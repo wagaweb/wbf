@@ -62,9 +62,15 @@ class WBF {
 		$GLOBALS['md'] = WBF::get_mobile_detect();
 		WBF::init_styles_compiler();
 
-		add_action( "after_switch_theme", "WBF::activation" );
-		add_action( "switch_theme", "WBF::deactivation", 4 );
+		if(WBF::is_plugin()){
+			register_activation_hook( __FILE__, 'activate_wbf' );
+			register_deactivation_hook( __FILE__, 'deactivate_wbf' );
+		}else{
+			add_action( "after_switch_theme", "WBF::activation" );
+			add_action( "switch_theme", "WBF::deactivation", 4 );
+		}
 
+		add_action( "plugins_loaded", "WBF::plugins_loaded" );
 		add_action( "after_setup_theme", "WBF::after_setup_theme" );
 		add_action( "init", "WBF::init" );
 
@@ -204,6 +210,20 @@ class WBF {
 	}
 
 	/**
+	 * Checks if WBF is in the plugins directory
+	 * @return bool
+	 */
+	static function is_plugin(){
+		$path = WBF_DIRECTORY;
+		if(preg_match("/plugins/",$path)){
+			$is_plugin = true;
+		}else{
+			$is_plugin = false;
+		}
+		return apply_filters("wbf/is_plugin",$is_plugin);
+	}
+
+	/**
 	 *
 	 *
 	 * BACKUP FUNCTIONS
@@ -246,6 +266,20 @@ class WBF {
 		locate_template('/wbf/public/email-encoder.php', true);
 	}
 
+	/**
+	 * Wordpress "plugins_loaded" callback
+	 */
+	static function plugins_loaded(){
+		// ACF INTEGRATION
+		if(!is_plugin_active("advanced-custom-fields-pro/acf.php") && !is_plugin_active("advanced-custom-fields/acf.php")){
+			require_once WBF_DIRECTORY.'/vendor/acf/acf.php';
+			require_once WBF_DIRECTORY.'/admin/acf-integration.php';
+		}
+	}
+
+	/**
+	 * Wordpress "after_setup_theme" callback
+	 */
     static function after_setup_theme() {
 	    global $wbf_notice_manager;
 
@@ -270,17 +304,14 @@ class WBF {
 
 	    do_action("wbf_after_setup_theme");
 
-	    // ACF INTEGRATION
-        if(!is_plugin_active("advanced-custom-fields-pro/acf.php") && !is_plugin_active("advanced-custom-fields/acf.php")){
-            locate_template( '/wbf/vendor/acf/acf.php', true );
-            locate_template( '/wbf/admin/acf-integration.php', true );
-        }
-
         // Google Fonts
         locate_template('/wbf/includes/google-fonts-retriever.php', true);
         if(class_exists("WBF\GoogleFontsRetriever")) $GLOBALS['wbf_gfont_fetcher'] = WBF\GoogleFontsRetriever::getInstance();
     }
 
+	/**
+	 * Wordpress "init" callback
+	 */
 	static function init() {
 		do_action("wbf_init");
 
@@ -419,7 +450,7 @@ class WBF {
 
 	static function maybe_add_option() {
 		$opt = get_option( "wbf_installed" );
-		if ( ! $opt ) {
+		if( ! $opt || !self::has_valid_wbf_path()) {
 			self::add_wbf_options();
 		}
 	}
@@ -431,6 +462,17 @@ class WBF {
 		update_option( "wbf_components_saved_once", false );
 	}
 
+	private static function has_valid_wbf_path(){
+		$path = get_option("wbf_path");
+		if(!$path || empty($path) || !is_string($path)){
+			return false;
+		}
+		if(file_exists($path."/wbf.php")){
+			return true;
+		}
+		return false;
+	}
+
 	static function activation() {
 		self::load_modules_activation_hooks();
 
@@ -439,14 +481,17 @@ class WBF {
         //self::enable_default_components();
 	}
 
-	static function deactivation($template) {
+	static function deactivation($template = null) {
 		self::load_modules_deactivation_hooks();
-		$theme_switched = get_option( 'theme_switched', "" );
-
 		delete_option( "wbf_installed" );
 		delete_option( "wbf_path" );
 		delete_option( "wbf_url" );
-		do_action("wbf_deactivated", $theme_switched);
+		if($template){
+			$theme_switched = get_option( 'theme_switched', "" );
+			do_action("wbf_deactivated", $theme_switched);
+		}else{
+			do_action("wbf_deactivated", "plugin");
+		}
         /*if(!empty($theme_switched)){
             $wbf_components_saved_once = (array) get_option("wbf_components_saved_once", array());
             if(($key = array_search($theme_switched, $wbf_components_saved_once)) !== false) {
@@ -479,4 +524,13 @@ class WBF {
 	}
 }
 
+function activate_wbf(){
+	WBF::deactivation();
+}
+
+function deactivate_wbf(){
+	WBF::maybe_run_activation();
+}
+
 WBF::startup();
+
