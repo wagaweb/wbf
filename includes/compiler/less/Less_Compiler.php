@@ -4,7 +4,7 @@ namespace WBF\includes\compiler\less;
 use WBF\includes\compiler\Base_Compiler;
 use \Exception;
 
-require_once( get_template_directory()."/wbf/includes/compiler/interface-base-compiler.php" );
+require_once( WBF_DIRECTORY."/includes/compiler/interface-base-compiler.php" );
 
 class Less_Compiler implements Base_Compiler{
     public $compile_sets = array();
