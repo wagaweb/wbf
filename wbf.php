@@ -524,13 +524,16 @@ class WBF {
 	}
 }
 
-function activate_wbf(){
-	WBF::deactivation();
-}
+if(!function_exists("activate_wbf")):
+	function activate_wbf(){
+		WBF::maybe_run_activation();
+	}
+endif;
 
-function deactivate_wbf(){
-	WBF::maybe_run_activation();
-}
+if(!function_exists("deactivate_wbf")):
+	function deactivate_wbf(){
+		WBF::deactivation();
+	}
+endif;
 
 WBF::startup();
-
