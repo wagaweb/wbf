@@ -33,7 +33,7 @@ if ( ! defined( 'WPINC' ) ) {
 if( ! class_exists('WBF') ) :
 
 	if (!defined('WBF_ENV')) {
-	    define('WBF_ENV', 'production');
+		define('WBF_ENV', 'production');
 	}
 
 	define("WBF_DIRECTORY", __DIR__);
@@ -72,7 +72,9 @@ if( ! class_exists('WBF') ) :
 				add_action( "switch_theme", "WBF::deactivation", 4 );
 			}
 
-			add_action( "plugins_loaded", "WBF::plugins_loaded" );
+			if(WBF::is_plugin()) {
+				add_action( "plugins_loaded", "WBF::plugins_loaded" );
+			}
 			add_action( "after_setup_theme", "WBF::after_setup_theme" );
 			add_action( "init", "WBF::init" );
 
@@ -282,34 +284,42 @@ if( ! class_exists('WBF') ) :
 		/**
 		 * Wordpress "after_setup_theme" callback
 		 */
-	    static function after_setup_theme() {
-		    global $wbf_notice_manager;
+		static function after_setup_theme() {
+			global $wbf_notice_manager;
 
-		    self::maybe_add_option();
+			self::maybe_add_option();
 
-		    $modules = self::load_modules();
+			$modules = self::load_modules();
 
-		    // Make framework available for translation.
-	        load_textdomain( 'wbf', WBF_DIRECTORY . '/languages/wbf-'.get_locale().".mo");
+			// Make framework available for translation.
+			load_textdomain( 'wbf', WBF_DIRECTORY . '/languages/wbf-'.get_locale().".mo");
 
-		    if(!isset($wbf_notice_manager)){
-			    $GLOBALS['wbf_notice_manager'] = new \WBF\admin\Notice_Manager(); // Loads notice manager. The notice manager can be already loaded by plugins constructor prior this point.
-		    }
+			if(!isset($wbf_notice_manager)){
+				$GLOBALS['wbf_notice_manager'] = new \WBF\admin\Notice_Manager(); // Loads notice manager. The notice manager can be already loaded by plugins constructor prior this point.
+			}
 
-	        // Load the CSS
-		    locate_template( '/wbf/public/public-styles.php', true );
-		    locate_template( '/wbf/admin/adm-styles.php', true );
+			// Load the CSS
+			locate_template( '/wbf/public/public-styles.php', true );
+			locate_template( '/wbf/admin/adm-styles.php', true );
 
-	        // Load scripts
-	        //locate_template( '/wbf/public/scripts.php', true );
-	        locate_template( '/wbf/admin/adm-scripts.php', true );
+			// Load scripts
+			//locate_template( '/wbf/public/scripts.php', true );
+			locate_template( '/wbf/admin/adm-scripts.php', true );
 
-		    do_action("wbf_after_setup_theme");
+			do_action("wbf_after_setup_theme");
 
-	        // Google Fonts
-	        locate_template('/wbf/includes/google-fonts-retriever.php', true);
-	        if(class_exists("WBF\GoogleFontsRetriever")) $GLOBALS['wbf_gfont_fetcher'] = WBF\GoogleFontsRetriever::getInstance();
-	    }
+			// ACF INTEGRATION
+			if(!self::is_plugin()){
+				if(!is_plugin_active("advanced-custom-fields-pro/acf.php") && !is_plugin_active("advanced-custom-fields/acf.php")){
+					locate_template( '/wbf/vendor/acf/acf.php', true );
+					locate_template( '/wbf/admin/acf-integration.php', true );
+				}
+			}
+
+			// Google Fonts
+			locate_template('/wbf/includes/google-fonts-retriever.php', true);
+			if(class_exists("WBF\GoogleFontsRetriever")) $GLOBALS['wbf_gfont_fetcher'] = WBF\GoogleFontsRetriever::getInstance();
+		}
 
 		/**
 		 * Wordpress "init" callback
@@ -457,14 +467,14 @@ if( ! class_exists('WBF') ) :
 			}
 		}
 
-		private static function add_wbf_options(){
+		static function add_wbf_options(){
 			update_option( "wbf_installed", true ); //Set a flag to make other component able to check if framework is installed
 			update_option( "wbf_path", WBF_DIRECTORY );
 			update_option( "wbf_url", WBF_URL );
 			update_option( "wbf_components_saved_once", false );
 		}
 
-		private static function has_valid_wbf_path(){
+		static function has_valid_wbf_path(){
 			$path = get_option("wbf_path");
 			if(!$path || empty($path) || !is_string($path)){
 				return false;
@@ -480,7 +490,7 @@ if( ! class_exists('WBF') ) :
 
 			self::add_wbf_options();
 			do_action("wbf_activated");
-	        //self::enable_default_components();
+			//self::enable_default_components();
 		}
 
 		static function deactivation($template = null) {
@@ -494,17 +504,17 @@ if( ! class_exists('WBF') ) :
 			}else{
 				do_action("wbf_deactivated", "plugin");
 			}
-	        /*if(!empty($theme_switched)){
-	            $wbf_components_saved_once = (array) get_option("wbf_components_saved_once", array());
-	            if(($key = array_search($theme_switched, $wbf_components_saved_once)) !== false) {
-	                unset($wbf_components_saved_once[$key]);
-	            }
-	            if(empty($wbf_components_saved_once)){
-	                delete_option( "wbf_components_saved_once" );
-	            }else{
-	                update_option( "wbf_components_saved_once", $wbf_components_saved_once );
-	            }
-	        }*/
+			/*if(!empty($theme_switched)){
+				$wbf_components_saved_once = (array) get_option("wbf_components_saved_once", array());
+				if(($key = array_search($theme_switched, $wbf_components_saved_once)) !== false) {
+					unset($wbf_components_saved_once[$key]);
+				}
+				if(empty($wbf_components_saved_once)){
+					delete_option( "wbf_components_saved_once" );
+				}else{
+					update_option( "wbf_components_saved_once", $wbf_components_saved_once );
+				}
+			}*/
 		}
 
 		/**
@@ -539,5 +549,17 @@ if( ! class_exists('WBF') ) :
 	endif;
 
 	WBF::startup();
+
+else:
+
+	//If this is a plugin, then force the options to point over the plugin.
+	if(preg_match("/plugins/",__FILE__) && preg_match("/themes/",get_option("wbf_path"))){
+		update_option( "wbf_path", __DIR__ );
+		update_option( "wbf_url", get_bloginfo("url") . "/wp-content/plugins/wbf/" );
+		define("WBF_DIRECTORY", __DIR__);
+		define("WBF_URL", get_bloginfo("url") . "/wp-content/plugins/wbf/");
+		define("WBF_ADMIN_DIRECTORY", __DIR__ . "/admin");
+		define("WBF_PUBLIC_DIRECTORY", __DIR__ . "/public");
+	}
 
 endif; // class_exists check
