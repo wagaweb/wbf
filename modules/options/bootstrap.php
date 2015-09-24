@@ -10,13 +10,8 @@ require_once "functions.php";
 require_once WBF_DIRECTORY."/vendor/options-framework/class-options-sanitization.php";
 require_once "sanitization.php";
 
-if ( get_stylesheet_directory() == get_template_directory() ) {
-    define('OPTIONS_FRAMEWORK_URL', get_template_directory() . '/wbf/vendor/options-framework/');
-    define('OPTIONS_FRAMEWORK_DIRECTORY', get_bloginfo('template_directory') . '/wbf/vendor/options-framework/');
-} else {
-    define('OPTIONS_FRAMEWORK_URL', get_stylesheet_directory() . '/wbf/vendor/options-framework/');
-    define('OPTIONS_FRAMEWORK_DIRECTORY', get_bloginfo('template_directory') . '/wbf/vendor/options-framework/');
-}
+define('OPTIONS_FRAMEWORK_URL', \WBF::prefix_url('vendor/options-framework/'));
+define('OPTIONS_FRAMEWORK_DIRECTORY', \WBF::prefix_url('vendor/options-framework/'));
 
 add_action( "wbf_init",'\WBF\modules\options\module_init', 11 );
 add_action( "updated_option", '\WBF\modules\options\of_options_save', 9999, 3 );
