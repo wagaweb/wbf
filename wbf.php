@@ -119,7 +119,7 @@ if( ! class_exists('WBF') ) :
 
 			//Set update server
 			if(self::is_plugin()){
-				$this->update_instance = new \WBF\includes\Plugin_Update_Checker("http://update.waboot.org/?action=get_metadata&slug=wbf&type=plugin",WBF_DIRECTORY,"wbf",null,false,12,'wbf_updates');
+				$this->update_instance = new \WBF\includes\Plugin_Update_Checker("http://update.waboot.org/?action=get_metadata&slug=wbf&type=plugin",self::get_path(),"wbf",null,false,12,'wbf_updates');
 			}
 		}
 
@@ -201,7 +201,7 @@ if( ! class_exists('WBF') ) :
 				return $modules;
 			}
 
-			$modules_dir = WBF_DIRECTORY."/modules";
+			$modules_dir = self::get_path()."modules";
 			$dirs = array_filter(glob($modules_dir."/*"), 'is_dir');
 			$dirs = apply_filters("wbf/modules/available", $dirs); //Allow developer to add\delete modules
 			foreach($dirs as $d){
@@ -246,7 +246,7 @@ if( ! class_exists('WBF') ) :
 		 * @return bool
 		 */
 		static function is_plugin(){
-			$path = WBF_DIRECTORY;
+			$path = self::get_path();
 			if(preg_match("/plugins/",$path)){
 				$is_plugin = true;
 			}else{
@@ -260,11 +260,17 @@ if( ! class_exists('WBF') ) :
 		 * @return bool|string
 		 */
 		static function get_url(){
+			static $url;
+
+			if(isset($url)) return $url;
+
 			$url = get_option("wbf_url");
 			if($url && is_string($url) && !empty($url)){
-				return rtrim($url,"/")."/";
+				$url = rtrim($url,"/")."/";
+				return $url;
 			}elseif(defined("WBF_URL")){
-				return rtrim(WBF_URL,"/")."/";
+				$url = rtrim(WBF_URL,"/")."/";
+				return $url;
 			}
 			return false;
 		}
@@ -274,11 +280,17 @@ if( ! class_exists('WBF') ) :
 		 * @return bool|string
 		 */
 		static function get_path(){
+			static $path;
+
+			if(isset($path)) return $path;
+
 			$path = get_option("wbf_path");
 			if($path && is_string($path) && !empty($path)){
-				return rtrim($path,"/")."/";
+				$path = rtrim($path,"/")."/";
+				return $path;
 			}elseif(defined("WBF_DIRECTORY")){
-				return rtrim(WBF_URL,"/")."/";
+				$path = rtrim(WBF_DIRECTORY,"/")."/";
+				return $path;
 			}
 			return false;
 		}
@@ -362,8 +374,8 @@ if( ! class_exists('WBF') ) :
 		function plugins_loaded(){
 			// ACF INTEGRATION
 			if(!is_plugin_active("advanced-custom-fields-pro/acf.php") && !is_plugin_active("advanced-custom-fields/acf.php")){
-				require_once WBF_DIRECTORY.'/vendor/acf/acf.php';
-				require_once WBF_DIRECTORY.'/admin/acf-integration.php';
+				require_once self::get_path().'vendor/acf/acf.php';
+				require_once self::get_path().'admin/acf-integration.php';
 			}
 		}
 
@@ -378,7 +390,7 @@ if( ! class_exists('WBF') ) :
 			$this->modules = $this->load_modules();
 
 			// Make framework available for translation.
-			load_textdomain( 'wbf', WBF_DIRECTORY . '/languages/wbf-'.get_locale().".mo");
+			load_textdomain( 'wbf', self::get_path() . 'languages/wbf-'.get_locale().".mo");
 
 			if(!isset($wbf_notice_manager)){
 				$GLOBALS['wbf_notice_manager'] = new \WBF\admin\Notice_Manager(); // Loads notice manager. The notice manager can be already loaded by plugins constructor prior this point.
@@ -469,7 +481,7 @@ if( ! class_exists('WBF') ) :
 		}
 
 		function unset_unwanted_updates($value){
-			$acf_update_path = preg_replace("/^\//","",WBF_DIRECTORY.'/vendor/acf/acf.php');
+			$acf_update_path = preg_replace("/^\//","",self::get_path().'vendor/acf/acf.php');
 
 			if(isset($value->response[$acf_update_path])){
 				unset($value->response[$acf_update_path]);
