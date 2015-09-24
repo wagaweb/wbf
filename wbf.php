@@ -73,7 +73,17 @@ if( ! class_exists('WBF') ) :
 			$this->startup();
 		}
 
+		static function handle_errors($errno,$errstr,$errfile,$errline,$errcontext){
+			global $wbf_notice_manager;
+			if($wbf_notice_manager && is_admin() && current_user_can("manage_options")){
+				$str = sprintf('[Admin Only] There was an USER_WARNING error generated at %s:%s: <strong>%s</strong>',basename($errfile),$errline,$errstr);
+				$wbf_notice_manager->add_notice($errline,$str,"error","_flash_");
+			}
+		}
+
 		function startup(){
+
+			set_error_handler('\WBF::handle_errors',E_USER_WARNING);
 
 			$this->maybe_run_activation();
 
@@ -81,7 +91,7 @@ if( ! class_exists('WBF') ) :
 			$this->path = self::get_path();
 
 			if($this->options['do_global_theme_customizations']){
-				add_action('wbf_after_setup_theme','WBF::do_global_theme_customizations');
+				add_action('wbf_after_setup_theme',[$this,'do_global_theme_customizations']);
 			}
 
 			$GLOBALS['md'] = $this->get_mobile_detect();
