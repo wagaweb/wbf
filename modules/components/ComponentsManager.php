@@ -26,7 +26,7 @@ class ComponentsManager {
         global $plugin_page;
         if($plugin_page == "waboot_components"){
             // Enqueue custom CSS
-            $stylesheet = wbf_locate_template_uri('wbf/admin/css/componentsframework.css');
+            $stylesheet = \WBF::prefix_url('admin/css/componentsframework.css');
             if ($stylesheet != ""){
                 wp_enqueue_style('waboot-theme-components-style', $stylesheet, array(), '1.0.0', 'all'); //Custom Theme Options CSS
             }
