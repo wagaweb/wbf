@@ -15,6 +15,36 @@ if(!function_exists('wbf_get_template_part')):
 	}
 endif;
 
+if(!function_exists("wbf_locate_file")):
+	function wbf_locate_file($file, $load = false, $require_once = true){
+		$located = '';
+		$search_paths = [
+			WBF_DIRECTORY,
+			get_option("wbf_path"),
+			get_template_directory(),
+			get_stylesheet_directory()
+		];
+
+		foreach($search_paths as $p){
+			$path = rtrim($p,"/") . '/'.ltrim($file,"/");
+			if(file_exists($path)){
+				$located = $path;
+				break;
+			}
+		}
+
+		if ( $load && '' != $located ){
+			if($require_once){
+				require_once $located;
+			}else{
+				require $located;
+			}
+		}
+
+		return $located;
+	}
+endif;
+
 if(!function_exists('wbf_locate_template')):
 	function wbf_locate_template($templates, $load = false, $require_once = true ) {
 		$located = '';
