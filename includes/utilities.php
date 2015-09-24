@@ -33,6 +33,10 @@ if(!function_exists("wbf_locate_file")):
 			}
 		}
 
+		if($located == ''){
+			throw new \Exception(sprintf(__("File: %s non found in any of the followinf paths: %s","wbf"),$file,implode(";\n",$search_paths)));
+		}
+
 		if ( $load && '' != $located ){
 			if($require_once){
 				require_once $located;
