@@ -14,6 +14,7 @@
   "dependencies": {
     "codemirror": "4.7.0",
     "imagesloaded": "",
-    "jquery-modal": ""
+    "jquery-modal": "",
+    "bootstrap": "^3.3.5"
   }
 }

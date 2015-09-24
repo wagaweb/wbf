@@ -21,6 +21,7 @@ vendor/eventie
 vendor/imagesloaded
 vendor/jquery-modal
 vendor/codemirror
+vendor/bootstrap
 
 ############
 ## VENDORS (other)
