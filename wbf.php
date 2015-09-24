@@ -77,6 +77,9 @@ if( ! class_exists('WBF') ) :
 
 			$this->maybe_run_activation();
 
+			$this->url = self::get_url();
+			$this->path = self::get_path();
+
 			if($this->options['do_global_theme_customizations']){
 				add_action('wbf_after_setup_theme','WBF::do_global_theme_customizations');
 			}
@@ -259,9 +262,9 @@ if( ! class_exists('WBF') ) :
 		static function get_url(){
 			$url = get_option("wbf_url");
 			if($url && is_string($url) && !empty($url)){
-				return $url;
+				return rtrim($url,"/")."/";
 			}elseif(defined("WBF_URL")){
-				return WBF_URL;
+				return rtrim(WBF_URL,"/")."/";
 			}
 			return false;
 		}
@@ -273,9 +276,9 @@ if( ! class_exists('WBF') ) :
 		static function get_path(){
 			$path = get_option("wbf_path");
 			if($path && is_string($path) && !empty($path)){
-				return $path;
+				return rtrim($path,"/")."/";
 			}elseif(defined("WBF_DIRECTORY")){
-				return WBF_URL;
+				return rtrim(WBF_URL,"/")."/";
 			}
 			return false;
 		}
