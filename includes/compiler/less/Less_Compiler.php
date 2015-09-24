@@ -59,7 +59,7 @@ class Less_Compiler implements Base_Compiler{
         try{
 	        global $wp_filesystem;
 	        require_once( \WBF::get_path()."includes/compiler/less/Less_Cache.php" );
-	        require_once( get_template_directory()."/wbf/includes/compiler/compiler-utils.php" );
+	        require_once( \WBF::get_path()."includes/compiler/compiler-utils.php" );
 
 	        $args = wp_parse_args($args,$this->compile_sets[$name]);
 
