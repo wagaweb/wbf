@@ -54,7 +54,7 @@ if( ! class_exists('WBF') ) :
 		var $url;
 		var $path;
 
-		const version = "0.13.3";
+		const version = "0.13.4";
 
 		public static function getInstance($args = []){
 			static $instance = null;
