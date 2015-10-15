@@ -196,7 +196,12 @@ function of_recompile_styles($values,$release = false){
 function of_generate_less_file($value = null,$input_file_path = null,$output_file_path = null,$output_type = "FILE"){
 	if(!isset($value) || empty($value)) $value = Framework::get_options_values();
 	if(!isset($input_file_path) || empty($input_file_path)) $input_file_path = "/sources/less/_theme-options-generated.less.cmp"; //todo: in un ottica di poter utilizzare più compilatori, questo file dovrebbe essere specificato altrove
-	if(!isset($output_file_path) || empty($output_file_path)) $output_file_path = "/sources/less/theme-options-generated.less"; //todo: in un ottica di poter utilizzare più compilatori, questo file dovrebbe essere specificato altrove
+	if(is_multisite()){
+		$blogname = wbf_get_sanitized_blogname();
+		if(!isset($output_file_path) || empty($output_file_path)) $output_file_path = "/sources/less/mu/{$blogname}-theme-options-generated.less"; //todo: in un ottica di poter utilizzare più compilatori, questo file dovrebbe essere specificato altrove
+	}else{
+		if(!isset($output_file_path) || empty($output_file_path)) $output_file_path = "/sources/less/theme-options-generated.less";
+	}
 
 	if(!is_array($value)) return;
 
@@ -207,6 +212,9 @@ function of_generate_less_file($value = null,$input_file_path = null,$output_fil
         $tmpFile = new \SplFileInfo(get_template_directory().$input_file_path);
     }
 	$parsedFile = $output_file_path ? new \SplFileInfo(get_stylesheet_directory().$output_file_path) : null;
+	if(!is_dir($parsedFile->getPath())){
+		mkdir($parsedFile->getPath());
+	}
 
     if($tmpFile->isFile() && $tmpFile->isWritable()) {
         $genericOptionfindRegExp = "~//{of_get_option\('([a-zA-Z0-9\-_]+)'\)}~";
@@ -278,27 +286,30 @@ function of_generate_less_file($value = null,$input_file_path = null,$output_fil
  * @return array
  */
 function _of_get_theme_options_deps($all_options = null){
+	//todo: a partire da quì, forse si genera qlc errore durante l'attivazione del plugin qnd non c'è nessun tema che lo supporta
     $deps_to_achieve = array();
     if(!isset($all_options)) $all_options = Framework::get_registered_options();
-    foreach($all_options as $k => $opt_data){
-        if(isset($opt_data['id'])){
-            $current_opt_name = $opt_data['id'];
-            $current_value = of_get_option($current_opt_name);
-            if(isset($opt_data['deps'])){
-                if(isset($opt_data['deps']['_global'])){
-                    if(isset($opt_data['deps']['_global']['components']))
-                        $deps_to_achieve['components'][] = $opt_data['deps']['_global']['components'];
-                }
-                unset($opt_data['deps']['_global']);
-                foreach($opt_data['deps'] as $v => $deps){
-                    if($current_value == $v){ //true the option has the value specified into deps array
-                        //Then set the deps to achieve
-                        if(isset($deps['components'])) $deps_to_achieve['components'] = $deps['components'];
-                    }
-                }
-            }
-        }
-    }
+	if(is_array($all_options) && !empty($all_options)){
+	    foreach($all_options as $k => $opt_data){
+	        if(isset($opt_data['id'])){
+	            $current_opt_name = $opt_data['id'];
+	            $current_value = of_get_option($current_opt_name);
+	            if(isset($opt_data['deps'])){
+	                if(isset($opt_data['deps']['_global'])){
+	                    if(isset($opt_data['deps']['_global']['components']))
+	                        $deps_to_achieve['components'][] = $opt_data['deps']['_global']['components'];
+	                }
+	                unset($opt_data['deps']['_global']);
+	                foreach($opt_data['deps'] as $v => $deps){
+	                    if($current_value == $v){ //true the option has the value specified into deps array
+	                        //Then set the deps to achieve
+	                        if(isset($deps['components'])) $deps_to_achieve['components'] = $deps['components'];
+	                    }
+	                }
+	            }
+	        }
+	    }
+	}
     return $deps_to_achieve;
 }
 
