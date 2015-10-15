@@ -28,7 +28,8 @@ class GUI extends \Options_Framework_Interface
         $counter = 0;
         $menu = '';
 
-        foreach ($options as $value) {
+	    if(is_array($options) && !empty($options)){
+            foreach ($options as $value) {
 
             $val = '';
             $select_value = '';
@@ -343,6 +344,9 @@ class GUI extends \Options_Framework_Interface
 
             echo $output;
         }
+	    }else{
+		    echo '<p>'.__("There is no options available","wbf")."</p>";
+	    }
 
         // Outputs closing div if there tabs
         if (GUI::optionsframework_tabs() != '') {
@@ -358,15 +362,17 @@ class GUI extends \Options_Framework_Interface
         $options = & Framework::get_registered_options();
         $menu = '';
 
-        foreach ( $options as $value ) {
-            // Heading for Navigation
-            if ( $value['type'] == "heading" && (!isset($value['component'])) ) {
-                $counter++;
-                $class = '';
-                $class = ! empty( $value['id'] ) ? $value['id'] : $value['name'];
-                $class = preg_replace( '/[^a-zA-Z0-9._\-]/', '', strtolower($class) ) . '-tab';
-                $menu .= '<li><a id="options-group-'.  $counter . '-tab" class="nav-tab ' . $class .'" title="' . esc_attr( $value['name'] ) . '" href="' . esc_attr( '#options-group-'.  $counter ) . '">' . esc_html( $value['name'] ) . '</a></li>';
-            }
+        if(is_array($options) && !empty($options)){
+		    foreach ( $options as $value ) {
+	            // Heading for Navigation
+	            if ( $value['type'] == "heading" && (!isset($value['component'])) ) {
+	                $counter++;
+	                $class = '';
+	                $class = ! empty( $value['id'] ) ? $value['id'] : $value['name'];
+	                $class = preg_replace( '/[^a-zA-Z0-9._\-]/', '', strtolower($class) ) . '-tab';
+	                $menu .= '<li><a id="options-group-'.  $counter . '-tab" class="nav-tab ' . $class .'" title="' . esc_attr( $value['name'] ) . '" href="' . esc_attr( '#options-group-'.  $counter ) . '">' . esc_html( $value['name'] ) . '</a></li>';
+	            }
+	        }
         }
 
         return $menu;

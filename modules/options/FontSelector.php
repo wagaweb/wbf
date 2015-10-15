@@ -59,9 +59,11 @@ class FontSelector
         $options_names = call_user_func(function(){
 	        $names = array();
 	        $all_options = Framework::get_registered_options();
-	        foreach($all_options as $opt){
-		        if(isset($opt['id']) && $opt['type'] == "typography" && isset($opt['fonts_type']) && $opt['fonts_type'] == "google"){
-			        $names[] = $opt['id'];
+	        if(is_array($all_options) && !empty($all_options)){
+		        foreach($all_options as $opt){
+			        if(isset($opt['id']) && $opt['type'] == "typography" && isset($opt['fonts_type']) && $opt['fonts_type'] == "google"){
+				        $names[] = $opt['id'];
+			        }
 		        }
 	        }
 	        return $names;

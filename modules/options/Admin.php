@@ -6,10 +6,13 @@ class Admin extends \Options_Framework_Admin{
 
 	public function init() {
 		parent::init();
+		$all_options = Framework::get_registered_options();
 		remove_action( 'admin_menu', array( $this, 'add_options_page' ) );
-		add_action( 'wbf_admin_submenu', array( $this, 'add_options_page' ) );
-		add_action( 'wbf_admin_submenu', array( $this, 'add_man_page' ), 12 );
-		//add_action( 'admin_menu', array( $this, 'add_additional_appearance_link' ) );
+		if(is_array($all_options) && !empty($all_options)){
+			add_action( 'wbf_admin_submenu', array( $this, 'add_options_page' ) );
+			add_action( 'wbf_admin_submenu', array( $this, 'add_man_page' ), 12 );
+			//add_action( 'admin_menu', array( $this, 'add_additional_appearance_link' ) );
+		}
 		add_action( 'optionsframework_after', array( $this, 'add_copy_in_admin_page' ));
 	}
 
