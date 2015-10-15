@@ -1,5 +1,11 @@
 <?php
 
+if(!function_exists("wbf_get_sanitized_blogname")):
+	function wbf_get_sanitized_blogname(){
+		return sanitize_title_with_dashes(get_bloginfo("name"));
+	}
+endif;
+
 if(!function_exists('wbf_get_template_part')):
 	function wbf_get_template_part($slug, $name = null){
 		do_action( "get_template_part_{$slug}", $slug, $name );

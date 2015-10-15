@@ -20,8 +20,14 @@ function parse_input_file($filepath){
 		if($tmpFileObj->isWritable()){
 			while (!$inputFileObj->eof()) {
 				$line = $inputFileObj->fgets();
+
 				if(preg_match("|\{@import '([a-zA-Z0-9\-/_.]+)'\}|",$line,$matches)){
-					$fileToImport = new \SplFileInfo(dirname($filepath)."/".$matches[1]);
+					if(is_multisite() && $matches[1] == "theme-options-generated.less"){
+						$blogname = wbf_get_sanitized_blogname();
+						$fileToImport = new \SplFileInfo(dirname($filepath)."/mu/".$blogname."-".$matches[1]);
+					}else{
+						$fileToImport = new \SplFileInfo(dirname($filepath)."/".$matches[1]);
+					}
 					if($fileToImport->isFile() && $fileToImport->isReadable()){
 						if($inputFile->getPath() == $fileToImport->getPath()){
 							$line = "@import '{$fileToImport->getBasename()}';\n";
