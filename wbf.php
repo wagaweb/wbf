@@ -129,7 +129,16 @@ if( ! class_exists('WBF') ) :
 
 			//Set update server
 			if(self::is_plugin()){
-				$this->update_instance = new \WBF\includes\Plugin_Update_Checker("http://update.waboot.org/?action=get_metadata&slug=wbf&type=plugin",self::get_path(),"wbf",null,false,12,'wbf_updates');
+				$this->update_instance = new \WBF\includes\Plugin_Update_Checker(
+					"http://update.waboot.org/?action=get_metadata&slug=wbf&type=plugin", //$metadataUrl
+					self::get_path()."wbf.php", //$pluginFile
+					"wbf", //$slug
+					null, //$plugin_license
+					false, //$checkLicense
+					12, //$checkPeriod
+					'wbf_updates', //$optionName
+					is_multisite() //$muPluginFile
+				);
 			}
 		}
 
