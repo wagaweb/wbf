@@ -102,6 +102,20 @@ module.exports = {
 
         });
 
+        $('#prova').sortable({
+            stop: function(event, ui) {
+                var newImgArray = $('.imgGalleryAdmin');
+                $('#imgId').val('');
+                var imgIds = [];
+                $.each(newImgArray, function(index, value){
+                    imgIds.push($(value).attr('data-id'));
+                });
+                $('#imgId').val(imgIds);
+            }
+        });
+        $('#prova').disableSelection();
+
+
     }
 };
 

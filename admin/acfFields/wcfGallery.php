@@ -29,6 +29,7 @@ class wcfGallery extends \acf_field{
             'max'			=> __("Maximum selection reached",'wbf')
         );
         add_action('save_post', array($this,'saveGalleryMeta'));
+        add_action( 'admin_enqueue_scripts', array($this,'load_custom_wp_admin_style') );
         parent::__construct();
     }
 
@@ -59,6 +60,7 @@ class wcfGallery extends \acf_field{
      */
     function render_field( $field ) {
         global $post_id;
+
         wp_enqueue_media();
         $val = '';
         $values = get_field('field_wbf_gallery', $post_id);
@@ -93,7 +95,7 @@ class wcfGallery extends \acf_field{
             <input type="hidden" name="imgId" id="imgId" value=" <?php echo $val; ?>">
             <!--<input type="text" name="image_url" id="image_url" class="regular-text">-->
             <input type="button" name="upload-btn" id="upload-btn" class="button-primary button" value="Upload Image">
-            <div>
+            <div id="prova">
             <?php $this->renderGalleryMeta($post_id); ?>
             </div>
         </div>
@@ -117,7 +119,7 @@ class wcfGallery extends \acf_field{
             $imgExt = strrchr($img, ".");
             $imgUrl = substr($img,0,strlen($img) - strlen($imgExt));
             echo '<div class="containerImgGalleryAdmin">
-                    <img class="imgGalleryAdmin" src=" '. $imgUrl . '-150x150' . $imgExt .'">
+                    <img class="imgGalleryAdmin" src=" '. $imgUrl . '-150x150' . $imgExt .'" data-id="'.$field .'">
                     <div class="deleteImg">
                         <a class="acf-icon dark remove-attachment " data-index="'.$index .'" href="#" data-id="'.$field .'">
                             <i class="acf-sprite-delete"></i>
@@ -125,6 +127,9 @@ class wcfGallery extends \acf_field{
                     </div>
                 </div>';
         }
+    }
+    function load_custom_wp_admin_style() {
+        wp_enqueue_script( 'jquery-ui-sortable' );
     }
 
 }
