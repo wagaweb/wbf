@@ -28,6 +28,7 @@ class wcfGallery extends \acf_field{
             'uploadedTo'	=> __("uploaded to this post",'wbf'),
             'max'			=> __("Maximum selection reached",'wbf')
         );
+        add_action('save_post', array($this,'saveGalleryMeta'));
         parent::__construct();
     }
 
@@ -57,36 +58,38 @@ class wcfGallery extends \acf_field{
      * @param $field
      */
     function render_field( $field ) {
-        // vars
-        $uploader = acf_get_setting('uploader');
-        // enqueue
-        if( $uploader == 'wp' ) {
-            acf_enqueue_uploader();
-        }
-        ?>
-        <div class="acf-hidden">
-            <?php acf_hidden_input(array( 'name' => $field['name'], 'value' => $field['value'], 'data-name' => 'id' )); ?>
-        </div>
-        <div class="mfu-main" data-maxfile="<?php echo $field['max'] ?>">
-            <script type="text/template" id="FileUploadInput">
-                <div class="file-input">
-                    <input type="text" name="<?php echo esc_attr($field['name']) ?>[]" value="" />
-                    <a href="#" class="acf-button blue upload-attachment"><?php _e('Upload', 'wbf'); ?></a>
-                </div>
-            </script>
-            <div class="mfu-files">
-                <?php if( $field['value'] && is_array($field['value']) ) : ?>
-                    <?php foreach($field['value'] as $k => $v) : ?>
-                        <div class="file-input">
-                            <input type="text" name="<?php echo esc_attr($field['name']) ?>[<?php echo $k; ?>]" value="<?php echo $v; ?>" />
-                        </div>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </div>
-            <div class="mfu-toolbar">
-                <a href="#" class="acf-button blue add-attachment"><?php _e('Add new file', 'wbf'); ?></a>
+        global $post_id;
+        wp_enqueue_media();?>
+        <div>
+            <label for="image_url">Image</label>
+            <input type="hidden" name="imgId" id="imgId" value="1,2,3,4">
+            <!--<input type="text" name="image_url" id="image_url" class="regular-text">-->
+            <input type="button" name="upload-btn" id="upload-btn" class="button-primary button" value="Upload Image">
+            <div>
+            <?php $this->renderGalleryMeta($post_id); ?>
             </div>
         </div>
-    <?php
+        <?php
     }
+
+    function saveGalleryMeta($postId){
+        if(isset($_POST['imgId'])) {
+            $fields = get_field('field_wbf_gallery', $postId);
+            $ids = array();
+            $ids = explode(',', $_POST['imgId']);
+            $ids = array_merge($fields, $ids);
+            update_field('field_wbf_gallery', $ids, $postId);
+
+        }
+    }
+    function renderGalleryMeta($postId){
+        $fields = get_field('field_wbf_gallery', $postId);
+        foreach($fields as $field){
+            $img = wp_get_attachment_url($field);
+            $imgExt = strrchr($img, ".");
+            $imgUrl = substr($img,0,strlen($img) - strlen($imgExt));
+            echo '<img class="imgGalleryAdmin" src=" '. $imgUrl . '-150x150' . $imgExt .'">';
+        }
+    }
+
 }
