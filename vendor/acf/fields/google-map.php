@@ -150,10 +150,9 @@ class acf_field_google_map extends acf_field {
 	<div class="canvas" style="height: <?php echo $field['height']; ?>px">
 		
 	</div>
-	
+
 </div>
 <?php
-		
 	}
 	
 		

@@ -205,7 +205,6 @@ class acf_field_oembed extends acf_field {
 		
 	</div>
 	<div class="canvas">
-		
 		<div class="canvas-loading">
 			<i class="acf-loading"></i>
 		</div>

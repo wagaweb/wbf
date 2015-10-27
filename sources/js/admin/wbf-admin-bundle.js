@@ -12,9 +12,10 @@ module.exports = {
 };
 },{}],2:[function(require,module,exports){
 module.exports = {
-    multipleFileUpload: require("./acf-fields/multiple-file-upload")
+    multipleFileUpload: require("./acf-fields/multiple-file-upload"),
+    wcfGallery: require("./acf-fields/wcf-gallery")
 };
-},{"./acf-fields/multiple-file-upload":3}],3:[function(require,module,exports){
+},{"./acf-fields/multiple-file-upload":3,"./acf-fields/wcf-gallery":4}],3:[function(require,module,exports){
 module.exports = {
     init_interface: function(){
         var $ = jQuery;
@@ -31,10 +32,10 @@ module.exports = {
             });
 
             //Upload file action
-            /*$("a.upload-attachment").on("click", function(e){
+            $("a.upload-attachment").on("click", function(e){
              e.preventDefault();
              console.log("Click!");
-             });*/
+             });
 
             function add_file_input(){
                 $container.append(tpl());
@@ -43,6 +44,13 @@ module.exports = {
     }
 };
 },{}],4:[function(require,module,exports){
+module.exports = {
+    init_interface: function(){
+        var $ = jQuery;
+        console.log("ciao");
+    }
+};
+},{}],5:[function(require,module,exports){
 module.exports = {
     init_interface: function(){
         "use strict";
@@ -57,7 +65,7 @@ module.exports = {
         });
     }
 };
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 module.exports = {
     init_interface: function(){
         "use strict";
@@ -142,7 +150,7 @@ module.exports = {
         };
     }
 };
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 module.exports = {
     init_interface: function(){
         "use strict";
@@ -156,7 +164,7 @@ module.exports = {
     }
 };
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 module.exports = {
     init_interface: function(my_controller){
         "use strict";
@@ -223,7 +231,7 @@ module.exports = {
         });
     }
 };
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 jQuery(document).ready(function($) {
     //Init ACF Custom Fields
     var acf_fields_views = require("./views/acf-fields.js");
@@ -251,4 +259,4 @@ jQuery(document).ready(function($) {
     behavior_view.init_interface();
 });
 
-},{"./controllers/font-selector.js":1,"./views/acf-fields.js":2,"./views/behavior.js":4,"./views/code-editor.js":5,"./views/component-page.js":6,"./views/font-selector.js":7}]},{},[8]);
+},{"./controllers/font-selector.js":1,"./views/acf-fields.js":2,"./views/behavior.js":5,"./views/code-editor.js":6,"./views/component-page.js":7,"./views/font-selector.js":8}]},{},[9]);
