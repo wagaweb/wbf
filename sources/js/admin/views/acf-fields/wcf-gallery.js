@@ -29,12 +29,32 @@ module.exports = {
                     var newImgUrl = imgUrl + '-150x150.' + imgExt;
                     $("#upload-btn").after("<img src=" +newImgUrl+">");
                     imgIds.push(attachment.id);
-                    $('#imgId').val(imgIds);
+                    console.log(imgIds);
                 });
+                var savedVal = $('#imgId').val();
+                $('#imgId').val(savedVal + ',' + imgIds);
             });
             custom_uploader.open();
         });
-        //$('.imgGalleryAdmin')
+        $('.containerImgGalleryAdmin').on('mouseover',function(){
+            $(this).addClass('on');
+
+            $('.containerImgGalleryAdmin.on .deleteImg').on('click', function(){
+                var oldValues = $('#imgId').val();
+                var arrayValues = oldValues.split(",").map(Number);
+                var elemIndex = $(this).children().attr('data-index');
+                var elemValie = $(this).children().attr('data-id');
+                arrayValues.splice(elemIndex,1);
+                console.log(arrayValues);
+                $('.on .imgGalleryAdmin').remove();
+                $('#imgId').val(arrayValues);
+            });
+
+        });
+        $('.containerImgGalleryAdmin').on('mouseout',function(){
+            $(this).removeClass('on');
+
+        });
 
     }
 };
