@@ -64,11 +64,13 @@ class wcfGallery extends \acf_field{
         wp_enqueue_media();
         $val = '';
         $values = get_field('field_wbf_gallery', $post_id);
-        foreach($values as $in => $value) {
-            if ($in == '0') {
-                $val .= $value;
-            } else {
-                $val .= ',' . $value;
+        if($values) {
+            foreach ($values as $in => $value) {
+                if ($in == '0') {
+                    $val .= $value;
+                } else {
+                    $val .= ',' . $value;
+                }
             }
         }
         ?>
@@ -114,18 +116,20 @@ class wcfGallery extends \acf_field{
     }
     function renderGalleryMeta($postId){
         $fields = get_field('field_wbf_gallery', $postId);
-        foreach($fields as $index => $field){
-            $img = wp_get_attachment_url($field);
-            $imgExt = strrchr($img, ".");
-            $imgUrl = substr($img,0,strlen($img) - strlen($imgExt));
-            echo '<div class="containerImgGalleryAdmin">
-                    <img class="imgGalleryAdmin" src=" '. $imgUrl . '-150x150' . $imgExt .'" data-id="'.$field .'">
+        if($fields) {
+            foreach ($fields as $index => $field) {
+                $img = wp_get_attachment_url($field);
+                $imgExt = strrchr($img, ".");
+                $imgUrl = substr($img, 0, strlen($img) - strlen($imgExt));
+                echo '<div class="containerImgGalleryAdmin">
+                    <img class="imgGalleryAdmin" src=" ' . $imgUrl . '-150x150' . $imgExt . '" data-id="' . $field . '">
                     <div class="deleteImg">
-                        <a class="acf-icon dark remove-attachment " data-index="'.$index .'" href="#" data-id="'.$field .'">
+                        <a class="acf-icon dark remove-attachment " data-index="' . $index . '" href="#" data-id="' . $field . '">
                             <i class="acf-sprite-delete"></i>
                         </a>
                     </div>
                 </div>';
+            }
         }
     }
     function load_custom_wp_admin_style() {
