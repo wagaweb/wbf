@@ -36,7 +36,7 @@ module.exports = {
                         var newData = JSON.stringify(data);
                         var imgUrl = JSON.parse(newData);
                         var newImgUrl = imgUrl.thumb;
-                        $("#upload-btn").after("<img src=" +newImgUrl+">");
+                        $("#prova").append("<div class='containerImgGalleryAdmin'><img class='imgGalleryAdmin' src=" +newImgUrl+"></div>");
                     }).fail(function(jqXHR, textStatus, errorThrown){
                         console.log(errorThrown);
                     }).always(function(result, textStatus, type){
