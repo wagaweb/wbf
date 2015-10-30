@@ -103,19 +103,28 @@ module.exports = {
         });
         $('.containerImgGalleryAdmin').on('mouseover',function(){
             $(this).addClass('on');
-
-            $('.containerImgGalleryAdmin.on .deleteImg').on('click', function(){
-                var oldValues = $('#imgId').val();
-                var arrayValues = oldValues.split(",").map(Number);
-                var elemIndex = $(this).children().attr('data-index');
-                var elemValie = $(this).children().attr('data-id');
-                arrayValues.splice(elemIndex,1);
-                console.log(arrayValues);
-                $('.on .imgGalleryAdmin').remove();
-                $('#imgId').val(arrayValues);
-            });
-
         });
+        $('.deleteImg').on('click', function(e){
+            console.log("click");
+            e.preventDefault();
+            var oldValues = $('#imgId').val();
+            var arrayValues = oldValues.split(",").map(Number);
+            var elemIndex = $(this).children().attr('data-index');
+            var imgIds = [];
+            console.log(arrayValues, elemIndex);
+            $.each(arrayValues, function (index, value) {
+                console.log(index, elemIndex);
+                if (index != elemIndex) {
+                    imgIds.push($(value)[0]);
+                }
+            });
+            $('.containerImgGalleryAdmin.on').remove();
+            $('#imgId').val(imgIds);
+            $.each($('.deleteImg'), function (index, value) {
+                $(this).children().attr('data-index', index);
+            });
+        });
+
         $('.containerImgGalleryAdmin').on('mouseout',function(){
             $(this).removeClass('on');
 
