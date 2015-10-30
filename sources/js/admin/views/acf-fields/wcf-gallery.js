@@ -36,7 +36,15 @@ module.exports = {
                         var newData = JSON.stringify(data);
                         var imgUrl = JSON.parse(newData);
                         var newImgUrl = imgUrl.thumb;
-                        $("#prova").append("<div class='containerImgGalleryAdmin'><img class='imgGalleryAdmin' src=" +newImgUrl+"></div>");
+                        var newDataIndex = $('.containerImgGalleryAdmin').length;
+                        $("#prova").append("<div class='containerImgGalleryAdmin'>" +
+                        "<img class='imgGalleryAdmin' src=" +newImgUrl+" data-id='"+ attachment.id +"'>" +
+                        "<div class='deleteImg'>"+
+                        "<a class='acf-icon dark remove-attachment ' data-index='"+ newDataIndex  +"' href='#' data-id='"+ attachment.id +"'>"+
+                        "<i class='acf-sprite-delete'></i>"+
+                        "</a>"+
+                        "</div></div>");
+                        $("#prova").sortable('refresh');
                     }).fail(function(jqXHR, textStatus, errorThrown){
                         console.log(errorThrown);
                     }).always(function(result, textStatus, type){
