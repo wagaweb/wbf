@@ -68,17 +68,36 @@ module.exports = {
                 var imgIds = [];
                 selection.map( function( attachment ) {
                     attachment = attachment.toJSON();
-                    console.log(attachment);
-                    var extNum = attachment.url.lastIndexOf('.');
-                    var imgUrl = attachment.url.substring(0,extNum);
-                    var imgExt = attachment.url.substring(extNum+1,attachment.url.length);
-                    var newImgUrl = imgUrl + '-150x150.' + imgExt;
-                    $("#upload-btn").after("<img src=" +newImgUrl+">");
                     imgIds.push(attachment.id);
                     console.log(imgIds);
+                    $.ajax(wbfData.ajaxurl,{ //ajax url is not available in the front end. Needs to wp_localize_script
+                        data: {
+                            action: "wcf_get_thumbnail", //the action specified in ajax wordpress hooks
+                            id: attachment.id
+                        },
+                        dataType: "json", //Default is an "intelligent guess"; does not work very often
+                        method: "POST" //Default is GET
+                    }).done(function(data, textStatus, jqXHR){
+                        console.log(data);
+                        var newData = JSON.stringify(data);
+                        var imgUrl = JSON.parse(newData);
+                        var newImgUrl = imgUrl.thumb;
+                        $("#upload-btn").after("<img src=" +newImgUrl+">");
+                    }).fail(function(jqXHR, textStatus, errorThrown){
+                        console.log(errorThrown);
+                    }).always(function(result, textStatus, type){
+                        console.log(type);
+                    });
+                    //FIN QUI
+
                 });
                 var savedVal = $('#imgId').val();
-                $('#imgId').val(savedVal + ',' + imgIds);
+                if(savedVal==' '){
+                    $('#imgId').val(imgIds);
+                }else{
+                    $('#imgId').val(savedVal + ',' + imgIds);
+                }
+
             });
             custom_uploader.open();
         });

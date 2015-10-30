@@ -30,9 +30,19 @@ class wcfGallery extends \acf_field{
         );
         add_action('save_post', array($this,'saveGalleryMeta'));
         add_action( 'admin_enqueue_scripts', array($this,'load_custom_wp_admin_style') );
+        add_action('wp_ajax_wcf_get_thumbnail',				array($this, 'ajax_wcf_get_thumbnail'));
+        add_action('wp_ajax_nopriv_wcf_get_thumbnail',		array($this, 'ajax_wcf_get_thumbnail'));
         parent::__construct();
     }
-
+    public function ajax_wcf_get_thumbnail(){
+        $id= $_POST['id'];
+        $uploadDir = wp_upload_dir();
+        $uploadUrl = $uploadDir['url'];
+        $image = wp_get_attachment_metadata($id);
+        $imageUrl = $uploadUrl.'/'.$image["sizes"]["thumbnail"]["file"];
+        echo json_encode(['thumb'=>$imageUrl]);
+        wp_die();
+    }
     /**
      * Render field settings during field group creation
      * @param $field
@@ -116,13 +126,14 @@ class wcfGallery extends \acf_field{
     }
     function renderGalleryMeta($postId){
         $fields = get_field('field_wbf_gallery', $postId);
-        if($fields) {
+        if($fields[0] !='') {
             foreach ($fields as $index => $field) {
-                $img = wp_get_attachment_url($field);
-                $imgExt = strrchr($img, ".");
-                $imgUrl = substr($img, 0, strlen($img) - strlen($imgExt));
+                $uploadDir = wp_upload_dir();
+                $uploadUrl = $uploadDir['url'];
+                $img = wp_get_attachment_metadata($field);
+                $thumbnail = $uploadUrl.'/'.$img["sizes"]["thumbnail"]["file"];;
                 echo '<div class="containerImgGalleryAdmin">
-                    <img class="imgGalleryAdmin" src=" ' . $imgUrl . '-150x150' . $imgExt . '" data-id="' . $field . '">
+                    <img class="imgGalleryAdmin" src=" ' . $thumbnail. '" data-id="' . $field . '">
                     <div class="deleteImg">
                         <a class="acf-icon dark remove-attachment " data-index="' . $index . '" href="#" data-id="' . $field . '">
                             <i class="acf-sprite-delete"></i>
