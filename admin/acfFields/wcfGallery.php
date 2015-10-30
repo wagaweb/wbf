@@ -36,10 +36,10 @@ class wcfGallery extends \acf_field{
     }
     public function ajax_wcf_get_thumbnail(){
         $id= $_POST['id'];
-        $uploadDir = wp_upload_dir();
-        $uploadUrl = $uploadDir['url'];
+        $fullImageUrl = wp_get_attachment_url($id);
+        $uploadImageUrl = substr($fullImageUrl,0, strrpos($fullImageUrl,'/'));
         $image = wp_get_attachment_metadata($id);
-        $imageUrl = $uploadUrl.'/'.$image["sizes"]["thumbnail"]["file"];
+        $imageUrl = $uploadImageUrl.'/'.$image["sizes"]["thumbnail"]["file"];
         echo json_encode(['thumb'=>$imageUrl]);
         wp_die();
     }
@@ -128,10 +128,10 @@ class wcfGallery extends \acf_field{
         $fields = get_field('field_wbf_gallery', $postId);
         if($fields[0] !='') {
             foreach ($fields as $index => $field) {
-                $uploadDir = wp_upload_dir();
-                $uploadUrl = $uploadDir['url'];
+                $fullImageUrl = wp_get_attachment_url($id);
+                $uploadImageUrl = substr($fullImageUrl,0, strrpos($fullImageUrl,'/'));
                 $img = wp_get_attachment_metadata($field);
-                $thumbnail = $uploadUrl.'/'.$img["sizes"]["thumbnail"]["file"];;
+                $thumbnail = $uploadImageUrl.'/'.$img["sizes"]["thumbnail"]["file"];;
                 echo '<div class="containerImgGalleryAdmin">
                     <img class="imgGalleryAdmin" src=" ' . $thumbnail. '" data-id="' . $field . '">
                     <div class="deleteImg">
