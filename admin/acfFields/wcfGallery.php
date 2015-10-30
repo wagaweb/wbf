@@ -84,28 +84,9 @@ class wcfGallery extends \acf_field{
             }
         }
         ?>
-        <style>
-            .deleteImg{
-                display:none;
-                position:absolute;
-                top:0;
-                right: 0;
-                width: 20px;
-                height: 20px;;
-            }
-            .on > .deleteImg{
-                display:inherit;
-            }
-            .containerImgGalleryAdmin{
-                float:left;
-                margin:5px;
-                position:relative;
-            }
-        </style>
         <div>
-            <label for="image_url">Image</label>
+
             <input type="hidden" name="imgId" id="imgId" value=" <?php echo $val; ?>">
-            <!--<input type="text" name="image_url" id="image_url" class="regular-text">-->
             <input type="button" name="upload-btn" id="upload-btn" class="button-primary button" value="Upload Image">
             <div id="prova">
             <?php $this->renderGalleryMeta($post_id); ?>
@@ -118,8 +99,15 @@ class wcfGallery extends \acf_field{
         if(isset($_POST['imgId'])) {
             $fields = get_field('field_wbf_gallery', $postId);
             $ids = array();
+            $has_thumbnail = get_the_post_thumbnail($postId);
+            if ( !$has_thumbnail ) {
+                $images = get_field('field_wbf_gallery', false, false);
+                $image_id = $images[0];
+                if ( $image_id ) {
+                    set_post_thumbnail( $postId, $image_id );
+                }
+            }
             $ids = explode(',', $_POST['imgId']);
-           // $ids = array_merge($fields, $ids);
             update_field('field_wbf_gallery', $ids, $postId);
 
         }
