@@ -86,11 +86,12 @@ class wcfGallery extends \acf_field{
         ?>
         <div>
 
-            <input type="hidden" name="imgId" id="imgId" value=" <?php echo $val; ?>">
-            <input type="button" name="upload-btn" id="upload-btn" class="button-primary button" value="Upload Image">
+
             <div id="prova">
             <?php $this->renderGalleryMeta($post_id); ?>
             </div>
+            <input type="hidden" name="imgId" id="imgId" value=" <?php echo $val; ?>">
+            <input type="button" name="upload-btn" id="upload-btn" class="button-primary button" value="Upload Image">
         </div>
         <?php
     }
