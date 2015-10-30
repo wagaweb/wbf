@@ -128,18 +128,20 @@ class wcfGallery extends \acf_field{
         $fields = get_field('field_wbf_gallery', $postId);
         if($fields[0] !='') {
             foreach ($fields as $index => $field) {
-                $fullImageUrl = wp_get_attachment_url($id);
+                $fullImageUrl = wp_get_attachment_url($field);
                 $uploadImageUrl = substr($fullImageUrl,0, strrpos($fullImageUrl,'/'));
                 $img = wp_get_attachment_metadata($field);
-                $thumbnail = $uploadImageUrl.'/'.$img["sizes"]["thumbnail"]["file"];;
-                echo '<div class="containerImgGalleryAdmin">
-                    <img class="imgGalleryAdmin" src=" ' . $thumbnail. '" data-id="' . $field . '">
-                    <div class="deleteImg">
-                        <a class="acf-icon dark remove-attachment " data-index="' . $index . '" href="#" data-id="' . $field . '">
-                            <i class="acf-sprite-delete"></i>
-                        </a>
-                    </div>
-                </div>';
+                if(isset($img["sizes"])) {
+                    $thumbnail = $uploadImageUrl . '/' . $img["sizes"]["thumbnail"]["file"];
+                    echo '<div class="containerImgGalleryAdmin">
+                    <img class="imgGalleryAdmin" src=" ' . $thumbnail . '" data-id="' . $field . '">
+                        <div class="deleteImg">
+                            <a class="acf-icon dark remove-attachment " data-index="' . $index . '" href="#" data-id="' . $field . '">
+                                <i class="acf-sprite-delete"></i>
+                            </a>
+                        </div>
+                    </div>';
+                }
             }
         }
     }
