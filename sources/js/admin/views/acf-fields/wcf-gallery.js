@@ -50,8 +50,6 @@ module.exports = {
                     }).always(function(result, textStatus, type){
                         console.log(type);
                     });
-                    //FIN QUI
-
                 });
                 var savedVal = $('#imgId').val();
                 if(savedVal==' '){
@@ -63,10 +61,10 @@ module.exports = {
             });
             custom_uploader.open();
         });
-        $('.containerImgGalleryAdmin').on('mouseover',function(){
+        $('#prova').on('mouseover', '.containerImgGalleryAdmin',function(){
             $(this).addClass('on');
         });
-        $('.deleteImg').on('click', function(e){
+        $('#prova').on('click',' .deleteImg', function(e){
             console.log("click");
             e.preventDefault();
             var oldValues = $('#imgId').val();
@@ -87,7 +85,7 @@ module.exports = {
             });
         });
 
-        $('.containerImgGalleryAdmin').on('mouseout',function(){
+        $('#prova').on('mouseout', '.containerImgGalleryAdmin',function(){
             $(this).removeClass('on');
 
         });
