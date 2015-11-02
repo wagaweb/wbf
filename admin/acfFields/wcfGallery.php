@@ -32,6 +32,10 @@ class wcfGallery extends \acf_field{
         add_action( 'admin_enqueue_scripts', array($this,'load_custom_wp_admin_style') );
         add_action('wp_ajax_wcf_get_thumbnail',				array($this, 'ajax_wcf_get_thumbnail'));
         add_action('wp_ajax_nopriv_wcf_get_thumbnail',		array($this, 'ajax_wcf_get_thumbnail'));
+        add_action('wp_ajax_wcf_media_info',				array($this, 'ajax_wcf_media_info'));
+        add_action('wp_ajax_nopriv_wcf_media_info',		array($this, 'ajax_wcf_media_info'));
+        add_action('wp_ajax_wcf_update_media_info',				array($this, 'ajax_wcf_update_media_info'));
+        add_action('wp_ajax_nopriv_wcf_update_media_info',		array($this, 'ajax_wcf_update_media_info'));
         parent::__construct();
     }
     public function ajax_wcf_get_thumbnail(){
@@ -41,6 +45,35 @@ class wcfGallery extends \acf_field{
         $image = wp_get_attachment_metadata($id);
         $imageUrl = $uploadImageUrl.'/'.$image["sizes"]["thumbnail"]["file"];
         echo json_encode(['thumb'=>$imageUrl]);
+        wp_die();
+    }
+
+    public function ajax_wcf_media_info(){
+        $id= $_POST['id'];
+        $mediaInfo = wp_prepare_attachment_for_js( $id );
+        $imgMeta['thumb'] = $mediaInfo['sizes']['thumbnail']['url'];
+        $imgMeta['name'] = $mediaInfo['filename'];
+        $imgMeta['upload'] = $mediaInfo['dateFormatted'];
+        $imgMeta['filesize'] = $mediaInfo['filesize'];
+        $imgMeta['size'] = $mediaInfo['width'].'x'.$mediaInfo['height'];
+        $imgMeta['title'] = $mediaInfo['title'];
+        $imgMeta['caption'] = $mediaInfo['caption'];
+        $imgMeta['alt'] = $mediaInfo['alt'];
+        $imgMeta['description'] = $mediaInfo['description'];
+
+        echo json_encode($imgMeta);
+        wp_die();
+    }
+    public function ajax_wcf_update_media_info(){
+        $id= $_POST['id'];
+        $post = get_post( $id, ARRAY_A );
+        $post['post_title'] = $_POST['title'];
+        $post['post_excerpt'] = $_POST['caption'];
+        $alt = $_POST['alt'];
+        $post['post_content'] = $_POST['description'];
+        update_post_meta( $id, '_wp_attachment_image_alt', wp_slash($alt));
+        wp_update_post( $post );
+        echo json_encode($id);
         wp_die();
     }
     /**
@@ -85,13 +118,47 @@ class wcfGallery extends \acf_field{
         }
         ?>
         <div>
-
-
-            <div id="prova">
+            <div class="mainContainer">
+            <div id="imageContainer">
             <?php $this->renderGalleryMeta($post_id); ?>
+
+            </div>
+            <div class="uploadContainer">
+                <input type="button" name="upload-btn" id="upload-btn" class="button-primary button" value="Upload Image">
+            </div>
+            </div>
+            <div id="imageInfo">
+                <div class="header">
+                    <div id="imgThumb">
+                        <img src="">
+                    </div>
+                    <div id="mainInfo">
+                        <p class="imgName"></p>
+                        <p class="upload"></p>
+                        <p class="dimensions"></p>
+                    </div>
+                </div>
+                <div class="body">
+                    <p class="title">
+                        <label>Titolo</label><input name="title" id="imageTitle" type="text" value=""/>
+                    </p>
+                    <p class="caption">
+                        <label>Didascalia</label><textarea rows="3" id="imageCaption"></textarea>
+                    </p>
+                    <p class="alt">
+                        <label>Testo Alt</label><input type="text" name="imageAlt" id="imageAlt" value=""/>
+                    </p>
+                    <p class="description">
+                        <label>Descrizione</label><textarea rows="3" id="imageDescription"></textarea>
+                    </p>
+                </div>
+                <div class="footer">
+                    <button id="closeBtn" class="button">Close</button> <button id="updateBtn" class="button-primary button">Update</button>
+                </div>
             </div>
             <input type="hidden" name="imgId" id="imgId" value=" <?php echo $val; ?>">
-            <input type="button" name="upload-btn" id="upload-btn" class="button-primary button" value="Upload Image">
+            <!--<input type="button" name="upload-btn" id="upload-btn" class="button-primary button" value="Upload Image">-->
+
         </div>
         <?php
     }

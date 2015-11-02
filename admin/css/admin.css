@@ -42,9 +42,8 @@ div#behavior.postbox .option-wrap span {
 /**********************************
  * ADMIN GALLERY BOX
  **********************************/
-#prova {
+#imageContainer {
   border: 1px solid #DFDFDF;
-  margin-bottom: 10px;
   padding: 5px;
 }
 .deleteImg {
@@ -62,7 +61,130 @@ div#behavior.postbox .option-wrap span {
   display: inline-block;
   margin: 5px;
   position: relative;
+  cursor: pointer;
+}
+.uploadContainer {
+  height: 30px;
+  padding: 10px;
+  border: 1px solid #dfdfdf;
+  border-top: 0;
 }
 .imgGalleryAdmin {
   width: 150px;
+}
+.mainContainer.selected {
+  min-height: 391px;
+  width: 64%;
+  float: left;
+}
+#imageContainer.selected {
+  width: 99%;
+  float: left;
+  border-right: 0;
+  height: 330px;
+}
+.uploadContainer.selected {
+  width: 99%;
+  float: left;
+  margin-bottom: 20px;
+}
+#imageInfo {
+  display: none;
+  border: 1px solid #dfdfdf;
+  background: #F9F9F9;
+  min-height: 391px;
+  min-width: 440px;
+  width: 35%;
+  float: left;
+}
+#imageInfo.active {
+  display: inherit;
+}
+#imageInfo .header {
+  background: #F1F1F1;
+  height: 82px;
+  border-bottom: 1px solid #dfdfdf;
+  padding: 10px;
+}
+#imageInfo #imgThumb {
+  display: none;
+  float: left;
+  width: 80px;
+  border: 1px solid #dfdfdf;
+  height: 80px;
+}
+#imageInfo #imgThumb.active {
+  display: inherit;
+}
+#imageInfo #mainInfo {
+  float: left;
+}
+#imgThumb img {
+  width: 70px;
+  border: 5px solid #fff;
+}
+#mainInfo p {
+  text-align: left;
+  margin: 0 10px 5px;
+}
+#mainInfo .imgName,
+#imageTitle {
+  font-weight: bold;
+  margin-top: 0;
+}
+#mainInfo .upload,
+#mainInfo .dimensions {
+  color: #999999;
+}
+#imageInfo .body {
+  display: none;
+  padding: 10px;
+}
+#imageInfo .body.active {
+  display: inherit;
+}
+#imageInfo .body label {
+  float: left;
+  font-style: italic;
+}
+#imageInfo .body input,
+#imageInfo .body textarea {
+  float: right;
+  max-width: 350px;
+}
+#imageInfo p.title,
+#imageInfo p.alt {
+  min-height: 20px;
+}
+#imageInfo p.caption,
+#imageInfo p.description {
+  min-height: 60px;
+}
+#imageContainer.selected .containerImgGalleryAdmin {
+  width: 100px;
+  height: 100px;
+}
+#imageContainer.selected .imgGalleryAdmin {
+  width: 100px;
+}
+#imageContainer.selected .selected .imgGalleryAdmin {
+  width: 90px;
+  border: 5px solid #1e8cbe;
+}
+#imageInfo .footer {
+  height: 30px;
+  border-top: 1px solid #dfdfdf;
+  padding: 10px;
+}
+#imageInfo .footer button {
+  display: none;
+}
+#imageInfo .footer.active button {
+  display: inherit;
+}
+#imageInfo .footer #closeBtn {
+  float: left;
+}
+#imageInfo .footer #updateBtn {
+  float: right;
 }

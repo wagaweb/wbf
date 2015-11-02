@@ -37,14 +37,14 @@ module.exports = {
                         var imgUrl = JSON.parse(newData);
                         var newImgUrl = imgUrl.thumb;
                         var newDataIndex = $('.containerImgGalleryAdmin').length;
-                        $("#prova").append("<div class='containerImgGalleryAdmin'>" +
+                        $("#imageContainer").append("<div class='containerImgGalleryAdmin'>" +
                         "<img class='imgGalleryAdmin' src=" +newImgUrl+" data-id='"+ attachment.id +"'>" +
                         "<div class='deleteImg'>"+
                         "<a class='acf-icon dark remove-attachment ' data-index='"+ newDataIndex  +"' href='#' data-id='"+ attachment.id +"'>"+
                         "<i class='acf-sprite-delete'></i>"+
                         "</a>"+
                         "</div></div>");
-                        $("#prova").sortable('refresh');
+                        $("#imageContainer").sortable('refresh');
                     }).fail(function(jqXHR, textStatus, errorThrown){
                         console.log(errorThrown);
                     }).always(function(result, textStatus, type){
@@ -52,7 +52,8 @@ module.exports = {
                     });
                 });
                 var savedVal = $('#imgId').val();
-                if(savedVal==' '){
+                console.log(savedVal);
+                if(savedVal=="  "||savedVal==''||savedVal==' '){
                     $('#imgId').val(imgIds);
                 }else{
                     $('#imgId').val(savedVal + ',' + imgIds);
@@ -61,10 +62,10 @@ module.exports = {
             });
             custom_uploader.open();
         });
-        $('#prova').on('mouseover', '.containerImgGalleryAdmin',function(){
+        $('#imageContainer').on('mouseover', '.containerImgGalleryAdmin',function(){
             $(this).addClass('on');
         });
-        $('#prova').on('click',' .deleteImg', function(e){
+        $('#imageContainer').on('click',' .deleteImg', function(e){
             console.log("click");
             e.preventDefault();
             var oldValues = $('#imgId').val();
@@ -84,13 +85,66 @@ module.exports = {
                 $(this).children().attr('data-index', index);
             });
         });
+        $('#imageContainer').on('click','.containerImgGalleryAdmin',function(){
+            $('#imageContainer, .uploadContainer, .mainContainer').addClass('selected');
+            $(this).addClass('selected');
+            $('#imageInfo').addClass('active');
+            $.ajax(wbfData.ajaxurl,{ //ajax url is not available in the front end. Needs to wp_localize_script
+                data: {
+                    action: "wcf_media_info", //the action specified in ajax wordpress hooks
+                    id: $(this).children().attr('data-id')
+                },
+                dataType: "json", //Default is an "intelligent guess"; does not work very often
+                method: "POST" //Default is GET
+            }).done(function(data, textStatus, jqXHR){
+                $('#imageInfo #imgThumb, #imageInfo .body, #imageInfo .footer').addClass('active');
+                $('#imageInfo #imgThumb img').attr('src',data.thumb);
+                $('#imageInfo #mainInfo .imgName').text(data.name);
+                $('#imageInfo #mainInfo .upload').text(data.upload);
+                $('#imageInfo #mainInfo .dimensions').text(data.size +' ('+ data.filesize + ')' );
+                $('.title #imageTitle').val(data.title);
+                $('.caption #imageCaption').val(data.caption);
+                $('.alt #imageAlt').val(data.alt);
+                $('.description #imageDescription').val(data.description);
+            }).fail(function(jqXHR, textStatus, errorThrown){
+                console.log(errorThrown);
+            }).always(function(result, textStatus, type){
+                console.log(type);
+            });
+        });
+        $('#imageInfo #closeBtn').on('click',function(e){
+            e.preventDefault();
+            $('.mainContainer, #imageContainer, .uploadContainer, .containerImgGalleryAdmin').removeClass('selected');
+            $('#imageInfo, #imageInfo .body, #imageInfo .footer  ').removeClass('active');
+        });
+        $('#imageInfo #updateBtn').on('click',function(e){
+            e.preventDefault();
+            $.ajax(wbfData.ajaxurl,{ //ajax url is not available in the front end. Needs to wp_localize_script
+                data: {
+                    action: "wcf_update_media_info", //the action specified in ajax wordpress hooks
+                    id: $('.containerImgGalleryAdmin.selected .imgGalleryAdmin').attr('data-id'),
+                    title:$('.title #imageTitle').val(),
+                    caption:$('.caption #imageCaption').val(),
+                    alt:$('.alt #imageAlt').val(),
+                    description:$('.description #imageDescription').val()
+                },
+                dataType: "json", //Default is an "intelligent guess"; does not work very often
+                method: "POST" //Default is GET
+            }).done(function(data, textStatus, jqXHR){
+                console.log(data);
+            }).fail(function(jqXHR, textStatus, errorThrown){
+                console.log(errorThrown);
+            }).always(function(result, textStatus, type){
+                console.log(type);
+            });
+        });
 
-        $('#prova').on('mouseout', '.containerImgGalleryAdmin',function(){
+        $('#imageContainer').on('mouseout', '.containerImgGalleryAdmin',function(){
             $(this).removeClass('on');
 
         });
 
-        $('#prova').sortable({
+        $('#imageContainer').sortable({
             stop: function(event, ui) {
                 var newImgArray = $('.imgGalleryAdmin');
                 $('#imgId').val('');
@@ -101,7 +155,7 @@ module.exports = {
                 $('#imgId').val(imgIds);
             }
         });
-        $('#prova').disableSelection();
+        $('#imageContainer').disableSelection();
 
 
     }
