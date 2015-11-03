@@ -121,6 +121,8 @@ module.exports = {
         });
         $('#imageInfo #updateBtn').on('click',function(e){
             e.preventDefault();
+            $('#imageInfo .spinner').addClass('is-active');
+            $(this).attr('disabled','disabled');
             $.ajax(wbfData.ajaxurl,{ //ajax url is not available in the front end. Needs to wp_localize_script
                 data: {
                     action: "wcf_update_media_info", //the action specified in ajax wordpress hooks
@@ -133,7 +135,11 @@ module.exports = {
                 dataType: "json", //Default is an "intelligent guess"; does not work very often
                 method: "POST" //Default is GET
             }).done(function(data, textStatus, jqXHR){
-                console.log(data);
+                if(data.response=='true') {
+                    $('#imageInfo #updateBtn').removeAttr('disabled');
+                    $('#imageInfo .spinner').removeClass('is-active');
+                }
+
             }).fail(function(jqXHR, textStatus, errorThrown){
                 console.log(errorThrown);
             }).always(function(result, textStatus, type){

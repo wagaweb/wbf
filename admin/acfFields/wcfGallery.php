@@ -72,8 +72,12 @@ class wcfGallery extends \acf_field{
         $alt = $_POST['alt'];
         $post['post_content'] = $_POST['description'];
         update_post_meta( $id, '_wp_attachment_image_alt', wp_slash($alt));
-        wp_update_post( $post );
-        echo json_encode($id);
+        $resp = wp_update_post( $post );
+        if($resp==$id) {
+            echo json_encode(['response' => 'true']);
+        }else{
+            echo json_encode(['response' => 'false']);
+        }
         wp_die();
     }
     /**
@@ -153,7 +157,7 @@ class wcfGallery extends \acf_field{
                     </p>
                 </div>
                 <div class="footer">
-                    <button id="closeBtn" class="button">Close</button> <button id="updateBtn" class="button-primary button">Update</button>
+                    <button id="closeBtn" class="button">Close</button><button id="updateBtn" class="button-primary button">Update</button><span class="spinner"></span>
                 </div>
             </div>
             <input type="hidden" name="imgId" id="imgId" value=" <?php echo $val; ?>">
