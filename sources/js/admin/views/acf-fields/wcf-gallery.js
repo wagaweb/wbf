@@ -84,17 +84,17 @@ module.exports = {
                 $(this).children().attr('data-index', index);
             });
         });
-        $('#imageContainer').on('click','.containerImgGalleryAdmin',function(){
+        $('#imageContainer').on('click','.imgGalleryAdmin',function(){
             if($('.containerImgGalleryAdmin').hasClass('selected')){
                 $('.containerImgGalleryAdmin').removeClass('selected');
             }
             $('#imageContainer, .uploadContainer, .mainContainer').addClass('selected');
-            $(this).addClass('selected');
+            $(this).parent().addClass('selected');
             $('#imageInfo').addClass('active');
             $.ajax(wbfData.ajaxurl,{ //ajax url is not available in the front end. Needs to wp_localize_script
                 data: {
                     action: "wcf_media_info", //the action specified in ajax wordpress hooks
-                    id: $(this).children().attr('data-id')
+                    id: $(this).attr('data-id')
                 },
                 dataType: "json", //Default is an "intelligent guess"; does not work very often
                 method: "POST" //Default is GET
@@ -146,7 +146,7 @@ module.exports = {
                 console.log(type);
             });
         });
-        $('#imageContainer').on('click','.containerImgGalleryAdmin.selected',function(){
+        $('#imageContainer').on('click','.containerImgGalleryAdmin.selected .imgGalleryAdmin',function(){
             $('.mainContainer, #imageContainer, .uploadContainer, .containerImgGalleryAdmin').removeClass('selected');
             $('#imageInfo, #imageInfo .body, #imageInfo .footer  ').removeClass('active');
         });
