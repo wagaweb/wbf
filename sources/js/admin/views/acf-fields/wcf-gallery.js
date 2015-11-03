@@ -66,7 +66,6 @@ module.exports = {
             $(this).addClass('on');
         });
         $('#imageContainer').on('click',' .deleteImg', function(e){
-            console.log("click");
             e.preventDefault();
             var oldValues = $('#imgId').val();
             var arrayValues = oldValues.split(",").map(Number);
@@ -86,6 +85,9 @@ module.exports = {
             });
         });
         $('#imageContainer').on('click','.containerImgGalleryAdmin',function(){
+            if($('.containerImgGalleryAdmin').hasClass('selected')){
+                $('.containerImgGalleryAdmin').removeClass('selected');
+            }
             $('#imageContainer, .uploadContainer, .mainContainer').addClass('selected');
             $(this).addClass('selected');
             $('#imageInfo').addClass('active');
@@ -138,7 +140,10 @@ module.exports = {
                 console.log(type);
             });
         });
-
+        $('#imageContainer').on('click','.containerImgGalleryAdmin.selected',function(){
+            $('.mainContainer, #imageContainer, .uploadContainer, .containerImgGalleryAdmin').removeClass('selected');
+            $('#imageInfo, #imageInfo .body, #imageInfo .footer  ').removeClass('active');
+        });
         $('#imageContainer').on('mouseout', '.containerImgGalleryAdmin',function(){
             $(this).removeClass('on');
 

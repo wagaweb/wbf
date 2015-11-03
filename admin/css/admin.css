@@ -78,22 +78,21 @@ div#behavior.postbox .option-wrap span {
   float: left;
 }
 #imageContainer.selected {
-  width: 99%;
+  width: 96.2%;
   float: left;
-  border-right: 0;
-  height: 330px;
+  min-height: 330px;
 }
 .uploadContainer.selected {
-  width: 99%;
+  width: 96.2%;
   float: left;
   margin-bottom: 20px;
+  padding-right: 0;
 }
 #imageInfo {
   display: none;
   border: 1px solid #dfdfdf;
   background: #F9F9F9;
   min-height: 391px;
-  min-width: 440px;
   width: 35%;
   float: left;
 }
@@ -109,23 +108,25 @@ div#behavior.postbox .option-wrap span {
 #imageInfo #imgThumb {
   display: none;
   float: left;
-  width: 80px;
+  width: 60px;
   border: 1px solid #dfdfdf;
-  height: 80px;
+  height: 60px;
 }
 #imageInfo #imgThumb.active {
   display: inherit;
 }
 #imageInfo #mainInfo {
   float: left;
+  width: 59%;
 }
 #imgThumb img {
-  width: 70px;
+  width: 50px;
   border: 5px solid #fff;
 }
 #mainInfo p {
   text-align: left;
   margin: 0 10px 5px;
+  font-size: 9px;
 }
 #mainInfo .imgName,
 #imageTitle {
@@ -146,11 +147,13 @@ div#behavior.postbox .option-wrap span {
 #imageInfo .body label {
   float: left;
   font-style: italic;
+  font-size: 10.5px;
 }
 #imageInfo .body input,
 #imageInfo .body textarea {
   float: right;
   max-width: 350px;
+  width: 65%;
 }
 #imageInfo p.title,
 #imageInfo p.alt {
