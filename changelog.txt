@@ -1,0 +1,6 @@
+== Change log ==
+
+Version 0.13.5 - 10/11/2015
+---------------------------------
+
+- Corretto un errore che visualizzava una notice quando non c'erano behavior assegnati a un nodo
