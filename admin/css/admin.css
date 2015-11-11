@@ -72,10 +72,15 @@ div#behavior.postbox .option-wrap span {
 .imgGalleryAdmin {
   width: 150px;
 }
+.mainContainer{
+  width:100%;
+  transition: 0.20s ease-out;
+}
 .mainContainer.selected {
   min-height: 391px;
   width: 64%;
   float: left;
+  transition: 0.40s ease;
 }
 #imageContainer.selected {
   width: 96.2%;
@@ -89,16 +94,52 @@ div#behavior.postbox .option-wrap span {
   padding-right: 0;
 }
 #imageInfo {
-  display: none;
+  visibility: hidden;
   border: 1px solid #dfdfdf;
   background: #F9F9F9;
   min-height: 391px;
-  width: 35%;
   float: left;
 }
 #imageInfo.active {
-  display: inherit;
+  visibility: visible;
+  animation: slideInRight;
+  -webkit-animation: slideInRight;
+  -webkit-animation-duration: 0.40s;
+  animation-duration: 0.40s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
 }
+
+@-webkit-keyframes slideInRight {
+  0% {
+    -webkit-transform: translate3d(100%, 0, 0);
+    transform: translate3d(100%, 0, 0);
+    opacity:0;
+    width:0;
+  }
+  100% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+    width:35%;
+  }
+}
+
+@keyframes slideInRight {
+  0% {
+    -webkit-transform: translate3d(100%, 0, 0);
+    transform: translate3d(100%, 0, 0);
+    visibility: visible;
+    opacity:0;
+    width:0;
+
+  }
+  100% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+    width:35%;
+  }
+}
+
 #imageInfo .header {
   background: #F1F1F1;
   height: 82px;
@@ -190,4 +231,7 @@ div#behavior.postbox .option-wrap span {
 }
 #imageInfo .footer #updateBtn {
   float: right;
+}
+.acf-field-wcf-gallery{
+  overflow: hidden;
 }
