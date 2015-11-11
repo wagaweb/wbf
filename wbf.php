@@ -9,7 +9,7 @@
  * that starts the plugin.
  *
  * @link              http://www.waga.it
- * @since             0.13.5
+ * @since             0.13.6
  * @package           WBF
  *
  * @wordpress-plugin
@@ -54,7 +54,7 @@ if( ! class_exists('WBF') ) :
 		var $url;
 		var $path;
 
-		const version = "0.13.5";
+		const version = "0.13.6";
 
 		public static function getInstance($args = []){
 			static $instance = null;

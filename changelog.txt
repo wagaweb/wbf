@@ -1,5 +1,10 @@
 == Change log ==
 
+Version 0.13.6 - 11/11/2015
+---------------------------------
+
+- Corretto errore in autoloader che cercava di caricare anche classi non appartenenti a WBF.
+
 Version 0.13.5 - 10/11/2015
 ---------------------------------
 
