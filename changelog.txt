@@ -1,5 +1,10 @@
 == Change log ==
 
+Version 0.13.7 - 12/11/2015
+---------------------------------
+
+- Corretto bug che in alcuni casi faceva inserire a prefixUrl e prefixPath un doppio slash alla fine.
+
 Version 0.13.6 - 11/11/2015
 ---------------------------------
 
