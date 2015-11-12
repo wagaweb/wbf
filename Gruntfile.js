@@ -108,7 +108,7 @@ module.exports = function (grunt) {
                             "!.jshintrc",
                             "!.bowerrc",
                             "!bower.json",
-                            "!builds",
+                            "!builds/**",
                             "!node_modules/**",
                             "!bower_components/**",
                             "!assets/cache/**",
