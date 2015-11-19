@@ -8,14 +8,14 @@
  * that starts the plugin.
  *
  * @link              http://www.waga.it
- * @since             0.13.6
+ * @since             0.13.3
  * @package           WBF
  *
  * @wordpress-plugin
  * Plugin Name:       Waboot Framework
  * Plugin URI:        http://www.waga.it
  * Description:       WordPress Extension Framework
- * Version:           0.13.4
+ * Version:           0.13.7
  * Author:            WAGA
  * Author URI:        http://www.waga.com/
  * License:           GPL-2.0+
