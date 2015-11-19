@@ -1,6 +1,6 @@
 == Change log ==
 
-Version 0.13.8 - in progress
+Version 0.13.8 - 19/11/2015
 ---------------------------------
 
 - Migliorato lo switch tra wbf-as-plugin e wbf-in-theme
