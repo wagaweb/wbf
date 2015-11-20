@@ -15,7 +15,7 @@
  * Plugin Name:       Waboot Framework
  * Plugin URI:        http://www.waga.it
  * Description:       WordPress Extension Framework
- * Version:           0.13.7
+ * Version:           0.13.8
  * Author:            WAGA
  * Author URI:        http://www.waga.com/
  * License:           GPL-2.0+
@@ -59,7 +59,7 @@ if( ! class_exists('WBF') ) :
 		var $url;
 		var $path;
 
-		const version = "0.13.7";
+		const version = "0.13.8";
 
 		public static function getInstance($args = []){
 			static $instance = null;
@@ -592,6 +592,11 @@ if( ! class_exists('WBF') ) :
 			$opt = get_option( "wbf_installed" );
 			if( ! $opt || !self::has_valid_wbf_path()) {
 				$this->add_wbf_options();
+			}else{
+				if(WBF_DIRECTORY != get_option("wbf_path")){
+					//This case may fire when switch from a wbf-as-plugin to a wbf-in-theme environment @since 0.13.8
+					$this->add_wbf_options();
+				}
 			}
 		}
 
