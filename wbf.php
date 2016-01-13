@@ -97,6 +97,7 @@ if( ! class_exists('WBF') ) :
 			set_error_handler('\WBF::handle_errors',E_USER_WARNING);
 
 			$this->maybe_run_activation();
+			$this->maybe_add_option();
 
 			$this->url = self::get_url();
 			$this->path = self::get_path();
@@ -494,8 +495,6 @@ if( ! class_exists('WBF') ) :
 		 */
 		function after_setup_theme() {
 			global $wbf_notice_manager;
-
-			$this->maybe_add_option();
 
 			$this->modules = $this->load_modules();
 
