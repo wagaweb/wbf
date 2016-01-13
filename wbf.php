@@ -216,6 +216,13 @@ if( ! class_exists('WBF') ) :
 			echo $output;
 		}
 
+		/**
+		 * Checks if $module_name is loaded
+		 *
+		 * @param $module_name
+		 *
+		 * @return bool
+		 */
 		static function module_is_loaded($module_name){
 			$modules = self::get_modules();
 			foreach($modules as $name => $params){
@@ -563,6 +570,11 @@ if( ! class_exists('WBF') ) :
 			wp_register_script("owlcarousel-js",WBF_URL."/vendor/owlcarousel/owl.carousel.min.js",array("jquery"),false,true);
 		}
 
+		/**
+		 * Register menu item
+		 *
+		 * @hooked 'admin_menu'
+		 */
 		function admin_menu(){
 			global $menu,$options_framework_admin,$WBFThemeUpdateChecker;
 
@@ -583,6 +595,15 @@ if( ! class_exists('WBF') ) :
 			do_action("wbf_admin_submenu","waboot_options");
 		}
 
+		/**
+		 * Unset updates from integrated plugins, ect...
+		 *
+		 * @hooked 'site_transient_update_plugins'
+		 *
+		 * @param $value
+		 *
+		 * @return mixed
+		 */
 		function unset_unwanted_updates($value){
 			$acf_update_path = preg_replace("/^\//","",self::get_path().'vendor/acf/acf.php');
 
@@ -593,6 +614,15 @@ if( ! class_exists('WBF') ) :
 			return $value;
 		}
 
+		/**
+		 * Exclude pagebuilder from loading
+		 *
+		 * @hooked 'wbf/modules/available'
+		 *
+		 * @param $module_dirs
+		 *
+		 * @return mixed
+		 */
 		function do_not_load_pagebuilder($module_dirs){
 			foreach($module_dirs as $k => $dir){
 				$module_name = basename($dir);
@@ -606,6 +636,9 @@ if( ! class_exists('WBF') ) :
 
 		/**
 		 * Add env notice to the admin bar
+		 *
+		 * @hooked 'admin_bar_menu' - 1000
+		 *
 		 * @param $wp_admin_bar
 		 * @since 0.2.0
 		 */
@@ -625,6 +658,9 @@ if( ! class_exists('WBF') ) :
 
 		/**
 		 * Add a "Compile Less" button to the toolbar
+		 *
+		 * @hooked 'admin_bar_menu' - 990
+		 *
 		 * @param $wp_admin_bar
 		 * @since 0.1.1
 		 */
@@ -642,11 +678,18 @@ if( ! class_exists('WBF') ) :
 			}
 		}
 
+		/**
+		 * Override default location of options.php
+		 *
+		 * @hooked 'options_framework_location'
+		 *
+		 * @return array
+		 */
 		function of_location_override(){
 			return array("inc/options.php");
 		}
 
-		/**
+		/*
 		 *
 		 *
 		 * ACTIVATION \ DEACTIVATION
