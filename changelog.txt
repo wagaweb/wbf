@@ -1,11 +1,16 @@
 == Change log ==
 
-Version 0.13.9 - 19/11/2015
+Version 0.13.10 - 19/11/2015
 ---------------------------------
 
 - Ora è possibile specificare WBF_DIRECTORY dal file config
 - Introdotto il concetto di estensione (integrazioni con altri plugin, piccole features aggiuntive...)
 - Ora ACF è una estensione
+
+Version 0.13.9 - 20/11/2015
+---------------------------------
+
+- Fix minori
 
 Version 0.13.8 - 19/11/2015
 ---------------------------------
