@@ -225,15 +225,28 @@ if( ! class_exists('WBF') ) :
 			return false;
 		}
 
+		/**
+		 * Retrieve WBF Modules
+		 *
+		 * @param bool|false $include
+		 *
+		 * @return mixed
+		 */
 		static function get_modules($include = false){
 			static $modules = array();
 			if(!empty($modules)){
-				return $modules;
+				if(!$include){
+					return $modules;
+				}else{
+					foreach($modules as $m){
+						require_once $m['bootstrap'];
+					}
+				}
 			}
 
 			$modules_dir = self::get_path()."modules";
 			$dirs = array_filter(glob($modules_dir."/*"), 'is_dir');
-			$dirs = apply_filters("wbf/modules/available", $dirs); //Allow developer to add\delete modules
+			$dirs = apply_filters("wbf/modules/available", $dirs); //Allow developers to add\delete modules
 			foreach($dirs as $d){
 				$current_module_dir = $d;
 				if(is_file($current_module_dir."/bootstrap.php")){
@@ -249,10 +262,68 @@ if( ! class_exists('WBF') ) :
 			return $modules;
 		}
 
+		/**
+		 * Retrieve WBF Extensions
+		 *
+		 * @param bool|false $include
+		 *
+		 * @return mixed
+		 */
+		static function get_extensions($include = false){
+			static $exts = array();
+			if(!empty($exts)){
+				if(!$include){
+					return $exts;
+				}else{
+					foreach($exts as $e){
+						require_once $e['bootstrap'];
+					}
+				}
+			}
+
+			$exts_dir = self::get_path()."extensions";
+			$dirs = array_filter(glob($exts_dir."/*"), 'is_dir');
+			$dirs = apply_filters("wbf/extensions/available", $dirs); //Allow developers to add\delete extensions
+			foreach($dirs as $d){
+				$current_ext_dir = $d;
+				if(is_file($current_ext_dir."/bootstrap.php")){
+					$exts[basename($d)] = array(
+						'path' => $current_ext_dir,
+						'bootstrap' => $current_ext_dir."/bootstrap.php",
+					);
+					if($include) require_once $exts[basename($d)]['bootstrap'];
+				}
+			}
+			return $exts;
+		}
+
+		/**
+		 * Retrieve and includes WBF Modules
+		 *
+		 * @hooked 'after_setup_theme'
+		 *
+		 * @return mixed
+		 */
 		function load_modules(){
 			return $this->get_modules(true);
 		}
 
+		/**
+		 * Retrieve and includes WBF Extensions
+		 *
+		 * @hooked 'plugins_loaded'
+		 *
+		 * @since 0.13.9
+		 *
+		 * @return mixed
+		 */
+		function load_extensions(){
+			return $this->get_extensions(true);
+		}
+
+		/**
+		 * Init modules activations procedures
+		 */
 		function load_modules_activation_hooks(){
 			$modules = $this->get_modules();
 			foreach($modules as $m){
@@ -262,6 +333,9 @@ if( ! class_exists('WBF') ) :
 			}
 		}
 
+		/**
+		 * Init modules deactivation procedures
+		 */
 		function load_modules_deactivation_hooks(){
 			$modules = $this->get_modules();
 			foreach($modules as $m){
@@ -357,7 +431,7 @@ if( ! class_exists('WBF') ) :
 			}
 		}
 
-		/**
+		/*
 		 *
 		 *
 		 * BACKUP FUNCTIONS
@@ -384,7 +458,7 @@ if( ! class_exists('WBF') ) :
 			return $b;
 		}
 
-		/**
+		/*
 		 *
 		 *
 		 * HOOKS
@@ -404,11 +478,8 @@ if( ! class_exists('WBF') ) :
 		 * Wordpress "plugins_loaded" callback
 		 */
 		function plugins_loaded(){
-			// ACF INTEGRATION
-			if(!is_plugin_active("advanced-custom-fields-pro/acf.php") && !is_plugin_active("advanced-custom-fields/acf.php")){
-				require_once self::get_path().'vendor/acf/acf.php';
-				require_once self::get_path().'admin/acf-integration.php';
-			}
+			// Load extensions
+			$this->load_extensions();
 		}
 
 		/**

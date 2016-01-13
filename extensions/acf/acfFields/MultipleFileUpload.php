@@ -1,6 +1,6 @@
 <?php
 
-namespace WBF\admin\acfFields;
+namespace WBF\extensions\acf\acfFields;
 
 class MultipleFileUpload extends \acf_field{
 
