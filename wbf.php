@@ -37,15 +37,21 @@ if( ! class_exists('WBF') ) :
 
 	require_once('includes/utilities.php'); // Utility
 
-	define("WBF_DIRECTORY", __DIR__);
-	if(preg_match("/wp-content\/themes/", __DIR__ )){
-		$url = rtrim(path_to_url(dirname(__FILE__)),"/")."/"; //ensure trailing slash
+	//Define directory
+	if(!defined("WBF_DIRECTORY")){
+		define("WBF_DIRECTORY", __DIR__);
+	}
+	//Define uri
+	if(preg_match("/wp-content\/themes/", WBF_DIRECTORY )){
+		//If WBF is in a theme
+		$url = rtrim(path_to_url(dirname(WBF_DIRECTORY."/wbf.php")),"/")."/"; //ensure trailing slash
 		define("WBF_URL", $url);
 	}else{
+		//If is in the plugin directory
 		define("WBF_URL", get_bloginfo("url") . "/wp-content/plugins/wbf/");
 	}
-	define("WBF_ADMIN_DIRECTORY", __DIR__ . "/admin");
-	define("WBF_PUBLIC_DIRECTORY", __DIR__ . "/public");
+	define("WBF_ADMIN_DIRECTORY", WBF_DIRECTORY . "/admin");
+	define("WBF_PUBLIC_DIRECTORY", WBF_DIRECTORY . "/public");
 
 	require_once("wbf-autoloader.php");
 	require_once("backup-functions.php");
@@ -674,14 +680,17 @@ if( ! class_exists('WBF') ) :
 else:
 	//HERE WBF IS ALREADY DEFINED. We can't tell if by a plugin or via theme... So...
 
-	//If this is a plugin, then force the options to point over the plugin.
-	if(preg_match("/plugins/",__FILE__) && preg_match("/themes/",get_option("wbf_path"))){
-		update_option( "wbf_path", __DIR__ );
-		update_option( "wbf_url", get_bloginfo("url") . "/wp-content/plugins/wbf/" );
+	if(!defined("WBF_DIRECTORY")){
 		define("WBF_DIRECTORY", __DIR__);
+	}
+
+	//If this is a plugin, then force the options to point over the plugin.
+	if(preg_match("/plugins/",WBF_DIRECTORY."/wbf.php") && preg_match("/themes/",get_option("wbf_path"))){
 		define("WBF_URL", get_bloginfo("url") . "/wp-content/plugins/wbf/");
-		define("WBF_ADMIN_DIRECTORY", __DIR__ . "/admin");
-		define("WBF_PUBLIC_DIRECTORY", __DIR__ . "/public");
+		define("WBF_ADMIN_DIRECTORY", WBF_DIRECTORY . "/admin");
+		define("WBF_PUBLIC_DIRECTORY", WBF_DIRECTORY . "/public");
+		update_option( "wbf_path", WBF_DIRECTORY );
+		update_option( "wbf_url", get_bloginfo("url") . "/wp-content/plugins/wbf/" );
 	}
 
 endif; // class_exists check
