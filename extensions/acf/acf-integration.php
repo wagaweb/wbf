@@ -4,7 +4,7 @@ namespace WBF\extensions\acf;
 
 add_filter('acf/settings/path', '\WBF\extensions\acf\wbf_acf_settings_path');
 add_filter('acf/settings/dir', '\WBF\extensions\acf\wbf_acf_settings_dir');
-//add_filter('acf/settings/show_admin', '__return_false');
+add_filter('acf/settings/show_admin', '__return_false');
 add_action('acf/include_field_types', '\WBF\extensions\acf\wbf_include_field_types');
 
 function wbf_acf_settings_path($path) {
