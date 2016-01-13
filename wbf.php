@@ -65,7 +65,7 @@ if( ! class_exists('WBF') ) :
 		var $url;
 		var $path;
 
-		const version = "0.13.9";
+		const version = "0.13.11";
 
 		public static function getInstance($args = []){
 			static $instance = null;
@@ -517,10 +517,7 @@ if( ! class_exists('WBF') ) :
 
 			// ACF INTEGRATION
 			if(!self::is_plugin()){
-				if(!is_plugin_active("advanced-custom-fields-pro/acf.php") && !is_plugin_active("advanced-custom-fields/acf.php")){
-					wbf_locate_file( '/vendor/acf/acf.php', true );
-					wbf_locate_file( '/admin/acf-integration.php', true );
-				}
+				$this->load_extensions();
 			}
 
 			// Google Fonts

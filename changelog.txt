@@ -1,6 +1,12 @@
 == Change log ==
 
-Version 0.13.10 - 19/11/2015
+Version 0.13.11 - 13/12/2015
+---------------------------------
+
+- Fix risoluzione path per plugin framework
+- Fix caricamento estensioni nel caso in cui WBF sia incluso nel tema
+
+Version 0.13.10 - 13/12/2015
 ---------------------------------
 
 - Ora è possibile specificare WBF_DIRECTORY dal file config
