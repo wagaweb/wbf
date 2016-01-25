@@ -457,7 +457,7 @@ if( ! class_exists('WBF') ) :
 
 			if(!isset($b) || (is_bool($b) && $b == false)){
 				$config = get_option( 'optionsframework' );
-				$b = of_get_option( $config['id'] . "_behavior_" . $name );
+				$b = \WBF\modules\options\of_get_option( $config['id'] . "_behavior_" . $name );
 			}
 
 			$b = apply_filters("wbf/modules/behaviors/get",$b);
@@ -533,7 +533,7 @@ if( ! class_exists('WBF') ) :
 
 			// Breadcrumbs
 			if(function_exists("of_get_option")) {
-				if(of_get_option('waboot_breadcrumbs', 1)){
+				if(\WBF\modules\options\of_get_option('waboot_breadcrumbs', 1)){
 					wbf_locate_file( '/vendor/breadcrumb-trail.php', true );
 					wbf_locate_file( '/public/breadcrumb-trail.php', true );
 				}
