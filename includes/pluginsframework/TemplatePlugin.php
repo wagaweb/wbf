@@ -17,6 +17,7 @@ class TemplatePlugin extends Plugin implements TemplatePlugin_Interface {
 		parent::__construct( $plugin_name, $dir, $version );
 		$this->templates       = array();
 		$this->templates_paths = array();
+		$this->ctp_templates   = array();
 		$this->loader->add_filter( 'page_attributes_dropdown_pages_args', $this, "register_templates" );
 		$this->loader->add_filter( 'wp_insert_post_data', $this, "register_templates" );
 		$this->loader->add_filter( 'template_include', $this, "view_template" );
@@ -145,7 +146,7 @@ class TemplatePlugin extends Plugin implements TemplatePlugin_Interface {
 
 			//Check if plugin has a template for current post\page
 			foreach ( $possible_templates as $tpl_filename ) {
-				if ( in_array( $tpl_filename, $this->ctp_templates ) ) {
+				if ( is_array($this->ctp_templates) && in_array( $tpl_filename, $this->ctp_templates ) ) {
 					$file = $this->templates_paths[ $tpl_filename ];
 					return $file;
 				}
