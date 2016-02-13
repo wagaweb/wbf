@@ -53,6 +53,10 @@ if( ! class_exists('WBF') ) :
 	define("WBF_ADMIN_DIRECTORY", WBF_DIRECTORY . "/admin");
 	define("WBF_PUBLIC_DIRECTORY", WBF_DIRECTORY . "/public");
 
+	if(!defined("WBF_THEME_DIRECTORY")){
+		define("WBF_THEME_DIRECTORY",rtrim(get_stylesheet_directory(),"/")."/wbf");
+	}
+
 	require_once("wbf-autoloader.php");
 	require_once("backup-functions.php");
 	include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
@@ -98,6 +102,7 @@ if( ! class_exists('WBF') ) :
 
 			$this->maybe_run_activation();
 			$this->maybe_add_option();
+			$this->maybe_add_theme_directory();
 
 			$this->url = self::get_url();
 			$this->path = self::get_path();
@@ -408,6 +413,17 @@ if( ! class_exists('WBF') ) :
 		}
 
 		/**
+		 * Returns WBF Theme dir
+		 * @return bool|string
+		 */
+		static function get_theme_dir(){
+			if(defined("WBF_THEME_DIRECTORY")){
+				return rtrim(WBF_THEME_DIRECTORY,"/");
+			}
+			return false;
+		}
+
+		/**
 		 * Prefix $to with the WBF URL
 		 * @param $to
 		 *
@@ -713,6 +729,12 @@ if( ! class_exists('WBF') ) :
 					//This case may fire when switch from a wbf-as-plugin to a wbf-in-theme environment @since 0.13.8
 					$this->add_wbf_options();
 				}
+			}
+		}
+
+		function maybe_add_theme_directory(){
+			if(defined("WBF_THEME_DIRECTORY") && !is_dir(WBF_THEME_DIRECTORY)){
+				mkdir(WBF_THEME_DIRECTORY);
 			}
 		}
 
