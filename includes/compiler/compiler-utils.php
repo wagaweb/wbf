@@ -4,6 +4,7 @@ namespace WBF\includes\compiler;
 
 /**
  * Generate a temp file parsing commented include tags in the $filepath less file.
+ * Must be called during compile() of various compilers (@see Less_Compiler.php)
  *
  * @param $filepath (the absolute path to the file to parse (usually waboot.less or waboot-child.less)
  *
@@ -21,41 +22,25 @@ function parse_input_file($filepath){
 			while (!$inputFileObj->eof()) {
 				$line = $inputFileObj->fgets();
 
-				if(preg_match("|\{@import '([a-zA-Z0-9\-/_.]+)'\}|",$line,$matches)){
-					if(is_multisite() && $matches[1] == "theme-options-generated.less"){
-						$blogname = wbf_get_sanitized_blogname();
-						$fileToImport = new \SplFileInfo(dirname($filepath)."/mu/".$blogname."-".$matches[1]);
-					}else{
-						$fileToImport = new \SplFileInfo(dirname($filepath)."/".$matches[1]);
-					}
-					if($fileToImport->isFile() && $fileToImport->isReadable()){
-						if($inputFile->getPath() == $fileToImport->getPath()){
-							$line = "@import '{$fileToImport->getBasename()}';\n";
-						}else{
-							$line = "@import '{$fileToImport->getRealPath()}';\n";
-						}
-					}/*else{
-						//If we are in the child theme, search the file into parent directory
-						if(is_child_theme()){
-							$fileToImport = new SplFileInfo(get_template_directory()."/sources/less/".$matches[1]);
-							if($fileToImport->isFile() && $fileToImport->isReadable()){
-								$line = "@import '{$fileToImport->getFilename()}';\n";
-							}
-						}
-					}*/
-				}
-
+				/*
+				 * PARSE {baseurl}
+				 */
                 if(preg_match("/(\{baseurl\})/",$line,$matches)){
                     $baseurl = get_template_directory_uri();
                     $line = preg_replace("/(\{baseurl\})/",$baseurl,$line);
                     $line = preg_replace("/^\/\//","",$line);
                 }
 
+				/*
+				 * PARSE {childbaseurl}
+				 */
                 if(preg_match("/(\{childbaseurl\})/",$line,$matches)){
                     $baseurl = get_stylesheet_directory_uri();
                     $line = preg_replace("/(\{childbaseurl\})/",$baseurl,$line);
                     $line = preg_replace("/^\/\//","",$line);
                 }
+
+				$line = apply_filters("wbf/compiler/parser/line",$line,$filepath,$inputFile); //Allow developers and module to hooks additional filters
 
 				$tmpFileObj->fwrite($line);
 			}
