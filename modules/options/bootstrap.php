@@ -12,10 +12,14 @@ require_once "sanitization.php";
 
 define('OPTIONS_FRAMEWORK_URL', \WBF::prefix_url('vendor/options-framework/'));
 define('OPTIONS_FRAMEWORK_DIRECTORY', \WBF::prefix_url('vendor/options-framework/'));
+if(!defined('WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR')){
+	define('WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR',rtrim(\WBF::get_theme_dir(),"/")."/options");
+}
 
 add_action( "wbf_init",'\WBF\modules\options\module_init', 11 );
 add_action( "updated_option", '\WBF\modules\options\of_options_save', 9999, 3 );
 add_action( "wbf/compiler/pre_compile", '\WBF\modules\options\of_generate_less_file', 9999, 3 );
+add_filter( "wbf/compiler/parser/line", '\WBF\modules\options\of_parse_generated_file', 10, 3 );
 
 /**
  * Font selector actions

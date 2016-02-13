@@ -183,7 +183,44 @@ function of_recompile_styles($values,$release = false){
 }
 
 /**
- * Replace {of_get_option} and {of_get_font} tags in _theme-options-generated.less.cmp; It is called during "update_option" via of_options_save() and during "wbf/compiler/pre_compile" via hook
+ * Parse {@import 'theme-options-generated.less'} into tmp_ style file.
+ *
+ * @hooked 'wbf/compiler/parser/line'
+ *
+ * @param $line
+ * @param $inputFile
+ * @param $filepath
+ *
+ * @return string
+ */
+function of_parse_generated_file($line,$filepath,$inputFile){
+	if(preg_match("|\{@import '([a-zA-Z0-9\-/_.]+)'\}|",$line,$matches)){
+		/*
+		 * PARSE theme-options-generated.less
+		 */
+		if($matches[1] == "theme-options-generated.less"){
+			if(is_multisite()){
+				$blogname = wbf_get_sanitized_blogname();
+				$fileToImport = new \SplFileInfo(WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR."/mu/".$blogname."-".$matches[1]);
+			}else{
+				$fileToImport = new \SplFileInfo(WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR."/".$matches[1]);
+			}
+			if($fileToImport->isFile() && $fileToImport->isReadable()){
+				if($inputFile->getPath() == $fileToImport->getPath()){
+					$line = "@import '{$fileToImport->getBasename()}';\n";
+				}else{
+					$line = "@import '{$fileToImport->getRealPath()}';\n";
+				}
+			}
+		}
+	}
+
+	return $line;
+}
+
+/**
+ * Replace {of_get_option} and {of_get_font} tags in _theme-options-generated.less.cmp;
+ * It is called during "update_option" via of_options_save() and during "wbf/compiler/pre_compile" via hook
  *
  * @param $value values of the options
  * @param null $input_file_path
@@ -195,23 +232,29 @@ function of_recompile_styles($values,$release = false){
  */
 function of_generate_less_file($value = null,$input_file_path = null,$output_file_path = null,$output_type = "FILE"){
 	if(!isset($value) || empty($value)) $value = Framework::get_options_values();
-	if(!isset($input_file_path) || empty($input_file_path)) $input_file_path = "/sources/less/_theme-options-generated.less.cmp"; //todo: in un ottica di poter utilizzare più compilatori, questo file dovrebbe essere specificato altrove
+	if(!isset($input_file_path) || empty($input_file_path)){
+		$input_file_path = WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR."/_theme-options-generated.less.cmp";
+	}
 	if(is_multisite()){
 		$blogname = wbf_get_sanitized_blogname();
-		if(!isset($output_file_path) || empty($output_file_path)) $output_file_path = "/sources/less/mu/{$blogname}-theme-options-generated.less"; //todo: in un ottica di poter utilizzare più compilatori, questo file dovrebbe essere specificato altrove
+		if(!isset($output_file_path) || empty($output_file_path)){
+			$output_file_path = WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR."/mu/{$blogname}-theme-options-generated.less";
+		}
 	}else{
-		if(!isset($output_file_path) || empty($output_file_path)) $output_file_path = "/sources/less/theme-options-generated.less";
+		if(!isset($output_file_path) || empty($output_file_path)){
+			$output_file_path = WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR."/theme-options-generated.less";
+		}
 	}
 
 	if(!is_array($value)) return;
 
 	$output_string = "";
 
-    $tmpFile = new \SplFileInfo(get_stylesheet_directory().$input_file_path);
+    $tmpFile = new \SplFileInfo($input_file_path);
     if(!$tmpFile->isFile() || !$tmpFile->isWritable()){
-        $tmpFile = new \SplFileInfo(get_template_directory().$input_file_path);
+        $tmpFile = new \SplFileInfo($input_file_path);
     }
-	$parsedFile = $output_file_path ? new \SplFileInfo(get_stylesheet_directory().$output_file_path) : null;
+	$parsedFile = $output_file_path ? new \SplFileInfo($output_file_path) : null;
 	if(!is_dir($parsedFile->getPath())){
 		mkdir($parsedFile->getPath());
 	}

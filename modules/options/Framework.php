@@ -9,6 +9,10 @@ class Framework extends \Options_Framework {
 	 */
 	public function init(){
 		Framework::set_theme_option_default_root_id();
+		//Create the framework working directory
+		if(defined("WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR") && !is_dir(WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR)){
+			mkdir(WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR);
+		}
 	}
 
 	/**
