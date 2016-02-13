@@ -8,12 +8,15 @@ class Styles_Compiler{
 	var $base_compiler;
 
 	function __construct($args,$base_compiler = null){
+		//todo: guess the base compiler out of input file name
 		if(!isset($base_compiler)){
 			$base_compiler = [
 				'require_path' => "less/Less_Compiler.php",
 				'class_name' => '\WBF\includes\compiler\less\Less_Compiler'
 			];
 		}
+
+		//todo: add the ability to specify the path of tmp_file
 
 		require_once $base_compiler['require_path'];
 		$this->base_compiler = new $base_compiler['class_name']($args);
