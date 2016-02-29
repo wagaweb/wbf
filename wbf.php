@@ -377,11 +377,12 @@ if( ! class_exists('WBF') ) :
 			if(isset($url)) return $url;
 
 			$url = get_option("wbf_url");
-			if($url && is_string($url) && !empty($url)){
-				$url = rtrim($url,"/")."/";
-				return $url;
-			}elseif(defined("WBF_URL")){
+
+			if(defined("WBF_URL")){ //Get the defined costant before all
 				$url = rtrim(WBF_URL,"/")."/";
+				return $url;
+			}elseif($url && is_string($url) && !empty($url)){
+				$url = rtrim($url,"/")."/";
 				return $url;
 			}
 			return false;
@@ -397,11 +398,12 @@ if( ! class_exists('WBF') ) :
 			if(isset($path)) return $path;
 
 			$path = get_option("wbf_path");
-			if($path && is_string($path) && !empty($path)){
-				$path = rtrim($path,"/")."/";
-				return $path;
-			}elseif(defined("WBF_DIRECTORY")){
+
+			if(defined("WBF_DIRECTORY")){ //Get the defined costant before all
 				$path = rtrim(WBF_DIRECTORY,"/")."/";
+				return $path;
+			}elseif($path && is_string($path) && !empty($path)){
+				$path = rtrim($path,"/")."/";
 				return $path;
 			}
 			return false;
