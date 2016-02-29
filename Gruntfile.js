@@ -164,7 +164,7 @@ module.exports = function (grunt) {
     });
 
     // Register tasks
-    grunt.registerTask('setup', ['bower-install', 'copy:all', 'less:dev']); //Setup task
+    grunt.registerTask('setup', ['bower-install', 'less:dev']); //Setup task
     grunt.registerTask('default', ['watch']); // Default task
     grunt.registerTask('build', ['less:production', 'jsmin', 'compress:build']); // Build task
     grunt.registerTask('js', ['jsbeautifier','browserify:dist']); // Concat and beautify js
