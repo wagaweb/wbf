@@ -35,7 +35,9 @@ if( ! class_exists('WBF') ) :
 		define('WBF_ENV', 'production');
 	}
 
-	require_once('includes/utilities.php'); // Utility
+	//Utilities
+	require_once('includes/utilities.php');
+	require_once('includes/class-utilities.php');
 
 	//Define directory
 	if(!defined("WBF_DIRECTORY")){
