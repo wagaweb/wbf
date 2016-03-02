@@ -293,7 +293,7 @@ if (!function_exists("wb_is_iphone")):
 endif;
 
 if (!function_exists("wb_is_ipad")):
-    function is_ipad()
+    function wb_is_ipad()
     {
         $md = WBF::get_mobile_detect();
         return ($md->isIpad());
