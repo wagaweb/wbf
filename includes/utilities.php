@@ -154,6 +154,8 @@ if (!function_exists( "wbf_get_filtered_post_types" )):
 			}
 		}
 
+		$result = array_unique(apply_filters("wbf/utilities/get_filtered_post_types",$result));
+
 		return $result;
 	}
 endif;
