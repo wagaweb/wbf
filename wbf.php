@@ -37,7 +37,6 @@ if( ! class_exists('WBF') ) :
 
 	//Utilities
 	require_once('includes/utilities.php');
-	require_once('includes/class-utilities.php');
 
 	//Define directory
 	if(!defined("WBF_DIRECTORY")){

@@ -1,5 +1,8 @@
 <?php
 
+require_once "class-utilities.php";
+require_once "class-wc-utilities.php";
+
 if(!function_exists("wbf_get_sanitized_blogname")):
 	/**
 	 * Return a sanitized version of blog name
