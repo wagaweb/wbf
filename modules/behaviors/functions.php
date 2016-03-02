@@ -17,7 +17,9 @@ function get_behavior($name, $post_id = 0, $return = "value") {
 			$post_id = get_queried_object_id();
 		}else{
 			global $post;
-			$post_id = $post->ID;
+			if(isset($post) && isset($post->ID) && $post->ID != 0){
+				$post_id = $post->ID;
+			}
 		}
 	}
 
