@@ -2,6 +2,7 @@
 /**
  * WBF Simple View Class.
  * @since 0.13.12
+ * 
  * Usage:
  *
  * - Create the template file: tpl.php
