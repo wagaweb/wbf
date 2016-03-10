@@ -1010,6 +1010,17 @@ class Utilities{
 	}
 
 	/**
+	 * Ensure that the string does not have the trailing slash
+	 *
+	 * @param $string
+	 *
+	 * @return string
+	 */
+	static function maybe_strip_trailing_slash($string){
+		return rtrim($string,"/");
+	}
+
+	/**
 	 * Simply var_dump enclosed in <pre> :)
 	 *
 	 * @param $var
