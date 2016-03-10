@@ -70,6 +70,9 @@ function wbf_autoloader($class) {
     }
 	
     switch ($class) {
+	    case 'WBF\includes\mvc\View':
+		    \WBF\includes\Utilities::locate_file('includes/mvc/View.php', true);
+		    break;
 	    case 'WBF\includes\License_Interface':
 			\WBF\includes\Utilities::locate_file('includes/license-interface.php', true);
 		    break;
