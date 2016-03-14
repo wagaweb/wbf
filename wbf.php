@@ -183,7 +183,10 @@ if( ! class_exists('WBF') ) :
 		}
 
 		static function set_styles_compiler($args,$base_compiler = null){
-			$GLOBALS['wbf_styles_compiler'] = new \WBF\includes\compiler\Styles_Compiler($args,$base_compiler);
+			global $wbf_styles_compiler;
+			if(!isset($wbf_styles_compiler) || !$wbf_styles_compiler){
+				$GLOBALS['wbf_styles_compiler'] = new \WBF\includes\compiler\Styles_Compiler($args,$base_compiler);
+			}
 		}
 
 		/**
