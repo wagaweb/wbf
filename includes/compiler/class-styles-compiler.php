@@ -5,9 +5,32 @@ use \Exception;
 use \WP_Error;
 
 class Styles_Compiler{
+
+	/**
+	 * @var Base_Compiler
+	 */
 	var $base_compiler;
 
+	/**
+	 * @var array
+	 */
+	var $compiling_options;
+
+	/**
+	 * Styles_Compiler constructor.
+	 *
+	 * @param $args
+	 * @param null $base_compiler
+	 *
+	 * @throws Exception
+	 */
 	function __construct($args,$base_compiler = null){
+		if(!is_array($args)){
+			throw new \Exception("Invalid arguments passed to Styles_Compiler");
+		}
+
+		$this->compiling_options = $args;
+
 		//todo: guess the base compiler out of input file name
 		if(!isset($base_compiler)){
 			$base_compiler = [
@@ -22,7 +45,12 @@ class Styles_Compiler{
 		$this->base_compiler = new $base_compiler['class_name']($args);
 
 		$this->maybe_release_lock();
+	}
 
+	/**
+	 * Performs action based on $_GET parameters
+	 */
+	function listen_get_parameters(){
 		if (isset($_GET['compile']) && $_GET['compile'] == true) {
 			if (current_user_can('manage_options')) {
 				$this->compile();
@@ -39,6 +67,9 @@ class Styles_Compiler{
 		}
 	}
 
+	/**
+	 * @param bool $setname
+	 */
 	function compile($setname = false){
 		/** This filter is documented in wp-admin/admin.php */
 		@ini_set( 'memory_limit', apply_filters( 'admin_memory_limit', WP_MAX_MEMORY_LIMIT ) );
@@ -128,6 +159,12 @@ class Styles_Compiler{
 		}
 	}
 
+	/**
+	 * @param $css
+	 * @param $path
+	 *
+	 * @throws Exception
+	 */
 	function write_to_file($css,$path){
 		$pathinfo = pathinfo($path);
 
@@ -151,6 +188,9 @@ class Styles_Compiler{
 		file_put_contents($path, $css);
 	}
 
+	/**
+	 * Clear compiler cache
+	 */
 	function clear_cache(){
 		$this->release_lock(); //release the compiler
 
@@ -171,6 +211,11 @@ class Styles_Compiler{
 		}
 	}
 
+	/**
+	 * Checks lock status to determine whether the compiler can compile or not
+	 *
+	 * @return bool
+	 */
 	function can_compile(){
 		$busyflag = $this->get_lock_status();
 		if($busyflag && $busyflag != 0){
