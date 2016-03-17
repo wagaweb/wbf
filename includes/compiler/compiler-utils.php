@@ -23,6 +23,24 @@ function parse_input_file($filepath){
 				$line = $inputFileObj->fgets();
 
 				/*
+				 * PARSE {basepath}
+				 */
+				if(preg_match("/(\{basepath\})/",$line,$matches)){
+					$basepath = get_template_directory();
+					$line = preg_replace("/(\{basepath\})/",$basepath,$line);
+					$line = preg_replace("/^\/\//","",$line);
+				}
+
+				/*
+				 * PARSE {childbasepath}
+				 */
+				if(preg_match("/(\{childbasepath\})/",$line,$matches)){
+					$childbasepath = get_stylesheet_directory();
+					$line = preg_replace("/(\{childbasepath\})/",$childbasepath,$line);
+					$line = preg_replace("/^\/\//","",$line);
+				}
+
+				/*
 				 * PARSE {baseurl}
 				 */
                 if(preg_match("/(\{baseurl\})/",$line,$matches)){
