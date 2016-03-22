@@ -16,7 +16,12 @@ function parse_input_file($filepath){
 	$inputFile = new \SplFileInfo($filepath);
 	if($inputFile->isReadable()){
 		$inputFileObj = $inputFile->openFile();
-		$tmpFile = new \SplFileInfo($inputFile->getPath()."/tmp_".$inputFile->getFilename());
+
+		//Note: we CANNOT arbitrarily move the tmp_ file outside the src file directly due to import dependencies
+		$tmpFilePath = $inputFile->getPath()."/tmp_".$inputFile->getFilename();
+		$tmpFilePath = apply_filters("wbf/compiler/tmp_file_path",$tmpFilePath);
+		$tmpFile = new \SplFileInfo($tmpFilePath);
+
 		$tmpFileObj = $tmpFile->openFile("w+");
 		if($tmpFileObj->isWritable()){
 			while (!$inputFileObj->eof()) {
@@ -82,7 +87,7 @@ function parse_input_file($filepath){
 					$parsed_line = apply_filters("wbf/compiler/parser/line/import",$parsed_line,$line,$matches,$filepath,$inputFile);
 				}
 
-				$parsed_line = apply_filters("wbf/compiler/parser/line",$line,$filepath,$inputFile); //Allow developers and module to hooks additional filters
+				$parsed_line = apply_filters("wbf/compiler/parser/line",$parsed_line,$filepath,$inputFile); //Allow developers and module to hooks additional filters
 
 				$tmpFileObj->fwrite($parsed_line);
 			}
