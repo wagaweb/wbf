@@ -5,6 +5,8 @@
  *
  * Usage:
  *
+ * THEMES:
+ *
  * - Create the template file: tpl.php
  * Eg:
  * <h1><?php echo $var1_name; ?><h2>
@@ -38,6 +40,10 @@
  *  'var1_name' => 'var1_value'
  *  'var2_name' => 'var2_value'
  * ]);
+ *
+ * PLUGINS:
+ *
+ * You can provide a \WBF\includes\pluginsframework\Plugin instance as second argument in View constructor to address a template file relative to the plugin path
  *
  * Enjoy!
  */
