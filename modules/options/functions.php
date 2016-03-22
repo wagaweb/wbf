@@ -185,7 +185,7 @@ function of_recompile_styles($values,$release = false){
 /**
  * Parse {@import 'theme-options-generated.less'} into tmp_ style file.
  *
- * @hooked 'wbf/compiler/parser/line'
+ * @hooked 'wbf/compiler/parser/line/import'
  *
  * @param $line
  * @param $inputFile
@@ -193,29 +193,26 @@ function of_recompile_styles($values,$release = false){
  *
  * @return string
  */
-function of_parse_generated_file($line,$filepath,$inputFile){
-	if(preg_match("|\{@import '([a-zA-Z0-9\-/_.]+)'\}|",$line,$matches)){
-		/*
-		 * PARSE theme-options-generated.less
-		 */
-		if($matches[1] == "theme-options-generated.less"){
-			if(is_multisite()){
-				$blogname = wbf_get_sanitized_blogname();
-				$fileToImport = new \SplFileInfo(WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR."/mu/".$blogname."-".$matches[1]);
+function of_parse_generated_file($parsed_line,$line,$matches,$filepath,$inputFile){
+	/*
+	 * PARSE theme-options-generated.less
+	 */
+	if(isset($matches[1]) && $matches[1] == "theme-options-generated.less"){
+		if(is_multisite()){
+			$blogname = wbf_get_sanitized_blogname();
+			$fileToImport = new \SplFileInfo(WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR."/mu/".$blogname."-".$matches[1]);
+		}else{
+			$fileToImport = new \SplFileInfo(WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR."/".$matches[1]);
+		}
+		if($fileToImport->isFile() && $fileToImport->isReadable()){
+			if($inputFile->getPath() == $fileToImport->getPath()){
+				$parsed_line = "@import '{$fileToImport->getBasename()}';\n";
 			}else{
-				$fileToImport = new \SplFileInfo(WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR."/".$matches[1]);
-			}
-			if($fileToImport->isFile() && $fileToImport->isReadable()){
-				if($inputFile->getPath() == $fileToImport->getPath()){
-					$line = "@import '{$fileToImport->getBasename()}';\n";
-				}else{
-					$line = "@import '{$fileToImport->getRealPath()}';\n";
-				}
+				$parsed_line = "@import '{$fileToImport->getRealPath()}';\n";
 			}
 		}
 	}
-
-	return $line;
+	return $parsed_line;
 }
 
 /**
