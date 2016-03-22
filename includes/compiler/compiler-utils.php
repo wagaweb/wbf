@@ -21,46 +21,70 @@ function parse_input_file($filepath){
 		if($tmpFileObj->isWritable()){
 			while (!$inputFileObj->eof()) {
 				$line = $inputFileObj->fgets();
+				$parsed_line = $line;
 
 				/*
 				 * PARSE {basepath}
 				 */
-				if(preg_match("/(\{basepath\})/",$line,$matches)){
+				if(preg_match("/(\{basepath\})/",$parsed_line,$matches)){
 					$basepath = get_template_directory();
-					$line = preg_replace("/(\{basepath\})/",$basepath,$line);
-					$line = preg_replace("/^\/\//","",$line);
+					$parsed_line = preg_replace("/(\{basepath\})/",$basepath,$parsed_line);
+					$parsed_line = preg_replace("/^\/\//","",$parsed_line);
+					//Custom hook:
+					$parsed_line = apply_filters("wbf/compiler/parser/line/basepath",$parsed_line,$line,$matches,$filepath,$inputFile);
 				}
 
 				/*
 				 * PARSE {childbasepath}
 				 */
-				if(preg_match("/(\{childbasepath\})/",$line,$matches)){
+				if(preg_match("/(\{childbasepath\})/",$parsed_line,$matches)){
 					$childbasepath = get_stylesheet_directory();
-					$line = preg_replace("/(\{childbasepath\})/",$childbasepath,$line);
-					$line = preg_replace("/^\/\//","",$line);
+					$parsed_line = preg_replace("/(\{childbasepath\})/",$childbasepath,$parsed_line);
+					$parsed_line = preg_replace("/^\/\//","",$parsed_line);
+					//Custom hook:
+					$parsed_line = apply_filters("wbf/compiler/parser/line/childbasepath",$parsed_line,$line,$matches,$filepath,$inputFile);
 				}
 
 				/*
 				 * PARSE {baseurl}
 				 */
-                if(preg_match("/(\{baseurl\})/",$line,$matches)){
+                if(preg_match("/(\{baseurl\})/",$parsed_line,$matches)){
                     $baseurl = get_template_directory_uri();
-                    $line = preg_replace("/(\{baseurl\})/",$baseurl,$line);
-                    $line = preg_replace("/^\/\//","",$line);
+					$parsed_line = preg_replace("/(\{baseurl\})/",$baseurl,$parsed_line);
+					$parsed_line = preg_replace("/^\/\//","",$parsed_line);
+					//Custom hook:
+					$parsed_line = apply_filters("wbf/compiler/parser/line/baseurl",$parsed_line,$line,$matches,$filepath,$inputFile);
                 }
 
 				/*
 				 * PARSE {childbaseurl}
 				 */
-                if(preg_match("/(\{childbaseurl\})/",$line,$matches)){
+                if(preg_match("/(\{childbaseurl\})/",$parsed_line,$matches)){
                     $baseurl = get_stylesheet_directory_uri();
-                    $line = preg_replace("/(\{childbaseurl\})/",$baseurl,$line);
-                    $line = preg_replace("/^\/\//","",$line);
+					$parsed_line = preg_replace("/(\{childbaseurl\})/",$baseurl,$parsed_line);
+					$parsed_line = preg_replace("/^\/\//","",$parsed_line);
+					//Custom hook:
+					$parsed_line = apply_filters("wbf/compiler/parser/line/childbaseurl",$parsed_line,$line,$matches,$filepath,$inputFile);
                 }
 
-				$line = apply_filters("wbf/compiler/parser/line",$line,$filepath,$inputFile); //Allow developers and module to hooks additional filters
+				/*
+				 * PARSE {@import}
+				 */
+				if(preg_match("|\{@import '([a-zA-Z0-9\-/_.\{\}]+)'\}|",$parsed_line,$matches)){
+					//Check the file existence
+					$fileToImport = new \SplFileInfo($matches[1]);
+					if($fileToImport->isFile() && $fileToImport->isReadable()){
+						$parsed_line = "@import ".$matches[1];
+					}else{
+						$parsed_line = "//@import ".$matches[1];
+					}
+					//Custom hook:
+					$parsed_line = apply_filters("wbf/compiler/parser/line/import",$parsed_line,$line,$matches,$filepath,$inputFile);
+				}
 
-				$tmpFileObj->fwrite($line);
+				$parsed_line = apply_filters("wbf/compiler/parser/line",$line,$filepath,$inputFile); //Allow developers and module to hooks additional filters
+
+				$tmpFileObj->fwrite($parsed_line);
 			}
 			$filepath = $tmpFile->getRealPath();
 		}
