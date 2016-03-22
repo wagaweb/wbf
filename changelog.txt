@@ -3,18 +3,28 @@
 Version 0.13.12 -
 ---------------------------------
 
-- Fix: le chiamate a of_get_option ora hanno il namespace.
+- Fix: le chiamate a "of_get_option()" ora hanno il namespace.
 - Fix: in alcuni rari casi $cpt_template nel Plugin Framework risultava vuoto
 - Fix: sono state ripristinate le funzioni nel file backup-functions.php
 - Fix: ora WBF::get_url() e WBF::get_path() danno correttamente priorità alle eventuali costanti definite.
 - Fix: ora get_behavior() gestisce il caso in cui $post non esista senza generare un errore
 - Fix: is_ipad() rinominata correttamente in wb_is_ipad()
+- Tweak: spostato il meccanismo del theme_option_generated dal compilatore al modulo options. Il file viene creato nella WBF_THEME_DIRECTORY.
+- Tweak: ora il file client-custom.css viene creato nella WBF_THEME_DIRECTORY.
+- Tweak: ora è disponibile il filtro "wbf/utilities/get_filtered_post_types" per gestire i post type disponibili nelle opzioni.
+- Tweak: introdotta la classe Utilities e WCUtilities e alcune nuove funzioni di utilità.
+- Tweak: ora sono disponibili i seguenti filtri per il compilatore:
+    - "wbf/compiler/tmp_file_path" : modifica il path del file generato a partire dall'input file (il file tmp_xxx)
+    - "wbf/compiler/parser/line/basepath" : modifica il risultato del parsing di {basepath} nell'input file
+    - "wbf/compiler/parser/line/childbasepath" : modifica il risultato del parsing di {childbasepath} nell'input file
+    - "wbf/compiler/parser/line/baseurl" : modifica il risultato del parsing di {baseurl} nell'input file
+    - "wbf/compiler/parser/line/childbaseurl" : modifica il risultato del parsing di {childbaseurl} nell'input file
+    - "wbf/compiler/parser/line" : modifica il risultato del parsing della linea
+- Tweak: ora è possibile spostare il file theme_options_generated tramite i filtr:
+    - "wbf/theme_options/styles/input_path"
+    - "wbf/theme_options/styles/output_path"
 - Feature: ora WBF prevede l'utilizzo di una working directory nel tema chiamata di default "wbf" e definibile nella costante WBF_THEME_DIRECTORY.
 - Feature: introdotta la classe View, utilizzabile da temi e plugin.
-- Enhancement: spostato il meccanismo del theme_option_generated dal compilatore al modulo options. Il file viene creato nella WBF_THEME_DIRECTORY.
-- Enhancement: ora il file client-custom.css viene creato nella WBF_THEME_DIRECTORY.
-- Enhancement: ora è disponibile il filtro "wbf/utilities/get_filtered_post_types" per gestire i post type disponibili nelle opzioni.
-- Enhancement: introdotta la classe Utilities e WCUtilities e alcune nuove funzioni di utilità.
 
 Version 0.13.11 - 13/12/2015
 ---------------------------------
