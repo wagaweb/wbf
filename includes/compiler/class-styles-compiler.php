@@ -45,6 +45,8 @@ class Styles_Compiler{
 		$this->base_compiler = new $base_compiler['class_name']($args);
 
 		$this->maybe_release_lock();
+
+		$this->listen_get_parameters();
 	}
 
 	/**
