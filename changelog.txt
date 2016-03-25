@@ -23,8 +23,10 @@ Version 0.13.12 -
 - Tweak: ora è possibile spostare il file theme_options_generated tramite i filtr:
     - "wbf/theme_options/styles/input_path"
     - "wbf/theme_options/styles/output_path"
+- Tweak: ora il file "client-custom.css" non è più rigidamente legato alla presenza della opzione "waboot_css", bensì prende in considerazione qualsiasi opzione di tipo "csseditor"
 - Feature: ora WBF prevede l'utilizzo di una working directory nel tema chiamata di default "wbf" e definibile nella costante WBF_THEME_DIRECTORY.
 - Feature: introdotta la classe View, utilizzabile da temi e plugin.
+- Feature: ora i moduli possono avere una priorità di caricamento, settabile tramite filtro. La priorità di default è 10.
 
 Version 0.13.11 - 13/12/2015
 ---------------------------------
