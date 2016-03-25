@@ -5,6 +5,8 @@
 
 namespace WBF\modules\options;
 
+use WBF\includes\Utilities;
+
 require_once "CustomizerManager.php";
 require_once "functions.php";
 require_once \WBF::get_path()."vendor/options-framework/class-options-sanitization.php";
@@ -40,6 +42,11 @@ add_filter( 'of_sanitize_typography', '\WBF\modules\options\of_sanitize_typograp
  */
 remove_filter( 'of_sanitize_text', 'sanitize_text_field' );
 add_filter( 'of_sanitize_text', '\WBF\modules\options\custom_sanitize_text' );
+
+/**
+ * Adds theme options generated css
+ */
+add_action( 'wp_enqueue_scripts', '\WBF\modules\options\add_client_custom_css', 99 );
 
 function module_init(){
     add_action( 'init', '\WBF\modules\options\optionsframework_init', 20 );
@@ -118,4 +125,18 @@ function of_get_option( $name, $default = false ) {
 	$value = apply_filters("wbf/theme_options/get/{$name}",$value);
 
     return $value;
+}
+
+/**
+ * Adds client custom CSS
+ */
+function add_client_custom_css(){
+	//if(is_admin()) return;
+	$client_custom_css = CodeEditor::custom_css_exists();
+	if($client_custom_css){
+		$uri = Utilities::path_to_url($client_custom_css);
+		$version = filemtime($client_custom_css);
+
+		wp_enqueue_style('client-custom',$uri,false,$version);
+	}
 }
