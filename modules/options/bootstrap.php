@@ -1,6 +1,14 @@
 <?php
-/**
+/*
  * Options Framework WBF Edition
+ *
+ * As all other modules, keep in mind that this piece of code will be executed during "after_setup_theme"
+ *
+ * @package   Behaviors Framework
+ * @author    Riccardo D'Angelo <riccardo@waga.it>
+ * @license   copyrighted
+ * @link      http://www.waga.it
+ * @copyright WAGA.it
  */
 
 namespace WBF\modules\options;
@@ -48,6 +56,11 @@ add_filter( 'of_sanitize_text', '\WBF\modules\options\custom_sanitize_text' );
  */
 add_action( 'wp_enqueue_scripts', '\WBF\modules\options\add_client_custom_css', 99 );
 
+/**
+ * Init the module
+ *
+ * @hooked 'wbf_init'
+ */
 function module_init(){
     add_action( 'init', '\WBF\modules\options\optionsframework_init', 20 );
 	//Bind to Theme Customizer
