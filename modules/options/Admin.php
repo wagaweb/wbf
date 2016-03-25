@@ -5,8 +5,26 @@ namespace WBF\modules\options;
 class Admin extends \Options_Framework_Admin{
 
 	public function init() {
-		parent::init();
+		//@since 0.13.12 we have removed the parent init, so the original filter "of_options" will never be called.
+		//parent::init();
 		$all_options = Framework::get_registered_options();
+
+		// Checks if options are available
+		if ( $all_options ) {
+			// Add the options page and menu item.
+			add_action( 'admin_menu', array( $this, 'add_options_page' ) );
+
+			// Add the required scripts and styles
+			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ) );
+			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
+
+			// Settings need to be registered after admin_init
+			add_action( 'admin_init', array( $this, 'settings_init' ) );
+
+			// Adds options menu to the admin bar
+			add_action( 'wp_before_admin_bar_render', array( $this, 'optionsframework_admin_bar' ) );
+		}
+
 		remove_action( 'admin_menu', array( $this, 'add_options_page' ) );
 		if(is_array($all_options) && !empty($all_options)){
 			add_action( 'wbf_admin_submenu', array( $this, 'add_options_page' ) );
