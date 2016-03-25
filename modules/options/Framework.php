@@ -72,20 +72,30 @@ class Framework extends \Options_Framework {
 
         if ( !$options ) {
             // Load options from options.php file (if it exists)
-            $location = apply_filters( 'options_framework_location', array('options.php') );
-            if ( $optionsfile = locate_template( $location ) ) {
-                $maybe_options = require_once $optionsfile;
-                if ( is_array( $maybe_options ) ) {
-                    $options = $maybe_options;
-                } else if ( function_exists( 'optionsframework_options' ) ) {
-                    $options = optionsframework_options();
-                }
-            }
+            $location = apply_filters( 'options_framework_location', array('options.php') ); //todo: will be deprecated
+            $location = apply_filters( 'wbf/modules/options/include_file', $location );
+
+			if(is_array($location)){
+				foreach($location as $loc){
+					if(is_file($loc)){
+						require_once $loc;
+					}else{
+						$r = locate_template( $loc, true );
+					}
+				}
+			}elseif(is_string($location)){
+				if(is_file($location)){
+					require_once $location;
+				}else{
+					$r = locate_template( $location, true );
+				}
+			}
 
 	        do_action("wbf/theme_options/register"); //This action can hook different functions to of_options filter (is used by Component Manager for example)
 
             // Allow setting/manipulating options via filters
-            $options = apply_filters( 'of_options', $options );
+            $options = apply_filters( 'of_options', $options ); //todo: will be deprecated
+            $options = apply_filters( 'wbf/modules/options/options', $options );
         }
 
         return $options;
