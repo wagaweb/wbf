@@ -144,6 +144,12 @@ if( ! class_exists('WBF') ) :
 			add_filter( 'site_transient_update_plugins', [$this,"unset_unwanted_updates"], 999 );
 
 			add_filter( 'wbf/modules/available', [$this,"do_not_load_pagebuilder"], 999 ); //todo: finché non è stabile, escludiamolo dai moduli
+			add_filter( 'wbf/modules/behaviors/priority', function(){
+				return 9;
+			});
+			add_filter( 'wbf/modules/options/priority', function(){
+				return 11;
+			});
 
 			//Set update server
 			if(self::is_plugin()){
@@ -272,10 +278,24 @@ if( ! class_exists('WBF') ) :
 						'bootstrap' => $current_module_dir."/bootstrap.php",
 						'activation' => is_file($current_module_dir."/activation.php") ? $current_module_dir."/activation.php" : false,
 						'deactivation' => is_file($current_module_dir."/deactivation.php") ? $current_module_dir."/deactivation.php" : false,
+						'priority' => apply_filters("wbf/modules/".basename($d)."/priority",10)
 					);
-					if($include) require_once $modules[basename($d)]['bootstrap'];
 				}
 			}
+
+			uasort($modules,function($a,$b){
+				if($a['priority'] == $b['priority']){
+					return 0;
+				}
+				return ($a['priority'] < $b['priority']) ? -1 : 1;
+			});
+
+			if($include){
+				foreach($modules as $m){
+					require_once $m['bootstrap'];
+				}
+			}
+
 			return $modules;
 		}
 
