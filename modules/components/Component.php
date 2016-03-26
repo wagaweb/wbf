@@ -123,13 +123,13 @@ class Component {
     public function widgets(){}
 
     public function theme_options($options){
-        $options[] = array(
+        $c_options[] = array(
           'name' => $this->name." Component",
           'type' => 'heading',
           'component' => true
         );
 
-        $options[] = array(
+        $c_options[] = array(
           'name' => __( 'Enable on all pages', 'wbf' ),
           'desc' => __( 'Check this box to load the component in every page (load locations will be ignored).', 'wbf' ),
           'id'   => $this->name.'_enabled_for_all_pages',
@@ -140,7 +140,7 @@ class Component {
 
         $filter_locs = array_merge(array("front"=>"Frontpage","home"=>"Blog"),wbf_get_filtered_post_types());
 
-        $options[] = array(
+        $c_options[] = array(
           'id' => $this->name.'_load_locations',
           'name' => __('Load locations','wbf'),
           'desc' => __('You can load the component only into one ore more page types by selecting them from the list below', 'wbf'),
@@ -149,13 +149,15 @@ class Component {
           'component' => true
         );
 
-        $options[] = array(
+        $c_options[] = array(
           'id' => $this->name.'_load_locations_ids',
           'name' => __('Load locations by ID','wbf'),
           'desc' => __('You can load the component for specific pages by enter here the respective ids (comma separated)', 'wbf'),
           'type' => 'text',
           'component' => true
         );
+
+	    $options = array_merge($options,$c_options);
 
         return $options;
     }

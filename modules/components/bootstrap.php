@@ -31,6 +31,27 @@ function setup_components(){
 add_action("wbf_init",'\WBF\modules\components\setup_components', 12);
 
 /**
+ * Hides components tab in theme options
+ *
+ * @param string $section_html
+ * @param array $current_option
+ * @param array $options
+ *
+ * @hooked "wbf/modules/options/gui/tab_section/html"
+ *
+ * @since 0.13.12
+ *
+ * @return string
+ */
+function hide_components_tabs($section_html,$current_option,$options){
+	if(isset($current_option['component'])){
+		$section_html = "";
+	}
+	return $section_html;
+}
+add_filter("wbf/modules/options/gui/tab_section/html",'\WBF\modules\components\hide_components_tabs',10,3);
+
+/**
  * WP HOOKS
  */
 
