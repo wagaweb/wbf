@@ -4,8 +4,10 @@ namespace WBF\modules\behaviors;
 
 /**
  * Get a behaviour.
+ *
  * @param $name
  * @param string $return (value OR array)
+ *
  * @return array|bool|mixed|string
  */
 function get_behavior($name, $post_id = 0, $return = "value") {
@@ -50,6 +52,50 @@ function get_behavior($name, $post_id = 0, $return = "value") {
 	}else{
 		return $b;
 	}
+}
+
+/**
+ * Register the behaviors as theme options. The values of those theme options will serve as behaviors default values.
+ *
+ * @param array $options
+ *
+ * @hooked 'wbf/modules/options/available'
+ *
+ * @since 0.13.12
+ *
+ * @return array
+ */
+function register_behaviors_as_theme_options($options){
+	if(\WBF::module_is_loaded("behaviors") && class_exists('\WBF\modules\behaviors\BehaviorsManager')){
+		//Behaviors tab heading
+		$bh_options[] = [
+			'name' => __( 'Posts & Pages', 'waboot' ),
+			'type' => 'heading'
+		];
+		$post_types = wbf_get_filtered_post_types(); //Get post types
+		foreach($post_types as $ptSlug => $ptLabel){
+			if( BehaviorsManager::count_behaviors_for_post_type($ptSlug) > 0){
+				$predef_behavior = BehaviorsManager::getAll(); //get predefined options
+
+				//Post type heading
+				$bh_options[] = [
+					'name' => $ptLabel,
+					'desc' => sprintf(__( 'Edit default options for "%s" post type', 'waboot' ),strtolower($ptLabel)),
+					'type' => 'info'
+				];
+
+				//Post type options:s
+				foreach($predef_behavior as $b){
+					if($b->is_enabled_for_post_type($ptSlug)){
+						$option = $b->generate_of_option($ptSlug);
+						$bh_options[] = $option;
+					}
+				}
+			}
+		}
+		$options = array_merge($options,$bh_options);
+	}
+	return $options;
 }
 
 function create_metabox(){
