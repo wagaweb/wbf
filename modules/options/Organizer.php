@@ -155,6 +155,7 @@ class Organizer {
 
 	public function get_group($group){
 		$res = [];
+		//todo: remove this foreach
 		foreach($this->options as $opt){
 			if(isset($opt['group_id']) && $opt['group_id'] == $group){
 				$res[] = $opt;
@@ -165,6 +166,7 @@ class Organizer {
 
 	public function get_section($section){
 		$res = [];
+		//todo: remove this foreach
 		foreach($this->options as $opt){
 			if(isset($opt['section_id']) && $opt['section_id'] == $section){
 				$res[] = $opt;
