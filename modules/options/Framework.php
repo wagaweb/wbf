@@ -95,7 +95,7 @@ class Framework extends \Options_Framework {
 
             // Allow setting/manipulating options via filters
             $options = apply_filters( 'of_options', $options ); //todo: will be deprecated
-            $options = apply_filters( 'wbf/modules/options/options', $options );
+            $options = apply_filters( 'wbf/modules/options/available', $options );
         }
 
         return $options;
