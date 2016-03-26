@@ -526,3 +526,12 @@ function import_theme_options($exported_options) {
     $options_field = Framework::get_options_root_id();
     update_option($options_field, $exported_options);
 }
+
+/**
+ * Get an instance of Organizer
+ *
+ * @return Organizer
+ */
+function organizer(){
+	return Organizer::getInstance();
+}

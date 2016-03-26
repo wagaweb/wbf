@@ -4,6 +4,7 @@ namespace WBF\modules\components;
 
 
 use WBF\modules\options\Framework;
+use WBF\modules\options\Organizer;
 
 class ComponentsManager {
 
@@ -13,7 +14,7 @@ class ComponentsManager {
      * Add hooks, detect components into components directory and updates relative options
      */
     static function init(){
-	    add_action("wbf/theme_options/register",'\WBF\modules\components\ComponentsManager::addRegisteredComponentOptions'); //register component options
+	    add_action("wbf/theme_options/register",'\WBF\modules\components\ComponentsManager::addRegisteredComponentOptions',999); //register component options
         /** Detect components in main theme **/
         self::_detect_components(get_template_directory()."/components");
         /** Detect components in child theme **/
@@ -260,6 +261,7 @@ class ComponentsManager {
                 require_once( $c['file'] );
                 $className  = ucfirst( $c['nicename'] ) . "Component";
                 $oComponent = new $className( $c );
+	            add_filter("wbf/modules/components/component/{$oComponent->name}_component/register_custom_options",[$oComponent,"theme_options"]);
                 $oComponent->register_options();
             }
         }
@@ -560,7 +562,7 @@ class ComponentsManager {
             }
         }
 
-        $components_options = apply_filters("wbf_components_options",array());
+        $components_options = Organizer::getInstance()->get_group("components");
         $compiled_components_options = array();
         $current_element = "";
         foreach($components_options as $key => $option){

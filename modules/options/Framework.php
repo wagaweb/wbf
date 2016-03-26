@@ -91,11 +91,22 @@ class Framework extends \Options_Framework {
 				}
 			}
 
-	        do_action("wbf/theme_options/register"); //This action can hook different functions to of_options filter (is used by Component Manager for example)
+	        $orgzr = Organizer::getInstance();
+
+	        do_action("wbf/theme_options/register",$orgzr); //This action can hook different functions to of_options filter (is used by Component Manager for example)
 
             // Allow setting/manipulating options via filters
-            $options = apply_filters( 'of_options', $options ); //todo: will be deprecated
-            $options = apply_filters( 'wbf/modules/options/available', $options );
+	        $orgzr->reset_section();
+	        $orgzr->reset_group();
+            $additional_options = apply_filters( 'of_options', [] ); //todo: will be deprecated
+            $additional_options = apply_filters( 'wbf/modules/options/available', $additional_options );
+	        if(is_array($additional_options) && !empty($additional_options)){
+		        foreach($additional_options as $opt){
+			        $orgzr->add($opt);
+		        }
+	        }
+
+	        $options = $orgzr->generate();
         }
 
         return $options;

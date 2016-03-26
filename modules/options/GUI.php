@@ -3,6 +3,10 @@
 namespace WBF\modules\options;
 
 class GUI extends \Options_Framework_Interface {
+	static function getOrganizer(){
+		return Organizer::getInstance();
+	}
+
 	/**
 	 * Generates the options fields that are used in the form.
 	 *
