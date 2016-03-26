@@ -28,6 +28,7 @@ Version 0.13.12 -
 - Feature: ora WBF prevede l'utilizzo di una working directory nel tema chiamata di default "wbf" e definibile nella costante WBF_THEME_DIRECTORY.
 - Feature: introdotta la classe View, utilizzabile da temi e plugin.
 - Feature: ora i moduli possono avere una priorità di caricamento, settabile tramite filtro. La priorità di default è 10.
+- Feature: introdotto il Theme Options Organizer, per una più efficace gestione delle theme options
 
 Version 0.13.11 - 13/12/2015
 ---------------------------------
