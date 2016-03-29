@@ -88,7 +88,7 @@ class Organizer {
 			$option = array_merge($option,$params);
 		}
 
-		$this->sections[$id] = [];
+		$this->sections[$id][] = $option;
 
 		if(!isset($this->groups[$group])){
 			$this->groups[$group] = [];
@@ -150,27 +150,53 @@ class Organizer {
 	 * Generate the structure
 	 */
 	public function generate(){
-		return $this->options;
+		$sections = apply_filters("wbf/modules/options/organizer/sections",$this->sections, $this);
+		//$groups = apply_filters("wbf/modules/options/organizer/groups",$this->groups, $this);
+		$res = [];
+		foreach($sections as $sections => $options){
+			if(is_array($options) && !empty($options)){
+				foreach($options as $opt){
+					$res[] = $opt;
+				}
+			}
+		}
+		$options = apply_filters("wbf/modules/options/organizer/output",$res, $this);
+		return $options;
 	}
 
-	public function get_group($group){
+	/**
+	 * Get the options of the specified group
+	 *
+	 * @param $group
+	 * @param bool|true $flatten
+	 * @return array
+	 */
+	public function get_group($group, $flatten = true){
 		$res = [];
-		//todo: remove this foreach
-		foreach($this->options as $opt){
-			if(isset($opt['group_id']) && $opt['group_id'] == $group){
-				$res[] = $opt;
+		if(isset($this->groups[$group])){
+			if(!$flatten){
+				$res = $this->groups[$group];
+			}else{
+				foreach($this->groups[$group] as $section => $options){
+					foreach($options as $opt){
+						$res[] = $opt;
+					}
+				}
 			}
 		}
 		return $res;
 	}
 
+	/**
+	 * Get the options of the specified section
+	 *
+	 * @param $section
+	 * @return array
+	 */
 	public function get_section($section){
 		$res = [];
-		//todo: remove this foreach
-		foreach($this->options as $opt){
-			if(isset($opt['section_id']) && $opt['section_id'] == $section){
-				$res[] = $opt;
-			}
+		if(isset($this->sections[$section])){
+			$res = $this->sections[$section];
 		}
 		return $res;
 	}
