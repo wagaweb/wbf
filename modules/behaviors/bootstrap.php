@@ -17,7 +17,7 @@ require_once "functions.php";
 
 //locate_template('/inc/behaviors.php', true); //todo: questo sarebbe meglio toglierlo, mi pare superfluo, valutare se crea qlc danno
 
-add_action("wbf/modules/options/available", '\WBF\modules\behaviors\register_behaviors_as_theme_options');
+add_action("wbf/theme_options/register", '\WBF\modules\behaviors\register_behaviors_as_theme_options',11,1);
 
 add_action( 'add_meta_boxes', '\WBF\modules\behaviors\create_metabox' );
 
