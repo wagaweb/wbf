@@ -107,12 +107,6 @@ class Component {
 	    $orgzr->set_section($section_name);
 
 	    $orgzr->add(array(
-		    'name' => $this->name." Component",
-		    'type' => 'heading',
-		    'component' => true
-	    ),null,null,$additional_params);
-
-	    $orgzr->add(array(
 		    'name' => __( 'Enable on all pages', 'wbf' ),
 		    'desc' => __( 'Check this box to load the component in every page (load locations will be ignored).', 'wbf' ),
 		    'id'   => $this->name.'_enabled_for_all_pages',
