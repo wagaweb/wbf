@@ -126,7 +126,7 @@ endif;
 if (!function_exists("wb_is_mobile")):
     function wb_is_mobile()
     {
-        $md = WBF::get_mobile_detect();
+        $md = WBF::getInstance()->get_mobile_detect();
         return ($md->isMobile());
     }
 endif;
@@ -134,7 +134,7 @@ endif;
 if (!function_exists("wb_is_tablet")):
     function wb_is_tablet()
     {
-        $md = WBF::get_mobile_detect();
+        $md = WBF::getInstance()->get_mobile_detect();
         return ($md->isTablet());
     }
 endif;
@@ -142,7 +142,7 @@ endif;
 if (!function_exists("wb_is_ios")):
     function wb_is_ios()
     {
-        $md = WBF::get_mobile_detect();
+        $md = WBF::getInstance()->get_mobile_detect();
         return ($md->isiOS());
     }
 endif;
@@ -150,7 +150,7 @@ endif;
 if (!function_exists("wb_is_android")):
     function wb_is_android()
     {
-        $md = WBF::get_mobile_detect();
+        $md = WBF::getInstance()->get_mobile_detect();
         return ($md->isAndroidOS());
     }
 endif;
@@ -158,7 +158,7 @@ endif;
 if (!function_exists("wb_is_windows_mobile")):
     function wb_is_windows_mobile()
     {
-        $md = WBF::get_mobile_detect();
+        $md = WBF::getInstance()->get_mobile_detect();
         return ($md->is('WindowsMobileOS') || $md->is('WindowsPhoneOS'));
     }
 endif;
@@ -166,7 +166,7 @@ endif;
 if (!function_exists("wb_is_iphone")):
     function wb_is_iphone()
     {
-        $md = WBF::get_mobile_detect();
+        $md = WBF::getInstance()->get_mobile_detect();
         return ($md->isIphone());
     }
 endif;
@@ -174,7 +174,7 @@ endif;
 if (!function_exists("wb_is_ipad")):
     function wb_is_ipad()
     {
-        $md = WBF::get_mobile_detect();
+        $md = WBF::getInstance()->get_mobile_detect();
         return ($md->isIpad());
     }
 endif;
@@ -182,7 +182,7 @@ endif;
 if (!function_exists("wb_is_samsung")):
     function wb_is_samsung()
     {
-        $md = WBF::get_mobile_detect();
+        $md = WBF::getInstance()->get_mobile_detect();
         return ($md->is('Samsung'));
     }
 endif;
@@ -190,7 +190,7 @@ endif;
 if (!function_exists("wb_is_samsung_tablet")):
     function wb_is_samsung_tablet()
     {
-        $md = WBF::get_mobile_detect();
+        $md = WBF::getInstance()->get_mobile_detect();
         return ($md->is('SamsungTablet'));
     }
 endif;
@@ -198,7 +198,7 @@ endif;
 if (!function_exists("wb_is_kindle")):
     function wb_is_kindle()
     {
-        $md = WBF::get_mobile_detect();
+        $md = WBF::getInstance()->get_mobile_detect();
         return ($md->is('Kindle'));
     }
 endif;
@@ -206,7 +206,7 @@ endif;
 if (!function_exists("wb_android_version")):
     function wb_android_version()
     {
-        $md = WBF::get_mobile_detect();
+        $md = WBF::getInstance()->get_mobile_detect();
         return $md->version('Android');
     }
 endif;
@@ -214,7 +214,7 @@ endif;
 if (!function_exists("wb_iphone_version")):
     function wb_iphone_version()
     {
-        $md = WBF::get_mobile_detect();
+        $md = WBF::getInstance()->get_mobile_detect();
         return $md->version('iPhone');
     }
 endif;
@@ -222,7 +222,7 @@ endif;
 if (!function_exists("wb_ipad_version")):
     function wb_ipad_version()
     {
-        $md = WBF::get_mobile_detect();
+        $md = WBF::getInstance()->get_mobile_detect();
         return $md->version('iPad');
     }
 endif;
