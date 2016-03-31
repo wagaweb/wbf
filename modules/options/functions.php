@@ -115,19 +115,41 @@ function of_options_save($option, $old_value, $value){
                 }
                 /*
                  * Check theme options dependencies
+                 *
+                 * Usage: options can specify dependencies at a global or value-specific level.
+                 *
+                 * - Global:
+                 * $opt_data['deps']['_global']['components'] = ['foo']
+                 * The "foo" component has to be active when this option has any value.
+                 *
+                 * - Value-specific:
+                 * $opt_data['deps']['foo']['components'] = ['bar']
+                 * The "bar" component has to be active when the option has the value of "foo"
+                 *
                  */
                 if(isset($opt_data['deps'])){
                     if(isset($opt_data['deps']['_global'])){
-                        if(isset($opt_data['deps']['_global']['components']))
+                        if(isset($opt_data['deps']['_global']['components'])){
                             $deps_to_achieve['components'][] = $opt_data['deps']['_global']['components'];
-                    }
-                    unset($opt_data['deps']['_global']);
-                    foreach($opt_data['deps'] as $v => $deps){
-                        if(array_key_exists($opt_data['id'],$value) && $value[$opt_data['id']] == $v){ //true the option has the value specified into deps array
-                            //Then set the deps to achieve
-                            if(isset($deps['components'])) $deps_to_achieve['components'] = $deps['components'];
                         }
+	                    unset($opt_data['deps']['_global']);
                     }
+	                if(!empty($opt_data['deps'])){
+		                foreach($opt_data['deps'] as $v => $deps){
+			                if(!is_array($deps)) continue;
+			                if(array_key_exists($opt_data['id'],$value) && $value[$opt_data['id']] == $v){ //true the option has the value specified into deps array
+				                //Then set the deps to achieve
+				                foreach($deps as $type => $deps_names){
+					                if(!is_array($deps_names)) continue;
+					                if(array_key_exists($type,$deps_to_achieve)){
+						                $deps_to_achieve[$type] = array_merge($deps_to_achieve[$type],$deps_names);
+					                }else{
+						                $deps_to_achieve[$type] = $deps_names;
+					                }
+				                }
+			                }
+		                }
+	                }
                 }
             }
         }
@@ -146,19 +168,24 @@ function of_options_save($option, $old_value, $value){
         if(!empty($deps_to_achieve)){
             $wbf_notice_manager->clear_notices("theme_opt_component_deps");
             if(!empty($deps_to_achieve['components'])){
-                //Try to enable all the required components
-                $registered_components = ComponentsManager::getAllComponents();
-                foreach($deps_to_achieve['components'] as $c_name){
-                    if(!ComponentsManager::is_active($c_name)){
-                        if(ComponentsManager::is_present($c_name)){
-                            ComponentsManager::enable($c_name, ComponentsManager::is_child_component( $c_name ));
-                        }else{
-                            //Register new notice that tells that the component is not present
-                            $message = __("An option requires the component <strong>$c_name</strong>, but it is not present","wbf");
-                            $wbf_notice_manager->add_notice($c_name."_component_not_present",$message,"error","theme_opt_component_deps","FileIsPresent",ComponentsManager::generate_component_mainfile_path($c_name));
-                        }
-                    }
-                }
+	            if(\WBF::getInstance()->module_is_loaded("components")){
+		            //Try to enable all the required components
+		            $registered_components = ComponentsManager::getAllComponents();
+		            foreach($deps_to_achieve['components'] as $c_name){
+			            if(!ComponentsManager::is_active($c_name)){
+				            if(ComponentsManager::is_present($c_name)){
+					            ComponentsManager::enable($c_name, ComponentsManager::is_child_component( $c_name ));
+				            }else{
+					            //Register new notice that tells that the component is not present
+					            $message = __("An option requires the component <strong>$c_name</strong>, but it is not present","wbf");
+					            $wbf_notice_manager->add_notice($c_name."_component_not_present",$message,"error","theme_opt_component_deps","FileIsPresent",ComponentsManager::generate_component_mainfile_path($c_name));
+				            }
+			            }
+		            }
+	            }else{
+		            $message = __("An option requires components module, but it is not loaded","wbf");
+		            $wbf_notice_manager->add_notice("components_not_loaded",$message,"error","_flash_");
+	            }
             }
         }else{
             $wbf_notice_manager->clear_notices("theme_opt_component_deps");
