@@ -2,9 +2,27 @@
 
 namespace WBF\includes;
 
-require_once get_option( "wbf_path" )."/vendor/yahnis-elsts/plugin-update-checker/plugin-update-checker.php";
+use WBF\admin\Notice_Manager;
+
+//require_once get_option( "wbf_path" ) . "/vendor/yahnis-elsts/plugin-update-checker/plugin-update-checker.php";
 
 class Plugin_Update_Checker extends \PluginUpdateChecker{
+
+	/**
+	 * @var bool
+	 */
+	var $checkLicense;
+
+	/**
+	 * @var License
+	 */
+	var $plugin_license;
+
+	/**
+	 * @var Notice_Manager
+	 */
+	var $notice_manager;
+
 	/**
 	 * Class constructor.
 	 *
@@ -18,37 +36,30 @@ class Plugin_Update_Checker extends \PluginUpdateChecker{
 	 * @param string $muPluginFile Optional. The plugin filename relative to the mu-plugins directory.
 	 */
 	public function __construct($metadataUrl, $pluginFile, $slug = '', $plugin_license = null, $checkLicense = false, $checkPeriod = 12, $optionName = '', $muPluginFile = ''){
-		$this->metadataUrl = $metadataUrl;
-		$this->pluginAbsolutePath = $pluginFile;
-		$this->pluginFile = plugin_basename($this->pluginAbsolutePath);
-		$this->muPluginFile = $muPluginFile;
-		$this->checkPeriod = $checkPeriod;
-		$this->slug = $slug;
-		$this->optionName = $optionName;
-		$this->debugMode = defined('WP_DEBUG') && WP_DEBUG;
-
-		//If no slug is specified, use the name of the main plugin file as the slug.
-		//For example, 'my-cool-plugin/cool-plugin.php' becomes 'cool-plugin'.
-		if ( empty($this->slug) ){
-			$this->slug = basename($this->pluginFile, '.php');
+		$this->checkLicense = true;
+		$this->plugin_license = $plugin_license;
+		//Load Notice Manager if needed
+		global $wbf_notice_manager;
+		if(!isset($wbf_notice_manager)){
+			$GLOBALS['wbf_notice_manager'] = new Notice_Manager(); // Loads notice manager
+			$this->notice_manager = &$GLOBALS['wbf_notice_manager'];
+		}else{
+			$this->notice_manager = &$wbf_notice_manager;
 		}
+		parent::__construct($metadataUrl,$pluginFile,$slug,$checkPeriod,$optionName,$muPluginFile);
+	}
 
-		if ( empty($this->optionName) ){
-			$this->optionName = 'external_updates-' . $this->slug;
-		}
-
-		//Backwards compatibility: If the plugin is a mu-plugin but no $muPluginFile is specified, assume
-		//it's the same as $pluginFile given that it's not in a subdirectory (WP only looks in the base dir).
-		if ( empty($this->muPluginFile) && (strpbrk($this->pluginFile, '/\\') === false) && $this->isMuPlugin() ) {
-			$this->muPluginFile = $this->pluginFile;
-		}
-
-		$checkLicense = true; //todo: Se il plugin framework deve essere indipendente da wbf... nn si dovrebbe controllare la licenza sul license manager del WBF
-
-		if($checkLicense){
-			if($plugin_license && $plugin_license->is_valid() || !$plugin_license) {
-				$this->installHooks();
-				$this->remove_not_upgradable_plugin($this->slug);
+	/**
+	 * Install the hooks required to run periodic update checks and inject update info
+	 * into WP data structures.
+	 *
+	 * @return void
+	 */
+	protected function installHooks() {
+		if($this->checkLicense){
+			if($this->plugin_license && $this->plugin_license->is_valid() || !$this->plugin_license){
+				parent::installHooks();
+				$this->remove_from_not_upgradable_plugin($this->slug);
 			}else{
 				$update = $this->maybeCheckForUpdates();
 				if(!is_null($update) && $update != false){
@@ -60,7 +71,7 @@ class Plugin_Update_Checker extends \PluginUpdateChecker{
 				}
 			}
 		}else{
-			$this->installHooks();
+			parent::installHooks();
 		}
 	}
 
@@ -79,13 +90,15 @@ class Plugin_Update_Checker extends \PluginUpdateChecker{
 		$queryArgs = apply_filters('puc_request_info_query_args-'.$this->slug, $queryArgs);
 
 		//Various options for the wp_remote_get() call. Plugins can filter these, too.
+		//For those options, you can see @ class-http.php->request()
 		$options = array(
-			'timeout' => 10, //seconds
+			'timeout' => 5, //seconds
 			'headers' => array(
 				'Accept' => 'application/json'
 			),
 		);
-		$options = apply_filters('puc_request_info_options-'.$this->slug, $options);
+		$options = apply_filters('puc_request_info_options-'.$this->slug, $options); //todo: will be deprecated
+		$options = apply_filters('wbf/plugins/'.$this->slug.'/updates/request_options/', $options);
 
 		//The plugin info should be at 'http://your-api.com/url/here/$slug/info.json'
 		$url = $this->metadataUrl;
@@ -114,10 +127,7 @@ class Plugin_Update_Checker extends \PluginUpdateChecker{
 				$message .= "wp_remote_get() returned an unexpected result.";
 			}
 			//trigger_error($message, E_USER_WARNING);
-			global $wbf_notice_manager;
-			if(isset($wbf_notice_manager)){
-				$wbf_notice_manager->add_notice($this->slug."_update",$message,"error","_flash_");
-			}
+			$this->notice_manager->add_notice($this->slug."_update",$message,"error","_flash_");
 		}
 
 		$pluginInfo = apply_filters('puc_request_info_result-'.$this->slug, $pluginInfo, $result);
@@ -130,6 +140,7 @@ class Plugin_Update_Checker extends \PluginUpdateChecker{
 	 * Will use a shorter check interval on certain admin pages like "Dashboard -> Updates" or when doing cron.
 	 *
 	 * You can override the default behaviour by using the "puc_check_now-$slug" filter.
+	 *
 	 * The filter callback will be passed three parameters:
 	 *     - Current decision. TRUE = check updates now, FALSE = don't check now.
 	 *     - Last check time as a Unix timestamp.
@@ -137,10 +148,16 @@ class Plugin_Update_Checker extends \PluginUpdateChecker{
 	 * Return TRUE to check for updates immediately, or FALSE to cancel.
 	 *
 	 * This method is declared public because it's a hook callback. Calling it directly is not recommended.
+	 *
+	 * @hooked 'check_plugin_updates-<plugin_slug>'
 	 */
 	public function maybeCheckForUpdates(){
 		if ( empty($this->checkPeriod) ){
-			return;
+			return false;
+		}
+
+		if(!apply_filters("wbf/plugins/$this->slug/updates/check_for_updates",true)){
+			return false;
 		}
 
 		$currentFilter = current_filter();
@@ -162,23 +179,14 @@ class Plugin_Update_Checker extends \PluginUpdateChecker{
 			$timeout = $this->checkPeriod * 3600;
 		}
 
+		$timeout = apply_filters("wbf/plugin_framework/updates/check_timeout",$timeout);
+		$timeout = apply_filters("wbf/plugins/$this->slug/updates/check_timeout",$timeout);
+
 		$state = $this->getUpdateState();
-		$shouldCheck =
-			empty($state) ||
-			!isset($state->lastCheck) ||
-			( (time() - $state->lastCheck) >= $timeout );
+		$shouldCheck = empty($state) || !isset($state->lastCheck) || ( (time() - $state->lastCheck) >= $timeout );
+		$shouldCheck = apply_filters('puc_check_now-' . $this->slug, $shouldCheck, (!empty($state) && isset($state->lastCheck)) ? $state->lastCheck : 0, $this->checkPeriod); //Let plugin authors substitute their own algorithm.
 
-		//Let plugin authors substitute their own algorithm.
-		$shouldCheck = apply_filters(
-			'puc_check_now-' . $this->slug,
-			$shouldCheck,
-			(!empty($state) && isset($state->lastCheck)) ? $state->lastCheck : 0,
-			$this->checkPeriod
-		);
-
-		$shouldCheck = true; //Hack :)
-
-		if ( $shouldCheck ){
+		if($shouldCheck){
 			$result = $this->checkForUpdates();
 			return $result;
 		}
@@ -234,21 +242,22 @@ class Plugin_Update_Checker extends \PluginUpdateChecker{
 		return $updates;
 	}
 
+	/**
+	 * Add the update notice
+	 */
 	public function update_available_notice(){
 		$unable_to_update = get_option("wbf_unable_to_update_plugins",array());
-		if(!empty($unable_to_update) && \WBF::is_wbf_admin_page()) :
-			?>
-			<div class="waboot-upgrade-notice update-nag">
-				<?php echo sprintf(__( 'One or more Waboot plugin has an updated version available! <a href="%s" title="Enter a valid license">Enter a valid license</a> to get latest updates.', 'wbf' ),"admin.php?page=waboot_license"); ?>
-			</div>
-		<?php endif;
+		if(!empty($unable_to_update) && \WBF::is_wbf_admin_page()){
+			$message = sprintf(__( 'One or more Waboot plugin has an updated version available! <a href="%s" title="Enter a valid license">Enter a valid license</a> to get latest updates.', 'wbf' ),"admin.php?page=waboot_license");
+			$this->notice_manager->add_notice($message,"nag","_flash_");
+		}
 	}
 
 	/**
 	 * Removes $plugin_name from the list of not upgradable plugins
 	 * @param $plugin_name
 	 */
-	protected function remove_not_upgradable_plugin($plugin_name){
+	protected function remove_from_not_upgradable_plugin($plugin_name){
 		$opt = get_option("wbf_unable_to_update_plugins",array());
 		foreach($opt as $k => $plg){
 			if($plg == $plugin_name){
@@ -264,8 +273,9 @@ class Plugin_Update_Checker extends \PluginUpdateChecker{
 	 */
 	protected function add_not_upgradable_plugin($plugin_name){
 		$opt = get_option("wbf_unable_to_update_plugins",array());
-		if(!in_array($plugin_name,$opt))
+		if(!in_array($plugin_name,$opt)){
 			$opt[] = $plugin_name;
+		}
 		update_option("wbf_unable_to_update_plugins",$opt);
 	}
 
