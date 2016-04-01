@@ -178,7 +178,7 @@ if( ! class_exists('WBF') ) :
 			 */
 
 			//Setup admin menu:
-			add_action( 'admin_menu', [$this,"admin_menu"] );
+			add_action( 'admin_menu', [$this,"admin_menu"], 11 );
 			add_action( 'admin_bar_menu', [$this,"add_env_notice"], 1000 );
 			add_action( 'admin_bar_menu', [$this,"add_admin_compile_button"], 990 );
 
@@ -685,10 +685,11 @@ if( ! class_exists('WBF') ) :
 			else
 				$warning_count = 0;
 
-			$menu_label = sprintf( __( 'Waboot %s' ), "<span class='update-plugins count-$warning_count' title='".__("Update available","wbf")."'><span class='update-count'>" . number_format_i18n($warning_count) . "</span></span>" );
+			$menu_title = apply_filters("wbf/admin_menu/label",'WBF');
+			$menu_label = sprintf( __( '%s %s' ), $menu_title, "<span class='update-plugins count-$warning_count' title='".__("Update available","wbf")."'><span class='update-count'>" . number_format_i18n($warning_count) . "</span></span>" );
 
-			$menu['58']     = $menu['59']; //move the separator before "Appearance" one position up
-			$waboot_menu    = add_menu_page( "Waboot", $menu_label, "edit_theme_options", "waboot_options", "WBF::options_page", "dashicons-text", 59 );
+			$menu['58'] = $menu['59']; //move the separator before "Appearance" one position up
+			$waboot_menu = add_menu_page( "Waboot", $menu_label, "edit_theme_options", "waboot_options", "WBF::options_page", "dashicons-text", 59 );
 			//$waboot_options = add_submenu_page( "waboot_options", __( "Theme options", "waboot" ), __( "Theme Options", "waboot" ), "edit_theme_options", "waboot_options", array($options_framework_admin,"options_page") );
 			do_action("wbf_admin_submenu","waboot_options");
 		}
