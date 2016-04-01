@@ -40,15 +40,15 @@ function plugin_autoload( $class ) {
 			case "WBF\includes\Plugin_Update_Checker":
 				require_once($wbf_path . "/includes/plugin-update-checker.php");
 				break;
-			/*case "PluginUpdateChecker":
+			case "PluginUpdateChecker":
 			case "PluginUpdate":
 			case "PluginInfo":
 			case "PluginUpdateChecker_1_6":
 			case "PluginInfo_1_6":
 			case "PluginUpdate_1_6":
 			case "PucFactory":
-				require_once($wbf_path . "/vendor/plugin-updates/plugin-update-checker.php");
-				break;*/
+				require_once($wbf_path . "/vendor/yahnis-elsts/plugin-update-checker/plugin-update-checker.php");
+				break;
 		}
 	}
 }
