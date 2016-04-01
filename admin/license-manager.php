@@ -182,9 +182,12 @@ class License_Manager{
 
 	/**
 	 * Update a specific license
+	 *
 	 * @param $license_slug
 	 * @param $type
 	 * @param $value
+	 *
+	 * @throws License_Exception
 	 */
 	static function update($license_slug,$type,$value){
 		$l = self::get($license_slug,$type);
