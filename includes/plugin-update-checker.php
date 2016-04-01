@@ -24,6 +24,11 @@ class Plugin_Update_Checker extends \PluginUpdateChecker{
 	var $notice_manager;
 
 	/**
+	 * @var string
+	 */
+	var $plugin_slug;
+
+	/**
 	 * Class constructor.
 	 *
 	 * @param string $metadataUrl The URL of the plugin's metadata file.
@@ -38,6 +43,7 @@ class Plugin_Update_Checker extends \PluginUpdateChecker{
 	public function __construct($metadataUrl, $pluginFile, $slug = '', $plugin_license = null, $checkLicense = false, $checkPeriod = 12, $optionName = '', $muPluginFile = ''){
 		$this->checkLicense = true;
 		$this->plugin_license = $plugin_license;
+		$this->plugin_slug = $slug;
 		//Load Notice Manager if needed
 		global $wbf_notice_manager;
 		if(!isset($wbf_notice_manager)){
@@ -64,7 +70,7 @@ class Plugin_Update_Checker extends \PluginUpdateChecker{
 				$update = $this->maybeCheckForUpdates();
 				if(!is_null($update) && $update != false){
 					$this->add_not_upgradable_plugin($this->slug);
-					add_action( 'admin_notices', array($this,'update_available_notice') );
+					$this->update_available_notice();
 					//Inject the fake update...
 					add_filter('site_transient_update_plugins', array($this,'injectFakeUpdate')); //WP 3.0+
 					add_filter('transient_update_plugins', array($this,'injectFakeUpdate')); //WP 2.8+
@@ -249,7 +255,7 @@ class Plugin_Update_Checker extends \PluginUpdateChecker{
 		$unable_to_update = get_option("wbf_unable_to_update_plugins",array());
 		if(!empty($unable_to_update) && \WBF::is_wbf_admin_page()){
 			$message = sprintf(__( 'One or more Waboot plugin has an updated version available! <a href="%s" title="Enter a valid license">Enter a valid license</a> to get latest updates.', 'wbf' ),"admin.php?page=waboot_license");
-			$this->notice_manager->add_notice($message,"nag","_flash_");
+			$this->notice_manager->add_notice($this->plugin_slug."-update",$message,"nag","_flash_");
 		}
 	}
 
