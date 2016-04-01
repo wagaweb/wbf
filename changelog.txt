@@ -26,6 +26,7 @@ Version 0.13.12 -
 - Tweak: ora il file "client-custom.css" non è più rigidamente legato alla presenza della opzione "waboot_css", bensì prende in considerazione qualsiasi opzione di tipo "csseditor"
 - Tweak: maggiore separazione dei ruoli tra Options, Behaviors e Components. Ora sia Behaviors che Components si occupano di applicare le proprie modifiche a Options, mentre precedentemente era Options ad adattarsi alla presenza dei due moduli.
 - Tweak: ora l'update checker del plugin framework ha un timeout di 5 secondi
+- Tweak: refactoring generale degli update manager di tema e plugin, ora sono più flessibili.
 - Feature: ora WBF prevede l'utilizzo di una working directory nel tema chiamata di default "wbf" e definibile nella costante WBF_THEME_DIRECTORY.
 - Feature: introdotta la classe View, utilizzabile da temi e plugin.
 - Feature: ora i moduli possono avere una priorità di caricamento, settabile tramite filtro. La priorità di default è 10.
