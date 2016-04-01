@@ -3,6 +3,7 @@
 namespace WBF\includes\compiler\less;
 use WBF\includes\compiler\Base_Compiler;
 use \Exception;
+use WBF\includes\Utilities;
 
 require_once( \WBF::get_path()."includes/compiler/interface-base-compiler.php" );
 
@@ -79,7 +80,8 @@ class Less_Compiler implements Base_Compiler{
 	        if($parser_options['sourceMap']){
 		        if(is_string($parser_options['sourceMapWriteTo']) && !empty($parser_options['sourceMapWriteTo']) && !is_dir(dirname($parser_options['sourceMapWriteTo']))){
 			        $dir = dirname($parser_options['sourceMapWriteTo']);
-			        if(!mkdir($dir)){
+			        Utilities::mkpath($dir);
+			        if(!is_dir($dir)){
 				        throw new Exception("Cannot create ({$dir})");
 			        }
 		        }
