@@ -254,7 +254,7 @@ class Plugin_Update_Checker extends \PluginUpdateChecker{
 	public function update_available_notice(){
 		$unable_to_update = get_option("wbf_unable_to_update_plugins",array());
 		if(!empty($unable_to_update) && \WBF::is_wbf_admin_page()){
-			$message = sprintf(__( 'One or more Waboot plugin has an updated version available! <a href="%s" title="Enter a valid license">Enter a valid license</a> to get latest updates.', 'wbf' ),"admin.php?page=waboot_license");
+			$message = sprintf(__( 'One or more plugins has an updated version available! <a href="%s" title="Enter a valid license">Enter a valid license</a> to get latest updates.', 'wbf' ),"admin.php?page=wbf_licenses");
 			$this->notice_manager->add_notice($this->plugin_slug."-update",$message,"nag","_flash_");
 		}
 	}
