@@ -9,11 +9,11 @@ module.exports = function (grunt) {
             dev: {
                 options: {},
                 files: {
-                    'admin/css/tinymce.css': 'sources/less/tinymce.less',
-                    'admin/css/admin.css': 'sources/less/admin.less',
-                    'admin/css/optionsframework.css': 'sources/less/optionsframework.less',
-                    'admin/css/componentsframework.css': 'sources/less/componentsframework.less',
-                    'admin/css/pagebuilder.css': 'sources/less/pagebuilder.less'
+                    'admin/css/tinymce.css': 'assets/src/less/tinymce.less',
+                    'admin/css/admin.css': 'assets/src/less/admin.less',
+                    'admin/css/optionsframework.css': 'assets/src/less/optionsframework.less',
+                    'admin/css/componentsframework.css': 'assets/src/less/componentsframework.less',
+                    'admin/css/pagebuilder.css': 'assets/src/less/pagebuilder.less'
                 }
             },
             production: {
@@ -24,7 +24,7 @@ module.exports = function (grunt) {
             }
         },
         jshint: {
-            all: ['sources/js/**/*.js'],
+            all: ['assets/src/js/**/*.js'],
             options: {
                 browser: true,
                 curly: false,
@@ -45,8 +45,8 @@ module.exports = function (grunt) {
         },
         browserify: {
             dist: {
-                src: ['sources/js/admin/wbf-admin.js'],
-                dest: 'sources/js/admin/wbf-admin-bundle.js'
+                src: ['assets/src/js/admin/wbf-admin.js'],
+                dest: 'assets/src/js/admin/wbf-admin-bundle.js'
             }
         },
         uglify: {
@@ -56,13 +56,13 @@ module.exports = function (grunt) {
             },
             dist: {
                 files: {
-                    'admin/js/wbf-admin.min.js': ['sources/js/admin/wbf-admin-bundle.js'],
-                    /*'admin/js/admin.min.js': ['sources/js/admin/admin.js'],
-                    'admin/js/acf-fields.min.js': ['sources/js/admin/acf-fields/*.js'],
-                    'admin/js/code-editor.min.js': ['sources/js/admin/code-editor.js'],
-                    'admin/js/components-page.min.js': ['sources/js/admin/components-page.js'],
-                    'admin/js/font-selector.min.js': ['sources/js/admin/font-selector.js'],*/
-                    'includes/scripts/wbfgmap.min.js': ['sources/js/includes/wbfgmap/markerclusterer.js','sources/js/includes/wbfgmap/acfmap.js']
+                    'admin/js/wbf-admin.min.js': ['assets/src/js/admin/wbf-admin-bundle.js'],
+                    /*'admin/js/admin.min.js': ['assets/src/js/admin/admin.js'],
+                    'admin/js/acf-fields.min.js': ['assets/src/js/admin/acf-fields/*.js'],
+                    'admin/js/code-editor.min.js': ['assets/src/js/admin/code-editor.js'],
+                    'admin/js/components-page.min.js': ['assets/src/js/admin/components-page.js'],
+                    'admin/js/font-selector.min.js': ['assets/src/js/admin/font-selector.js'],*/
+                    'includes/scripts/wbfgmap.min.js': ['assets/src/js/includes/wbfgmap/markerclusterer.js','assets/src/js/includes/wbfgmap/acfmap.js']
                 }
             }
         },
@@ -153,7 +153,7 @@ module.exports = function (grunt) {
         },
         watch: {
             less: {
-                files: 'sources/less/*.less',
+                files: 'assets/src/less/*.less',
                 tasks: ['less:dev']
             }/*,
             scripts: {

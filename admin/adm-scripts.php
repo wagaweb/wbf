@@ -2,7 +2,7 @@
 
 function wbf_admin_scripts(){
     if(WBF_ENV == "dev"){
-	    wp_register_script("wbf-admin",WBF_URL."/sources/js/admin/wbf-admin-bundle.js",array("jquery","backbone","underscore"),false,true);
+	    wp_register_script("wbf-admin",WBF_URL."/assets/src/js/admin/wbf-admin-bundle.js",array("jquery","backbone","underscore"),false,true);
     }else{
         wp_register_script("wbf-admin",WBF_URL."/admin/js/wbf-admin.min.js",array("jquery","backbone","underscore"),false,true);
     }
