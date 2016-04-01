@@ -180,13 +180,23 @@ module.exports = function (grunt) {
     grunt.registerTask('jsmin', ['js', 'uglify']);
 
     //Build task
-    grunt.registerTask('build', ['less:production', 'jsmin', 'compress:build']);
+    grunt.registerTask('build', ['bower-update','less:production', 'jsmin', 'compress:build']);
 
     //Runs bower install
     grunt.registerTask('bower-install', function() {
         var exec = require('child_process').exec;
         var cb = this.async();
         exec('bower install', function(err, stdout, stderr) {
+            console.log(stdout);
+            cb();
+        });
+    });
+
+    //Runs bower update
+    grunt.registerTask('bower-update', function() {
+        var exec = require('child_process').exec;
+        var cb = this.async();
+        exec('bower update', function(err, stdout, stderr) {
             console.log(stdout);
             cb();
         });
