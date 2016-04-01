@@ -112,7 +112,8 @@ if( ! class_exists('WBF') ) :
 
 		protected function __construct($args = []){
 			$args = wp_parse_args($args,[
-				'do_global_theme_customizations' => true
+				'do_global_theme_customizations' => true,
+				'check_for_updates' => true
 			]);
 			$this->options = $args;
 			$this->startup();
@@ -148,10 +149,6 @@ if( ! class_exists('WBF') ) :
 
 			$this->url = self::get_url();
 			$this->path = self::get_path();
-
-			if($this->options['do_global_theme_customizations']){
-				add_action('wbf_after_setup_theme',[$this,'do_global_theme_customizations']);
-			}
 
 			if($this->is_plugin()){
 				add_action('activate_' . plugin_basename(__FILE__), [$this,"maybe_run_activation"]);
@@ -200,20 +197,6 @@ if( ! class_exists('WBF') ) :
 			add_filter( 'wbf/modules/options/priority', function(){
 				return 11;
 			});
-
-			//Set update server
-			if(self::is_plugin()){
-				$this->update_instance = new \WBF\includes\Plugin_Update_Checker(
-					"http://update.waboot.org/?action=get_metadata&slug=wbf&type=plugin", //$metadataUrl
-					self::get_path()."wbf.php", //$pluginFile
-					"wbf", //$slug
-					null, //$plugin_license
-					false, //$checkLicense
-					12, //$checkPeriod
-					'wbf_updates', //$optionName
-					is_multisite() //$muPluginFile
-				);
-			}
 		}
 
 		/*
@@ -594,6 +577,10 @@ if( ! class_exists('WBF') ) :
 		function after_setup_theme() {
 			global $wbf_notice_manager;
 
+			$this->options = apply_filters("wbf/options",$this->options);
+
+			do_action("wbf_after_setup_theme");
+
 			$this->modules = $this->load_modules();
 
 			// Make framework available for translation.
@@ -612,7 +599,9 @@ if( ! class_exists('WBF') ) :
 			//locate_template( '/wbf/public/scripts.php', true );
 			wbf_locate_file( '/admin/adm-scripts.php', true );
 
-			do_action("wbf_after_setup_theme");
+			if($this->options['do_global_theme_customizations']){
+				$this->do_global_theme_customizations();
+			}
 
 			// ACF INTEGRATION
 			if(!self::is_plugin()){
@@ -629,6 +618,22 @@ if( ! class_exists('WBF') ) :
 		 */
 		function init() {
 			do_action("wbf_init");
+
+			if($this->options['check_for_updates']){
+				//Set update server
+				if(self::is_plugin()){
+					$this->update_instance = new \WBF\includes\Plugin_Update_Checker(
+						"http://update.waboot.org/?action=get_metadata&slug=wbf&type=plugin", //$metadataUrl
+						self::get_path()."wbf.php", //$pluginFile
+						"wbf", //$slug
+						null, //$plugin_license
+						false, //$checkLicense
+						12, //$checkPeriod
+						'wbf_updates', //$optionName
+						is_multisite() //$muPluginFile
+					);
+				}
+			}
 
 			// Breadcrumbs
 			if(!class_exists("Breadcrumb_Trail") && !function_exists("breadcrumb_trail")){
@@ -891,7 +896,7 @@ if( ! class_exists('WBF') ) :
 	$GLOBALS['wbf'] = WBF::getInstance();
 
 else:
-	//HERE WBF IS ALREADY DEFINED. We can't tell if by a plugin or via theme... So...
+	//HERE WBF IS ALREADY DEFINED. We can't tell if by a plugin or others... So...
 
 	if(!defined("WBF_DIRECTORY")){
 		define("WBF_DIRECTORY", __DIR__);
