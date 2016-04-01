@@ -167,6 +167,18 @@ class Utilities{
 	}
 
 	/**
+	 * Recursively create directories
+	 *
+	 * @param $path
+	 *
+	 * @return bool
+	 */
+	static function mkpath($path) {
+		if(@mkdir($path) or file_exists($path)) return true;
+		return (self::mkpath(dirname($path)) and mkdir($path));
+	}
+
+	/**
 	 * Show a flash message in the dashboard
 	 *
 	 * @param $m
