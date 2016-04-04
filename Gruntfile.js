@@ -201,14 +201,4 @@ module.exports = function (grunt) {
             cb();
         });
     });
-
-    //Runs bower update
-    grunt.registerTask('bower-update', function() {
-        var exec = require('child_process').exec;
-        var cb = this.async();
-        exec('bower update', function(err, stdout, stderr) {
-            console.log(stdout);
-            cb();
-        });
-    });
 };
