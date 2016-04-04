@@ -542,7 +542,16 @@ class ComponentsManager {
 					                $options_to_update[$opt_name][$k] = "1";
 				                }
 			                }
-		                }
+		                }elseif(isset($of_options[$opt_name]) && Framework::get_option_type($opt_name) == "multicheck"){
+                            //Now se to "false" all disabled checkbox, and to "1" all enabled checkbox
+                            foreach($of_options[$opt_name] as $k => $v){
+                                if(!isset($options_to_update[$opt_name][$k])){
+                                    $options_to_update[$opt_name][$k] = false;
+                                }else{
+                                    $options_to_update[$opt_name][$k] = "1";
+                                }
+                            }
+                        }
 	                }
                 }
 	            //Check if we must update something...
