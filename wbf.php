@@ -254,23 +254,46 @@ if( ! class_exists('WBF') ) :
 		}
 
 		/**
-		 * Print copyright
+		 * Get the copyright string
+		 *
+		 * @return string
+		 */
+		static function get_copyright(){
+			$v = new \WBF\includes\mvc\View("views/admin/copyright.php","wbf");
+
+			$label = "WBF";
+			$version = self::version;
+
+			$theme = wp_get_theme();
+			if($theme && isset($theme->stylesheet)){
+				if($theme->stylesheet == "waboot"){
+					$label = "Waboot";
+					$version = $theme->version;
+				}
+				elseif($theme->stylesheet != "waboot" && $theme->template == "waboot"){
+					$theme = wp_get_theme("waboot");
+					if($theme && isset($theme->version)){
+						$label = "Waboot";
+						$version = $theme->version;
+					}
+				}
+			}
+
+			$output = $v->clean()->get([
+				'label' => $label,
+				'version' => $version,
+			]);
+
+			return $output;
+		}
+
+		/**
+		 * Print copyright string
+		 *
+		 * @return void
 		 */
 		static function print_copyright(){
-			$theme = wp_get_theme();
-			if($theme->stylesheet == "waboot"){
-				$version = $theme->version;
-			}
-			if($theme->stylesheet != "waboot" && $theme->template == "waboot"){
-				$theme = wp_get_theme("waboot");
-				$version = $theme->version;
-			}
-			if($theme->stylesheet != "waboot" && $theme->template != "waboot"){
-				$version = self::version;
-			}
-			$output = "<div class=\"wbf-copy\"><span><em>Waboot ".$version."</em>";
-			$output .= "</span></div>";
-			echo $output;
+			echo self::get_copyright();
 		}
 
 		/**
