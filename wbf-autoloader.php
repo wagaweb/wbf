@@ -131,6 +131,15 @@ function wbf_autoloader($class) {
         case "ThemeUpdateChecker":
 	        \WBF\includes\Utilities::locate_file('vendor/theme-updates/theme-update-checker.php', true);
             break;
+		case "PluginUpdateChecker":
+		case "PluginUpdate":
+		case "PluginInfo":
+		case "PluginUpdateChecker_1_6":
+		case "PluginInfo_1_6":
+		case "PluginUpdate_1_6":
+		case "PucFactory":
+			\WBF\includes\Utilities::locate_file('vendor/yahnis-elsts/plugin-update-checker/plugin-update-checker.php', true);
+			break;
         case "Options_Framework":
 	        \WBF\includes\Utilities::locate_file('vendor/options-framework/class-options-framework.php', true);
             break;
