@@ -2,12 +2,10 @@
 /**
  * Apply custom stylesheet to admin panel
  *
- * @param $page
- *
-*@since 0.1.0
+ * @since 0.1.0
  * @uses wbf_locate_template_uri()
  */
-function wbf_admin_styles($page) {
+function wbf_admin_styles() {
     wp_enqueue_style('waboot-admin-style', \WBF::prefix_url('admin/css/admin.css'), array(), false, 'all');
 }
 add_action('admin_enqueue_scripts', 'wbf_admin_styles');
