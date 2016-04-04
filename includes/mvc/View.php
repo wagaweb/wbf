@@ -61,7 +61,7 @@ class View {
 	/**
 	 * Initialize a new view. If the $plugin argument is not provided, the template file will be searched into stylesheet and template directories.
 	 *
-	 * @param string $relative_file_path a path relative to $module "views" dir or to the root "views" dir if $module is not provided
+	 * @param string $relative_file_path a path to the view file starting from the theme or plugin directory
 	 * @param string|\WBF\includes\pluginsframework\Plugin  $plugin a plugin directory name or an instance of \WBF\includes\pluginsframework\Plugin
 	 *
 	 * @throws \Exception
@@ -133,5 +133,16 @@ class View {
 		}else{
 			include $this->template['dirname']."/".$this->template['basename'];
 		}
+	}
+
+	/**
+	 * Get the view output. The provided vars will be extracted with extract() but they will be also available through $GLOBALS['template_vars'].
+	 * @param array $vars
+	 */
+	function get($vars = []){
+		ob_start();
+		$this->display($vars);
+		$output = trim(preg_replace( "|[\r\n\t]|", "", ob_get_clean()));
+		return $output;
 	}
 }
