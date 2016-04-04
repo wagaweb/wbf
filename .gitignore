@@ -13,6 +13,7 @@ admin/css/admin.css
 admin/css/optionsframework.css
 admin/css/componentsframework.css
 admin/css/pagebuilder.css
+assets/src/js/admin/wbf-admin-bundle.js
 
 ############
 ## VENDORS (composer)
