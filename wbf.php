@@ -602,9 +602,9 @@ if( ! class_exists('WBF') ) :
 
 			$this->options = apply_filters("wbf/options",$this->options);
 
-			do_action("wbf_after_setup_theme");
-
 			$this->modules = $this->load_modules();
+
+			do_action("wbf_after_setup_theme");
 
 			// Make framework available for translation.
 			load_textdomain( 'wbf', self::get_path() . 'languages/wbf-'.get_locale().".mo");
