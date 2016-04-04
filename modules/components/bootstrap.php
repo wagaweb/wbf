@@ -32,24 +32,38 @@ add_action("wbf_init",'\WBF\modules\components\setup_components', 12);
 
 /**
  * Hides components tab in theme options
- *
- * @param string $section_html
- * @param array $current_option
- * @param array $options
- *
- * @hooked "wbf/modules/options/gui/tab_section/html"
- *
  * @since 0.13.12
  *
- * @return string
+ * @param $tabs
+ * @param array $options
+ *
+ * @hooked "wbf/modules/options/gui/tab_section/tabs"
+ *
+ * @return array
  */
-function hide_components_tabs($section_html,$current_option,$options){
-	if(isset($current_option['component'])){
-		$section_html = "";
+function hide_components_tabs($tabs,$options){
+	foreach($tabs as $k => $current_option){
+		if(isset($current_option['component'])){
+			unset($tabs[$k]);
+		}
 	}
-	return $section_html;
+	return $tabs;
 }
-add_filter("wbf/modules/options/gui/tab_section/html",'\WBF\modules\components\hide_components_tabs',10,3);
+add_filter("wbf/modules/options/gui/tab_section/tabs",'\WBF\modules\components\hide_components_tabs',10,2);
+
+function hide_components_options($options){
+	$current_screen = get_current_screen();
+	if(preg_match("/components/",$current_screen->base)){
+		return $options;
+	}
+	foreach($options as $k => $opt){
+		if(isset($opt['component']) && $opt['component']){
+			unset($options[$k]);
+		}
+	}
+	return $options;
+}
+add_filter("wbf/modules/options/gui/options_to_render",'\WBF\modules\components\hide_components_options',10);
 
 /**
  * WP HOOKS

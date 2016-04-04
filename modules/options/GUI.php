@@ -2,6 +2,8 @@
 
 namespace WBF\modules\options;
 
+use WBF\includes\mvc\View;
+
 class GUI extends \Options_Framework_Interface {
 	static function getOrganizer(){
 		return Organizer::getInstance();
@@ -32,8 +34,11 @@ class GUI extends \Options_Framework_Interface {
         $counter = 0;
         $menu = '';
 
+		$options = apply_filters("wbf/modules/options/gui/options_to_render",$options);
+
 	    if(is_array($options) && !empty($options)){
             foreach ($options as $value) {
+
 	            $val = '';
 	            $select_value = '';
 	            $output = '';
@@ -360,21 +365,17 @@ class GUI extends \Options_Framework_Interface {
      * Generates the tabs that are used in the options menu
      */
     static function optionsframework_tabs() {
-        $counter = 0;
         $options = & Framework::get_registered_options();
-        $menu = '';
+        $tabs = [];
         if(is_array($options) && !empty($options)){
-		    foreach ( $options as $value ) {
-	            // Heading for Navigation
-	            if ( $value['type'] == "heading") {
-	                $counter++;
-		            $class = !empty( $value['id'] ) ? $value['id'] : $value['name'];
-		            $class = preg_replace( '/[^a-zA-Z0-9._\-]/', '', strtolower($class) ) . '-tab';
-		            $html = '<li><a id="options-group-'.  $counter . '-tab" class="nav-tab ' . $class .'" title="' . esc_attr( $value['name'] ) . '" href="' . esc_attr( '#options-group-'.  $counter ) . '">' . esc_html( $value['name'] ) . '</a></li>';
-		            $menu .= apply_filters("wbf/modules/options/gui/tab_section/html",$html,$value,$options);
-	            }
-	        }
+			$tabs = array_filter($options, function($el){
+				if ($el['type'] == "heading") {
+					return true;
+				}
+				return false;
+			});
+			$tabs = apply_filters("wbf/modules/options/gui/tab_section/tabs",$tabs,$options);
         }
-        return $menu;
+        return $tabs;
     }
 }

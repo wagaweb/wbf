@@ -180,7 +180,9 @@ class Component {
 	 *
 	 * @return mixed
 	 */
-    public function theme_options($options){ return $options; }
+    public function theme_options($options){
+		return $options;
+	}
 
 	public function get_theme_options_values(){
 		return Framework::get_options_values_by_suffix($this->name);

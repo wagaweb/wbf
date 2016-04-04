@@ -480,6 +480,9 @@ class ComponentsManager {
         }
     }
 
+	/**
+     *
+     */
     static function components_admin_page() {
 
         if( (isset($_GET['enable']) || isset($_GET['disable'])) && !empty(self::$last_error) ){
