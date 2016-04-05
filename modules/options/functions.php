@@ -232,7 +232,18 @@ function of_create_styles($values){
  * @return string
  */
 function of_styles_get_default_input_path(){
-	return $input_file_path = WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR."/_theme-options-generated.less.cmp";
+	$input_file_path = WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR."/_theme-options-generated.less.cmp";
+	return $input_file_path;
+}
+
+/**
+ * Return the default path for _theme-options-generated.less.cmp in parent theme
+ *
+ * @return string
+ */
+function of_styles_get_parent_default_input_path(){
+	$input_file_path = get_template_directory()."/".WBF_THEME_DIRECTORY_NAME."/options/_theme-options-generated.less.cmp";
+	return $input_file_path;
 }
 
 /**
@@ -313,7 +324,8 @@ function of_generate_less_file($value = null,$input_file_path = null,$output_fil
 	$output_string = "";
 
     $tmpFile = new \SplFileInfo($input_file_path);
-    if(!$tmpFile->isFile() || !$tmpFile->isWritable()){
+    if( (!$tmpFile->isFile() || !$tmpFile->isWritable()) && is_child_theme() ){
+	    $input_file_path = of_styles_get_parent_default_input_path(); //Search in parent
         $tmpFile = new \SplFileInfo($input_file_path);
     }
 	$parsedFile = $output_file_path ? new \SplFileInfo($output_file_path) : null;
