@@ -215,12 +215,12 @@ function of_recompile_styles($values,$release = false){
 /**
  * Generate a new style file for the theme options
  *
- * @param $values
+ * @param array|null $values
  * @uses of_generate_less_file
  *
  * @return bool|string
  */
-function of_create_styles($values){
+function of_create_styles($values = null){
 	$input_file_path = apply_filters("wbf/theme_options/styles/input_path",of_styles_get_default_input_path());
 	$output_file_path = apply_filters("wbf/theme_options/styles/output_path",of_styles_get_default_output_path());
 	return of_generate_less_file($values,$input_file_path,$output_file_path); //Create a theme-options-generated.less file
@@ -319,7 +319,7 @@ function of_generate_less_file($value = null,$input_file_path = null,$output_fil
 		$output_file_path = of_styles_get_default_output_path();
 	}
 
-	if(!is_array($value)) return;
+	if(!is_array($value)) return false;
 
 	$output_string = "";
 
