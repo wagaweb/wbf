@@ -1,6 +1,6 @@
 <?php
 
-namespace FisPressShop\includes\wc;
+namespace WBF\extensions\woocommerce;
 
 class WCUtilities {
 
