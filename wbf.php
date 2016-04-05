@@ -171,8 +171,6 @@ if( ! class_exists('WBF') ) :
 			add_action( 'wp_enqueue_scripts', [$this,"register_libs"] );
 			add_action( 'admin_enqueue_scripts', [$this,"register_libs"] );
 
-			add_filter( 'options_framework_location',[$this,"of_location_override"] );
-
 			/*
 			 * |- Main Actions: END
 			 */
@@ -798,17 +796,6 @@ if( ! class_exists('WBF') ) :
 				);
 				$wp_admin_bar->add_node( $args );
 			}
-		}
-
-		/**
-		 * Override default location of options.php
-		 *
-		 * @hooked 'options_framework_location'
-		 *
-		 * @return array
-		 */
-		function of_location_override(){
-			return array("inc/options.php");
 		}
 
 		/*

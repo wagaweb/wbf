@@ -72,22 +72,22 @@ class Framework extends \Options_Framework {
 
         if ( !$options ) {
             // Load options from options.php file (if it exists)
-            $location = apply_filters( 'options_framework_location', array('options.php') ); //todo: will be deprecated
-            $location = apply_filters( 'wbf/modules/options/include_file', $location );
+            $locations = apply_filters( 'options_framework_location', false ); //todo: will be deprecated
+            $locations = apply_filters( 'wbf/modules/options/include_file', $locations );
 
-			if(is_array($location)){
-				foreach($location as $loc){
+			if(is_array($locations)){
+				foreach($locations as $loc){
 					if(is_file($loc)){
 						require_once $loc;
 					}else{
 						$r = locate_template( $loc, true );
 					}
 				}
-			}elseif(is_string($location)){
-				if(is_file($location)){
-					require_once $location;
+			}elseif(is_string($locations)){
+				if(is_file($locations)){
+					require_once $locations;
 				}else{
-					$r = locate_template( $location, true );
+					$r = locate_template( $locations, true );
 				}
 			}
 
