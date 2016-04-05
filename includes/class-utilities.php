@@ -221,7 +221,8 @@ class Utilities{
 	static function get_filtered_post_types($blacklist = array()){
 		$post_types = get_post_types();
 		$result = array();
-		$blacklist = array_unique(array_merge($blacklist,array('attachment','revision','nav_menu_item','ml-slider','acf-field-group','acf-field','webhook')));
+		$blacklist = array_merge($blacklist,array('attachment','revision','nav_menu_item','ml-slider'));
+		$blacklist = array_unique(apply_filters("wbf/utilities/get_filtered_post_types/blacklist",$blacklist));
 		foreach($post_types as $pt){
 			if(!in_array($pt,$blacklist)){
 				$pt_obj = get_post_type_object($pt);
