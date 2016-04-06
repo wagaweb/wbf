@@ -2,7 +2,7 @@
 
 namespace WBF\modules\options;
 
-use WBF\includes\mvc\View;
+use WBF\includes\mvc\HTMLView;
 
 class GUI extends \Options_Framework_Interface {
 	static function getOrganizer(){

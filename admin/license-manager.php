@@ -4,7 +4,7 @@ namespace WBF\admin;
 
 use WBF\includes\License;
 use WBF\includes\License_Exception;
-use WBF\includes\mvc\View;
+use WBF\includes\mvc\HTMLView;
 use WBF\includes\Theme_Update_Checker;
 
 class License_Manager{
@@ -57,7 +57,7 @@ class License_Manager{
 	 * Callback for displaying the licenses page
 	 */
 	static function license_page(){
-		$v = new View("views/admin/license-manager.php","wbf");
+		$v = new HTMLView("views/admin/license-manager.php","wbf");
 		$vars = [
 			'has_theme_licenses' => self::has_theme_licenses(),
 			'has_plugin_licenses' => self::has_plugin_licenses(),

@@ -261,7 +261,7 @@ if( ! class_exists('WBF') ) :
 		 * @return string
 		 */
 		static function get_copyright(){
-			$v = new \WBF\includes\mvc\View("views/admin/copyright.php","wbf");
+			$v = new \WBF\includes\mvc\HTMLView("views/admin/copyright.php","wbf");
 
 			$label = "WBF";
 			$version = self::version;
