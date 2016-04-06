@@ -9,31 +9,33 @@ module.exports = {
 
         //Initialize all editors.
         //The Timeout is necessary due to the lag between window load and the time needed for theme options script to arrange/show/hide the tabs.
-        setTimeout(function () {
-            targets.each(function (index) {
-                var my_option_group = $(this).closest(".group");
-                var my_options_group_link = $("a#" + my_option_group.attr("id") + "-tab");
-                var my_mode = $(this).attr("data-lang");
-                var editor = $(this).codemirror({
-                    mode: {name: my_mode, globalVars: true},
-                    lineNumbers: true,
-                    theme: "ambiance",
-                    extraKeys: (function () {
-                        if (isMac) {
-                            return {"Ctrl-F": "autocomplete"};
-                        } else {
-                            return {"Ctrl-Space": "autocomplete"};
-                        }
-                    })()
+        if(typeof CodeMirror !== "undefined"){
+            setTimeout(function () {
+                targets.each(function (index) {
+                    var my_option_group = $(this).closest(".group");
+                    var my_options_group_link = $("a#" + my_option_group.attr("id") + "-tab");
+                    var my_mode = $(this).attr("data-lang");
+                    var editor = $(this).codemirror({
+                        mode: {name: my_mode, globalVars: true},
+                        lineNumbers: true,
+                        theme: "ambiance",
+                        extraKeys: (function () {
+                            if (isMac) {
+                                return {"Ctrl-F": "autocomplete"};
+                            } else {
+                                return {"Ctrl-Space": "autocomplete"};
+                            }
+                        })()
+                    });
+                    editors.push(editor);
+                    my_options_group_link.bind("click", function () {
+                        setTimeout(function () {
+                            editor.refresh();
+                        }, 1000);
+                    });
                 });
-                editors.push(editor);
-                my_options_group_link.bind("click", function () {
-                    setTimeout(function () {
-                        editor.refresh();
-                    }, 1000);
-                });
-            });
-        }, 1500);
+            }, 1500);
+        }
 
         /*$("a#options-group-2-tab").on("click",function(){
          setTimeout(function(){
@@ -54,6 +56,10 @@ module.exports = {
                 'lineNumbers': false,
                 'runmode': false
             }, options);
+
+            if(typeof CodeMirror == "undefined"){
+                return;
+            }
 
             if (settings.runmode) this.each(function () {
                 var obj = $(this);

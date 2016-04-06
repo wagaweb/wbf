@@ -3,7 +3,9 @@
 namespace WBF\modules\components;
 
 
+use WBF\includes\mvc\HTMLView;
 use WBF\modules\options\Framework;
+use WBF\modules\options\Organizer;
 
 class ComponentsManager {
 
@@ -13,7 +15,7 @@ class ComponentsManager {
      * Add hooks, detect components into components directory and updates relative options
      */
     static function init(){
-	    add_action("wbf/theme_options/register",'\WBF\modules\components\ComponentsManager::addRegisteredComponentOptions'); //register component options
+	    add_action("wbf/theme_options/register",'\WBF\modules\components\ComponentsManager::addRegisteredComponentOptions',999); //register component options
         /** Detect components in main theme **/
         self::_detect_components(get_template_directory()."/components");
         /** Detect components in child theme **/
@@ -31,7 +33,7 @@ class ComponentsManager {
                 wp_enqueue_style('waboot-theme-components-style', $stylesheet, array(), '1.0.0', 'all'); //Custom Theme Options CSS
             }
             /*if(WBF_ENV == "dev"){
-                wp_register_script('component-page-script',WBF_URL."/sources/js/admin/components-page.js",array('jquery'));
+                wp_register_script('component-page-script',WBF_URL."/assets/src/js/admin/components-page.js",array('jquery'));
             }else{
                 wp_register_script('component-page-script',WBF_URL."/admin/js/components-page.min.js",array('jquery'));
             }
@@ -260,6 +262,7 @@ class ComponentsManager {
                 require_once( $c['file'] );
                 $className  = ucfirst( $c['nicename'] ) . "Component";
                 $oComponent = new $className( $c );
+	            add_filter("wbf/modules/components/component/{$oComponent->name}_component/register_custom_options",[$oComponent,"theme_options"]);
                 $oComponent->register_options();
             }
         }
@@ -478,18 +481,16 @@ class ComponentsManager {
         }
     }
 
+	/**
+     * Display the component page
+     */
     static function components_admin_page() {
 
-        if( (isset($_GET['enable']) || isset($_GET['disable'])) && !empty(self::$last_error) ){
-            ?>
-            <div class="error">
-                <p><?php echo self::$last_error; ?></p>
-            </div>
-        <?php
-        }
+		$options_updated_flag = false;
 
         if(isset($_POST['reset'])){
             self::reset_components_state();
+			$options_updated_flag = true;
         }
 
         $registered_components = self::getAllComponents();
@@ -537,7 +538,16 @@ class ComponentsManager {
 					                $options_to_update[$opt_name][$k] = "1";
 				                }
 			                }
-		                }
+		                }elseif(isset($of_options[$opt_name]) && Framework::get_option_type($opt_name) == "multicheck"){
+                            //Now se to "false" all disabled checkbox, and to "1" all enabled checkbox
+                            foreach($of_options[$opt_name] as $k => $v){
+                                if(!isset($options_to_update[$opt_name][$k])){
+                                    $options_to_update[$opt_name][$k] = false;
+                                }else{
+                                    $options_to_update[$opt_name][$k] = "1";
+                                }
+                            }
+                        }
 	                }
                 }
 	            //Check if we must update something...
@@ -548,8 +558,10 @@ class ComponentsManager {
 		            }
 	            }
             }
-            if($must_update)
+
+            if($must_update){
 	            Framework::update_theme_options($of_options);
+			}
 
             //Set the flag that tells that the components was saved at least once
             $theme = wp_get_theme();
@@ -558,9 +570,11 @@ class ComponentsManager {
 		        $components_already_saved[] = $theme->get_stylesheet();
 		        update_option("wbf_components_saved_once", $components_already_saved);
             }
+
+			$options_updated_flag = true;
         }
 
-        $components_options = apply_filters("wbf_components_options",array());
+        $components_options = Organizer::getInstance()->get_group("components");
         $compiled_components_options = array();
         $current_element = "";
         foreach($components_options as $key => $option){
@@ -572,127 +586,12 @@ class ComponentsManager {
             $compiled_components_options[$current_element][] = $components_options[$key];
         }
 
-        ?>
-        <div id="componentframework-wrapper" class="wrap">
-            <div class="componentframework-header">
-                <h2><?php _e( "Components", "wbf" ); ?></h2>
-            </div>
-
-            <div id="componentframework-content-wrapper">
-                <div class="nav-tab-wrapper">
-                    <ul>
-                        <li><a class="nav-tab" id="component-main-tab" data-show-comp-settings='component-main' href="#component-main">Available components</a></li>
-                        <?php foreach($registered_components as $comp_data): if(self::is_active($comp_data)) : ?>
-                            <li><a class="nav-tab" id="component-<?php echo $comp_data['nicename']; ?>-link" data-show-comp-settings='component-<?php echo $comp_data['nicename']; ?>' href="#component-<?php echo $comp_data['nicename']; ?>"><?php echo ucfirst($comp_data['nicename']); ?></a></li>
-                        <?php endif; endforeach; ?>
-                    </ul>
-                </div>
-                <div id="componentframework-metabox" class="metabox-holder">
-                    <div id="componentframework" class="postbox">
-                        <form method="post" action="admin.php?page=waboot_components">
-                            <div id="component-main" class="group">
-                                <table class="wp-list-table widefat components">
-                                    <thead>
-                                    <tr>
-                                        <th scope="col"></th>
-                                        <th scope="col" id="name"
-                                            class="manage-column column-name"><?php _e( "Component", "wbf" ) ?></th>
-                                        <th scope="col" id="description"
-                                            class="manage-column column-description"><?php _e( "Enable\Disable", "wbf" ) ?></th>
-                                    </tr>
-                                    </thead>
-                                    <tfoot>
-                                    <tr>
-                                        <th scope="col"></th>
-                                        <th scope="col" id="name"
-                                            class="manage-column column-name"><?php _e( "Component", "wbf" ) ?></th>
-                                        <th scope="col" id="description"
-                                            class="manage-column column-description"><?php _e( "Enable\Disable", "wbf" ) ?></th>
-                                    </tr>
-                                    </tfoot>
-                                    <tbody id="the-list">
-                                    <?php $i=1; foreach ( $registered_components as $comp_data ) : ?>
-                                        <tr id="<?php echo $comp_data['nicename']; ?>" <class="<?php print_component_status( $comp_data ); ?> <?php if($i%2 == 0) echo "even"; else echo "odd"; ?>">
-                                        <?php
-                                            //$data = get_plugin_data($comp_data['file']);
-                                            $data = self::get_component_data( $comp_data['file'] );
-                                        ?>
-                                        <th></th>
-                                        <th class="component-data column-description desc">
-                                            <strong><?php echo $data['Name']; ?></strong>
-                                            <div class="component-description">
-                                                <?php echo $data['Description']; ?>
-                                                <?php if ( self::is_child_component( $comp_data ) ) : ?>
-                                                    <p class="child-component-notice">
-                                                        <?php _e( "This is a component of the current child theme", "wbf" ); ?>
-                                                        <?php
-                                                        if ( isset( $comp_data['override'] ) ) {
-                                                            if ( $comp_data['override'] ) {
-                                                                _e( ", and <strong>override a core component</strong>", "wbf" );
-                                                            }
-                                                        }
-                                                        ?>
-                                                    </p>
-                                                <?php endif; ?>
-                                            </div>
-                                            <div class="<?php print_component_status($comp_data); ?> second plugin-version-author-uri">
-                                                <?php
-                                                $component_meta = array();
-                                                if ( ! empty( $data['Version'] ) ) {
-                                                    $component_meta[] = sprintf( __( 'Version %s' ), $data['Version'] );
-                                                }
-                                                if ( ! empty( $data['Author'] ) ) {
-                                                    $author = $data['Author'];
-                                                    if ( ! empty( $data['AuthorURI'] ) ) {
-                                                        $author = '<a href="' . $data['AuthorURI'] . '" title="' . esc_attr__( 'Visit author homepage' ) . '">' . $data['Author'] . '</a>';
-                                                    }
-                                                    $component_meta[] = sprintf( __( 'By %s' ), $author );
-                                                }
-                                                if ( ! empty( $plugin_data['PluginURI'] ) ) {
-                                                    $component_meta[] = '<a href="' . $data['ComponentURI'] . '" title="' . esc_attr__( 'Visit plugin site' ) . '">' . __( 'Visit plugin site' ) . '</a>';
-                                                }
-
-                                                echo implode( ' | ', $component_meta );
-
-                                                ?>
-                                            </div>
-                                        </th>
-                                        <th class="component-actions">
-                                            <div class="row-actions visible">
-                                                <div class="wb-onoffswitch">
-                                                    <?php if ( ! self::is_active( $comp_data ) ) : ?>
-                                                        <input id="<?php echo $comp_data['nicename']; ?>_status" class="checkbox of-input wb-onoffswitch-checkbox" type="checkbox" name="components_status[<?php echo $comp_data['nicename']; ?>]" >
-                                                    <?php else: ?>
-                                                        <input id="<?php echo $comp_data['nicename']; ?>_status" class="checkbox of-input wb-onoffswitch-checkbox" type="checkbox" name="components_status[<?php echo $comp_data['nicename']; ?>]" checked="checked">
-                                                    <?php endif; ?>
-                                                    <label class="wb-onoffswitch-label" for="<?php echo $comp_data['nicename']; ?>_status"><span class="wb-onoffswitch-inner"></span>
-                                                        <span class="wb-onoffswitch-switch"></span>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </th>
-                                    </tr>
-                                <?php $i++; endforeach; ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <?php foreach($registered_components as $comp_data): if(self::is_active($comp_data)) : ?>
-                            <div id="component-<?php echo $comp_data['nicename']; ?>" class="group" style="display: none;">
-                                <h3><?php _e(sprintf("%s Component Settings",ucfirst($comp_data['nicename'])),"wbf"); ?></h3>
-                                <?php \WBF\modules\options\GUI::optionsframework_fields($compiled_components_options[$comp_data['nicename']]); ?>
-                                <!-- </div> not necessary (for some reason) -->
-                                <?php endif; endforeach; ?>
-                                <div id="componentframework-submit">
-                                    <input type="submit" name="submit-components-options" id="submit" class="button button-primary" value="Save Changes">
-                                    <input type="submit" class="reset-button button-secondary" name="reset" value="<?php esc_attr_e( 'Restore default component activation state', 'wbf' ); ?>" onclick="return confirm( '<?php print esc_js( __( 'Click OK to reset. Any theme settings will be lost!', 'wbf' ) ); ?>' );" />
-                                </div>
-                        </form>
-                    </div>
-                </div><!-- #componentframework-content -->
-            </div><!-- #componentframework-wrap -->
-            <?php \WBF::print_copyright(); ?>
-        </div><!-- .wrap: end -->
-    <?php
+        (new HTMLView("modules/components/views/components_page.php","wbf"))->clean()->display([
+            'registered_components' => $registered_components,
+            'compiled_components_options' => $compiled_components_options,
+			'last_error' => (isset($_GET['enable']) || isset($_GET['disable'])) && !empty(self::$last_error)? self::$last_error : false,
+			'options_updated_flag' => $options_updated_flag
+        ]);
     }
 
     /**

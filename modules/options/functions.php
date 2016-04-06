@@ -37,7 +37,7 @@ function of_check_options_deps(){
  * @param $old_value
  * @param $value
  *
- * @uses of_generate_less_file()
+ * @uses of_recompile_styles()
  * @throws \Exception
  */
 function of_options_save($option, $old_value, $value){
@@ -115,19 +115,41 @@ function of_options_save($option, $old_value, $value){
                 }
                 /*
                  * Check theme options dependencies
+                 *
+                 * Usage: options can specify dependencies at a global or value-specific level.
+                 *
+                 * - Global:
+                 * $opt_data['deps']['_global']['components'] = ['foo']
+                 * The "foo" component has to be active when this option has any value.
+                 *
+                 * - Value-specific:
+                 * $opt_data['deps']['foo']['components'] = ['bar']
+                 * The "bar" component has to be active when the option has the value of "foo"
+                 *
                  */
                 if(isset($opt_data['deps'])){
                     if(isset($opt_data['deps']['_global'])){
-                        if(isset($opt_data['deps']['_global']['components']))
+                        if(isset($opt_data['deps']['_global']['components'])){
                             $deps_to_achieve['components'][] = $opt_data['deps']['_global']['components'];
-                    }
-                    unset($opt_data['deps']['_global']);
-                    foreach($opt_data['deps'] as $v => $deps){
-                        if(array_key_exists($opt_data['id'],$value) && $value[$opt_data['id']] == $v){ //true the option has the value specified into deps array
-                            //Then set the deps to achieve
-                            if(isset($deps['components'])) $deps_to_achieve['components'] = $deps['components'];
                         }
+	                    unset($opt_data['deps']['_global']);
                     }
+	                if(!empty($opt_data['deps'])){
+		                foreach($opt_data['deps'] as $v => $deps){
+			                if(!is_array($deps)) continue;
+			                if(array_key_exists($opt_data['id'],$value) && $value[$opt_data['id']] == $v){ //true the option has the value specified into deps array
+				                //Then set the deps to achieve
+				                foreach($deps as $type => $deps_names){
+					                if(!is_array($deps_names)) continue;
+					                if(array_key_exists($type,$deps_to_achieve)){
+						                $deps_to_achieve[$type] = array_merge($deps_to_achieve[$type],$deps_names);
+					                }else{
+						                $deps_to_achieve[$type] = $deps_names;
+					                }
+				                }
+			                }
+		                }
+	                }
                 }
             }
         }
@@ -146,19 +168,24 @@ function of_options_save($option, $old_value, $value){
         if(!empty($deps_to_achieve)){
             $wbf_notice_manager->clear_notices("theme_opt_component_deps");
             if(!empty($deps_to_achieve['components'])){
-                //Try to enable all the required components
-                $registered_components = ComponentsManager::getAllComponents();
-                foreach($deps_to_achieve['components'] as $c_name){
-                    if(!ComponentsManager::is_active($c_name)){
-                        if(ComponentsManager::is_present($c_name)){
-                            ComponentsManager::enable($c_name, ComponentsManager::is_child_component( $c_name ));
-                        }else{
-                            //Register new notice that tells that the component is not present
-                            $message = __("An option requires the component <strong>$c_name</strong>, but it is not present","wbf");
-                            $wbf_notice_manager->add_notice($c_name."_component_not_present",$message,"error","theme_opt_component_deps","FileIsPresent",ComponentsManager::generate_component_mainfile_path($c_name));
-                        }
-                    }
-                }
+	            if(\WBF::getInstance()->module_is_loaded("components")){
+		            //Try to enable all the required components
+		            $registered_components = ComponentsManager::getAllComponents();
+		            foreach($deps_to_achieve['components'] as $c_name){
+			            if(!ComponentsManager::is_active($c_name)){
+				            if(ComponentsManager::is_present($c_name)){
+					            ComponentsManager::enable($c_name, ComponentsManager::is_child_component( $c_name ));
+				            }else{
+					            //Register new notice that tells that the component is not present
+					            $message = __("An option requires the component <strong>$c_name</strong>, but it is not present","wbf");
+					            $wbf_notice_manager->add_notice($c_name."_component_not_present",$message,"error","theme_opt_component_deps","FileIsPresent",ComponentsManager::generate_component_mainfile_path($c_name));
+				            }
+			            }
+		            }
+	            }else{
+		            $message = __("An option requires components module, but it is not loaded","wbf");
+		            $wbf_notice_manager->add_notice("components_not_loaded",$message,"error","_flash_");
+	            }
             }
         }else{
             $wbf_notice_manager->clear_notices("theme_opt_component_deps");
@@ -168,50 +195,140 @@ function of_options_save($option, $old_value, $value){
 
 /**
  * Generate a new _theme-options-generated.less and recompile the styles
+ *
  * @param $values
- * @param false $release release the compiler after? Default to "false". If "false" the compiler release the lock itself if necessary.
- * @uses of_generate_less_file
+ * @param bool|false $release release the compiler after? Default to "false". If "false" the compiler release the lock itself if necessary.
+ * @uses of_create_styles
  */
 function of_recompile_styles($values,$release = false){
-	of_generate_less_file($values); //Create a theme-options-generated.less file //todo: in un ottica di poter utilizzare più compilatori, questo file dovrebbe essere specificato altrove
-	//Then, compile less
-	if(isset($GLOBALS['wbf_styles_compiler']) && $GLOBALS['wbf_styles_compiler']){
-		global $wbf_styles_compiler;
-		$wbf_styles_compiler->compile();
-		if($release) $wbf_styles_compiler->release_lock();
+	$result = of_create_styles($values);
+	if($result){
+		//Then, compile less
+		if(isset($GLOBALS['wbf_styles_compiler']) && $GLOBALS['wbf_styles_compiler']){
+			global $wbf_styles_compiler;
+			$wbf_styles_compiler->compile();
+			if($release) $wbf_styles_compiler->release_lock();
+		}
 	}
 }
 
 /**
- * Replace {of_get_option} and {of_get_font} tags in _theme-options-generated.less.cmp; It is called during "update_option" via of_options_save() and during "wbf/compiler/pre_compile" via hook
+ * Generate a new style file for the theme options
  *
- * @param $value values of the options
+ * @param array|null $values
+ * @uses of_generate_less_file
+ *
+ * @return bool|string
+ */
+function of_create_styles($values = null){
+	$input_file_path = apply_filters("wbf/theme_options/styles/input_path",of_styles_get_default_input_path());
+	$output_file_path = apply_filters("wbf/theme_options/styles/output_path",of_styles_get_default_output_path());
+	return of_generate_less_file($values,$input_file_path,$output_file_path); //Create a theme-options-generated.less file
+}
+
+/**
+ * Return the default path for _theme-options-generated.less.cmp
+ *
+ * @return string
+ */
+function of_styles_get_default_input_path(){
+	$input_file_path = WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR."/_theme-options-generated.less.cmp";
+	return $input_file_path;
+}
+
+/**
+ * Return the default path for _theme-options-generated.less.cmp in parent theme
+ *
+ * @return string
+ */
+function of_styles_get_parent_default_input_path(){
+	$input_file_path = get_template_directory()."/".WBF_THEME_DIRECTORY_NAME."/options/_theme-options-generated.less.cmp";
+	return $input_file_path;
+}
+
+/**
+ * Return the default path for theme-options-generated.less
+ *
+ * @return string
+ */
+function of_styles_get_default_output_path(){
+	if(is_multisite()){
+		$blogname = wbf_get_sanitized_blogname();
+		if(!isset($output_file_path) || empty($output_file_path)){
+			$output_file_path = WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR."/mu/{$blogname}-theme-options-generated.less";
+		}
+	}else{
+		if(!isset($output_file_path) || empty($output_file_path)){
+			$output_file_path = WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR."/theme-options-generated.less";
+		}
+	}
+	return $output_file_path;
+}
+
+/**
+ * Parse {@import 'theme-options-generated.less'} into tmp_ style file.
+ *
+ * @hooked 'wbf/compiler/parser/line/import'
+ *
+ * @param $line
+ * @param $inputFile
+ * @param $filepath
+ *
+ * @return string
+ */
+function of_parse_generated_file($parsed_line,$line,$matches,$filepath,$inputFile){
+	/*
+	 * PARSE theme-options-generated.less
+	 */
+	if(isset($matches[1]) && $matches[1] == "theme-options-generated.less"){
+		if(is_multisite()){
+			$blogname = wbf_get_sanitized_blogname();
+			$fileToImport = new \SplFileInfo(WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR."/mu/".$blogname."-".$matches[1]);
+		}else{
+			$fileToImport = new \SplFileInfo(WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR."/".$matches[1]);
+		}
+		if($fileToImport->isFile() && $fileToImport->isReadable()){
+			if($inputFile->getPath() == $fileToImport->getPath()){
+				$parsed_line = "@import '{$fileToImport->getBasename()}';\n";
+			}else{
+				$parsed_line = "@import '{$fileToImport->getRealPath()}';\n";
+			}
+		}
+	}
+	return $parsed_line;
+}
+
+/**
+ * Replace {of_get_option} and {of_get_font} tags in _theme-options-generated.less.cmp;
+ * It is called during "update_option" via of_options_save() and during "wbf/compiler/pre_compile" via hook
+ *
+ * @param array $value values of the options
  * @param null $input_file_path
  * @param null $output_file_path
- *
- * @param string $output
+ * @param string $output_type can be "FILE" or "STRING"
  *
  * @return bool|string
  */
 function of_generate_less_file($value = null,$input_file_path = null,$output_file_path = null,$output_type = "FILE"){
 	if(!isset($value) || empty($value)) $value = Framework::get_options_values();
-	if(!isset($input_file_path) || empty($input_file_path)) $input_file_path = "/sources/less/_theme-options-generated.less.cmp"; //todo: in un ottica di poter utilizzare più compilatori, questo file dovrebbe essere specificato altrove
-	if(is_multisite()){
-		$blogname = wbf_get_sanitized_blogname();
-		if(!isset($output_file_path) || empty($output_file_path)) $output_file_path = "/sources/less/mu/{$blogname}-theme-options-generated.less"; //todo: in un ottica di poter utilizzare più compilatori, questo file dovrebbe essere specificato altrove
-	}else{
-		if(!isset($output_file_path) || empty($output_file_path)) $output_file_path = "/sources/less/theme-options-generated.less";
+
+	if(!isset($input_file_path) || empty($input_file_path)){
+		$input_file_path = of_styles_get_default_input_path();
+	}
+	if(!isset($output_file_path) || empty($output_file_path)){
+		$output_file_path = of_styles_get_default_output_path();
 	}
 
-	if(!is_array($value)) return;
+	if(!is_array($value)) return false;
 
 	$output_string = "";
 
-    $tmpFile = new \SplFileInfo(get_stylesheet_directory().$input_file_path);
-    if(!$tmpFile->isFile() || !$tmpFile->isWritable()){
-        $tmpFile = new \SplFileInfo(get_template_directory().$input_file_path);
+    $tmpFile = new \SplFileInfo($input_file_path);
+    if( (!$tmpFile->isFile() || !$tmpFile->isWritable()) && is_child_theme() ){
+	    $input_file_path = of_styles_get_parent_default_input_path(); //Search in parent
+        $tmpFile = new \SplFileInfo($input_file_path);
     }
-	$parsedFile = $output_file_path ? new \SplFileInfo(get_stylesheet_directory().$output_file_path) : null;
+	$parsedFile = $output_file_path ? new \SplFileInfo($output_file_path) : null;
 	if(!is_dir($parsedFile->getPath())){
 		mkdir($parsedFile->getPath());
 	}
@@ -447,4 +564,13 @@ function transfer_theme_options($from_theme, $to_theme = null) {
 function import_theme_options($exported_options) {
     $options_field = Framework::get_options_root_id();
     update_option($options_field, $exported_options);
+}
+
+/**
+ * Get an instance of Organizer
+ *
+ * @return Organizer
+ */
+function organizer(){
+	return Organizer::getInstance();
 }

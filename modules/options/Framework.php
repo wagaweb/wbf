@@ -9,6 +9,10 @@ class Framework extends \Options_Framework {
 	 */
 	public function init(){
 		Framework::set_theme_option_default_root_id();
+		//Create the framework working directory
+		if(defined("WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR") && !is_dir(WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR)){
+			mkdir(WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR);
+		}
 	}
 
 	/**
@@ -68,20 +72,41 @@ class Framework extends \Options_Framework {
 
         if ( !$options ) {
             // Load options from options.php file (if it exists)
-            $location = apply_filters( 'options_framework_location', array('options.php') );
-            if ( $optionsfile = locate_template( $location ) ) {
-                $maybe_options = require_once $optionsfile;
-                if ( is_array( $maybe_options ) ) {
-                    $options = $maybe_options;
-                } else if ( function_exists( 'optionsframework_options' ) ) {
-                    $options = optionsframework_options();
-                }
-            }
+            $locations = apply_filters( 'options_framework_location', false ); //todo: will be deprecated
+            $locations = apply_filters( 'wbf/modules/options/include_file', $locations );
 
-	        do_action("wbf/theme_options/register"); //This action can hook different functions to of_options filter (is used by Component Manager for example)
+			if(is_array($locations)){
+				foreach($locations as $loc){
+					if(is_file($loc)){
+						require_once $loc;
+					}else{
+						$r = locate_template( $loc, true );
+					}
+				}
+			}elseif(is_string($locations)){
+				if(is_file($locations)){
+					require_once $locations;
+				}else{
+					$r = locate_template( $locations, true );
+				}
+			}
+
+	        $orgzr = Organizer::getInstance();
+
+	        do_action("wbf/theme_options/register",$orgzr); //This action can hook different functions to of_options filter (is used by Component Manager for example)
 
             // Allow setting/manipulating options via filters
-            $options = apply_filters( 'of_options', $options );
+	        $orgzr->reset_section();
+	        $orgzr->reset_group();
+            $additional_options = apply_filters( 'of_options', [] ); //todo: will be deprecated
+            $additional_options = apply_filters( 'wbf/modules/options/available', $additional_options );
+	        if(is_array($additional_options) && !empty($additional_options)){
+		        foreach($additional_options as $opt){
+			        $orgzr->add($opt);
+		        }
+	        }
+
+	        $options = $orgzr->generate();
         }
 
         return $options;

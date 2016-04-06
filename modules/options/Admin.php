@@ -2,11 +2,31 @@
 
 namespace WBF\modules\options;
 
+use WBF\includes\mvc\HTMLView;
+
 class Admin extends \Options_Framework_Admin{
 
 	public function init() {
-		parent::init();
+		//@since 0.13.12 we have removed the parent init, so the original filter "of_options" will never be called.
+		//parent::init();
 		$all_options = Framework::get_registered_options();
+
+		// Checks if options are available
+		if ( $all_options ) {
+			// Add the options page and menu item.
+			add_action( 'admin_menu', array( $this, 'add_options_page' ) );
+
+			// Add the required scripts and styles
+			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ) );
+			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
+
+			// Settings need to be registered after admin_init
+			add_action( 'admin_init', array( $this, 'settings_init' ) );
+
+			// Adds options menu to the admin bar
+			add_action( 'wp_before_admin_bar_render', array( $this, 'optionsframework_admin_bar' ) );
+		}
+
 		remove_action( 'admin_menu', array( $this, 'add_options_page' ) );
 		if(is_array($all_options) && !empty($all_options)){
 			add_action( 'wbf_admin_submenu', array( $this, 'add_options_page' ) );
@@ -335,42 +355,12 @@ class Admin extends \Options_Framework_Admin{
      *
      * @since 1.7.0
      */
-    function options_page() { ?>
-
-        <div id="optionsframework-wrap" class="wrap">
-            <?php $menu = $this->menu_settings(); ?>
-
-            <div class="optionsframework-header">
-                <h2><?php echo esc_html( $menu['page_title'] ); ?></h2>
-            </div>
-
-            <div id="optionsframework-content-wrapper">
-                <div class="nav-tab-wrapper">
-                    <ul>
-                        <?php echo GUI::optionsframework_tabs(); ?>
-                    </ul>
-                </div>
-
-                <?php settings_errors( 'options-framework' ); ?>
-
-                <div id="optionsframework-metabox" class="metabox-holder">
-                    <div id="optionsframework" class="postbox">
-                        <form action="options.php" method="post">
-                            <?php settings_fields( 'optionsframework' ); ?>
-                            <?php GUI::optionsframework_fields(); /* Settings */ ?>
-                            <div id="optionsframework-submit">
-                                <input type="submit" class="button-primary" name="update" value="<?php esc_attr_e( 'Save Options', "wbf" ); ?>" />
-                                <input type="submit" class="reset-button button-secondary" name="reset" value="<?php esc_attr_e( 'Restore Defaults', 'wbf' ); ?>" onclick="return confirm( '<?php print esc_js( __( 'Click OK to reset. Any theme settings will be lost!', 'wbf' ) ); ?>' );" />
-                                <a href="admin.php?page=waboot_options&amp;clear_cache" class="clearcache-button button-secondary"><?php esc_attr_e( 'Clear Theme Cache', "wbf" ); ?></a>
-                                <div class="clear"></div>
-                            </div>
-                        </form>
-                    </div> <!-- / #container -->
-                </div>
-            </div> <!-- / #content-wrapper -->
-            <?php do_action( 'optionsframework_after' ); ?>
-        </div> <!-- / .wrap -->
-    <?php
+    function options_page() {
+		$v = new HTMLView("modules/options/views/admin/options-page.php","wbf");
+		$v->clean()->display([
+			'menu' => $this->menu_settings(),
+			'tabs' => GUI::optionsframework_tabs()
+		]);
     }
 
 	/**

@@ -9,11 +9,11 @@ module.exports = function (grunt) {
             dev: {
                 options: {},
                 files: {
-                    'admin/css/tinymce.css': 'sources/less/tinymce.less',
-                    'admin/css/admin.css': 'sources/less/admin.less',
-                    'admin/css/optionsframework.css': 'sources/less/optionsframework.less',
-                    'admin/css/componentsframework.css': 'sources/less/componentsframework.less',
-                    'admin/css/pagebuilder.css': 'sources/less/pagebuilder.less'
+                    'admin/css/tinymce.css': 'assets/src/less/tinymce.less',
+                    'admin/css/admin.css': 'assets/src/less/admin.less',
+                    'admin/css/optionsframework.css': 'assets/src/less/optionsframework.less',
+                    'admin/css/componentsframework.css': 'assets/src/less/componentsframework.less',
+                    'admin/css/pagebuilder.css': 'assets/src/less/pagebuilder.less'
                 }
             },
             production: {
@@ -24,7 +24,7 @@ module.exports = function (grunt) {
             }
         },
         jshint: {
-            all: ['sources/js/**/*.js'],
+            all: ['assets/src/js/**/*.js'],
             options: {
                 browser: true,
                 curly: false,
@@ -45,8 +45,8 @@ module.exports = function (grunt) {
         },
         browserify: {
             dist: {
-                src: ['sources/js/admin/wbf-admin.js'],
-                dest: 'sources/js/admin/wbf-admin-bundle.js'
+                src: ['assets/src/js/admin/wbf-admin.js'],
+                dest: 'assets/src/js/admin/wbf-admin-bundle.js'
             }
         },
         uglify: {
@@ -56,13 +56,13 @@ module.exports = function (grunt) {
             },
             dist: {
                 files: {
-                    'admin/js/wbf-admin.min.js': ['sources/js/admin/wbf-admin-bundle.js'],
-                    /*'admin/js/admin.min.js': ['sources/js/admin/admin.js'],
-                    'admin/js/acf-fields.min.js': ['sources/js/admin/acf-fields/*.js'],
-                    'admin/js/code-editor.min.js': ['sources/js/admin/code-editor.js'],
-                    'admin/js/components-page.min.js': ['sources/js/admin/components-page.js'],
-                    'admin/js/font-selector.min.js': ['sources/js/admin/font-selector.js'],*/
-                    'includes/scripts/wbfgmap.min.js': ['sources/js/includes/wbfgmap/markerclusterer.js','sources/js/includes/wbfgmap/acfmap.js']
+                    'admin/js/wbf-admin.min.js': ['assets/src/js/admin/wbf-admin-bundle.js'],
+                    /*'admin/js/admin.min.js': ['assets/src/js/admin/admin.js'],
+                    'admin/js/acf-fields.min.js': ['assets/src/js/admin/acf-fields/*.js'],
+                    'admin/js/code-editor.min.js': ['assets/src/js/admin/code-editor.js'],
+                    'admin/js/components-page.min.js': ['assets/src/js/admin/components-page.js'],
+                    'admin/js/font-selector.min.js': ['assets/src/js/admin/font-selector.js'],*/
+                    'includes/scripts/wbfgmap.min.js': ['assets/src/js/includes/wbfgmap/markerclusterer.js','assets/src/js/includes/wbfgmap/acfmap.js']
                 }
             }
         },
@@ -109,6 +109,8 @@ module.exports = function (grunt) {
                             "!.bowerrc",
                             "!bower.json",
                             "!builds/**",
+                            "!bin/**",
+                            "!tests/**",
                             "!node_modules/**",
                             "!bower_components/**",
                             "!assets/cache/**",
@@ -153,7 +155,7 @@ module.exports = function (grunt) {
         },
         watch: {
             less: {
-                files: 'sources/less/*.less',
+                files: 'assets/src/less/*.less',
                 tasks: ['less:dev']
             }/*,
             scripts: {
@@ -163,20 +165,42 @@ module.exports = function (grunt) {
         }
     });
 
-    // Register tasks
-    grunt.registerTask('setup', ['bower-install', 'less:dev']); //Setup task
-    grunt.registerTask('default', ['watch']); // Default task
-    grunt.registerTask('build', ['less:production', 'jsmin', 'compress:build']); // Build task
-    grunt.registerTask('js', ['jsbeautifier','browserify:dist']); // Concat and beautify js
-    grunt.registerTask('jsmin', ['js', 'uglify']); // Concat, beautify and minify js
+    /*
+     *  Register tasks
+     */
 
-    // Run bower install
-    grunt.registerTask('bower-install', function () {
+    //Default task
+    grunt.registerTask('default', ['watch']);
+
+    //Setup task
+    grunt.registerTask('setup', ['bower-install', 'jsmin', 'less:dev']);
+
+    //Concat and beautify js
+    grunt.registerTask('js', ['jsbeautifier','browserify:dist']);
+
+    //Concat, beautify and minify js
+    grunt.registerTask('jsmin', ['js', 'uglify']);
+
+    //Build task
+    grunt.registerTask('build', ['bower-update','less:production', 'jsmin', 'compress:build']);
+
+    //Runs bower install
+    grunt.registerTask('bower-install', function() {
         var exec = require('child_process').exec;
         var cb = this.async();
-        exec('bower install', function (err, stdout, stderr) {
+        exec('bower install', function(err, stdout, stderr) {
             console.log(stdout);
             cb();
         });
     });
-}
+
+    //Runs bower update
+    grunt.registerTask('bower-update', function() {
+        var exec = require('child_process').exec;
+        var cb = this.async();
+        exec('bower update', function(err, stdout, stderr) {
+            console.log(stdout);
+            cb();
+        });
+    });
+};

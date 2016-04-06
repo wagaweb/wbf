@@ -3,6 +3,7 @@
 namespace WBF\includes\pluginsframework;
 
 use WBF\admin\License_Manager;
+use WBF\admin\Notice_Manager;
 use WBF\includes\License;
 use WBF\includes\Plugin_Update_Checker;
 
@@ -79,6 +80,11 @@ class Plugin {
 	 * @var \WBF\includes\License
 	 */
 	public $license = false;
+	/**
+	 * The instance of Notice_Manager.
+	 * @var Notice_Manager
+	 */
+	public $notice_manager;
 
 	protected $debug_mode = false;
 
@@ -113,8 +119,17 @@ class Plugin {
 		$this->set_locale();
 	}
 
-	public function set_update_server($metadata_call = null,License $license = null){
-		if(isset($metadata_call) && is_string($metadata_call) && !empty($metadata_call)){
+	/**
+	 * Set the update server for the plugin. You can specify also a License class.
+	 * The License class must extends WBF\includes\License and implements WBF\includes\License_Interface.
+	 *
+	 * @param string|null $endpoint
+	 * @param License|null $license
+	 *
+	 * @return bool|Plugin_Update_Checker
+	 */
+	public function set_update_server($endpoint = null,License $license = null){
+		if(isset($endpoint) && is_string($endpoint) && !empty($endpoint)){
 			if($license){
 				$this->register_license($license);
 			}elseif(is_file($this->plugin_dir."/includes/class-ls.php") && !isset($license)){
@@ -128,11 +143,14 @@ class Plugin {
 				}
 			}
 			$this->update_instance = new Plugin_Update_Checker(
-				$metadata_call,
+				$endpoint,
 				$this->plugin_dir.$this->plugin_name.".php",
 				$this->plugin_name,
 				$this->license
 			);
+			return $this->update_instance;
+		}else{
+			return false;
 		}
 	}
 
@@ -174,7 +192,10 @@ class Plugin {
 		//Load Notice Manager if needed
 		global $wbf_notice_manager;
 		if(!isset($wbf_notice_manager)){
-			$GLOBALS['wbf_notice_manager'] = new \WBF\admin\Notice_Manager(); // Loads notice manager
+			$GLOBALS['wbf_notice_manager'] = new Notice_Manager(); // Loads notice manager
+			$this->notice_manager = &$GLOBALS['wbf_notice_manager'];
+		}else{
+			$this->notice_manager = &$wbf_notice_manager;
 		}
 
 		$this->loader = new Loader($this);

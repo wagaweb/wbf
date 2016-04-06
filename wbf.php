@@ -15,7 +15,7 @@
  * Plugin Name:       Waboot Framework
  * Plugin URI:        http://www.waga.it
  * Description:       WordPress Extension Framework
- * Version:           0.13.11
+ * Version:           0.13.12
  * Author:            WAGA
  * Author URI:        http://www.waga.com/
  * License:           GPL-2.0+
@@ -35,7 +35,8 @@ if( ! class_exists('WBF') ) :
 		define('WBF_ENV', 'production');
 	}
 
-	require_once('includes/utilities.php'); // Utility
+	//Utilities
+	require_once('includes/utilities.php');
 
 	//Define directory
 	if(!defined("WBF_DIRECTORY")){
@@ -53,17 +54,54 @@ if( ! class_exists('WBF') ) :
 	define("WBF_ADMIN_DIRECTORY", WBF_DIRECTORY . "/admin");
 	define("WBF_PUBLIC_DIRECTORY", WBF_DIRECTORY . "/public");
 
+	if(!defined("WBF_THEME_DIRECTORY_NAME")){
+		define("WBF_THEME_DIRECTORY_NAME","wbf");
+	}
+
+	if(!defined("WBF_THEME_DIRECTORY")){
+		define("WBF_THEME_DIRECTORY",rtrim(get_stylesheet_directory(),"/").WBF_THEME_DIRECTORY_NAME);
+	}
+
 	require_once("wbf-autoloader.php");
 	require_once("backup-functions.php");
 	include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 
 	class WBF {
 
+		/**
+		 * @var array
+		 */
 		var $options;
+
+		/**
+		 * @var \WBF\includes\Plugin_Update_Checker
+		 */
 		var $update_instance;
+
+		/**
+		 * @var array
+		 */
 		var $modules;
+
+		/**
+		 * @var string
+		 */
 		var $url;
+
+		/**
+		 * @var string
+		 */
 		var $path;
+
+		/**
+		 * @var Mobile_Detect
+		 */
+		var $mobile_detect;
+
+		/**
+		 * @var \WBF\admin\Notice_Manager
+		 */
+		var $notice_manager;
 
 		const version = "0.13.11";
 
@@ -78,12 +116,22 @@ if( ! class_exists('WBF') ) :
 
 		protected function __construct($args = []){
 			$args = wp_parse_args($args,[
-				'do_global_theme_customizations' => true
+				'do_global_theme_customizations' => true,
+				'check_for_updates' => true
 			]);
 			$this->options = $args;
 			$this->startup();
 		}
 
+		/**
+		 * WBF Error handler. Registerd during startup.
+		 *
+		 * @param $errno
+		 * @param $errstr
+		 * @param $errfile
+		 * @param $errline
+		 * @param $errcontext
+		 */
 		static function handle_errors($errno,$errstr,$errfile,$errline,$errcontext){
 			global $wbf_notice_manager;
 			if($wbf_notice_manager && is_admin() && current_user_can("manage_options")){
@@ -92,22 +140,19 @@ if( ! class_exists('WBF') ) :
 			}
 		}
 
+		/**
+		 * WBF Startup. Adds filters and actions.
+		 */
 		function startup(){
 
 			set_error_handler('\WBF::handle_errors',E_USER_WARNING);
 
 			$this->maybe_run_activation();
 			$this->maybe_add_option();
+			$this->maybe_add_theme_directory();
 
 			$this->url = self::get_url();
 			$this->path = self::get_path();
-
-			if($this->options['do_global_theme_customizations']){
-				add_action('wbf_after_setup_theme',[$this,'do_global_theme_customizations']);
-			}
-
-			$GLOBALS['md'] = $this->get_mobile_detect();
-			$this->init_styles_compiler();
 
 			if($this->is_plugin()){
 				add_action('activate_' . plugin_basename(__FILE__), [$this,"maybe_run_activation"]);
@@ -117,44 +162,46 @@ if( ! class_exists('WBF') ) :
 				add_action( "switch_theme", [$this,"deactivation"], 4 );
 			}
 
+			/*
+			 * Main Actions: BEGIN
+			 */
+
 			if($this->is_plugin()) {
-				add_action( "plugins_loaded", [$this,"plugins_loaded"] );
+				add_action( "plugins_loaded", [$this,"plugins_loaded"], 11 );
 			}
-			add_action( "after_setup_theme", [$this,"after_setup_theme"] );
-			add_action( "init", [$this,"init"] );
-
-			add_action( 'admin_menu', [$this,"admin_menu"] );
-			add_action( 'admin_bar_menu', [$this,"add_env_notice"], 1000 );
-			add_action( 'admin_bar_menu', [$this,"add_admin_compile_button"], 990 );
-
-			if(class_exists('\WBF\admin\License_Manager')){
-				\WBF\admin\License_Manager::init();
-			}
+			add_action( "after_setup_theme", [$this,"after_setup_theme"], 11 );
+			add_action( "init", [$this,"init"], 11 );
 
 			add_action( 'wp_enqueue_scripts', [$this,"register_libs"] );
 			add_action( 'admin_enqueue_scripts', [$this,"register_libs"] );
 
-			add_filter( 'options_framework_location',[$this,"of_location_override"] );
+			/*
+			 * |- Main Actions: END
+			 */
+
+			//Setup admin menu:
+			add_action( 'admin_menu', [$this,"admin_menu"], 11 );
+			add_action( 'admin_bar_menu', [$this,"add_env_notice"], 1000 );
+			add_action( 'admin_bar_menu', [$this,"add_admin_compile_button"], 990 );
+
+			//Init License Manager: //todo: move to plugin framweork?
+			if(class_exists('\WBF\admin\License_Manager')){
+				\WBF\admin\License_Manager::init();
+			}
+
+			//Additional settings:
 			add_filter( 'site_transient_update_plugins', [$this,"unset_unwanted_updates"], 999 );
 
-			add_filter( 'wbf/modules/available', [$this,"do_not_load_pagebuilder"], 999 ); //todo: finché non è stabile, escludiamolo dai moduli
-
-			//Set update server
-			if(self::is_plugin()){
-				$this->update_instance = new \WBF\includes\Plugin_Update_Checker(
-					"http://update.waboot.org/?action=get_metadata&slug=wbf&type=plugin", //$metadataUrl
-					self::get_path()."wbf.php", //$pluginFile
-					"wbf", //$slug
-					null, //$plugin_license
-					false, //$checkLicense
-					12, //$checkPeriod
-					'wbf_updates', //$optionName
-					is_multisite() //$muPluginFile
-				);
-			}
+			add_filter( 'wbf/modules/available', [$this,"do_not_load_pagebuilder"], 999 ); //todo: its not stable yet
+			add_filter( 'wbf/modules/behaviors/priority', function(){
+				return 9;
+			});
+			add_filter( 'wbf/modules/options/priority', function(){
+				return 11;
+			});
 		}
 
-		/**
+		/*
 		 *
 		 *
 		 * UTILITY
@@ -162,22 +209,30 @@ if( ! class_exists('WBF') ) :
 		 *
 		 */
 
-		static function get_mobile_detect() {
-			global $md;
-			if ( ! $md instanceof Mobile_Detect ) {
-				$md = new Mobile_Detect();
-				$md->setDetectionType( 'extended' );
+		/**
+		 * Get Mobile detect class
+		 *
+		 * @return Mobile_Detect
+		 */
+		public function get_mobile_detect() {
+			if ( ! $this->mobile_detect instanceof Mobile_Detect ) {
+				$this->mobile_detect = new Mobile_Detect();
+				$this->mobile_detect->setDetectionType( 'extended' );
 			}
-
-			return $md;
+			return $this->mobile_detect;
 		}
 
-		private function init_styles_compiler(){
-			$GLOBALS['wbf_styles_compiler'] = false;
-		}
-
+		/**
+		 * Initialize the style compiler as global variable
+		 *
+		 * @param $args
+		 * @param null $base_compiler
+		 */
 		static function set_styles_compiler($args,$base_compiler = null){
-			$GLOBALS['wbf_styles_compiler'] = new \WBF\includes\compiler\Styles_Compiler($args,$base_compiler);
+			global $wbf_styles_compiler;
+			if(!isset($wbf_styles_compiler) || !$wbf_styles_compiler){
+				$GLOBALS['wbf_styles_compiler'] = new \WBF\includes\compiler\Styles_Compiler($args,$base_compiler);
+			}
 		}
 
 		/**
@@ -200,21 +255,47 @@ if( ! class_exists('WBF') ) :
 			return false;
 		}
 
-		static function print_copyright(){
+		/**
+		 * Get the copyright string
+		 *
+		 * @return string
+		 */
+		static function get_copyright(){
+			$v = new \WBF\includes\mvc\HTMLView("views/admin/copyright.php","wbf");
+
+			$label = "WBF";
+			$version = self::version;
+
 			$theme = wp_get_theme();
-			if($theme->stylesheet == "waboot"){
-				$version = $theme->version;
+			if($theme && isset($theme->stylesheet)){
+				if($theme->stylesheet == "waboot"){
+					$label = "Waboot";
+					$version = $theme->version;
+				}
+				elseif($theme->stylesheet != "waboot" && $theme->template == "waboot"){
+					$theme = wp_get_theme("waboot");
+					if($theme && isset($theme->version)){
+						$label = "Waboot";
+						$version = $theme->version;
+					}
+				}
 			}
-			if($theme->stylesheet != "waboot" && $theme->template == "waboot"){
-				$theme = wp_get_theme("waboot");
-				$version = $theme->version;
-			}
-			if($theme->stylesheet != "waboot" && $theme->template != "waboot"){
-				$version = self::version;
-			}
-			$output = "<div class=\"wbf-copy\"><span><em>Waboot ".$version."</em>";
-			$output .= "</span></div>";
-			echo $output;
+
+			$output = $v->clean()->get([
+				'label' => $label,
+				'version' => $version,
+			]);
+
+			return $output;
+		}
+
+		/**
+		 * Print copyright string
+		 *
+		 * @return void
+		 */
+		static function print_copyright(){
+			echo self::get_copyright();
 		}
 
 		/**
@@ -263,10 +344,24 @@ if( ! class_exists('WBF') ) :
 						'bootstrap' => $current_module_dir."/bootstrap.php",
 						'activation' => is_file($current_module_dir."/activation.php") ? $current_module_dir."/activation.php" : false,
 						'deactivation' => is_file($current_module_dir."/deactivation.php") ? $current_module_dir."/deactivation.php" : false,
+						'priority' => apply_filters("wbf/modules/".basename($d)."/priority",10)
 					);
-					if($include) require_once $modules[basename($d)]['bootstrap'];
 				}
 			}
+
+			uasort($modules,function($a,$b){
+				if($a['priority'] == $b['priority']){
+					return 0;
+				}
+				return ($a['priority'] < $b['priority']) ? -1 : 1;
+			});
+
+			if($include){
+				foreach($modules as $m){
+					require_once $m['bootstrap'];
+				}
+			}
+
 			return $modules;
 		}
 
@@ -410,6 +505,17 @@ if( ! class_exists('WBF') ) :
 		}
 
 		/**
+		 * Returns WBF Theme dir
+		 * @return bool|string
+		 */
+		static function get_theme_dir(){
+			if(defined("WBF_THEME_DIRECTORY")){
+				return rtrim(WBF_THEME_DIRECTORY,"/");
+			}
+			return false;
+		}
+
+		/**
 		 * Prefix $to with the WBF URL
 		 * @param $to
 		 *
@@ -498,13 +604,18 @@ if( ! class_exists('WBF') ) :
 		function after_setup_theme() {
 			global $wbf_notice_manager;
 
+			$this->options = apply_filters("wbf/options",$this->options);
+
 			$this->modules = $this->load_modules();
+
+			do_action("wbf_after_setup_theme");
 
 			// Make framework available for translation.
 			load_textdomain( 'wbf', self::get_path() . 'languages/wbf-'.get_locale().".mo");
 
 			if(!isset($wbf_notice_manager)){
 				$GLOBALS['wbf_notice_manager'] = new \WBF\admin\Notice_Manager(); // Loads notice manager. The notice manager can be already loaded by plugins constructor prior this point.
+				$this->notice_manager = &$GLOBALS['wbf_notice_manager'];
 			}
 
 			// Load the CSS
@@ -515,7 +626,9 @@ if( ! class_exists('WBF') ) :
 			//locate_template( '/wbf/public/scripts.php', true );
 			wbf_locate_file( '/admin/adm-scripts.php', true );
 
-			do_action("wbf_after_setup_theme");
+			if($this->options['do_global_theme_customizations']){
+				$this->do_global_theme_customizations();
+			}
 
 			// ACF INTEGRATION
 			if(!self::is_plugin()){
@@ -533,13 +646,24 @@ if( ! class_exists('WBF') ) :
 		function init() {
 			do_action("wbf_init");
 
-			// Breadcrumbs
-			if(function_exists("of_get_option")) {
-				if(\WBF\modules\options\of_get_option('waboot_breadcrumbs', 1)){
-					wbf_locate_file( '/vendor/breadcrumb-trail.php', true );
-					wbf_locate_file( '/public/breadcrumb-trail.php', true );
+			if($this->options['check_for_updates']){
+				//Set update server
+				if(self::is_plugin()){
+					$this->update_instance = new \WBF\includes\Plugin_Update_Checker(
+						"http://update.waboot.org/?action=get_metadata&slug=wbf&type=plugin", //$metadataUrl
+						self::get_path()."wbf.php", //$pluginFile
+						"wbf", //$slug
+						null, //$plugin_license
+						false, //$checkLicense
+						12, //$checkPeriod
+						'wbf_updates', //$optionName
+						is_multisite() //$muPluginFile
+					);
 				}
-			}else{
+			}
+
+			// Breadcrumbs
+			if(!class_exists("Breadcrumb_Trail") && !function_exists("breadcrumb_trail")){
 				wbf_locate_file( '/vendor/breadcrumb-trail.php', true);
 				wbf_locate_file( '/public/breadcrumb-trail.php', true );
 			}
@@ -548,6 +672,9 @@ if( ! class_exists('WBF') ) :
 			$GLOBALS['wbf_notice_manager']->enqueue_notices(); //Display notices
 		}
 
+		/**
+		 * Register libraries used by WBF ecosystem
+		 */
 		function register_libs(){
 			/*
 			 * STYLES
@@ -559,8 +686,8 @@ if( ! class_exists('WBF') ) :
 			 */
 			wp_register_script('gmapapi', 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places', array('jquery'), false, false );
 			if(WBF_ENV == "dev"){
-				wp_register_script("wbfgmapmc",WBF_URL."/sources/js/includes/wbfgmap/markerclusterer.js",array("jquery","gmapapi"),false,true);
-				wp_register_script("wbfgmap",WBF_URL."/sources/js/includes/wbfgmap/acfmap.js",array("jquery","gmapapi","wbfgmapmc"),false,true);
+				wp_register_script("wbfgmapmc",WBF_URL."/assets/src/js/includes/wbfgmap/markerclusterer.js",array("jquery","gmapapi"),false,true);
+				wp_register_script("wbfgmap",WBF_URL."/assets/src/js/includes/wbfgmap/acfmap.js",array("jquery","gmapapi","wbfgmapmc"),false,true);
 			}else{
 				wp_register_script("wbfgmap",WBF_URL."/includes/scripts/wbfgmap.min.js",array("jquery","gmapapi"),false,true);
 			}
@@ -585,10 +712,11 @@ if( ! class_exists('WBF') ) :
 			else
 				$warning_count = 0;
 
-			$menu_label = sprintf( __( 'Waboot %s' ), "<span class='update-plugins count-$warning_count' title='".__("Update available","wbf")."'><span class='update-count'>" . number_format_i18n($warning_count) . "</span></span>" );
+			$menu_title = apply_filters("wbf/admin_menu/label",'WBF');
+			$menu_label = sprintf( __( '%s %s' ), $menu_title, "<span class='update-plugins count-$warning_count' title='".__("Update available","wbf")."'><span class='update-count'>" . number_format_i18n($warning_count) . "</span></span>" );
 
-			$menu['58']     = $menu['59']; //move the separator before "Appearance" one position up
-			$waboot_menu    = add_menu_page( "Waboot", $menu_label, "edit_theme_options", "waboot_options", "WBF::options_page", "dashicons-text", 59 );
+			$menu['58'] = $menu['59']; //move the separator before "Appearance" one position up
+			$waboot_menu = add_menu_page( "Waboot", $menu_label, "edit_theme_options", "waboot_options", "WBF::options_page", "dashicons-text", 59 );
 			//$waboot_options = add_submenu_page( "waboot_options", __( "Theme options", "waboot" ), __( "Theme Options", "waboot" ), "edit_theme_options", "waboot_options", array($options_framework_admin,"options_page") );
 			do_action("wbf_admin_submenu","waboot_options");
 		}
@@ -676,17 +804,6 @@ if( ! class_exists('WBF') ) :
 			}
 		}
 
-		/**
-		 * Override default location of options.php
-		 *
-		 * @hooked 'options_framework_location'
-		 *
-		 * @return array
-		 */
-		function of_location_override(){
-			return array("inc/options.php");
-		}
-
 		/*
 		 *
 		 *
@@ -715,6 +832,12 @@ if( ! class_exists('WBF') ) :
 					//This case may fire when switch from a wbf-as-plugin to a wbf-in-theme environment @since 0.13.8
 					$this->add_wbf_options();
 				}
+			}
+		}
+
+		function maybe_add_theme_directory(){
+			if(defined("WBF_THEME_DIRECTORY") && !is_dir(WBF_THEME_DIRECTORY)){
+				mkdir(WBF_THEME_DIRECTORY);
 			}
 		}
 
@@ -790,7 +913,7 @@ if( ! class_exists('WBF') ) :
 	$GLOBALS['wbf'] = WBF::getInstance();
 
 else:
-	//HERE WBF IS ALREADY DEFINED. We can't tell if by a plugin or via theme... So...
+	//HERE WBF IS ALREADY DEFINED. We can't tell if by a plugin or others... So...
 
 	if(!defined("WBF_DIRECTORY")){
 		define("WBF_DIRECTORY", __DIR__);
@@ -806,3 +929,15 @@ else:
 	}
 
 endif; // class_exists check
+
+if(!function_exists("WBF")){
+	/**
+	 * Return the registered instance of WBF
+	 *
+	 * @return WBF
+	 */
+	function WBF(){
+		global $wbf;
+		return $wbf;
+	}
+}

@@ -1,6 +1,14 @@
 <?php
-/**
- * WABOOT COMPONENT FRAMEWORK
+/*
+ * WBF Component Framework
+ *
+ * As all other modules, keep in mind that this piece of code will be executed during "after_setup_theme"
+ *
+ * @package   Behaviors Framework
+ * @author    Riccardo D'Angelo <riccardo@waga.it>
+ * @license   copyrighted
+ * @link      http://www.waga.it
+ * @copyright WAGA.it
  */
 
 namespace WBF\modules\components;
@@ -21,6 +29,41 @@ function setup_components(){
     ComponentsManager::setupRegisteredComponents(); //Loads setup() methods of components
 }
 add_action("wbf_init",'\WBF\modules\components\setup_components', 12);
+
+/**
+ * Hides components tab in theme options
+ * @since 0.13.12
+ *
+ * @param $tabs
+ * @param array $options
+ *
+ * @hooked "wbf/modules/options/gui/tab_section/tabs"
+ *
+ * @return array
+ */
+function hide_components_tabs($tabs,$options){
+	foreach($tabs as $k => $current_option){
+		if(isset($current_option['component'])){
+			unset($tabs[$k]);
+		}
+	}
+	return $tabs;
+}
+add_filter("wbf/modules/options/gui/tab_section/tabs",'\WBF\modules\components\hide_components_tabs',10,2);
+
+function hide_components_options($options){
+	$current_screen = get_current_screen();
+	if(preg_match("/components/",$current_screen->base)){
+		return $options;
+	}
+	foreach($options as $k => $opt){
+		if(isset($opt['component']) && $opt['component']){
+			unset($options[$k]);
+		}
+	}
+	return $options;
+}
+add_filter("wbf/modules/options/gui/options_to_render",'\WBF\modules\components\hide_components_options',10);
 
 /**
  * WP HOOKS

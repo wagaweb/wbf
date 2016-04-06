@@ -4,6 +4,7 @@ namespace WBF\admin;
 
 use WBF\includes\License;
 use WBF\includes\License_Exception;
+use WBF\includes\mvc\HTMLView;
 use WBF\includes\Theme_Update_Checker;
 
 class License_Manager{
@@ -56,63 +57,14 @@ class License_Manager{
 	 * Callback for displaying the licenses page
 	 */
 	static function license_page(){
-		?>
-		<div class="wrap">
-			<h2><?php _e( "Licenses", "wbf" ); ?></h2>
-			<p><?php _e("Here you can enter your license.", "wbf"); ?></p>
-			<?php if(self::has_theme_licenses()) : ?>
-				<h3><?php _e("Theme license:", "wbf"); ?></h3>
-				<?php foreach(self::get_theme_licenses() as $slug => $license): ?>
-					<form method="post" action="admin.php?page=wbf_licenses">
-						<?php
-							$current_license = $license->get();
-							if(!$current_license) $current_license = "";
-							$status = $license->get_license_status();
-						?>
-						<div class="license">
-							<h4><?php echo $license->nicename; ?></h4>
-							<div class="license-body">
-								<label><?php printf(_x("License code","License","wbf"),$license->nicename); ?>&nbsp;<input id="license_<?php echo $license->slug; ?>" type="text" value="<?php echo self::crypt_license_visual($current_license); ?>" name="code"/></label>
-								<input type="submit" name="update-license" id="submit" class="button button-primary" value="<?php _ex("Update","License","wbf"); ?>" <?php if($license->is_valid()) echo "disabled"; ?>>
-								<input type="submit" name="delete-license" id="delete" class="button button-primary" value="<?php _ex("Delete","License","wbf"); ?>">
-								<div id="license-status" class="license-<?php $license->print_license_status(); ?>">
-									<p><strong><?php _ex("Status:","License","wbf") ?></strong>&nbsp;<?php $license->print_license_status(); ?></p>
-								</div>
-							</div>
-						</div>
-						<input type="hidden" name="slug" value="<?php echo $license->slug; ?>">
-						<input type="hidden" name="type" value="theme">
-					</form>
-				<?php endforeach; ?>
-			<?php endif; ?>
-			<?php if(self::has_plugin_licenses()) : ?>
-				<h3><?php _e("Plugin license:", "wbf"); ?></h3>
-				<?php foreach(self::get_plugin_licenses() as $slug => $license): ?>
-					<form method="post" action="admin.php?page=wbf_licenses">
-						<?php
-							$current_license = $license->get();
-							$status = $license->get_license_status();
-						?>
-						<div class="license">
-							<h4><?php echo $license->nicename; ?></h4>
-							<div class="license-body">
-								<label><?php _e("License code","wbf"); ?>&nbsp;<input type="text" value="<?php echo self::crypt_license_visual($current_license); ?>" name="code"/></label>
-								<input type="submit" name="update-license" id="submit" class="button button-primary" value="<?php _ex("Update","License","wbf"); ?>" <?php if($license->is_valid()) echo "disabled"; ?>>
-								<input type="submit" name="delete-license" id="delete" class="button button-primary" value="<?php _ex("Delete","License","wbf"); ?>">
-								<div id="license-status" class="license-<?php $license->print_license_status(); ?>">
-									<p><strong><?php _ex("Status:","License","wbf") ?></strong>&nbsp;<?php $license->print_license_status(); ?></p>
-								</div>
-							</div>
-						</div>
-						<input type="hidden" name="slug" value="<?php echo $license->slug; ?>">
-						<input type="hidden" name="type" value="plugin">
-					</form>
-				<?php endforeach; ?>
-			<?php endif; ?>
-			<?php wp_nonce_field('submit_licence_nonce','license_nonce_field'); ?>
-			<?php \WBF::print_copyright(); ?>
-		</div>
-		<?php
+		$v = new HTMLView("views/admin/license-manager.php","wbf");
+		$vars = [
+			'has_theme_licenses' => self::has_theme_licenses(),
+			'has_plugin_licenses' => self::has_plugin_licenses(),
+			'theme_licenses' => self::has_theme_licenses() ? self::get_theme_licenses() : [],
+			'plugin_licenses' => self::has_plugin_licenses() ? self::get_plugin_licenses() : [],
+		];
+		$v->clean()->display($vars);
 	}
 
 	/**
@@ -182,9 +134,12 @@ class License_Manager{
 
 	/**
 	 * Update a specific license
+	 *
 	 * @param $license_slug
 	 * @param $type
 	 * @param $value
+	 *
+	 * @throws License_Exception
 	 */
 	static function update($license_slug,$type,$value){
 		$l = self::get($license_slug,$type);

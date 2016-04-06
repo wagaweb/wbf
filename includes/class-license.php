@@ -2,6 +2,8 @@
 
 namespace WBF\includes;
 
+use WBF\admin\License_Manager;
+
 abstract class License{
 	var $nicename = "License";
 	var $slug;
@@ -41,8 +43,12 @@ abstract class License{
 		$this->license = $this->get();
 	}
 
-	function get(){
-		return get_option($this->option_name,false);
+	function get($crypt = false){
+		$license = get_option($this->option_name,false);
+		if($crypt && is_string($license) && !empty($license)){
+			$license = License_Manager::crypt_license_visual($license);
+		}
+		return $license;
 	}
 
 	function update($new_license){

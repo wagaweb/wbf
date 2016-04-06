@@ -1,109 +1,56 @@
 <?php
 
+require_once "class-utilities.php";
+
 if(!function_exists("wbf_get_sanitized_blogname")):
+	/**
+	 * Return a sanitized version of blog name
+	 *
+	 * @return string
+	 */
 	function wbf_get_sanitized_blogname(){
-		return sanitize_title_with_dashes(get_bloginfo("name"));
+		return \WBF\includes\Utilities::get_sanitized_blogname();
 	}
 endif;
 
 if(!function_exists('wbf_get_template_part')):
+	/**
+	 * WBF version of get_template_part
+	 *
+	 * @param $slug
+	 * @param null $name
+	 */
 	function wbf_get_template_part($slug, $name = null){
-		do_action( "get_template_part_{$slug}", $slug, $name );
-
-		$templates = apply_filters("wbf/get_template_part/path:{$slug}",array(),array($slug,$name)); //@deprecated from WBF ^0.11.0
-		$name = (string) $name;
-		if ( '' !== $name )
-			$templates['names'][] = "{$slug}-{$name}.php";
-
-		$templates['names'][] = "{$slug}.php";
-
-		wbf_locate_template($templates, true, false);
+		\WBF\includes\Utilities::get_template_part($slug,$name);
 	}
 endif;
 
 if(!function_exists("wbf_locate_file")):
+	/**
+	 * Search for $file in WBF directory, plus template and stylesheet directories
+	 *
+	 * @param $file
+	 * @param bool $load
+	 * @param bool $require_once
+	 * @return string
+	 * @throws \Exception
+	 */
 	function wbf_locate_file($file, $load = false, $require_once = true){
-		$located = '';
-		$search_paths = [
-			WBF_DIRECTORY,
-			get_option("wbf_path"),
-			get_template_directory(),
-			get_stylesheet_directory()
-		];
-
-		foreach($search_paths as $p){
-			$path = rtrim($p,"/") . '/'.ltrim($file,"/");
-			if(file_exists($path)){
-				$located = $path;
-				break;
-			}
-		}
-
-		if($located == ''){
-			throw new \Exception(sprintf(__("File: %s non found in any of the followinf paths: %s","wbf"),$file,implode(";\n",$search_paths)));
-		}
-
-		if ( $load && '' != $located ){
-			if($require_once){
-				require_once $located;
-			}else{
-				require $located;
-			}
-		}
-
-		return $located;
+		return \WBF\includes\Utilities::locate_file($file,$load,$require_once);
 	}
 endif;
 
 if(!function_exists('wbf_locate_template')):
+	/**
+	 * Retrieve the template file from various set of sources
+	 *
+	 * @param array $templates an associative array that must contain at least "names" key. It can have the "sources" key, with a list of paths to explore.
+	 * @param bool|false $load if TRUE it calls load_template()
+	 * @param bool|true $require_once it $load is TRUE, it assigned as the second argument to load_template()
+	 * @return string
+	 */
 	function wbf_locate_template($templates, $load = false, $require_once = true ) {
-		$located = '';
-		$template_names = $templates['names'];
-		$template_sources = isset($templates['sources']) ? $templates['sources'] : array();
-		$registered_base_paths = apply_filters("wbf/get_template_part/base_paths",array());
-
-		//Search into template dir
-		foreach ( (array) $template_names as $template_name ) {
-			if ( ! $template_name ) {
-				continue;
-			}
-			if ( file_exists( get_stylesheet_directory() . '/' . $template_name ) ) {
-				$located = get_stylesheet_directory() . '/' . $template_name;
-				break;
-			} elseif ( file_exists( get_template_directory() . '/' . $template_name ) ) {
-				$located = get_template_directory() . '/' . $template_name;
-				break;
-			} elseif(!empty($registered_base_paths)){
-				//Search into registered base dirs
-				foreach($registered_base_paths as $path){
-					$path = rtrim($path,"/") . '/'.ltrim($template_name,"/");
-					if(file_exists( $path )){
-						$located = $path;
-						break;
-					}
-				}
-				if($located){
-					break;
-				}
-			}
-		}
-
-		//Search into plugins dir
-		if(empty($located)) {
-			foreach($template_sources as $template_name){
-				if ( !$template_name )
-					continue;
-				if( file_exists($template_name)){
-					$located = $template_name;
-					break;
-				}
-			}
-		}
-
-		if ( $load && '' != $located )
-			load_template( $located, $require_once );
-
-		return $located;
+		return \WBF\includes\Utilities::locate_template($templates,$load,$require_once);
 	}
 endif;
 
@@ -118,21 +65,7 @@ if (!function_exists( 'wbf_locate_template_uri' )):
      * @return string The URI of the file if one is located.
      */
     function wbf_locate_template_uri($template_names){
-        $located = '';
-        foreach ((array)$template_names as $template_name) {
-            if (!$template_name)
-                continue;
-
-            if (file_exists(get_stylesheet_directory() . '/' . $template_name)) {
-                $located = get_stylesheet_directory_uri() . '/' . $template_name;
-                break;
-            } else if (file_exists(get_template_directory() . '/' . $template_name)) {
-                $located = get_template_directory_uri() . '/' . $template_name;
-                break;
-            }
-        }
-
-        return $located;
+        return \WBF\includes\Utilities::locate_template_uri($template_names);
     }
 endif;
 
@@ -144,71 +77,28 @@ if (!function_exists( "wbf_get_filtered_post_types" )):
 	 * @return array
 	 */
 	function wbf_get_filtered_post_types($blacklist = array()){
-		$post_types = get_post_types();
-		$result = array();
-		$blacklist = array_unique(array_merge($blacklist,array('attachment','revision','nav_menu_item','ml-slider','acf-field-group','acf-field')));
-		foreach($post_types as $pt){
-			if(!in_array($pt,$blacklist)){
-				$pt_obj = get_post_type_object($pt);
-				$result[$pt_obj->name] = $pt_obj->label;
-			}
-		}
-
-		return $result;
+		return \WBF\includes\Utilities::get_filtered_post_types($blacklist);
 	}
 endif;
 
-/**
- * Get posts while preserving memory
- *
- * @param callable $callback a function that will be called for each post. You can use it to additionally filter the posts. If it returns true, the post will be added to output array.
- * @param array    $args normal arguments for WP_Query
- * @param bool     $include_meta the post meta will be included in the post object (default to FALSE)
- *
- * @return array of posts
- */
-function wbf_get_posts(\closure $callback = null, $args = array(), $include_meta = false){
-	$all_posts = [];
-	$page = 1;
-	$get_posts = function ( $args ) use ( &$page ) {
-		$args = wp_parse_args( $args, array(
-			'post_type' => 'post',
-			'paged' => $page,
-		) );
-		$all_posts = new \WP_Query( $args );
-		if ( count( $all_posts->posts ) > 0 ) {
-			return $all_posts;
-		} else {
-			return false;
-		}
-	};
-	while ( $paged_posts = $get_posts( $args ) ) {
-		$i = 0;
-		while ( $i <= count( $paged_posts->posts ) - 1 ) { //while($all_posts->have_posts()) WE CANNOT USE have_posts... too many issue
-			//if($i == 1) $all_posts->next_post(); //The first next post does not change $all_posts->post for some reason... so we need to do it double...
-			$p = $paged_posts->posts[ $i ];
-			if($include_meta){
-				$p->meta = get_post_meta($p->ID);
-			}
-			if(isset($callback)){
-				$result = call_user_func( $callback, $p );
-				if($result){
-					$all_posts[$p->ID] = $p;
-				}
-			}else{
-				$all_posts[$p->ID] = $p;
-			}
-			//if($i < count($all_posts->posts)) $all_posts->next_post();
-			$i ++;
-		}
-		$page ++;
+if (!function_exists( "wbf_get_posts" )) :
+	/**
+	 * Get posts while preserving memory
+	 *
+	 * @param callable $callback a function that will be called for each post. You can use it to additionally filter the posts. If it returns true, the post will be added to output array.
+	 * @param array    $args normal arguments for WP_Query
+	 * @param bool     $include_meta the post meta will be included in the post object (default to FALSE)
+	 *
+	 * @return array of posts
+	 */
+	function wbf_get_posts(\closure $callback = null, $args = array(), $include_meta = false){
+		return \WBF\includes\Utilities::recursive_get_posts($callback,$args,$include_meta);
 	}
-	return $all_posts;
-}
+endif;
 
 if (!function_exists( "wbf_admin_show_message" )) :
     function wbf_admin_show_message($m, $type) {
-	    wbf_add_admin_notice("adm_notice_".rand(1,50),$m,$type,$args = ['category'=>'_flash_']);
+	    \WBF\includes\Utilities::admin_show_message($m,$type);
     }
 endif;
 
@@ -224,17 +114,7 @@ if (!function_exists("wbf_add_admin_notice")) :
 	 * @param array $args (category[default:base], condition[default:null], cond_args[default:null])
 	 */
 	function wbf_add_admin_notice($id,$message,$level,$args = []){
-		global $wbf_notice_manager;
-
-		if(!isset($wbf_notice_manager)) return;
-
-		$args = wp_parse_args($args,[
-			"category" => 'base',
-			"condition" => null,
-			"cond_args" => null
-		]);
-
-		$wbf_notice_manager->add_notice($id,$message,$level,$args['category'],$args['condition'],$args['cond_args']);
+		\WBF\includes\Utilities::add_admin_notice($id,$message,$level,$args);
 	}
 endif;
 
@@ -245,7 +125,7 @@ endif;
 if (!function_exists("wb_is_mobile")):
     function wb_is_mobile()
     {
-        $md = WBF::get_mobile_detect();
+        $md = WBF::getInstance()->get_mobile_detect();
         return ($md->isMobile());
     }
 endif;
@@ -253,7 +133,7 @@ endif;
 if (!function_exists("wb_is_tablet")):
     function wb_is_tablet()
     {
-        $md = WBF::get_mobile_detect();
+        $md = WBF::getInstance()->get_mobile_detect();
         return ($md->isTablet());
     }
 endif;
@@ -261,7 +141,7 @@ endif;
 if (!function_exists("wb_is_ios")):
     function wb_is_ios()
     {
-        $md = WBF::get_mobile_detect();
+        $md = WBF::getInstance()->get_mobile_detect();
         return ($md->isiOS());
     }
 endif;
@@ -269,7 +149,7 @@ endif;
 if (!function_exists("wb_is_android")):
     function wb_is_android()
     {
-        $md = WBF::get_mobile_detect();
+        $md = WBF::getInstance()->get_mobile_detect();
         return ($md->isAndroidOS());
     }
 endif;
@@ -277,7 +157,7 @@ endif;
 if (!function_exists("wb_is_windows_mobile")):
     function wb_is_windows_mobile()
     {
-        $md = WBF::get_mobile_detect();
+        $md = WBF::getInstance()->get_mobile_detect();
         return ($md->is('WindowsMobileOS') || $md->is('WindowsPhoneOS'));
     }
 endif;
@@ -285,15 +165,15 @@ endif;
 if (!function_exists("wb_is_iphone")):
     function wb_is_iphone()
     {
-        $md = WBF::get_mobile_detect();
+        $md = WBF::getInstance()->get_mobile_detect();
         return ($md->isIphone());
     }
 endif;
 
 if (!function_exists("wb_is_ipad")):
-    function is_ipad()
+    function wb_is_ipad()
     {
-        $md = WBF::get_mobile_detect();
+        $md = WBF::getInstance()->get_mobile_detect();
         return ($md->isIpad());
     }
 endif;
@@ -301,7 +181,7 @@ endif;
 if (!function_exists("wb_is_samsung")):
     function wb_is_samsung()
     {
-        $md = WBF::get_mobile_detect();
+        $md = WBF::getInstance()->get_mobile_detect();
         return ($md->is('Samsung'));
     }
 endif;
@@ -309,7 +189,7 @@ endif;
 if (!function_exists("wb_is_samsung_tablet")):
     function wb_is_samsung_tablet()
     {
-        $md = WBF::get_mobile_detect();
+        $md = WBF::getInstance()->get_mobile_detect();
         return ($md->is('SamsungTablet'));
     }
 endif;
@@ -317,7 +197,7 @@ endif;
 if (!function_exists("wb_is_kindle")):
     function wb_is_kindle()
     {
-        $md = WBF::get_mobile_detect();
+        $md = WBF::getInstance()->get_mobile_detect();
         return ($md->is('Kindle'));
     }
 endif;
@@ -325,7 +205,7 @@ endif;
 if (!function_exists("wb_android_version")):
     function wb_android_version()
     {
-        $md = WBF::get_mobile_detect();
+        $md = WBF::getInstance()->get_mobile_detect();
         return $md->version('Android');
     }
 endif;
@@ -333,7 +213,7 @@ endif;
 if (!function_exists("wb_iphone_version")):
     function wb_iphone_version()
     {
-        $md = WBF::get_mobile_detect();
+        $md = WBF::getInstance()->get_mobile_detect();
         return $md->version('iPhone');
     }
 endif;
@@ -341,7 +221,7 @@ endif;
 if (!function_exists("wb_ipad_version")):
     function wb_ipad_version()
     {
-        $md = WBF::get_mobile_detect();
+        $md = WBF::getInstance()->get_mobile_detect();
         return $md->version('iPad');
     }
 endif;
@@ -351,75 +231,62 @@ endif;
  **************************************************************/
 
 if ( !function_exists("get_post_thumbnail_src") ) :
+	/**
+	 * Get the src of the $post_id thumbnail
+	 *
+	 * @param $post_id
+	 * @param null $size
+	 * @return mixed
+	 */
 	function get_post_thumbnail_src($post_id,$size=null){
-		$post_thumbnail_id = get_post_thumbnail_id($post_id);
-		$thumbnail = wp_get_attachment_image_src($post_thumbnail_id,$size);
-		return $thumbnail[0];
+		return \WBF\includes\Utilities::get_post_thumbnail_src($post_id,$size);
 	}
 endif;
 
 if ( !function_exists("get_current_url") ) :
+	/**
+	 * Get the current url via vanilla function
+	 *
+	 * @return string
+	 */
 	function get_current_url() {
-		$pageURL = 'http';
-		if ($_SERVER["HTTPS"] == "on") {$pageURL .= "s";}
-		$pageURL .= "://";
-		if ($_SERVER["SERVER_PORT"] != "80") {
-			$pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
-		} else {
-			$pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
-		}
-		return $pageURL;
+		return \WBF\includes\Utilities::get_current_url();
 	}
 endif;
 
 if ( !function_exists("get_wp_current_url") ) :
+	/**
+	 * Get the current url using wp functions
+	 *
+	 * @return string
+	 */
 	function wp_get_current_url(){
-		global $wp;
-		$current_url = add_query_arg( $wp->query_string, '', home_url( $wp->request ) );
-		return $current_url;
+		return \WBF\includes\Utilities::wp_get_current_url();
 	}
 endif;
 
 if ( !function_exists("array_neighbor") ) :
 	/**
 	 * Get the next and prev element in an array relative to the current
-	 * @param $arr of items
-	 * @param $key of current item
+	 * @param array $arr of items
+	 * @param string $key of current item
 	 * @return array
 	 */
-	function array_neighbor($arr, $key)
-	{
-		$keys = array_keys($arr);
-		$keyIndexes = array_flip($keys);
-
-		$return = array();
-		if (isset($keys[$keyIndexes[$key]-1])) {
-			$return[] = $keys[$keyIndexes[$key]-1];
-		}
-		else {
-			$return[] = $keys[sizeof($keys)-1];
-		}
-
-		if (isset($keys[$keyIndexes[$key]+1])) {
-			$return[] = $keys[$keyIndexes[$key]+1];
-		}
-		else {
-			$return[] = $keys[0];
-		}
-
-		return $return;
+	function array_neighbor($arr, $key){
+		return \WBF\includes\Utilities::array_neighbor($arr,$key);
 	}
 endif;
 
 if ( !function_exists("recursive_array_search") ) :
+	/**
+	 * Guess what :)
+	 *
+	 * @param $needle
+	 * @param $haystack
+	 * @return bool|int|string
+	 */
 	function recursive_array_search($needle,$haystack) {
-		foreach($haystack as $key=>$value) {
-			$current_key=$key;
-			if($needle===$value OR (is_array($value) && recursive_array_search($needle,$value) !== false)) {
-				return $current_key;
-			}
-		}
-		return false;
+		return \WBF\includes\Utilities::recursive_array_search($needle,$haystack);
 	}
 endif;
 
@@ -431,12 +298,7 @@ if ( !function_exists("remote_file_size") ) :
 	 * @return int as file size in byte
 	 */
 	function remote_file_size($url){
-		# Get all header information
-		$data = get_headers($url, true);
-		# Look up validity
-		if (isset($data['Content-Length']))
-			# Return file size
-			return (int) $data['Content-Length'];
+		return \WBF\includes\Utilities::remote_file_size($url);
 	}
 endif;
 
@@ -449,97 +311,80 @@ if ( !function_exists("formatBytes") ) :
 	 * @return string human readable file size (2,87 МB)
 	 */
 	function formatBytes($bytes, $precision = 2) {
-		$units = array('B', 'KB', 'MB', 'GB', 'TB');
-
-		$bytes = max($bytes, 0);
-		$pow = floor(($bytes ? log($bytes) : 0) / log(1024));
-		$pow = min($pow, count($units) - 1);
-
-		// Uncomment one of the following alternatives
-		$bytes /= pow(1024, $pow);
-		// $bytes /= (1 << (10 * $pow));
-
-		return round($bytes, $precision) . ' ' . $units[$pow];
+		return \WBF\includes\Utilities::formatBytes($bytes,$precision);
 	}
 endif;
 
 if ( !function_exists("listFolderFiles") ) :
+	/**
+	 * List all files in a folder
+	 *
+	 * @param $dir
+	 * @param string $extension
+	 * @return array
+	 */
 	function listFolderFiles($dir,$extension = "php"){
-		$files_in_root = glob($dir."/*.{$extension}");
-		$files = glob($dir."/*/*.{$extension}");
-
-		if(!$files_in_root) $files_in_root = array();
-		if(!$files) $files = array();
-
-		return array_merge($files_in_root,$files);
+		return \WBF\includes\Utilities::listFolderFiles($dir,$extension);
 	}
 endif;
 
 if ( !function_exists("createdir") ) :
-	function createdir($path){
-		if(!is_dir($path)){
-			if(!mkdir($path,0777)){
-				throw new WPCriticalErr(_("Unable to create folder {$path}"));
-				return false;
-			}else{
-				return true;
-			}
-		}
+	/**
+	 * Create a directory
+	 *
+	 * @param $path
+	 * @param int $chmod
+	 * @return bool
+	 * @throws Exception
+	 */
+	function createdir($path,$chmod = 0777){
+		return \WBF\includes\Utilities::mkdir($path,$chmod);
 	}
 endif;
 
 if ( !function_exists("deltree") ) :
 	/**
 	 * Completely erase a directory
-	 * @param $dir the directory path
+	 * @param string $dir the directory path
 	 */
 	function deltree($dir){
-		if(!preg_match("|[A-Za-z0-9]+/$|",$dir)) $dir .= "/"; // ensure $dir ends with a slash
-
-		$files = glob( $dir . '*', GLOB_MARK );
-		foreach($files as $file){
-			if( substr( $file, -1 ) == '/' )
-				deltree( $file );
-			else
-				unlink( $file );
-		}
-		if(is_dir($dir)) rmdir( $dir );
+		\WBF\includes\Utilities::deltree($dir);
 	}
 endif;
 
 if ( !function_exists("url_to_path") ) :
+	/**
+	 * Convert an url to the absolute path of that url in wordpress
+	 *
+	 * @param $url
+	 * @return mixed
+	 */
 	function url_to_path($url){
-		$blogurl = get_bloginfo("url");
-		$blogurl = preg_replace("(https?://)", "", $blogurl );
-		//$result = preg_match("/^https?:\/\/$blogurl\/([[:space:]a-zA-Z0-9\/_.-]+)/", $url, $matches);
-		$result = preg_replace("|^https?://$blogurl|", ABSPATH, $url);
-		//$blogpath = ABSPATH;
-
-		//$filepath = $blogpath."/".$matches[1];
-		//return $filepath;
-		return $result;
+		return \WBF\includes\Utilities::url_to_path($url);
 	}
 endif;
 
 if ( !function_exists("path_to_url") ) :
+	/**
+	 * Convert a path to the uri relative to wordpress installation
+	 *
+	 * @param $path
+	 * @return mixed
+	 */
 	function path_to_url($path){
-		$blogurl = trailingslashit(get_bloginfo("url"));
-		$blogpath = ABSPATH;
-		$result = preg_replace("|^$blogpath|", $blogurl, $path);
-		return $result;
+		return \WBF\includes\Utilities::path_to_url($path);
 	}
 endif;
 
 if ( !function_exists("count_digit") ) :
+	/**
+	 * Count a digit of an int
+	 *
+	 * @param $number
+	 * @return int
+	 */
 	function count_digit($number){
-		$digit = 0;
-		do
-		{
-			$number /= 10;      //$number = $number / 10;
-			$number = intval($number);
-			$digit++;
-		}while($number!=0);
-		return $digit;
+		return \WBF\includes\Utilities::count_digit($number);
 	}
 endif;
 
@@ -551,102 +396,6 @@ if ( !function_exists("get_timezone_offset") ) :
 	 * @return int;
 	 */
 	function get_timezone_offset($remote_tz, $origin_tz = null) {
-		if($origin_tz === null) {
-			if(!is_string($origin_tz = date_default_timezone_get())) {
-				return false; // A UTC timestamp was returned -- bail out!
-			}
-		}
-		$origin_dtz = new DateTimeZone($origin_tz);
-		$remote_dtz = new DateTimeZone($remote_tz);
-		$origin_dt = new DateTime("now", $origin_dtz);
-		$remote_dt = new DateTime("now", $remote_dtz);
-		$offset = $origin_dtz->getOffset($origin_dt) - $remote_dtz->getOffset($remote_dt);
-		return $offset;
+		return \WBF\includes\Utilities::get_timezone_offset($remote_tz,$origin_tz);
 	}
 endif;
-
-/***************************************************************
- * TYPOGRAPHY (these functions are deprecated)
- ***************************************************************/
-
-/**
- * Returns an array of system fonts
- * Feel free to edit this, update the font fallbacks, etc.
- * @deprecated
- */
-function options_typography_get_os_fonts() {
-    // OS Font Defaults
-    $os_faces = array(
-        'Arial, sans-serif' => 'Arial',
-        '"Avant Garde", sans-serif' => 'Avant Garde',
-        'Cambria, Georgia, serif' => 'Cambria',
-        'Copse, sans-serif' => 'Copse',
-        'Garamond, "Hoefler Text", Times New Roman, Times, serif' => 'Garamond',
-        'Georgia, serif' => 'Georgia',
-        '"Helvetica Neue", Helvetica, sans-serif' => 'Helvetica Neue',
-        'Tahoma, Geneva, sans-serif' => 'Tahoma'
-    );
-    return $os_faces;
-}
-
-/**
- * Returns a select list of Google fonts
- * Feel free to edit this, update the fallbacks, etc.
- * @deprecated
- */
-function options_typography_get_google_fonts() {
-    // Google Font Defaults
-    $google_faces = array(
-        '' => 'Select',
-        'Abril Fatface, serif' => 'Abril Fatface',
-        'Actor, sans-serif' => 'Actor',
-        'Amaranth, sans-serif' => 'Amaranth',
-        'Arvo, serif' => 'Arvo',
-        'Average, sans-serif' => 'Average',
-        'Bevan, serif' => 'Bevan',
-        'Copse, sans-serif' => 'Copse',
-        'Crimson Text, serif' => 'Crimson Text',
-        'Dancing Script, cursive' => 'Dancing Script',
-        'Droid Sans, sans-serif' => 'Droid Sans',
-        'Droid Serif, serif' => 'Droid Serif',
-        'EB Garamond, serif' => 'EB Garamond',
-        'Exo, sans-serif' => 'Exo',
-        'Exo 2, sans-serif' => 'Exo 2',
-        'Fjord, serif' => 'Fjord',
-        'Forum, serif' => 'Forum',
-        'Gentium Basic, serif' => 'Gentium Basic',
-        'Gravitas One, serif' => 'Gravitas One',
-        'Istok Web, sans-serif' => 'Istok Web',
-        'Italiana, serif' => 'Italiana',
-        'Josefin Slab, sans-serif' => 'Josefin Slab',
-        'Jura, sans-serif' => 'Jura',
-        'Kreon, serif' => 'Kreon',
-        'Lato, sans-serif' => 'Lato',
-        'Ledger Regular, sans-serif' => 'Ledger Regular',
-        'Lobster, cursive' => 'Lobster',
-        'Montserrat, sans-serif' => 'Montserrat',
-        'Nobile, sans-serif' => 'Nobile',
-        'Old Standard TT, serif' => 'Old Standard TT',
-        'Open Sans, sans-serif' => 'Open Sans',
-        'Oswald, sans-serif' => 'Oswald',
-        'Pacifico, cursive' => 'Pacifico',
-        'Raleway, sans-serif' => 'Raleway',
-        'Rokkitt, serif' => 'Rokkit',
-        'Playfair Display, serif' => 'Playfair Display',
-        'Poly, serif' => 'Poly',
-        'PT Sans, sans-serif' => 'PT Sans',
-        'PT Serif, serif' => 'PT Serif',
-        'Quattrocento, serif' => 'Quattrocento',
-        'Raleway, cursive' => 'Raleway',
-        'Roboto, sans-serif' => 'Roboto',
-        'Roboto Condensed, sans-serif' => 'Roboto Condensed',
-        'Roboto Slab, serif' => 'Roboto Slab',
-        'Signika, sans-serif' => 'Signika',
-        'Stalemate, cursive' => 'Stalemate',
-        'Source Sans Pro, sans-serif' => 'Source Sans Pro',
-        'Ubuntu, sans-serif' => 'Ubuntu',
-        'Vollkorn, serif' => 'Vollkorn',
-        'Yanone Kaffeesatz, sans-serif' => 'Yanone Kaffeesatz'
-    );
-    return $google_faces;
-}

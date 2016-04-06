@@ -1,11 +1,14 @@
 <?php
 
 namespace WBF\modules\behaviors;
+use WBF\modules\options\Organizer;
 
 /**
  * Get a behaviour.
+ *
  * @param $name
  * @param string $return (value OR array)
+ *
  * @return array|bool|mixed|string
  */
 function get_behavior($name, $post_id = 0, $return = "value") {
@@ -17,7 +20,9 @@ function get_behavior($name, $post_id = 0, $return = "value") {
 			$post_id = get_queried_object_id();
 		}else{
 			global $post;
-			$post_id = $post->ID;
+			if(isset($post) && isset($post->ID) && $post->ID != 0){
+				$post_id = $post->ID;
+			}
 		}
 	}
 
@@ -47,6 +52,46 @@ function get_behavior($name, $post_id = 0, $return = "value") {
 		return $b->value;
 	}else{
 		return $b;
+	}
+}
+
+/**
+ * Register the behaviors as theme options. The values of those theme options will serve as behaviors default values.
+ *
+ * @param Organizer $organizer
+ *
+ * @hooked 'wbf/theme_options/register'
+ *
+ * @since 0.13.12
+ *
+ * @return array
+ */
+function register_behaviors_as_theme_options($organizer){
+	if(\WBF::module_is_loaded("behaviors") && class_exists('\WBF\modules\behaviors\BehaviorsManager')){
+		//Behaviors tab heading
+		$bh_options[] = [];
+		$organizer->add_section("behaviors",__( 'Posts & Pages', 'waboot' ));
+		$post_types = wbf_get_filtered_post_types(); //Get post types
+		foreach($post_types as $ptSlug => $ptLabel){
+			if( BehaviorsManager::count_behaviors_for_post_type($ptSlug) > 0){
+				$predef_behavior = BehaviorsManager::getAll(); //get predefined options
+
+				//Post type heading
+				$organizer->add([
+					'name' => $ptLabel,
+					'desc' => sprintf(__( 'Edit default options for "%s" post type', 'waboot' ),strtolower($ptLabel)),
+					'type' => 'info'
+				],"behaviors","behaviors",['behavior'=>true]);
+
+				//Post type options:s
+				foreach($predef_behavior as $b){
+					if($b->is_enabled_for_post_type($ptSlug)){
+						$option = $b->generate_of_option($ptSlug);
+						$organizer->add($option,"behaviors","behaviors",['behavior'=>true]);
+					}
+				}
+			}
+		}
 	}
 }
 
