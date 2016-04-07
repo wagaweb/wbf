@@ -46,10 +46,6 @@ class Component {
       'post_type' => '*',
       'node_id' => '*'
     ];
-	/**
-	 * @var bool
-	 */
-	var $filters_updated_flag = false;
 
     public function __construct($component){
         $this->name = $component['nicename'];
@@ -73,8 +69,8 @@ class Component {
      * DO NOT EVER, AND I MEAN EVER, PUT THIS INTO OBJECT CONSTRUCTOR, IT WILL BLOW THIGS UP!
      */
     public function detectFilters(){
-
-	    if($this->filters_updated_flag) return; //the method was already called at least once
+		static $filters_updated_flag;
+	    if(isset($filters_updated_flag) && $filters_updated_flag) return; //the method was already called at least once
 
         //Detect the filters
         if(\WBF\modules\options\of_get_option($this->name."_selective_disable","0") == 1){
@@ -113,7 +109,8 @@ class Component {
                 }
             }
         }
-	    $this->filters_updated_flag = true;
+
+	    $filters_updated_flag = true;
     }
 
     /**
@@ -206,7 +203,7 @@ class Component {
 
 	/**
 	 * Filter called during "wbf/modules/components/component/{$component_name}/register_options" by addRegisteredComponentOptions().
-	 * By default $options is passed empty to this method
+	 * By default $options is passed empty to this method. This is a backward compatibility method, mostly; register_options() is better.
 	 *
 	 * @param $options
 	 *
@@ -221,14 +218,12 @@ class Component {
 	}
 
     public function onActivate(){
-        //echo "Attivato: $this->name";
         add_action( 'admin_notices', array($this,'activationNotice') );
         $this->register_options();
 	    $this->restore_theme_options();
     }
 
     public function onDeactivate(){
-        //echo "Disattivato: $this->name";
 		$this->backup_theme_options();
         add_action( 'admin_notices', array($this,'deactivationNotice') );
     }
@@ -236,22 +231,23 @@ class Component {
     public function activationNotice(){
         ?>
         <div class="updated">
-            <p><?php _e( sprintf("Activated: %s",$this->name), "wbf" ); ?></p>
+            <p><?php _ex( sprintf("Activated: %s",$this->name),"component", "wbf" ); ?></p>
         </div>
-    <?php
+        <?php
     }
 
     public function deactivationNotice(){
         ?>
         <div class="updated">
-            <p><?php _e( sprintf("Deactivated: %s",$this->name), "wbf" ); ?></p>
+            <p><?php _ex( sprintf("Deactivated: %s",$this->name),"component", "wbf" ); ?></p>
         </div>
-    <?php
+        <?php
     }
 
     /**
-     * Retrive a file from component directory
-     * @param $filepath
+     * Retrieve a file from component directory
+     *
+     * @param string $filepath
      * @return string
      */
     public function file($filepath){
