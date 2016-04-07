@@ -7,20 +7,48 @@ use WBF\modules\options\Framework;
 use WBF\modules\options\Organizer;
 
 class Component {
-
+	/**
+	 * @var string
+	 */
     var $name;
+	/**
+	 * @var bool
+	 */
     var $active;
+	/**
+	 * @var string
+	 */
     var $file;
+	/**
+	 * @var array
+	 */
     var $files;
+	/**
+	 * @var bool
+	 */
     var $is_child_component;
+	/**
+	 * @var string
+	 */
     var $directory_uri;
-
-    //Se il filtro è su * il componente viene caricato sempre, altrimenti solo nelle robe specificate
-    var $filters = array(
+	/**
+	 * @var string
+	 */
+    var $directory;
+	/**
+	 * @var string
+	 */
+	var $relative_path;
+	/**
+	 * @var array if the filter is on "*" the component will be always loaded
+	 */
+    var $filters = [
       'post_type' => '*',
       'node_id' => '*'
-    );
-
+    ];
+	/**
+	 * @var bool
+	 */
 	var $filters_updated_flag = false;
 
     public function __construct($component){
@@ -29,9 +57,13 @@ class Component {
         $this->file = $component['file'];
         $this->is_child_component = $component['child_component'];
         if($this->is_child_component){
-            $this->directory_uri = get_child_components_directory_uri()."/".$this->name;
+            $this->directory_uri = rtrim(get_child_components_directory_uri(),"/")."/".$this->name;
+            $this->directory = rtrim(get_child_components_directory(),"/")."/".$this->name;
+	        $this->relative_path = get_child_dirname()."/".$this->name;
         }else{
-            $this->directory_uri = get_root_components_directory_uri()."/".$this->name;
+            $this->directory_uri = rtrim(get_root_components_directory_uri(),"/")."/".$this->name;
+            $this->directory = rtrim(get_root_components_directory(),"/")."/".$this->name;
+	        $this->relative_path = get_root_dirname()."/".$this->name;
         }
     }
 
