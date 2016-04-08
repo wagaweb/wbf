@@ -100,16 +100,16 @@
 							</tbody>
 						</table>
 					</div>
-					<?php foreach($registered_components as $comp_data): if(\WBF\modules\components\ComponentsManager::is_active($comp_data)) : ?>
+					<?php foreach($registered_components as $comp_data): if(!\WBF\modules\components\ComponentsManager::is_active($comp_data)) continue; ?>
 					<div id="component-<?php echo $comp_data['nicename']; ?>" class="group" style="display: none;">
 						<h3><?php _e(sprintf("%s Component Settings",ucfirst($comp_data['nicename'])),"wbf"); ?></h3>
 						<?php \WBF\modules\options\GUI::optionsframework_fields($compiled_components_options[$comp_data['nicename']]); ?>
-						<!-- </div> not necessary (for some reason) -->
-						<?php endif; endforeach; ?>
-						<div id="componentframework-submit">
-							<input type="submit" name="submit-components-options" id="submit" class="button button-primary" value="Save Changes">
-							<input type="submit" class="reset-button button-secondary" name="reset" value="<?php esc_attr_e( 'Restore default component activation state', 'wbf' ); ?>" onclick="return confirm( '<?php print esc_js( __( 'Click OK to reset. Any theme settings will be lost!', 'wbf' ) ); ?>' );" />
-						</div>
+					<?php //</div> not necessary (is echoed from GUI::optionsframework_fields )... THIS MUST BE CHANGED AS SOON AS POSSIBLE, IT'S JUST SO WRONG! ?>
+					<?php endforeach; ?>
+					<div id="componentframework-submit">
+						<input type="submit" name="submit-components-options" id="submit" class="button button-primary" value="Save Changes">
+						<input type="submit" class="reset-button button-secondary" name="reset" value="<?php esc_attr_e( 'Restore default component activation state', 'wbf' ); ?>" onclick="return confirm( '<?php print esc_js( __( 'Click OK to reset. Any theme settings will be lost!', 'wbf' ) ); ?>' );" />
+					</div>
 				</form>
 			</div>
 		</div><!-- #componentframework-content -->
