@@ -47,6 +47,11 @@ class Component {
       'node_id' => '*'
     ];
 
+	/**
+	 * Component constructor.
+	 *
+	 * @param array $component (an array with at least "nicename","enabled","file", and "child_component")
+	 */
     public function __construct($component){
         $this->name = $component['nicename'];
         $this->active = $component['enabled'];
