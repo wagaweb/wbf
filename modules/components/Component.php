@@ -182,12 +182,6 @@ class Component {
 
     /**
      * Method called on "wp" action for each active components that is enabled for current displayed page
-     * @deprecated, use run() instead
-     */
-    public function onInit(){}
-
-    /**
-     * Method called on "wp" action for each active components that is enabled for current displayed page
      */
     public function run(){}
 

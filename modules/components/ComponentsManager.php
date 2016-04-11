@@ -232,11 +232,11 @@ class ComponentsManager {
                     self::addLoadedComponent( $oComponent );
                     switch ( $action ) {
                         case "wp":
-                            if(method_exists($oComponent,"onInit")){
-                                $oComponent->onInit(); //deprecated
+                            if(method_exists($oComponent,"run")){
+                                $oComponent->run();
                             }else{
-                                if(method_exists($oComponent,"run")){
-                                    $oComponent->run();
+                                if(method_exists($oComponent,"onInit")){
+                                    $oComponent->onInit();
                                 }
                             }
                             break;
