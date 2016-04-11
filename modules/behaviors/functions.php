@@ -67,7 +67,7 @@ function get_behavior($name, $post_id = 0, $return = "value") {
  * @return array
  */
 function register_behaviors_as_theme_options($organizer){
-	if(\WBF::module_is_loaded("behaviors") && class_exists('\WBF\modules\behaviors\BehaviorsManager')){
+	if(\WBF::module_is_loaded("behaviors") && class_exists('\WBF\modules\behaviors\BehaviorsManager') && BehaviorsManager::hasBehaviors()){
 		//Behaviors tab heading
 		$bh_options[] = [];
 		$organizer->add_section("behaviors",__( 'Posts & Pages', 'waboot' ));

@@ -31,6 +31,10 @@ class BehaviorsManager{
 		}
 	}
 
+	static function hasBehaviors(){
+		return count(self::getAll()) > 0;
+	}
+
 	static function getAll($post_type = null){
 		if(is_null($post_type)) $post_type = "*";
 		static $behaviors;
