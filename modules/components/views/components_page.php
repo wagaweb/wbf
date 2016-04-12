@@ -22,7 +22,7 @@
 		</div>
 		<div id="componentframework-metabox" class="metabox-holder">
 			<div id="componentframework" class="postbox">
-				<form method="post" action="admin.php?page=waboot_components">
+				<form method="post" action="admin.php?page=<?php echo \WBF\modules\components\ComponentsManager::$wp_menu_slug; ?>">
 					<div id="component-main" class="group">
 						<table class="wp-list-table widefat components">
 							<thead>

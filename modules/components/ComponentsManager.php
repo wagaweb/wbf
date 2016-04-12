@@ -10,6 +10,8 @@ use WBF\modules\options\Organizer;
 class ComponentsManager {
 
     static $last_error = "";
+	
+	static $wp_menu_slug = "wbf_components";
 
     /**
      * Add hooks, detect components into components directory and updates relative options
@@ -26,7 +28,7 @@ class ComponentsManager {
 
     static function scripts($hook){
         global $plugin_page;
-        if($plugin_page == "waboot_components"){
+        if($plugin_page == ComponentsManager::$wp_menu_slug){
             // Enqueue custom CSS
             $stylesheet = \WBF::prefix_url('admin/css/componentsframework.css');
             if ($stylesheet != ""){
@@ -164,7 +166,7 @@ class ComponentsManager {
     }
 
     static function add_menu($parent_slug) {
-        add_submenu_page( $parent_slug, __( "Waboot Components", "wbf" ), __( "Components", "wbf" ), "activate_plugins", "waboot_components", '\WBF\modules\components\ComponentsManager::components_admin_page', "", 66 );
+        add_submenu_page( $parent_slug, __( "Waboot Components", "wbf" ), __( "Components", "wbf" ), "activate_plugins", self::$wp_menu_slug, '\WBF\modules\components\ComponentsManager::components_admin_page', "", 66 );
     }
 
     /**
@@ -433,7 +435,7 @@ class ComponentsManager {
      */
     static function toggle_components(){
         global $plugin_page;
-        if(is_admin() && isset($_GET['page']) && $_GET['page'] == "waboot_components"){
+        if(is_admin() && isset($_GET['page']) && $_GET['page'] == self::$wp_menu_slug){
             if ( isset( $_GET['enable'] ) ) {
                 $component_name = $_GET['enable'];
                 try {
