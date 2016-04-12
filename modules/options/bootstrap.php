@@ -68,33 +68,13 @@ function module_init(){
 }
 
 function optionsframework_init() {
+	global $wbf_options_framework;
+
     // Instantiate the main plugin class.
     $options_framework = new Framework;
     $options_framework->init();
 
-    // Instantiate the options page.
-    $options_framework_admin = new Admin;  //[WABOOT MOD]
-    $options_framework_admin->init();
-
-    // Instantiate the media uploader class
-    $options_framework_media_uploader = new MediaUploader; //[WABOOT MOD]
-    $options_framework_media_uploader->init();
-
-    // Instantiate the code editor class [WABOOT MOD]
-    $options_framework_waboot_code_editor = new CodeEditor;
-    $options_framework_waboot_code_editor->init();
-
-    // Instantiate the gfont selector class [WABOOT MOD]
-    $options_framework_waboot_gfont_selector = new FontSelector;
-    $options_framework_waboot_gfont_selector->init();
-
-	//If there are no options for current theme, then add the defaults
-	/*$values = Framework::get_options_values();
-	if(!$values || empty($values)){
-		$defaults = Framework::get_default_values();
-		of_options_save(Framework::get_options_root_id(),[],$defaults);
-		Framework::update_theme_options($defaults);
-	}*/
+	$GLOBALS['wbf_options_framework'] = $options_framework; //todo: this is bad, found another way
 }
 
 /**
