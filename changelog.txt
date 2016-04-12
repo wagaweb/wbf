@@ -1,5 +1,10 @@
 == Change log ==
 
+Version 0.13.13 -
+---------------------------------
+
+
+
 Version 0.13.12 -
 ---------------------------------
 
@@ -34,6 +39,7 @@ Version 0.13.12 -
 - Feature: introdotto il Theme Options Organizer, per una più efficace gestione delle theme options
 - Feature: ora è possibile impedire il check degli update di WBF
 - Feature: aggiunte estensioni per woocommerce e gravityform
+- Feature: Introdotta la classe Resources
 
 Version 0.13.11 - 13/12/2015
 ---------------------------------

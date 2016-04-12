@@ -103,7 +103,15 @@ if( ! class_exists('WBF') ) :
 		 */
 		var $notice_manager;
 
-		const version = "0.13.11";
+		/**
+		 * @var \WBF\includes\Resources
+		 */
+		var $resources;
+
+		/**
+		 * @var string
+		 */
+		const version = "0.13.12";
 
 		public static function getInstance($args = []){
 			static $instance = null;
@@ -151,8 +159,9 @@ if( ! class_exists('WBF') ) :
 			$this->maybe_add_option();
 			$this->maybe_add_theme_directory();
 
-			$this->url = self::get_url();
-			$this->path = self::get_path();
+			$this->resources = \WBF\includes\Resources::getInstance();
+			$this->url = $this->resources->get_url();
+			$this->path = $this->resources->get_path();
 
 			if($this->is_plugin()){
 				add_action('activate_' . plugin_basename(__FILE__), [$this,"maybe_run_activation"]);
@@ -450,6 +459,7 @@ if( ! class_exists('WBF') ) :
 
 		/**
 		 * Checks if WBF is in the plugins directory
+		 * 
 		 * @return bool
 		 */
 		static function is_plugin(){
@@ -462,89 +472,92 @@ if( ! class_exists('WBF') ) :
 			return apply_filters("wbf/is_plugin",$is_plugin);
 		}
 
+		/*
+		 *
+		 *
+		 * PATHS AND RESOURCES (deprecated)
+		 * 
+		 * 
+		 */
+
 		/**
 		 * Returns WBF url or FALSE
+		 *
+		 * @deprecated
+		 * 
 		 * @return bool|string
 		 */
 		static function get_url(){
-			static $url;
-
-			if(isset($url)) return $url;
-
-			$url = get_option("wbf_url");
-
-			if(defined("WBF_URL")){ //Get the defined costant before all
-				$url = rtrim(WBF_URL,"/")."/";
-				return $url;
-			}elseif($url && is_string($url) && !empty($url)){
-				$url = rtrim($url,"/")."/";
-				return $url;
-			}
-			return false;
+			return \WBF\includes\Resources::getInstance()->get_url();
 		}
 
 		/**
 		 * Returns WBF path or FALSE
+		 *
+		 * @deprecated
+		 * 
 		 * @return bool|string
 		 */
 		static function get_path(){
-			static $path;
+			return \WBF\includes\Resources::getInstance()->get_path();
+		}
 
-			if(isset($path)) return $path;
+		/**
+		 * Gets WBF admin assets uri
+		 *
+		 * @deprecated
+		 *
+		 * @return bool|string
+		 */
+		static function get_admin_assets_uri(){
+			return \WBF\includes\Resources::getInstance()->get_admin_assets_uri();
+		}
 
-			$path = get_option("wbf_path");
-
-			if(defined("WBF_DIRECTORY")){ //Get the defined costant before all
-				$path = rtrim(WBF_DIRECTORY,"/")."/";
-				return $path;
-			}elseif($path && is_string($path) && !empty($path)){
-				$path = rtrim($path,"/")."/";
-				return $path;
-			}
-			return false;
+		/**
+		 * Gets WBF assets uri
+		 * @param bool $admin_assets_flag
+		 *
+		 * @deprecated
+		 * 
+		 * @return bool|string
+		 */
+		static function get_assets_uri($admin_assets_flag = false){
+			return \WBF\includes\Resources::getInstance()->get_assets_uri($admin_assets_flag);
 		}
 
 		/**
 		 * Returns WBF Theme dir
+		 *
+		 * @deprecated
+		 * 
 		 * @return bool|string
 		 */
 		static function get_theme_dir(){
-			if(defined("WBF_THEME_DIRECTORY")){
-				return rtrim(WBF_THEME_DIRECTORY,"/");
-			}
-			return false;
+			return \WBF\includes\Resources::getInstance()->get_theme_dir();
 		}
 
 		/**
 		 * Prefix $to with the WBF URL
 		 * @param $to
 		 *
+		 * @deprecated
+		 *
 		 * @return bool|string
 		 */
 		static function prefix_url($to){
-			$url = trim(self::get_url());
-			$to = trim($to);
-			if($url){
-				return rtrim($url,"/")."/".ltrim($to,"/");
-			}else{
-				return false;
-			}
+			return \WBF\includes\Resources::getInstance()->prefix_url($to);
 		}
 
 		/**
 		 * Prefix $to with the WBF PATH
 		 * @param $to
 		 *
+		 * @deprecated
+		 *
 		 * @return bool|string
 		 */
 		static function prefix_path($to){
-			$path = trim(self::get_url());
-			$to = trim($to);
-			if($path){
-				return rtrim($path,"/")."/".ltrim($to,"/");
-			}else{
-				return false;
-			}
+			return \WBF\includes\Resources::getInstance()->prefix_path($to);
 		}
 
 		/*
