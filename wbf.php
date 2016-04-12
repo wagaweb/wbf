@@ -698,7 +698,7 @@ if( ! class_exists('WBF') ) :
 			 * SCRIPTS
 			 */
 			wp_register_script('gmapapi', 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places', array('jquery'), false, false );
-			if(WBF_ENV == "dev"){
+			if(defined("WBF_ENV") && WBF_ENV == "dev"){
 				wp_register_script("wbfgmapmc",WBF_URL."/assets/src/js/includes/wbfgmap/markerclusterer.js",array("jquery","gmapapi"),false,true);
 				wp_register_script("wbfgmap",WBF_URL."/assets/src/js/includes/wbfgmap/acfmap.js",array("jquery","gmapapi","wbfgmapmc"),false,true);
 			}else{
