@@ -109,6 +109,11 @@ if( ! class_exists('WBF') ) :
 		var $resources;
 
 		/**
+		 * @var
+		 */
+		var $wp_menu_slug;
+
+		/**
 		 * @var string
 		 */
 		const version = "0.13.12";
@@ -249,13 +254,17 @@ if( ! class_exists('WBF') ) :
 		 * @return bool
 		 */
 		static function is_wbf_admin_page(){
-			global $plugin_page;
-			$valid_pages = array(
-				'waboot_options',
-				'waboot_components',
-				'themeoptions_manager',
-				'waboot_license'
-			);
+			global $plugin_page,$wbf_options_framework;
+			
+			$valid_pages = [
+				self::getInstance()->wp_menu_slug,
+				\WBF\modules\components\ComponentsManager::$wp_menu_slug,
+				'wbf_licenses'
+			];
+
+			if(isset($wbf_options_framework)){
+				$valid_pages[] = $wbf_options_framework->admin->wp_menu_slug;
+			}
 
 			if(in_array($plugin_page,$valid_pages)){
 				return true;
@@ -619,6 +628,8 @@ if( ! class_exists('WBF') ) :
 
 			$this->options = apply_filters("wbf/options",$this->options);
 
+			$this->wp_menu_slug = "wbf_options";
+
 			$this->modules = $this->load_modules();
 
 			do_action("wbf_after_setup_theme");
@@ -725,13 +736,15 @@ if( ! class_exists('WBF') ) :
 			else
 				$warning_count = 0;
 
+			$page_title = "WBF";
 			$menu_title = apply_filters("wbf/admin_menu/label",'WBF');
 			$menu_label = sprintf( __( '%s %s' ), $menu_title, "<span class='update-plugins count-$warning_count' title='".__("Update available","wbf")."'><span class='update-count'>" . number_format_i18n($warning_count) . "</span></span>" );
+			$menu_slug = $this->wp_menu_slug;
 
 			$menu['58'] = $menu['59']; //move the separator before "Appearance" one position up
-			$waboot_menu = add_menu_page( "Waboot", $menu_label, "edit_theme_options", "waboot_options", "WBF::options_page", "dashicons-text", 59 );
+			$waboot_menu = add_menu_page( $page_title, $menu_label, "edit_theme_options", $menu_slug, "WBF::options_page", "dashicons-text", 59 );
 			//$waboot_options = add_submenu_page( "waboot_options", __( "Theme options", "waboot" ), __( "Theme Options", "waboot" ), "edit_theme_options", "waboot_options", array($options_framework_admin,"options_page") );
-			do_action("wbf_admin_submenu","waboot_options");
+			do_action("wbf_admin_submenu","wbf_options");
 		}
 
 		/**

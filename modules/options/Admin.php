@@ -6,6 +6,8 @@ use WBF\includes\mvc\HTMLView;
 
 class Admin extends \Options_Framework_Admin{
 
+	var $wp_menu_slug = "themeoptions-manager";
+
 	public function init() {
 		//@since 0.13.12 we have removed the parent init, so the original filter "of_options" will never be called.
 		//parent::init();
@@ -46,14 +48,14 @@ class Admin extends \Options_Framework_Admin{
 	 */
 	function add_options_page() {
 		$menu = $this->menu_settings();
-		$this->options_screen = add_submenu_page( "waboot_options", $menu['page_title'], $menu['menu_title'], $menu['capability'], $menu['menu_slug'], array($this, 'options_page') );
+		$this->options_screen = add_submenu_page( \WBF::getInstance()->wp_menu_slug, $menu['page_title'], $menu['menu_title'], $menu['capability'], $menu['menu_slug'], array($this, 'options_page') );
 	}
 
 	/**
 	 * Add "Manage Theme Options" subpage to WBF Menu
 	 */
 	public function add_man_page($parent_slug) {
-		add_submenu_page( $parent_slug , __( "Theme Options Manager", "wbf" ), __( "Import/Export", "wbf" ), "edit_theme_options", "themeoptions-manager", array( $this, 'do_man_page') );
+		add_submenu_page( $parent_slug , __( "Theme Options Manager", "wbf" ), __( "Import/Export", "wbf" ), "edit_theme_options", $this->wp_menu_slug, array( $this, 'do_man_page') );
 	}
 
 	function add_copy_in_admin_page(){
@@ -66,7 +68,7 @@ class Admin extends \Options_Framework_Admin{
 			'menu_title' => __('Theme Options', 'wbf'),
 			'capability' => 'edit_theme_options',
 			'old_menu_slug' => 'options-framework',
-			'menu_slug' => 'waboot_options'
+			'menu_slug' => \WBF::getInstance()->wp_menu_slug
 		);
 		return apply_filters('optionsframework_menu', $menu);
 	}
@@ -148,14 +150,14 @@ class Admin extends \Options_Framework_Admin{
 
 			<h3><?php _e( "Export or Backup Theme Options", "wbf" ); ?></h3>
 
-			<form action="admin.php?page=themeoptions-manager" method="POST" id="export-themeoptions">
+			<form action="admin.php?page=<?php echo $this->wp_menu_slug; ?>" method="POST" id="export-themeoptions">
 				<p><label><input type="radio" name="option" value="backup"> <?php _e( "Backup current Theme Options on the disk", "wbf" ); ?></label></p>
 				<p class="submit"><input type="submit" name="submit-backup" id="submit" class="button button-primary" value="<?php _e( "Backup" ) ?>"></p>
 			</form>
 
 			<h3><?php _e( "Import or Restore Theme Options", "wbf" ); ?></h3>
 
-			<form action="admin.php?page=themeoptions-manager" method="POST" enctype="multipart/form-data"
+			<form action="admin.php?page=<?php echo $this->wp_menu_slug; ?>" method="POST" enctype="multipart/form-data"
 			      id="export-themeoptions">
 				<p><?php _e( "Select a file to restore, or upload one:" ); ?></p>
 				<?php if ( ! empty( $backup_files ) ) : ?>

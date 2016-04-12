@@ -5,6 +5,16 @@ namespace WBF\modules\options;
 class Framework extends \Options_Framework {
 
 	/**
+	 * @var Admin
+	 */
+	var $admin;
+
+	/**
+	 * @var array
+	 */
+	var $extensions;
+
+	/**
 	 * Initialize the framework.
 	 */
 	public function init(){
@@ -13,6 +23,18 @@ class Framework extends \Options_Framework {
 		if(defined("WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR") && !is_dir(WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR)){
 			mkdir(WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR);
 		}
+
+		$this->admin = new Admin();
+		$this->admin->init();
+
+		//Loads up extensions todo: refactor a bit
+		$mu = new MediaUploader();
+		$mu->init();
+		$ce = new CodeEditor();
+		$ce->init();
+		$fs = new FontSelector();
+		$fs->init();
+		$this->extensions = [$mu,$ce,$fs];
 	}
 
 	/**
