@@ -256,6 +256,7 @@ if( ! class_exists('WBF') ) :
 		static function is_wbf_admin_page(){
 			global $plugin_page,$wbf_options_framework;
 			
+			//todo: this is ugly, we could expose a function like register_wbf_admin_page()
 			$valid_pages = [
 				self::getInstance()->wp_menu_slug,
 				\WBF\modules\components\ComponentsManager::$wp_menu_slug,
