@@ -131,13 +131,13 @@ class Organizer {
 		}
 
 		if(isset($this->groups[$group][$section])){
-			$this->groups[$group][$section][] = $option;
+			$this->groups[$group][$section][] = $option; //todo: check for existence before insert?
 		}else{
 			$this->groups[$group][$section][] = $option;
 		}
 
 		if(isset($this->sections[$section])){
-			$this->sections[$section][] = $option;
+			$this->sections[$section][] = $option; //todo: check for existence before insert?
 		}else{
 			$this->sections[$section][] = $option;
 		}
