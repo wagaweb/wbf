@@ -232,7 +232,8 @@ function of_create_styles($values = null){
  * @return string
  */
 function of_styles_get_default_input_path(){
-	$input_file_path = WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR."/_theme-options-generated.less.cmp";
+	$input_file_path = rtrim(get_stylesheet_directory(),"/")."/"."_theme-options-generated.less.cmp";
+	$input_file_path = apply_filters("wbf/modules/options/theme_options_input_file_location/main",$input_file_path);
 	return $input_file_path;
 }
 
@@ -242,7 +243,8 @@ function of_styles_get_default_input_path(){
  * @return string
  */
 function of_styles_get_parent_default_input_path(){
-	$input_file_path = get_template_directory()."/".WBF_THEME_DIRECTORY_NAME."/options/_theme-options-generated.less.cmp";
+	$input_file_path = rtrim(get_template_directory(),"/")."/"."_theme-options-generated.less.cmp";
+	$input_file_path = apply_filters("wbf/modules/options/theme_options_input_file_location/child",$input_file_path);
 	return $input_file_path;
 }
 

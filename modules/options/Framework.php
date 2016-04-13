@@ -2,6 +2,8 @@
 
 namespace WBF\modules\options;
 
+use WBF\includes\Utilities;
+
 class Framework extends \Options_Framework {
 
 	/**
@@ -21,7 +23,7 @@ class Framework extends \Options_Framework {
 		Framework::set_theme_option_default_root_id();
 		//Create the framework working directory
 		if(defined("WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR") && !is_dir(WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR)){
-			mkdir(WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR);
+			Utilities::mkpath(WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR);
 		}
 
 		$this->admin = new Admin();

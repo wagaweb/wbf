@@ -58,8 +58,16 @@ if( ! class_exists('WBF') ) :
 		define("WBF_THEME_DIRECTORY_NAME","wbf");
 	}
 
-	if(!defined("WBF_THEME_DIRECTORY")){
+	if(!defined("WBF_WORK_DIRECTORY_NAME")){
+		define("WBF_WORK_DIRECTORY_NAME","wbf");
+	}
+
+	/*if(!defined("WBF_THEME_DIRECTORY")){
 		define("WBF_THEME_DIRECTORY",rtrim(get_stylesheet_directory(),"/")."/".WBF_THEME_DIRECTORY_NAME);
+	}*/
+
+	if(!defined("WBF_CONTENT_DIRECTORY")){
+		define("WBF_CONTENT_DIRECTORY", WP_CONTENT_DIR."/".WBF_WORK_DIRECTORY_NAME);
 	}
 
 	require_once("wbf-autoloader.php");
@@ -162,11 +170,12 @@ if( ! class_exists('WBF') ) :
 
 			$this->maybe_run_activation();
 			$this->maybe_add_option();
-			$this->maybe_add_theme_directory();
 
 			$this->resources = \WBF\includes\Resources::getInstance();
 			$this->url = $this->resources->get_url();
 			$this->path = $this->resources->get_path();
+
+			$this->resources->maybe_add_work_directory();
 
 			if($this->is_plugin()){
 				add_action('activate_' . plugin_basename(__FILE__), [$this,"maybe_run_activation"]);
@@ -859,12 +868,6 @@ if( ! class_exists('WBF') ) :
 					//This case may fire when switch from a wbf-as-plugin to a wbf-in-theme environment @since 0.13.8
 					$this->add_wbf_options();
 				}
-			}
-		}
-
-		function maybe_add_theme_directory(){
-			if(defined("WBF_THEME_DIRECTORY") && !is_dir(WBF_THEME_DIRECTORY)){
-				mkdir(WBF_THEME_DIRECTORY);
 			}
 		}
 

@@ -16,6 +16,11 @@ class Resources{
 	 * @var bool|string
 	 */
 	private $wbf_url = false;
+	/**
+	 * The WBF working directory path
+	 * @var bool|string
+	 */
+	private $wbf_wd = false;
 
 	/**
 	 * @return Resources
@@ -88,18 +93,6 @@ class Resources{
 	}
 
 	/**
-	 * Returns WBF Theme dir
-	 *
-	 * @return bool|string
-	 */
-	public function get_theme_dir(){
-		if(defined("WBF_THEME_DIRECTORY")){
-			return rtrim(WBF_THEME_DIRECTORY,"/");
-		}
-		return false;
-	}
-
-	/**
 	 * Prefix $to with the WBF URL
 	 * @param $to
 	 *
@@ -129,6 +122,60 @@ class Resources{
 		}else{
 			return false;
 		}
+	}
+
+	/**
+	 * Returns WBF Theme dir
+	 *
+	 * @return bool|string
+	 */
+	/*public function get_theme_dir(){
+		if(defined("WBF_THEME_DIRECTORY")){
+			return rtrim(WBF_THEME_DIRECTORY,"/");
+		}
+		return false;
+	}*/
+
+	/**
+	 * Tries to create the WBF working directory
+	 */
+	function maybe_add_work_directory(){
+		$theme = wp_get_theme();
+		if(defined("WBF_WORK_DIRECTORY_NAME")){
+			$path = WBF_CONTENT_DIRECTORY."/".$theme->get_stylesheet();
+			if(!is_dir(WBF_CONTENT_DIRECTORY)){ //We do not have the working directory
+				Utilities::mkpath($path);
+			}elseif(!is_dir($path)){ //We have the working directory, but not the theme directory in it
+				@mkdir($path);
+			}
+			if(is_dir($path)){
+				$this->wbf_wd = $path;
+			}
+		}
+	}
+
+	/**
+	 * Returns WBF base working directory (without the theme)
+	 *
+	 * @return bool|string
+	 */
+	function get_base_working_directory(){
+		if($this->wbf_wd){
+			return rtrim(dirname($this->wbf_wd),"/");
+		}
+		return false;
+	}
+
+	/**
+	 * Returns WBF working directory
+	 *
+	 * @return bool|string
+	 */
+	function get_working_directory(){
+		if($this->wbf_wd){
+			return rtrim($this->wbf_wd,"/");
+		}
+		return false;
 	}
 
 	private function __clone(){}
