@@ -54,9 +54,9 @@ if( ! class_exists('WBF') ) :
 	define("WBF_ADMIN_DIRECTORY", WBF_DIRECTORY . "/admin");
 	define("WBF_PUBLIC_DIRECTORY", WBF_DIRECTORY . "/public");
 
-	if(!defined("WBF_THEME_DIRECTORY_NAME")){
+	/*if(!defined("WBF_THEME_DIRECTORY_NAME")){
 		define("WBF_THEME_DIRECTORY_NAME","wbf");
-	}
+	}*/
 
 	if(!defined("WBF_WORK_DIRECTORY_NAME")){
 		define("WBF_WORK_DIRECTORY_NAME","wbf");
@@ -66,8 +66,8 @@ if( ! class_exists('WBF') ) :
 		define("WBF_THEME_DIRECTORY",rtrim(get_stylesheet_directory(),"/")."/".WBF_THEME_DIRECTORY_NAME);
 	}*/
 
-	if(!defined("WBF_CONTENT_DIRECTORY")){
-		define("WBF_CONTENT_DIRECTORY", WP_CONTENT_DIR."/".WBF_WORK_DIRECTORY_NAME);
+	if(!defined("WBF_WORK_DIRECTORY")){
+		define("WBF_WORK_DIRECTORY", WP_CONTENT_DIR."/".WBF_WORK_DIRECTORY_NAME);
 	}
 
 	require_once("wbf-autoloader.php");

@@ -142,8 +142,8 @@ class Resources{
 	function maybe_add_work_directory(){
 		$theme = wp_get_theme();
 		if(defined("WBF_WORK_DIRECTORY_NAME")){
-			$path = WBF_CONTENT_DIRECTORY."/".$theme->get_stylesheet();
-			if(!is_dir(WBF_CONTENT_DIRECTORY)){ //We do not have the working directory
+			$path = WBF_WORK_DIRECTORY."/".$theme->get_stylesheet();
+			if(!is_dir(WBF_WORK_DIRECTORY)){ //We do not have the working directory
 				Utilities::mkpath($path);
 			}elseif(!is_dir($path)){ //We have the working directory, but not the theme directory in it
 				@mkdir($path);

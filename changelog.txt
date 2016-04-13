@@ -33,7 +33,7 @@ Version 0.13.12 -
 - Tweak: ora l'update checker del plugin framework ha un timeout di 5 secondi
 - Tweak: refactoring generale degli update manager di tema e plugin, ora sono più flessibili.
 - Tweak: da questa release è iniziato l'utilizzo delle View: ora alcune parti delle theme options vengono renderizzate come tali
-- Feature: ora WBF prevede l'utilizzo di una working directory nel tema chiamata di default "wbf" e definibile nella costante WBF_THEME_DIRECTORY.
+- Feature: ora WBF prevede l'utilizzo di una working directory dentro wp-content chiamata di default "wbf" e definibile nella costante WBF_WORKING_DIRECTORY e WBF_WORKING_DIRECTORY_NAME.
 - Feature: introdotta la classe View, utilizzabile da temi e plugin.
 - Feature: ora i moduli possono avere una priorità di caricamento, settabile tramite filtro. La priorità di default è 10.
 - Feature: introdotto il Theme Options Organizer, per una più efficace gestione delle theme options
