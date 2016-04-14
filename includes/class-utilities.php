@@ -167,6 +167,27 @@ class Utilities{
 	}
 
 	/**
+	 * Get the current page type. Can be "default_home" | "static_home" | "blog_page" | "common"
+	 *
+	 * @return string
+	 */
+	static function get_current_page_type(){
+		if ( is_front_page() && is_home() ) {
+			// Default homepage
+			return "default_home";
+		} elseif ( is_front_page() ) {
+			// static homepage
+			return "static_home";
+		} elseif ( is_home() ) {
+			// blog page
+			return "blog_page";
+		} else {
+			//everything else
+			return "common";
+		}
+	}
+
+	/**
 	 * Recursively create directories
 	 *
 	 * @param $path
