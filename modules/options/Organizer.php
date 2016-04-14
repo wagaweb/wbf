@@ -77,8 +77,11 @@ class Organizer {
 			$group = $this->current_group;
 		}
 
+		if($this->has_section($id)) return $this;
+
 		$option = [
 			'name' => $label,
+			'id' => $id."_heading",
 			'type' => 'heading',
 			'section_id' => $id,
 			'group_id' => $group
@@ -88,17 +91,17 @@ class Organizer {
 			$option = array_merge($option,$params);
 		}
 
-		$this->sections[$id][] = $option;
+		$this->sections[$id][$option['id']] = $option;
 
 		if(!isset($this->groups[$group])){
 			$this->groups[$group] = [];
 		}
 
 		if(!isset($this->groups[$group][$id])){
-			$this->groups[$group][$id][] = $option;
+			$this->groups[$group][$id][$option['id']] = $option;
 		}
 
-		$this->options[] = $option;
+		$this->options[$option['id']] = $option;
 
 		return $this;
 	}
@@ -130,20 +133,52 @@ class Organizer {
 			$option = array_merge($option,$params);
 		}
 
+		if(!isset($option['id'])){
+			$option['id'] = sanitize_title($option['name']."_".$option['type']);
+		}
+
 		if(isset($this->groups[$group][$section])){
-			$this->groups[$group][$section][] = $option; //todo: check for existence before insert?
+			$this->groups[$group][$section][$option['id']] = $option; //todo: check for existence before insert?
 		}else{
-			$this->groups[$group][$section][] = $option;
+			$this->groups[$group][$section][$option['id']] = $option;
 		}
 
 		if(isset($this->sections[$section])){
-			$this->sections[$section][] = $option; //todo: check for existence before insert?
+			$this->sections[$section][$option['id']] = $option; //todo: check for existence before insert?
 		}else{
-			$this->sections[$section][] = $option;
+			$this->sections[$section][$option['id']] = $option;
 		}
 
-		$this->options[] = $option;
+		$this->options[$option['id']] = $option;
 		return $this;
+	}
+
+	/**
+	 * Update an option
+	 *
+	 * @param $id
+	 * @param $values
+	 * @param null $section
+	 * @param null $group
+	 * @param null $params
+	 */
+	public function update($id,$values,$section = null,$group = null,$params = null){
+		if(!$this->has_option($id)){
+			$values['id'] = $id;
+			$this->add($values,$section,$group,$params);
+		}else{
+			$current_opt_values = $this->options[$id];
+			$new_values = $current_opt_values;
+			foreach($values as $k => $v){
+				if(isset($current_opt_values[$k]) && is_array($current_opt_values[$k]) && is_array($values[$k])){
+					$new_values[$k] = wp_parse_args($values[$k],$current_opt_values[$k]);
+				}else{
+					$new_values[$k] = $v;
+				}
+			}
+			$new_values = wp_parse_args($values,$current_opt_values);
+			$this->options[$id] = $new_values;
+		}
 	}
 
 	/**
@@ -199,6 +234,44 @@ class Organizer {
 			$res = $this->sections[$section];
 		}
 		return $res;
+	}
+
+	/**
+	 * Checks if a sections is registered
+	 *
+	 * @param $name
+	 *
+	 * @return mixed
+	 */
+	public function has_section($name){
+		return array_key_exists($name,$this->sections);
+	}
+
+	/**
+	 * Checks if a group is registered
+	 *
+	 * @param $name
+	 *
+	 * @return mixed
+	 */
+	public function has_group($name){
+		return array_key_exists($name,$this->groups);
+	}
+
+	/**
+	 * Check if option is registered
+	 *
+	 * @param $id
+	 *
+	 * @return bool
+	 */
+	public function has_option($id){
+		/*$options_ids = wp_list_pluck($this->options,"id");
+		if(is_array($options_ids)){
+			return in_array($id,$options_ids);
+		}
+		return false;*/
+		return array_key_exists($id,$this->options);
 	}
 
 	/**
