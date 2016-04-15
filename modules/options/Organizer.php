@@ -107,19 +107,47 @@ class Organizer {
 	}
 
 	/**
+	 * Insert an option. Do not use directly.
+	 *
+	 * @param $id
+	 * @param $values
+	 * @param null $section
+	 * @param null $group
+	 */
+	private function insert($id,$values,$section = null,$group = null){
+		if(!isset($section)){
+			$section = $this->current_section;
+		}
+		if(!isset($group)){
+			$group = $this->current_group;
+		}
+
+		if(isset($this->groups[$group][$section])){
+			$this->groups[$group][$section][$id] = $values; //todo: check for existence before insert?
+		}else{
+			$this->groups[$group][$section][$id] = $values;
+		}
+
+		if(isset($this->sections[$section])){
+			$this->sections[$section][$id] = $values; //todo: check for existence before insert?
+		}else{
+			$this->sections[$section][$id] = $values;
+		}
+
+		$this->options[$id] = $values;
+	}
+
+	/**
 	 * Add a new options
 	 *
 	 * @param array $option
-	 *
 	 * @param string|null $section
-	 *
 	 * @param string|null $group
-	 *
 	 * @param array $params
 	 *
 	 * @return $this
 	 */
-	public function add($option,$section = null,$group = null,$params = []){
+	public function add(array $option,$section = null,$group = null,$params = []){
 		if(!isset($section)){
 			$section = $this->current_section;
 		}
@@ -137,19 +165,8 @@ class Organizer {
 			$option['id'] = sanitize_title($option['name']."_".$option['type']);
 		}
 
-		if(isset($this->groups[$group][$section])){
-			$this->groups[$group][$section][$option['id']] = $option; //todo: check for existence before insert?
-		}else{
-			$this->groups[$group][$section][$option['id']] = $option;
-		}
+		$this->insert($option['id'],$option,$section,$group);
 
-		if(isset($this->sections[$section])){
-			$this->sections[$section][$option['id']] = $option; //todo: check for existence before insert?
-		}else{
-			$this->sections[$section][$option['id']] = $option;
-		}
-
-		$this->options[$option['id']] = $option;
 		return $this;
 	}
 
@@ -161,12 +178,23 @@ class Organizer {
 	 * @param null $section
 	 * @param null $group
 	 * @param null $params
+	 *
+	 * @throws \Exception
 	 */
-	public function update($id,$values,$section = null,$group = null,$params = null){
+	public function update($id,array $values,$section = null,$group = null,$params = null){
+		if(!is_string($id)){
+			throw new \Exception("Unable to update the option; id must be a string.");
+		}
 		if(!$this->has_option($id)){
 			$values['id'] = $id;
 			$this->add($values,$section,$group,$params);
 		}else{
+			if(!isset($section)){
+				$section = $this->current_section;
+			}
+			if(!isset($group)){
+				$group = $this->current_group;
+			}
 			$current_opt_values = $this->options[$id];
 			$new_values = $current_opt_values;
 			foreach($values as $k => $v){
@@ -176,8 +204,7 @@ class Organizer {
 					$new_values[$k] = $v;
 				}
 			}
-			$new_values = wp_parse_args($values,$current_opt_values);
-			$this->options[$id] = $new_values;
+			$this->insert($id,$new_values,$section,$group);
 		}
 	}
 
