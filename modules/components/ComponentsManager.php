@@ -52,7 +52,7 @@ class ComponentsManager {
      * @return mixed|void
      */
     static function _detect_components( $components_directory, $child_theme = false ) {
-        $registered_components = $child_theme ? self::get_child_registered_components() : self::get_waboot_registered_components();
+        $registered_components = $child_theme ? self::get_child_registered_components() : self::get_parent_registered_components();
 
         //Unset deleted components
         foreach ( $registered_components as $name => $data ) {
@@ -75,15 +75,17 @@ class ComponentsManager {
                 if ( ! array_key_exists( $component_name, $registered_components ) ) {
                     $registered_components[ $component_name ] = array(
                       'nicename'        => $component_name,
+	                  'class_name'      => isset($component_data['Class Name']) && $component_data['Class Name'] != "" ? $component_data['Class Name'] : self::get_component_class_name($component_name),
                       'file'            => $file,
                       'child_component' => $child_theme,
                       'enabled'         => false
                     );
+
                 }
             }
         }
         if ( ! $child_theme ) {
-            self::update_waboot_registered_components( $registered_components );
+            self::update_parent_registered_components( $registered_components );
         } //update the WP Option of registered component
         else {
             self::update_child_registered_components( $registered_components );
@@ -97,17 +99,17 @@ class ComponentsManager {
      * @return mixed|void
      */
     static function get_child_registered_components() {
-        $template_name = basename( get_stylesheet_directory_uri() );
-
-        return get_option( "{$template_name}_registered_components", array());
+	    $theme = wp_get_theme();
+        return get_option( $theme->get_stylesheet()."_registered_components", array());
     }
 
     /**
      * Get the value of "waboot_registered_components" option (default to empty array)
      * @return mixed|void
      */
-    static function get_waboot_registered_components() {
-        return get_option( "waboot_registered_components", array());
+    static function get_parent_registered_components() {
+	    $theme = wp_get_theme();
+        return get_option( $theme->get_template()."_registered_components", array());
     }
 
     /**
@@ -152,8 +154,9 @@ class ComponentsManager {
      *
      * @param $registered_components
      */
-    static function update_waboot_registered_components( $registered_components ) {
-        update_option( "waboot_registered_components", $registered_components );
+    static function update_parent_registered_components( $registered_components ) {
+	    $theme = wp_get_theme();
+        update_option( $theme->get_template()."_registered_components", $registered_components );
     }
 
     /**
@@ -161,8 +164,8 @@ class ComponentsManager {
      * @param $registered_components
      */
     static function update_child_registered_components( $registered_components ) {
-        $template_name = basename( get_stylesheet_directory_uri() );
-        update_option( "{$template_name}_registered_components", $registered_components );
+	    $theme = wp_get_theme();
+        update_option( $theme->get_stylesheet()."_registered_components", $registered_components );
     }
 
     static function add_menu($parent_slug) {
@@ -177,7 +180,11 @@ class ComponentsManager {
         foreach ( $components as $c ) {
             if ( self::is_active( $c ) ) {
                 require_once( $c['file'] );
-                $className  = ucfirst( $c['nicename'] ) . "Component";
+                $className  = self::get_component_class_name($c['nicename']);
+	            if(!class_exists($className)){
+		            $className = $className."Component"; //legacy compatibility
+	            }
+	            if(!class_exists($className)) continue;
                 $oComponent = new $className( $c );
                 if(method_exists($oComponent,"detectFilters")){
                     $oComponent->detectFilters();
@@ -194,7 +201,11 @@ class ComponentsManager {
         foreach ( $components as $c ) {
             if ( self::is_active( $c ) ) {
                 require_once( $c['file'] );
-                $className  = ucfirst( $c['nicename'] ) . "Component";
+                $className  = self::get_component_class_name($c['nicename']);
+	            if(!class_exists($className)){
+		            $className = $className."Component"; //legacy compatibility
+	            }
+	            if(!class_exists($className)) continue;
                 $oComponent = new $className( $c );
                 if(method_exists($oComponent,"setup"))
                     $oComponent->setup();
@@ -210,7 +221,11 @@ class ComponentsManager {
         foreach ( $components as $c ) {
             if ( self::is_active( $c ) ) {
                 require_once( $c['file'] );
-                $className  = ucfirst( $c['nicename'] ) . "Component";
+                $className  = self::get_component_class_name($c['nicename']);
+	            if(!class_exists($className)){
+		            $className = $className."Component"; //legacy compatibility
+	            }
+	            if(!class_exists($className)) continue;
                 $oComponent = new $className( $c );
                 if(method_exists($oComponent,"widgets"))
                     $oComponent->widgets();
@@ -227,7 +242,11 @@ class ComponentsManager {
         foreach ( $components as $c ) {
             if ( self::is_active( $c ) ) {
                 require_once( $c['file'] );
-                $className  = ucfirst( $c['nicename'] ) . "Component";
+                $className  = self::get_component_class_name($c['nicename']);
+	            if(!class_exists($className)){
+		            $className = $className."Component"; //legacy compatibility
+	            }
+	            if(!class_exists($className)) continue;
                 $oComponent = new $className( $c );
 	            $oComponent->detectFilters();
                 if ( self::is_enable_for_current_page( $oComponent ) ) {
@@ -262,7 +281,11 @@ class ComponentsManager {
         foreach ( $components as $c ) {
             if ( self::is_active( $c ) ) {
                 require_once( $c['file'] );
-                $className  = ucfirst( $c['nicename'] ) . "Component";
+                $className  = self::get_component_class_name($c['nicename']);
+	            if(!class_exists($className)){
+		            $className = $className."Component"; //legacy compatibility
+	            }
+	            if(!class_exists($className)) continue;
                 $oComponent = new $className( $c );
 	            add_filter("wbf/modules/components/component/{$oComponent->name}_component/register_custom_options",[$oComponent,"theme_options"]);
                 $oComponent->register_options();
@@ -292,7 +315,7 @@ class ComponentsManager {
     static function getRegisteredComponents(){
         $registered_components = array();
 
-        $main_components = self::get_waboot_registered_components();
+        $main_components = self::get_parent_registered_components();
         $registered_components = array_merge($registered_components,$main_components);
         if(is_child_theme()){
             $child_components = self::get_child_registered_components();
@@ -308,7 +331,7 @@ class ComponentsManager {
     }
 
     static function retrieve_components(){
-        $core_components  = self::get_waboot_registered_components();
+        $core_components  = self::get_parent_registered_components();
         $child_components = is_child_theme() ? self::get_child_registered_components() : array();
         if ( is_child_theme() ) {
             foreach ( $core_components as $name => $comp ) {
@@ -617,18 +640,21 @@ class ComponentsManager {
      */
     static function enable( $component_name, $child_component = false ) {
         //chiamo onActivate() del componente
-        $registered_components = ! $child_component ? self::get_waboot_registered_components() : self::get_child_registered_components();
+        $registered_components = ! $child_component ? self::get_parent_registered_components() : self::get_child_registered_components();
         if ( array_key_exists( $component_name, $registered_components ) ) {
             $component = $registered_components[ $component_name ];
             require_once( $component['file'] );
-            $className = ucfirst( $component_name ) . "Component";
+            $className = self::get_component_class_name($component_name);
+	        if(!class_exists($className)){
+		        $className = $className."Component"; //legacy compatibility
+	        }
             if ( class_exists( $className ) ) {
                 $oComponent = new $className( $component );
                 $oComponent->onActivate();
                 $oComponent->active = true;
                 $registered_components[ $component_name ]['enabled'] = true;
                 if ( ! $child_component ) {
-                    self::update_waboot_registered_components( $registered_components );
+                    self::update_parent_registered_components( $registered_components );
                 } //update the WP Option of registered component
                 else {
                     self::update_child_registered_components( $registered_components );
@@ -650,11 +676,14 @@ class ComponentsManager {
      */
     static function disable( $component_name, $child_component = false ) {
         //chiamo onDeactivate() del componente
-        $registered_components = ! $child_component ? self::get_waboot_registered_components() : self::get_child_registered_components();
+        $registered_components = ! $child_component ? self::get_parent_registered_components() : self::get_child_registered_components();
         if ( array_key_exists( $component_name, $registered_components ) ) {
             $component = $registered_components[ $component_name ];
             require_once( $component['file'] );
-            $className = ucfirst( $component_name ) . "Component";
+            $className = self::get_component_class_name($component_name);
+	        if(!class_exists($className)){
+		        $className = $className."Component"; //legacy compatibility
+	        }
             if ( class_exists( $className ) ) {
                 $oComponent = new $className( $component );
                 $oComponent->onDeactivate();
@@ -662,7 +691,7 @@ class ComponentsManager {
             }
             $registered_components[ $component_name ]['enabled'] = false; //If there is no class defined (eg. due to an previous error), then simply disable the component
             if ( ! $child_component ) {
-                self::update_waboot_registered_components( $registered_components );
+                self::update_parent_registered_components( $registered_components );
             } //update the WP Option of registered component
             else {
                 self::update_child_registered_components( $registered_components );
@@ -716,4 +745,30 @@ class ComponentsManager {
             delete_option( "{$template_name}_registered_components");
         }
     }
+
+	/**
+	 * Returns the component class name
+	 *
+	 * @param $component_name
+	 *
+	 * @return string
+	 */
+	private static function get_component_class_name($component_name){
+		//return ucfirst( $component_name ) . "Component";
+		$class_name = ucfirst( $component_name );
+		$parts = implode('_', array_map("ucfirst", explode('_', $class_name)));
+		return $parts;
+	}
+
+	/**
+	 * Checks if a class is a sub class of Component
+	 *
+	 * @param $classname
+	 *
+	 * @return bool
+	 */
+	private static function is_component($classname){
+		if(!class_exists($classname)) return false;
+		return is_subclass_of($classname,'\WBF\modules\components\Component');
+	}
 }
