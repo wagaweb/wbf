@@ -1,6 +1,6 @@
 node_modules/
 bower_components/
-builds/
+builds/**/*
 npm-debug.log
 
 ############
