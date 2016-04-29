@@ -141,7 +141,9 @@ if( ! class_exists('WBF') ) :
 				'check_for_updates' => true
 			]);
 			$this->options = $args;
-			$this->startup();
+
+			if(!defined("WBF_PREVENT_STARTUP"))
+				$this->startup();
 		}
 
 		/**
