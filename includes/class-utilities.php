@@ -3,6 +3,12 @@
 namespace WBF\includes;
 
 class Utilities{
+
+	const PAGE_TYPE_DEFAULT_HOME = "default_home";
+	const PAGE_TYPE_STATIC_HOME = "static_home";
+	const PAGE_TYPE_BLOG_PAGE = "blog_page";
+	const PAGE_TYPE_COMMON = "common";
+
 	/**
 	 * Return a sanitized version of blog name
 	 *
@@ -174,16 +180,16 @@ class Utilities{
 	static function get_current_page_type(){
 		if ( is_front_page() && is_home() ) {
 			// Default homepage
-			return "default_home";
+			return self::PAGE_TYPE_DEFAULT_HOME;
 		} elseif ( is_front_page() ) {
 			// static homepage
-			return "static_home";
+			return self::PAGE_TYPE_STATIC_HOME;
 		} elseif ( is_home() ) {
 			// blog page
-			return "blog_page";
+			return self::PAGE_TYPE_BLOG_PAGE;
 		} else {
 			//everything else
-			return "common";
+			return self::PAGE_TYPE_COMMON;
 		}
 	}
 
