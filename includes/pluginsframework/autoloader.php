@@ -7,6 +7,14 @@ spl_autoload_register( 'WBF\includes\pluginsframework\plugin_autoload' );
 function plugin_autoload( $class ) {
 	$wbf_path = defined("WBF_DIRECTORY") ? WBF_DIRECTORY : get_option( "wbf_path" );
 
+	if(!is_file($wbf_path."/vendor/autoload.php")){
+		$wbf_path = WP_CONTENT_DIR."/plugins/wbf";
+	}
+
+	if(!is_file($wbf_path."/vendor/autoload.php")){
+		throw new \Exception("Plugins framework: WBF Not Found");
+	}
+
 	require_once $wbf_path."/vendor/autoload.php";
 
 	if ( $wbf_path ) {
