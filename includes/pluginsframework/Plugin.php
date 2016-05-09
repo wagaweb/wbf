@@ -55,9 +55,25 @@ class Plugin {
 	/**
 	 * The path relative to WP_PLUGIN_DIR
 	 *
-	 * @var
+	 * @var string
 	 */
 	protected $plugin_relative_dir;
+	/**
+	 * The path to /src/ if exists
+	 * 
+	 * @var string
+	 */
+	protected $src_path;
+	/**
+	 * The namespace to the public class (if provided)
+	 * @var string
+	 */
+	protected $public_class_name;
+	/**
+	 * The namespace to the admin class (if provided)
+	 * @var string
+	 */
+	protected $admin_class_name;
 	/**
 	 * The current version of the plugin.
 	 *
@@ -95,6 +111,24 @@ class Plugin {
 		//Set relative path
 		$pinfo = pathinfo($dir);
 		$this->plugin_relative_dir = "/".$pinfo['basename'];
+		//Set src path
+		if(is_dir($this->plugin_dir."/src")){
+			$this->src_path = $this->plugin_dir."src/";
+		}
+
+		//Set paths for Admin and Public
+		$class_name_parts = explode("\\",get_class($this));
+		if(!isset($this->public_class_name) && (is_file($this->get_src_dir()."public/class-public.php") || is_file($this->get_src_dir()."public/Public.php"))){
+			$class_name = $class_name_parts[0].'\pub\Pub';
+			$this->public_class_name = $class_name;
+		}elseif(!isset($this->public_class_name) && is_file($this->get_src_dir()."frontend/Frontend.php")){
+			$class_name = $class_name_parts[0].'\frontend\Frontend';
+			$this->public_class_name = $class_name;
+		}
+		if(!isset($this->admin_class_name) && (is_file($this->get_src_dir()."admin/class-admin.php") || is_file($this->get_src_dir()."admin/Admin.php"))){
+			$class_name = $class_name_parts[0].'\admin\Admin';
+			$this->admin_class_name = $class_name;
+		}
 
 		//Get the version
 		if(function_exists("get_plugin_data")){
@@ -264,12 +298,28 @@ class Plugin {
 		return $this->plugin_dir;
 	}
 
+	public function get_src_dir(){
+		if(isset($this->src_path)){
+			return $this->src_path;
+		}else{
+			return $this->get_dir();
+		}
+	}
+
 	public function get_path(){
 		return $this->plugin_path;
 	}
 
 	public function get_relative_dir(){
 		return $this->plugin_relative_dir;
+	}
+
+	public function get_public_class_name(){
+		return $this->public_class_name;
+	}
+
+	public function get_admin_class_name(){
+		return $this->admin_class_name;
 	}
 
 	public function is_debug(){

@@ -50,13 +50,12 @@ class Loader {
 		$this->filters = array();
 
 		if(isset($caller)){
-			$class_name_parts = explode("\\",get_class($caller));
-			if(is_file($caller->get_dir()."public/class-public.php")){
-				$class_name = $class_name_parts[0].'\pub\Pub';
+			if($caller->get_public_class_name()){
+				$class_name = $caller->get_public_class_name();
 				$this->public_plugin = new $class_name($caller->get_plugin_name(), $caller->get_version(), $caller);
 			}
-			if(is_file($caller->get_dir()."admin/class-admin.php")){
-				$class_name = $class_name_parts[0].'\admin\Admin';
+			if($caller->get_admin_class_name()){
+				$class_name = $caller->get_admin_class_name();
 				$this->admin_plugin = new $class_name($caller->get_plugin_name(), $caller->get_version(), $caller);
 			}
 		}
