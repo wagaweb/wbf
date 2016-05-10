@@ -30,6 +30,13 @@ class Plugin {
 	 */
 	protected $loader;
 	/**
+	 * The i18n instance
+	 *
+	 * @access protected
+	 * @var I18n
+	 */
+	protected $i18n;
+	/**
 	 * The unique identifier of this plugin.
 	 *
 	 * @since    1.0.0
@@ -245,10 +252,10 @@ class Plugin {
 	 * @access   private
 	 */
 	private function set_locale() {
-		$plugin_i18n = new I18n();
-		$plugin_i18n->set_domain( $this->get_plugin_name() );
-		$plugin_i18n->set_language_dir( $this->plugin_relative_dir."/languages/" );
-		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
+		$this->i18n = new I18n();
+		$this->i18n->set_domain( $this->get_plugin_name() );
+		$this->i18n->set_language_dir( $this->plugin_relative_dir."/languages/" );
+		$this->loader->add_action( 'plugins_loaded', $this->i18n, 'load_plugin_textdomain' );
 	}
 
 	/**
@@ -334,6 +341,28 @@ class Plugin {
 	 */
 	public function get_loader() {
 		return $this->loader;
+	}
+
+	/**
+	 * Get the instance of i18n related to the plugin
+	 * 
+	 * @return I18n
+	 */
+	public function get_locale(){
+		return $this->i18n;
+	}
+
+	/**
+	 * Get the textdomain ralated to the plugin
+	 *
+	 * @return I18n|false
+	 */
+	public function get_textdomain(){
+		$locale = $this->get_locale();
+		if($locale instanceof I18n){
+			return $locale->get_domain();
+		}
+		return false;
 	}
 
 	/**

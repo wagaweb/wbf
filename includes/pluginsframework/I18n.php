@@ -24,7 +24,7 @@ class I18n {
 	/**
 	 * The language directory (relative to WP_PLUGIN_DIR)
 	 *
-	 * @var
+	 * @var string
 	 */
 	private $dir;
 
@@ -34,13 +34,11 @@ class I18n {
 	 * @since    1.0.0
 	 */
 	public function load_plugin_textdomain() {
-
 		load_plugin_textdomain(
 			$this->domain,
 			false,
 			$this->dir
 		);
-
 	}
 
 	/**
@@ -54,7 +52,30 @@ class I18n {
 		$this->domain = $domain;
 	}
 
+	/**
+	 * Language dir setter
+	 *
+	 * @param $dir
+	 */
 	public function set_language_dir($dir){
 		$this->dir = $dir;
+	}
+
+	/**
+	 * Domain getter
+	 *
+	 * @return string
+	 */
+	public function get_domain(){
+		return $this->domain;
+	}
+
+	/**
+	 * Language dir getter
+	 * 
+	 * @return string
+	 */
+	public function get_language_dir(){
+		return $this->dir;
 	}
 }
