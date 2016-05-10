@@ -71,10 +71,6 @@ if( ! class_exists('\WBF\WBF') ) :
 		define("WBF_WORK_DIRECTORY", WP_CONTENT_DIR."/".WBF_WORK_DIRECTORY_NAME);
 	}
 	
-	if(!defined("WBF_STARTUP_OPTIONS")){
-		define("WBF_STARTUP_OPTIONS", []);
-	}
-
 	require_once("wbf-autoloader.php");
 	require_once("backup-functions.php");
 	include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
@@ -85,7 +81,7 @@ if( ! class_exists('\WBF\WBF') ) :
 	//Backward compatibility
 	class WBF extends \WBF\WBF{}
 
-	$GLOBALS['wbf'] = \WBF\WBF::getInstance(WBF_STARTUP_OPTIONS);
+	$GLOBALS['wbf'] = \WBF\WBF::getInstance();
 
 else:
 	//HERE WBF IS ALREADY DEFINED. We can't tell if by a plugin or others... So...
