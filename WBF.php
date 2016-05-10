@@ -82,24 +82,7 @@ class WBF {
 			}
 		}
 	}
-
-	/**
-	 * WBF Error handler. Registerd during startup.
-	 *
-	 * @param $errno
-	 * @param $errstr
-	 * @param $errfile
-	 * @param $errline
-	 * @param $errcontext
-	 */
-	static function handle_errors($errno,$errstr,$errfile,$errline,$errcontext){
-		global $wbf_notice_manager;
-		if($wbf_notice_manager && is_admin() && current_user_can("manage_options")){
-			$str = sprintf('[Admin Only] There was an USER_WARNING error generated at %s:%s: <strong>%s</strong>',basename($errfile),$errline,$errstr);
-			$wbf_notice_manager->add_notice($errline,$str,"error","_flash_");
-		}
-	}
-
+	
 	/**
 	 * WBF Startup. Adds filters and actions.
 	 *
@@ -115,7 +98,7 @@ class WBF {
 		$this->options = $options;
 
 		if($this->options['handle_errors']){
-			set_error_handler('\WBF::handle_errors',E_USER_WARNING);
+			set_error_handler([$this,"handle_errors"],E_USER_WARNING); //http://php.net/manual/en/language.types.callable.php
 		}
 
 		$this->maybe_run_activation();
@@ -181,6 +164,23 @@ class WBF {
 	 *
 	 *
 	 */
+
+	/**
+	 * WBF Error handler. Registerd during startup.
+	 *
+	 * @param $errno
+	 * @param $errstr
+	 * @param $errfile
+	 * @param $errline
+	 * @param $errcontext
+	 */
+	public function handle_errors($errno,$errstr,$errfile,$errline,$errcontext){
+		global $wbf_notice_manager;
+		if($wbf_notice_manager && is_admin() && current_user_can("manage_options")){
+			$str = sprintf('[Admin Only] There was an USER_WARNING error generated at %s:%s: <strong>%s</strong>',basename($errfile),$errline,$errstr);
+			$wbf_notice_manager->add_notice($errline,$str,"error","_flash_");
+		}
+	}
 
 	/**
 	 * Get Mobile detect class
