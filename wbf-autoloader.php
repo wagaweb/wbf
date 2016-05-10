@@ -70,6 +70,10 @@ function wbf_autoloader($class) {
     }
 	
     switch ($class) {
+	    case "WBF":
+	    case "WBF\\WBF":
+		    require_once "WBF.php";
+		    break;
 	    case 'WBF\includes\Resources':
 		    \WBF\includes\Utilities::locate_file('includes/Resources.php', true);
 		    break;
