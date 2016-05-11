@@ -24,31 +24,49 @@ class TemplatePlugin extends Plugin implements TemplatePlugin_Interface {
 		$this->loader->add_filter( 'wbf/get_template_part/base_paths', $this, 'add_template_base_path', 10, 2 );
 	}
 
+	/**
+	 * Adds a new template to WP page template selector.
+	 * 
+	 * @param string $template_name
+	 * @param string $label
+	 * @param string $path the complete path to the template
+	 *
+	 * @return array
+	 */
 	public function add_template( $template_name, $label, $path ) {
 		$current_wp_templates = wp_get_theme()->get_page_templates(); //current wp registered templates
 
-		$this->templates[ $template_name ]       = __( $label, $this->plugin_name );
+		$this->templates[ $template_name ] = __( $label, $this->plugin_name );
 		$this->templates_paths[ $template_name ] = $path;
-		$current_wp_templates                    = array_merge( $current_wp_templates, $this->templates );
+		$current_wp_templates = array_merge( $current_wp_templates, $this->templates );
 
 		return $this->templates;
 	}
 
-	public function add_cpt_template( $template_name, $path ) {
-		$this->ctp_templates[]                   = $template_name;
-		$this->templates_paths[ $template_name ] = $path;
+	/**
+	 * Adds a template to the WP template hierarchy
+	 * 
+	 * @param string $template_name the name of the template (must match WP template hierarchy scheme)
+	 * @param string|null $path the complete path to the template. If null, $this->get_src_dir()."templates/".$template_name will be taken.
+	 *
+	 * @return array the registered templates
+	 */
+	public function add_cpt_template( $template_name, $path = null ) {
+		$this->ctp_templates[] = $template_name;
+		if(!isset($path)){
+			$this->templates_paths[ $template_name ] = $this->get_src_dir()."templates/".$template_name;
+		}
 
 		return $this->ctp_templates;
 	}
 
 	/**
-	 * Adds our template to the pages cache in order to trick WordPress
+	 * Adds plugin templates to the pages cache in order to trick WordPress
 	 * into thinking the template file exists where it doens't really exist.
 	 *
-	 * @version    1.0.0
-	 * @since    1.0.0
+	 * @hooked 'wp_insert_post_data'
 	 *
-	 * @param   array $atts The attributes for the page attributes dropdown
+	 * @param array $atts The attributes for the page attributes dropdown
 	 *
 	 * @return array
 	 */
@@ -58,7 +76,7 @@ class TemplatePlugin extends Plugin implements TemplatePlugin_Interface {
 
 		// Retrieve the cache list. If it doesn't exist, or it's empty prepare an array
 		$templates = wp_cache_get( $cache_key, 'themes' );
-		if ( empty( $templates ) && function_exists('\WBF\includes\pluginsframework\get_page_templates') ) {
+		if(empty($templates)){
 			$templates = array_flip(get_page_templates());
 		}
 
@@ -68,7 +86,7 @@ class TemplatePlugin extends Plugin implements TemplatePlugin_Interface {
 
 			// Now add our template to the list of templates by merging our templates
 			// with the existing templates array from the cache.
-			$templates = array_merge( $templates, $this->templates );
+			$templates = array_merge( $templates, $this->templates ); //Adding plugin templates
 
 			// Add the modified cache to allow WordPress to pick it up for listing
 			// available templates
@@ -81,9 +99,8 @@ class TemplatePlugin extends Plugin implements TemplatePlugin_Interface {
 	/**
 	 * Checks if the template is assigned to the page
 	 *
-	 * @version    1.0.0
-	 * @since    1.0.0
-	 *
+	 * @hooked 'template_include'
+	 * 
 	 * @param $template
 	 *
 	 * @return string
@@ -166,10 +183,27 @@ class TemplatePlugin extends Plugin implements TemplatePlugin_Interface {
 		return $template;
 	}
 
+	/**
+	 * Adds new template parts sources directories.
+	 * 
+	 * @hooked 'wbf/get_template_part/base_paths' (this filter is used by Utilities::locate_template which is used by Utilities::get_template_part)
+	 * 
+	 * @param $paths
+	 *
+	 * @return array
+	 */
 	public function add_template_base_path($paths){
 		$new_paths = array(
-			$this->get_dir()."public"
+			$this->get_src_dir(),
+			$this->get_dir(),
+			$this->get_src_dir()."templates",
+			$this->get_src_dir()."templates/parts",
+			$this->get_src_dir()."public",
+			$this->get_dir()."public",
+			$this->get_dir()."templates",
 		);
+
+		$new_paths = array_unique($new_paths);
 
 		foreach($new_paths as $np){
 			if(!in_array($np,$paths)){
