@@ -19,7 +19,8 @@ class Utilities{
 	}
 
 	/**
-	 * WBF version of get_template_part
+	 * WBF version of get_template_part. In addition to the WP own method, it uses WBF locate_template that looks into plugins dir.
+	 * If want to use your plugin templates parts you have to use this function.
 	 *
 	 * @param $slug
 	 * @param null $name
@@ -88,11 +89,13 @@ class Utilities{
 	}
 
 	/**
-	 * Retrieve the template file from various set of sources
+	 * Retrieve the template file from various set of sources.
+	 * It is used mainly by TemplatePlugin to add sources of templates. @see: TemplatePlugin->add_template_base_path()
 	 *
 	 * @param array $templates an associative array that must contain at least "names" key. It can have the "sources" key, with a list of paths to explore.
 	 * @param bool|false $load if TRUE it calls load_template()
 	 * @param bool|true $require_once it $load is TRUE, it assigned as the second argument to load_template()
+	 *
 	 * @return string
 	 */
 	static function locate_template($templates, $load = false, $require_once = true ) {
