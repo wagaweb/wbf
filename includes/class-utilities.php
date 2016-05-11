@@ -90,7 +90,7 @@ class Utilities{
 
 	/**
 	 * Retrieve the template file from various set of sources.
-	 * It is used mainly by TemplatePlugin to add sources of templates. @see: TemplatePlugin->add_template_base_path()
+	 * It is used mainly by TemplatePlugin to add sources for template parts. @see: TemplatePlugin->add_template_base_path()
 	 *
 	 * @param array $templates an associative array that must contain at least "names" key. It can have the "sources" key, with a list of paths to explore.
 	 * @param bool|false $load if TRUE it calls load_template()
@@ -105,17 +105,32 @@ class Utilities{
 		$registered_base_paths = apply_filters("wbf/get_template_part/base_paths",array());
 
 		//Search into template dir
-		foreach ( (array) $template_names as $template_name ) {
-			if ( ! $template_name ) {
+		foreach( (array) $template_names as $template_name){
+			if(!$template_name){
 				continue;
 			}
-			if ( file_exists( get_stylesheet_directory() . '/' . $template_name ) ) {
-				$located = get_stylesheet_directory() . '/' . $template_name;
+
+			$search_locations = [
+				get_stylesheet_directory() . '/' . $template_name,
+				get_stylesheet_directory()."/templates/parts/".$template_name,
+				get_template_directory() . '/' . $template_name,
+				get_template_directory() . '/templates/parts/' . $template_name
+			];
+
+			$search_locations = array_unique($search_locations);
+
+			foreach($search_locations as $loc){
+				if(file_exists($loc)){
+					$located = $loc;
+					break;
+				}
+			}
+
+			if($located != ""){
 				break;
-			} elseif ( file_exists( get_template_directory() . '/' . $template_name ) ) {
-				$located = get_template_directory() . '/' . $template_name;
-				break;
-			} elseif(!empty($registered_base_paths)){
+			}
+
+			if(!empty($registered_base_paths)){
 				//Search into registered base dirs
 				foreach($registered_base_paths as $path){
 					$path = rtrim($path,"/") . '/'.ltrim($template_name,"/");
@@ -142,8 +157,9 @@ class Utilities{
 			}
 		}
 
-		if ( $load && '' != $located )
+		if ( $load && '' != $located ){
 			load_template( $located, $require_once );
+		}
 
 		return $located;
 	}
