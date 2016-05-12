@@ -374,4 +374,31 @@ class Plugin {
 	public function get_version() {
 		return $this->version;
 	}
+
+	/**
+	 * Get admin\core\frontend instances for $plugin
+	 *
+	 * @param string $plugin
+	 *
+	 * @return array with 'core', 'admin' and 'public' keys. Each keys is associated with respective classes.
+	 * @throws \Exception
+	 */
+	static function get_instances_of($plugin){
+		global $wbf_loaded_plugins;
+		if(isset($wbf_loaded_plugins[$plugin])){
+			$plugin = $wbf_loaded_plugins[$plugin];
+			$loader = $plugin->get_loader();
+			if($plugin && (isset($loader->public_plugin) || isset($loader->admin_plugin))){
+				return [
+					'core' => $plugin,
+					'public' => isset($loader->public_plugin) ? $loader->public_plugin : false,
+					'admin' => isset($loader->admin_plugin) ? $loader->admin_plugin : false
+				];
+			}else{
+				throw new \Exception("Trying to get $plugin instances: module $plugin has no instances");
+			}
+		}else{
+			return [];
+		}
+	}
 }
