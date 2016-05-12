@@ -67,7 +67,17 @@ abstract class View{
 	}
 
 	/**
-	 * Get the search paths given the $relative_file_path
+	 * Get the search paths given the $relative_file_path.
+	 *
+	 * The View will look for a valid file in these locations:
+	 *
+	 * IF PLUGIN (when $relative_file_path == "src/view/foo.php"):
+	 * - <parent_theme>/<relative_file_path WITHOUT /src/ if present>/<plugin_dir_name>-<file_name> (eg: wp-content/themes/twentyfifteen/views/wb-sample-foo.php)
+	 * - <parent_theme/child_theme>/<plugin_dir_name>/<relative_file_path WITHOUT /src/ if present>/<file_name> (eg: wp-content/themes/twentyfifteen/wb-sample/views/foo.php)
+	 * - <plugin_path>
+	 *
+	 * IF THEME:
+	 * <parent_theme/child_theme>/<relative_file_path>
 	 *
 	 * @param $relative_file_path
 	 * @param null $plugin
