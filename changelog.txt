@@ -5,6 +5,7 @@ Version 0.13.13 -
 - Fix: fixati gli errori stampati quando si usava get_behavior con behavior non esistente.
 - Tweak: Ora è possibile definire la costante "WBF_PREVENT_STARTUP" per impedire a WBF di legare le azioni agli hook di Wordpress e usarlo più come framework puro.
 - Tweak: Ora Utilities::get_current_page_type restituisce dei valori da costanti.
+- Tweak: Refactoring della ricerca delle possibili template valide da parte di View. Ora cerca le view dei plugin anche nei temi.
 - Plugin Framework:
     - Tweak: Ora Plugin possiede l'attributo "src_path", che punta alla cartella "src", se esistente, oppure alla directory di base del plugin.
     - Tweak: Ora Loader usa get_public_class_name() e get_admin_class_name() di Plugin per creare le istante di Admin e Public; in questo modo Plugin può personalizzare i nomi delle classi.
