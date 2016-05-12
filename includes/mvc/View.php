@@ -30,28 +30,42 @@ abstract class View{
 		}
 		if(isset($plugin)){
 			if($plugin instanceof Plugin){
-				$abs_path = Utilities::maybe_strip_trailing_slash($plugin->get_dir())."/".$relative_file_path;
+				$plugin_abspath = Utilities::maybe_strip_trailing_slash($plugin->get_src_dir())."/".$relative_file_path;
+				$plugin_dirname = $plugin->get_relative_dir();
 			}elseif(is_string($plugin)){
-				$abs_path = Utilities::maybe_strip_trailing_slash(WP_CONTENT_DIR)."/plugins/".$plugin."/".$relative_file_path;
+				$plugin_abspath = Utilities::maybe_strip_trailing_slash(WP_CONTENT_DIR)."/plugins/".$plugin."/".$relative_file_path;
+				$plugin_dirname = $plugin;
 			}else{
 				throw new \Exception("Invalid plugin parameter for View rendering");
 			}
+			$search_paths = [];
+			//Theme and parent
+			foreach([Utilities::maybe_strip_trailing_slash(get_stylesheet_directory()),Utilities::maybe_strip_trailing_slash(get_template_directory())] as $template_dir){
+				$search_paths[] = $template_dir."/".dirname($relative_file_path)."/".$plugin_dirname."-".basename($relative_file_path);
+				$search_paths[] = $template_dir."/".$plugin_dirname."/".basename($relative_file_path);
+			}
+			//Plugin
+			$search_paths[] = $plugin_abspath;
 		}else{
-			$template_dir = Utilities::maybe_strip_trailing_slash(get_stylesheet_directory());
-			if(file_exists($template_dir."/".$relative_file_path)){
-				$abs_path = $template_dir."/".$relative_file_path;
-			}else{
-				$template_dir = Utilities::maybe_strip_trailing_slash(get_template_directory());
-				if(file_exists($template_dir."/".$relative_file_path)){
-					$abs_path = $template_dir."/".$relative_file_path;
-				}else{
-					throw new \Exception("Invalid relative file path provided");
-				}
+			$search_paths = [];
+			foreach([Utilities::maybe_strip_trailing_slash(get_stylesheet_directory()),Utilities::maybe_strip_trailing_slash(get_template_directory())] as $template_dir){
+				$search_paths[] = $template_dir."/".$relative_file_path;
 			}
 		}
-		if(!file_exists($abs_path)){
-			throw new \Exception("File {$abs_path} does not exists");
+
+		$search_paths = array_unique($search_paths); //Clean up
+
+		//Searching for template
+		foreach($search_paths as $path){
+			if(file_exists($path)){
+				$abs_path = $path;
+			}
 		}
+
+		if(!isset($abs_path) || !file_exists($abs_path)){
+			throw new \Exception("File {$relative_file_path} does not exists in any of these locations: ".implode(",\n",$search_paths));
+		}
+
 		$this->template = pathinfo($abs_path);
 		$this->args = [
 			'page_title' => "Page Title",
