@@ -87,7 +87,7 @@ abstract class View{
 				throw new \Exception("Plugin parameter is neither a Plugin or a string");
 			}
 			$search_paths = [];
-			$relative_file_path = str_replace("src/","",$relative_file_path); //Strip src/
+			$relative_file_path = preg_replace("/^\/?src\//","",$relative_file_path); //Strip src/
 			//Theme and parent
 			foreach([Utilities::maybe_strip_trailing_slash(get_stylesheet_directory()),Utilities::maybe_strip_trailing_slash(get_template_directory())] as $template_dir){
 				$search_paths[] = $template_dir."/".dirname($relative_file_path)."/".$plugin_dirname."-".basename($relative_file_path);
