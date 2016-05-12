@@ -28,32 +28,11 @@ abstract class View{
 		if(!is_string($relative_file_path) || empty($relative_file_path)){
 			throw new \Exception("Cannot create View, invalid file path");
 		}
-		if(isset($plugin)){
-			if($plugin instanceof Plugin){
-				$plugin_abspath = Utilities::maybe_strip_trailing_slash($plugin->get_src_dir())."/".$relative_file_path;
-				$plugin_dirname = $plugin->get_relative_dir();
-			}elseif(is_string($plugin)){
-				$plugin_abspath = Utilities::maybe_strip_trailing_slash(WP_CONTENT_DIR)."/plugins/".$plugin."/".$relative_file_path;
-				$plugin_dirname = $plugin;
-			}else{
-				throw new \Exception("Invalid plugin parameter for View rendering");
-			}
-			$search_paths = [];
-			//Theme and parent
-			foreach([Utilities::maybe_strip_trailing_slash(get_stylesheet_directory()),Utilities::maybe_strip_trailing_slash(get_template_directory())] as $template_dir){
-				$search_paths[] = $template_dir."/".dirname($relative_file_path)."/".$plugin_dirname."-".basename($relative_file_path);
-				$search_paths[] = $template_dir."/".$plugin_dirname."/".basename($relative_file_path);
-			}
-			//Plugin
-			$search_paths[] = $plugin_abspath;
-		}else{
-			$search_paths = [];
-			foreach([Utilities::maybe_strip_trailing_slash(get_stylesheet_directory()),Utilities::maybe_strip_trailing_slash(get_template_directory())] as $template_dir){
-				$search_paths[] = $template_dir."/".$relative_file_path;
-			}
+		if(!$plugin instanceof Plugin && !is_string($plugin)){
+			throw new \Exception("Invalid plugin parameter for View rendering");
 		}
 
-		$search_paths = array_unique($search_paths); //Clean up
+		$search_paths = self::get_search_paths($relative_file_path,$plugin);
 
 		//Searching for template
 		foreach($search_paths as $path){
@@ -85,5 +64,46 @@ abstract class View{
 		$this->args['wrapper_el'] = "";
 		$this->args['title_wrapper'] = "%s";
 		return $this;
+	}
+
+	/**
+	 * Get the search paths given the $relative_file_path
+	 *
+	 * @param $relative_file_path
+	 * @param null $plugin
+	 *
+	 * @return array
+	 * @throws \Exception
+	 */
+	static function get_search_paths($relative_file_path,$plugin = null){
+		if(isset($plugin)){
+			if($plugin instanceof Plugin){
+				$plugin_abspath = Utilities::maybe_strip_trailing_slash($plugin->get_src_dir())."/".$relative_file_path;
+				$plugin_dirname = $plugin->get_relative_dir();
+			}elseif(is_string($plugin)){
+				$plugin_abspath = Utilities::maybe_strip_trailing_slash(WP_CONTENT_DIR)."/plugins/".$plugin."/".$relative_file_path;
+				$plugin_dirname = $plugin;
+			}else{
+				throw new \Exception("Plugin parameter is neither a Plugin or a string");
+			}
+			$search_paths = [];
+			$relative_file_path = str_replace("src/","",$relative_file_path); //Strip src/
+			//Theme and parent
+			foreach([Utilities::maybe_strip_trailing_slash(get_stylesheet_directory()),Utilities::maybe_strip_trailing_slash(get_template_directory())] as $template_dir){
+				$search_paths[] = $template_dir."/".dirname($relative_file_path)."/".$plugin_dirname."-".basename($relative_file_path);
+				$search_paths[] = $template_dir."/".$plugin_dirname."/".basename($relative_file_path);
+			}
+			//Plugin
+			$search_paths[] = $plugin_abspath;
+		}else{
+			$search_paths = [];
+			foreach([Utilities::maybe_strip_trailing_slash(get_stylesheet_directory()),Utilities::maybe_strip_trailing_slash(get_template_directory())] as $template_dir){
+				$search_paths[] = $template_dir."/".$relative_file_path;
+			}
+		}
+
+		$search_paths = array_unique($search_paths); //Clean up
+
+		return $search_paths;
 	}
 }
