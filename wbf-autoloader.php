@@ -77,6 +77,9 @@ function wbf_autoloader($class) {
 	    case 'WBF\includes\Resources':
 		    \WBF\includes\Utilities::locate_file('includes/Resources.php', true);
 		    break;
+	    case 'WBF\includes\AssetsManager':
+		    \WBF\includes\Utilities::locate_file('includes/AssetsManager.php', true);
+		    break;
 	    case 'WBF\includes\mvc\View':
 		    \WBF\includes\Utilities::locate_file('includes/mvc/View.php', true);
 		    break;
