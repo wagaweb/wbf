@@ -76,7 +76,7 @@ if( ! class_exists('\WBF\WBF') ) :
 	include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 
 	//Require the framework
-	require_once "Core.php";
+	require_once "PluginCore.php";
 
 	//Backward compatibility
 	class WBF extends \WBF\PluginCore{}
