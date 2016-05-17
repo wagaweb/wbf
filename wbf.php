@@ -76,12 +76,12 @@ if( ! class_exists('\WBF\WBF') ) :
 	include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 
 	//Require the framework
-	require_once "WBF.php";
+	require_once "Core.php";
 
 	//Backward compatibility
-	class WBF extends \WBF\WBF{}
+	class WBF extends \WBF\PluginCore{}
 
-	$GLOBALS['wbf'] = \WBF\WBF::getInstance();
+	$GLOBALS['wbf'] = \WBF\PluginCore::getInstance();
 
 else:
 	//HERE WBF IS ALREADY DEFINED. We can't tell if by a plugin or others... So...

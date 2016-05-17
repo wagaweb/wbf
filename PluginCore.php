@@ -2,7 +2,7 @@
 
 namespace WBF;
 
-class WBF {
+class PluginCore {
 
 	/**
 	 * @var array
