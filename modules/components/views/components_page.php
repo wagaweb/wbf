@@ -7,6 +7,14 @@
 		<p><?php _ex("Options updated successfully","Component Page","wbf"); ?></p>
 	</div>
 <?php endif; ?>
+<?php if(count($registered_components) <= 0) : ?>
+<div class="wrap">
+	<h2><?php _e("Components", "wbf"); ?></h2>
+	<p>
+		<?php _e("No components available in the current theme. You can create components into /components/ directory under theme directory.","wbf"); ?>
+	</p>
+</div>
+<?php return; endif; ?>
 <div id="componentframework-wrapper" class="wrap">
 	<div class="componentframework-header">
 		<h2><?php _e("Components", "wbf"); ?></h2>
