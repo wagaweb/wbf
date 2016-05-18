@@ -684,17 +684,20 @@ class PluginCore {
 	 *
 	 * @hooked 'admin_menu'
 	 */
-	function admin_menu(){
+	public function admin_menu(){
 		global $menu,$options_framework_admin,$WBFThemeUpdateChecker;
 
 		//Check if must display the bubble warning
-		if(isset($WBFThemeUpdateChecker))
-			$updates_state = get_option($WBFThemeUpdateChecker->optionName,null);
+		if(isset($WBFThemeUpdateChecker)){
+			$updates_state = get_option($WBFThemeUpdateChecker->optionName,null);	
+		}
 
-		if(isset($updates_state) && !is_null($updates_state->update))
-			$warning_count = 1;
-		else
-			$warning_count = 0;
+		if(isset($updates_state) && !is_null($updates_state->update)){
+			$warning_count = 1;	
+		}
+		else{
+			$warning_count = 0;	
+		}
 
 		$page_title = "WBF";
 		$menu_title = apply_filters("wbf/admin_menu/label",'WBF');
@@ -702,8 +705,7 @@ class PluginCore {
 		$menu_slug = $this->wp_menu_slug;
 
 		$menu['58'] = $menu['59']; //move the separator before "Appearance" one position up
-		$waboot_menu = add_menu_page( $page_title, $menu_label, "edit_theme_options", $menu_slug, "WBF::options_page", "dashicons-text", 59 );
-		//$waboot_options = add_submenu_page( "waboot_options", __( "Theme options", "waboot" ), __( "Theme Options", "waboot" ), "edit_theme_options", "waboot_options", array($options_framework_admin,"options_page") );
+		$wbf_menu = add_menu_page( $page_title, $menu_label, "edit_theme_options", $menu_slug, [$this,"options_page"], "dashicons-text", 59 );
 		do_action("wbf_admin_submenu","wbf_options");
 	}
 
@@ -874,7 +876,7 @@ class PluginCore {
 	/**
 	 * Waboot options page for further uses
 	 */
-	static function options_page() {
+	public function options_page() {
 		/*$options_framework_admin = new Waboot_Options_Framework_Admin;
 		$options_framework_admin->options_page();*/
 		return true;

@@ -23,7 +23,7 @@ require_once "sanitization.php";
 define('OPTIONS_FRAMEWORK_URL', \WBF::prefix_url('vendor/options-framework/'));
 define('OPTIONS_FRAMEWORK_DIRECTORY', \WBF::prefix_url('vendor/options-framework/'));
 if(!defined('WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR')){
-	define('WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR',\WBF::getInstance()->resources->get_working_directory()."/options");
+	define('WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR',WBF()->resources->get_working_directory()."/options");
 }
 
 add_action( "wbf_init",'\WBF\modules\options\module_init', 11 );
