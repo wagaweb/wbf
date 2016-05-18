@@ -150,7 +150,7 @@ class Plugin {
 		}
 
 		//Check if debug mode must be activated
-		if( (defined("WABOOT_ENV") && WABOOT_ENV == "dev") || (defined("WBF_ENV") && WBF_ENV == "dev") ){
+		if( (defined("WP_DEBUG") && WP_DEBUG) || (defined("WABOOT_ENV") && WABOOT_ENV == "dev") || (defined("WBF_ENV") && WBF_ENV == "dev") ){
 			$this->debug_mode = true;
 		}
 
