@@ -28,7 +28,7 @@ abstract class View{
 		if(!is_string($relative_file_path) || empty($relative_file_path)){
 			throw new \Exception("Cannot create View, invalid file path");
 		}
-		if(!$plugin instanceof Plugin && !is_string($plugin)){
+		if(isset($plugin) && !$plugin instanceof Plugin && !is_string($plugin)){
 			throw new \Exception("Invalid plugin parameter for View rendering");
 		}
 
