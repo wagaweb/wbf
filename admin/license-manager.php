@@ -48,7 +48,7 @@ class License_Manager{
 
 	static function admin_license_menu_item($parent_slug){
 		$licenses = self::get_all();
-		if(is_array($licenses) || !empty($licenses)){
+		if(is_array($licenses) && !empty($licenses)){
 			add_submenu_page( $parent_slug, __( "Licenses", "wbf" ), __( "Licenses", "wbf" ), "edit_theme_options", "wbf_licenses", "WBF\admin\License_Manager::license_page" );
 		}
 	}
