@@ -45,9 +45,9 @@ class PluginCore {
 	var $resources;
 
 	/**
-	 * @var
+	 * @var string
 	 */
-	var $wp_menu_slug;
+	var $wp_menu_slug = "wbf_options";
 
 	/**
 	 * @var string
@@ -689,14 +689,14 @@ class PluginCore {
 
 		//Check if must display the bubble warning
 		if(isset($WBFThemeUpdateChecker)){
-			$updates_state = get_option($WBFThemeUpdateChecker->optionName,null);	
+			$updates_state = get_option($WBFThemeUpdateChecker->optionName,null);
 		}
 
 		if(isset($updates_state) && !is_null($updates_state->update)){
-			$warning_count = 1;	
+			$warning_count = 1;
 		}
 		else{
-			$warning_count = 0;	
+			$warning_count = 0;
 		}
 
 		$page_title = "WBF";
@@ -706,7 +706,7 @@ class PluginCore {
 
 		$menu['58'] = $menu['59']; //move the separator before "Appearance" one position up
 		$wbf_menu = add_menu_page( $page_title, $menu_label, "edit_theme_options", $menu_slug, [$this,"options_page"], "dashicons-text", 59 );
-		do_action("wbf_admin_submenu","wbf_options");
+		do_action("wbf_admin_submenu",$menu_slug);
 	}
 
 	/**
