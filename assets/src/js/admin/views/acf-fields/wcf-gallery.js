@@ -155,19 +155,20 @@ module.exports = {
 
         });
 
-        $('#imageContainer').sortable({
-            stop: function(event, ui) {
-                var newImgArray = $('.imgGalleryAdmin');
-                $('#imgId').val('');
-                var imgIds = [];
-                $.each(newImgArray, function(index, value){
-                    imgIds.push($(value).attr('data-id'));
-                });
-                $('#imgId').val(imgIds);
-            }
-        });
-        $('#imageContainer').disableSelection();
-
+        if($("#imageContainer").length > 0){
+            $('#imageContainer').sortable({
+                stop: function(event, ui) {
+                    var newImgArray = $('.imgGalleryAdmin');
+                    $('#imgId').val('');
+                    var imgIds = [];
+                    $.each(newImgArray, function(index, value){
+                        imgIds.push($(value).attr('data-id'));
+                    });
+                    $('#imgId').val(imgIds);
+                }
+            });
+            $('#imageContainer').disableSelection();
+        }
 
     }
 };
