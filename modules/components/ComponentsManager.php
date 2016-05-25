@@ -15,15 +15,19 @@ class ComponentsManager {
 
     /**
      * Add hooks, detect components into components directory and updates relative options
+     * 
+     * @hooked 'wbf_after_setup_theme'
      */
     static function init(){
 	    add_action("wbf/theme_options/register",'\WBF\modules\components\ComponentsManager::addRegisteredComponentOptions',999); //register component options
-        /** Detect components in main theme **/
+	    /** Detect components in main theme **/
         self::_detect_components(get_template_directory()."/components");
         /** Detect components in child theme **/
         if(is_child_theme()){
             self::_detect_components(get_stylesheet_directory()."/components",true);
         }
+	    //Update registered_components global
+	    self::update_global_components_vars();
     }
 
     static function scripts($hook){
@@ -44,10 +48,13 @@ class ComponentsManager {
     }
 
     /**
-     * Detect the components in the their directory and update the registered component WP option
+     * Detect the components in the their directory and update the registered component WP option. Called by self::init()
      *
      * @param $components_directory
      * @param bool $child_theme
+     * 
+     * @use self::get_child_registered_components
+     * @use self::get_parent_registered_components
      *
      * @return mixed|void
      */
@@ -177,15 +184,8 @@ class ComponentsManager {
      */
     static function setupComponentsFilters(){
         $components = self::getAllComponents();
-        foreach ( $components as $c ) {
-            if ( self::is_active( $c ) ) {
-                require_once( $c['file'] );
-                $className  = self::get_component_class_name($c['nicename']);
-	            if(!class_exists($className)){
-		            $className = $className."Component"; //legacy compatibility
-	            }
-	            if(!class_exists($className)) continue;
-                $oComponent = new $className( $c );
+        foreach ( $components as $oComponent ) {
+            if ( self::is_active( $oComponent ) ) {
                 if(method_exists($oComponent,"detectFilters")){
                     $oComponent->detectFilters();
                 }
@@ -198,17 +198,11 @@ class ComponentsManager {
      */
     static function setupRegisteredComponents() {
         $components = self::getAllComponents();
-        foreach ( $components as $c ) {
-            if ( self::is_active( $c ) ) {
-                require_once( $c['file'] );
-                $className  = self::get_component_class_name($c['nicename']);
-	            if(!class_exists($className)){
-		            $className = $className."Component"; //legacy compatibility
-	            }
-	            if(!class_exists($className)) continue;
-                $oComponent = new $className( $c );
-                if(method_exists($oComponent,"setup"))
-                    $oComponent->setup();
+        foreach ( $components as $oComponent ) {
+            if ( self::is_active( $oComponent ) ) {
+                if(method_exists($oComponent,"setup")) {
+	                $oComponent->setup();
+                }
             }
         }
     }
@@ -218,17 +212,11 @@ class ComponentsManager {
      */
     static function registerComponentsWidgets(){
         $components = self::getAllComponents();
-        foreach ( $components as $c ) {
-            if ( self::is_active( $c ) ) {
-                require_once( $c['file'] );
-                $className  = self::get_component_class_name($c['nicename']);
-	            if(!class_exists($className)){
-		            $className = $className."Component"; //legacy compatibility
-	            }
-	            if(!class_exists($className)) continue;
-                $oComponent = new $className( $c );
-                if(method_exists($oComponent,"widgets"))
+        foreach ( $components as $oComponent ) {
+            if ( self::is_active( $oComponent ) ) {
+                if(method_exists($oComponent,"widgets")){
                     $oComponent->widgets();
+                }
             }
         }
     }
@@ -239,16 +227,8 @@ class ComponentsManager {
      */
     static function enqueueRegisteredComponent( $action ) {
         $components = self::getAllComponents();
-        foreach ( $components as $c ) {
-            if ( self::is_active( $c ) ) {
-                require_once( $c['file'] );
-                $className  = self::get_component_class_name($c['nicename']);
-	            if(!class_exists($className)){
-		            $className = $className."Component"; //legacy compatibility
-	            }
-	            if(!class_exists($className)) continue;
-                $oComponent = new $className( $c );
-	            $oComponent->detectFilters();
+        foreach ( $components as $oComponent ) {
+            if ( self::is_active( $oComponent ) ) {
                 if ( self::is_enable_for_current_page( $oComponent ) ) {
                     self::addLoadedComponent( $oComponent );
                     switch ( $action ) {
@@ -278,15 +258,8 @@ class ComponentsManager {
      */
     static function addRegisteredComponentOptions(){
         $components = self::getAllComponents();
-        foreach ( $components as $c ) {
-            if ( self::is_active( $c ) ) {
-                require_once( $c['file'] );
-                $className  = self::get_component_class_name($c['nicename']);
-	            if(!class_exists($className)){
-		            $className = $className."Component"; //legacy compatibility
-	            }
-	            if(!class_exists($className)) continue;
-                $oComponent = new $className( $c );
+        foreach ( $components as $oComponent ) {
+            if ( self::is_active( $oComponent ) ) {
 	            add_filter("wbf/modules/components/component/{$oComponent->name}_component/register_custom_options",[$oComponent,"theme_options"]);
                 $oComponent->register_options();
             }
@@ -302,34 +275,65 @@ class ComponentsManager {
         if ( ! empty( $registered_components ) ) {
             return $registered_components;
         } else {
-            $components = self::retrieve_components();
-            self::update_global_components_vars();
+            $components = self::update_global_components_vars();
             return $components;
         }
     }
+	
+	/**
+	 * Returns the currently loaded components
+	 * 
+	 * @return array
+	 */
+	static function getLoadedComponents(){
+		global $loaded_components;
+		return $loaded_components;
+	}
 
-    /**
-     * Gets all registered components (in array mode). Maybe this is a duplicate of getAllComponents()
-     * @return array
-     */
-    static function getRegisteredComponents(){
-        $registered_components = array();
+	/**
+	 * Return a component from the loaded ones
+	 *
+	 * @param $nicename
+	 *
+	 * @return bool|Component
+	 */
+	static function getLoadedComponent($nicename){
+		$loaded_components = self::getLoadedComponents();
+		if(array_key_exists($nicename,$loaded_components)){
+			return $loaded_components[$nicename];
+		}else{
+			return false;
+		}
+	}
 
-        $main_components = self::get_parent_registered_components();
-        $registered_components = array_merge($registered_components,$main_components);
-        if(is_child_theme()){
-            $child_components = self::get_child_registered_components();
-            $registered_components = array_merge($child_components,$main_components);
-        }
-
-        return $registered_components;
-    }
-
+	/**
+	 * Updates global $registered_components
+	 *
+	 * @use self::retrieve_components()
+	 * 
+	 * @return array
+	 */
     static function update_global_components_vars(){
         global $registered_components;
-        $registered_components = self::retrieve_components();
+        $components = self::retrieve_components();
+	    foreach($components as $c){
+		    require_once( $c['file'] );
+		    $class_name = self::get_component_class_name($c['nicename']);
+		    if(!class_exists($class_name)){
+			    $class_name = $class_name."Component";
+		    }
+		    if(class_exists($class_name)){
+			    $registered_components[$c['nicename']] = new $class_name($c);
+		    }
+	    }
+	    return $registered_components;
     }
 
+	/**
+	 * Retrieve current components
+	 *
+	 * @return mixed|void
+	 */
     static function retrieve_components(){
         $core_components  = self::get_parent_registered_components();
         $child_components = is_child_theme() ? self::get_child_registered_components() : array();
@@ -377,9 +381,11 @@ class ComponentsManager {
             if ( $component['enabled'] == true ) {
                 return true;
             }
+        }elseif($component instanceof Component) {
+	        return $component->is_active();
         }else{
             $registered_components = self::getAllComponents();
-            if(isset($registered_components[$component]) && $registered_components[$component]['enabled']){
+            if(isset($registered_components[$component]) && $registered_components[$component]->is_active()){
                 return true;
             }
         }
@@ -397,7 +403,7 @@ class ComponentsManager {
             if(is_file($component['file'])) return true;
         }else{
             $registered_components = self::getAllComponents();
-            if(isset($registered_components[$component]) && is_file($registered_components[$component]['file'])) return true;
+            if(isset($registered_components[$component]) && is_file($registered_components[$component]->file)) return true;
         }
         return false;
     }
@@ -446,6 +452,11 @@ class ComponentsManager {
 	    return $maybe_enabled;
     }
 
+	/**
+	 * Inject a new component into global $loaded_components
+	 *
+	 * @param Component $c
+	 */
     static function addLoadedComponent( \WBF\modules\components\Component $c ) {
         global $loaded_components;
         if ( ! in_array( $c->name, $loaded_components ) ) {
@@ -711,7 +722,7 @@ class ComponentsManager {
             $components = ComponentsManager::getAllComponents();
             foreach ( $components as $name => $c ) {
                 if ( $name == $registered_component ) {
-                    if ( $c['child_component'] == true ) {
+                    if ( $c->is_child_component == true ) {
                         return true;
                     }
                 }
@@ -725,10 +736,10 @@ class ComponentsManager {
         $default_components = apply_filters("wbf_default_components",array());
         $registered_components = \WBF\modules\components\ComponentsManager::getAllComponents();
         foreach($registered_components as $c_name => $c_data){
-            if(!isset($c_data['child_component'])){
-	            $c_data['child_component'] = false;
+            if(!isset($c_data->is_child_component)){
+	            $c_data->is_child_component = false;
             }
-	        self::disable($c_name, $c_data['child_component']);
+	        self::disable($c_name, $c_data->is_child_component);
         }
         foreach($default_components as $c_name){
             self::ensure_enabled($c_name);
@@ -745,6 +756,19 @@ class ComponentsManager {
             delete_option( "{$template_name}_registered_components");
         }
     }
+
+	/**
+	 * Return an instance of Component
+	 * 
+	 * @param $component_params
+	 * 
+	 * @return Component
+	 */
+	private function instance_component($component_params){
+		$loaded_components = self::getLoadedComponents();
+		$registered_components = self::getAllComponents();
+		
+	}
 
 	/**
 	 * Returns the component class name

@@ -20,7 +20,7 @@ class ComponentIsPresent implements Condition {
 
     function verify(){
         $registered_components = ComponentsManager::getAllComponents();
-        if(isset($registered_components[$this->c_name]) && is_file($registered_components[$this->c_name]['file'])){
+        if(isset($registered_components[$this->c_name]) && is_file($registered_components[$this->c_name]->file)){
             return true;
         }
 
