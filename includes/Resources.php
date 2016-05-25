@@ -115,7 +115,7 @@ class Resources{
 	 * @return bool|string
 	 */
 	public function prefix_path($to){
-		$path = trim($this->get_url());
+		$path = trim($this->get_path());
 		$to = trim($to);
 		if($path){
 			return rtrim($path,"/")."/".ltrim($to,"/");
