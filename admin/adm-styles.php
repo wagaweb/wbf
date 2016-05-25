@@ -6,7 +6,15 @@
  * @uses wbf_locate_template_uri()
  */
 function wbf_admin_styles() {
-    wp_enqueue_style('waboot-admin-style', \WBF::prefix_url('admin/css/admin.css'), array(), false, 'all');
+	$styles = [
+		'wbf-admin-style' => [
+			'uri' => \WBF\includes\Resources::getInstance()->prefix_url('admin/css/admin.css'),
+			'path' => \WBF\includes\Resources::getInstance()->prefix_path('admin/css/admin.css'),
+			'type' => 'css'	
+		]
+	];
+	$am = new \WBF\includes\AssetsManager($styles);
+	$am->enqueue();
 }
 add_action('admin_enqueue_scripts', 'wbf_admin_styles');
 
