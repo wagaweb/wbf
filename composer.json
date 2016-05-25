@@ -3,7 +3,7 @@
   "description": "A comprehensive full-stack Wordpress framework",
   "type": "wordpress-plugin",
   "homepage": "http://www.waga.it",
-  "version": "0.13.13",
+  "version": "0.13.14",
   "license": "proprietary",
   "authors": [
     {

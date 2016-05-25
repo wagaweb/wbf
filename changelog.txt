@@ -1,5 +1,10 @@
 == Change log ==
 
+Version 0.13.14 - 25/05/2016
+---------------------------------
+
+- Tweak: Refactoring Component Framework
+
 Version 0.13.13 - 25/05/2016
 ---------------------------------
 - Fix: fixati gli errori stampati quando si usava get_behavior con behavior non esistente.
