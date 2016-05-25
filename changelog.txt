@@ -1,15 +1,19 @@
 == Change log ==
 
-Version 0.13.13 -
+Version 0.13.13 - 25/05/2016
 ---------------------------------
 - Fix: fixati gli errori stampati quando si usava get_behavior con behavior non esistente.
 - Tweak: Ora è possibile definire la costante "WBF_PREVENT_STARTUP" per impedire a WBF di legare le azioni agli hook di Wordpress e usarlo più come framework puro.
 - Tweak: Ora Utilities::get_current_page_type restituisce dei valori da costanti.
 - Tweak: Refactoring della ricerca delle possibili template valide da parte di View. Ora cerca le view dei plugin anche nei temi.
+- Tweak: Controllato il caso in cui non ci siano componenti.
+- Tweak: Fix diplay voce "Licenze" in assenza di licenze.
 - Plugin Framework:
     - Tweak: Ora Plugin possiede l'attributo "src_path", che punta alla cartella "src", se esistente, oppure alla directory di base del plugin.
     - Tweak: Ora Loader usa get_public_class_name() e get_admin_class_name() di Plugin per creare le istante di Admin e Public; in questo modo Plugin può personalizzare i nomi delle classi.
     - Tweak: Ora Plugin possiede l'attributo i18n che punta alla istanza di I18n relativa al plugin; in questo modo si possono usare i metodi get_locale() e get_textdomain()
+- Feature: introdotto AssetsManager
+- Feature: introdotto PluginCore, che separa la classe di WBF dal file wbf.php. Questo è un passo nella direzione di permettere l'utilizzo di WBF come vero e proprio framework, oltre che come plugin.
 
 Version 0.13.12 - 29/04/2016
 ---------------------------------
