@@ -40,7 +40,7 @@ class PluginCore {
 	var $notice_manager;
 
 	/**
-	 * @var \WBF\includes\Resources
+	 * @var includes\Resources
 	 */
 	var $resources;
 
@@ -104,7 +104,7 @@ class PluginCore {
 		$this->maybe_run_activation();
 		$this->maybe_add_option();
 
-		$this->resources = \WBF\includes\Resources::getInstance();
+		$this->resources = includes\Resources::getInstance();
 		$this->url = $this->resources->get_url();
 		$this->path = $this->resources->get_path();
 
@@ -444,7 +444,7 @@ class PluginCore {
 	/*
 	 *
 	 *
-	 * PATHS AND RESOURCES (deprecated)
+	 * PATHS AND RESOURCES (shortcut functions)
 	 *
 	 *
 	 */
@@ -452,81 +452,67 @@ class PluginCore {
 	/**
 	 * Returns WBF url or FALSE
 	 *
-	 * @deprecated
-	 *
 	 * @return bool|string
 	 */
 	static function get_url(){
-		return \WBF\includes\Resources::getInstance()->get_url();
+		return includes\Resources::getInstance()->get_url();
 	}
 
 	/**
 	 * Returns WBF path or FALSE
 	 *
-	 * @deprecated
-	 *
 	 * @return bool|string
 	 */
 	static function get_path(){
-		return \WBF\includes\Resources::getInstance()->get_path();
+		return includes\Resources::getInstance()->get_path();
 	}
 
 	/**
 	 * Gets WBF admin assets uri
 	 *
-	 * @deprecated
-	 *
 	 * @return bool|string
 	 */
 	static function get_admin_assets_uri(){
-		return \WBF\includes\Resources::getInstance()->get_admin_assets_uri();
+		return includes\Resources::getInstance()->get_admin_assets_uri();
 	}
 
 	/**
 	 * Gets WBF assets uri
 	 * @param bool $admin_assets_flag
 	 *
-	 * @deprecated
-	 *
 	 * @return bool|string
 	 */
 	static function get_assets_uri($admin_assets_flag = false){
-		return \WBF\includes\Resources::getInstance()->get_assets_uri($admin_assets_flag);
+		return includes\Resources::getInstance()->get_assets_uri($admin_assets_flag);
 	}
 
 	/**
-	 * Returns WBF Theme dir
-	 *
-	 * @deprecated
+	 * Returns WBF working directory
 	 *
 	 * @return bool|string
 	 */
-	static function get_theme_dir(){
-		return \WBF\includes\Resources::getInstance()->get_theme_dir();
+	static function get_wd(){
+		return includes\Resources::getInstance()->get_working_directory();
 	}
 
 	/**
 	 * Prefix $to with the WBF URL
 	 * @param $to
 	 *
-	 * @deprecated
-	 *
 	 * @return bool|string
 	 */
 	static function prefix_url($to){
-		return \WBF\includes\Resources::getInstance()->prefix_url($to);
+		return includes\Resources::getInstance()->prefix_url($to);
 	}
 
 	/**
 	 * Prefix $to with the WBF PATH
 	 * @param $to
 	 *
-	 * @deprecated
-	 *
 	 * @return bool|string
 	 */
 	static function prefix_path($to){
-		return \WBF\includes\Resources::getInstance()->prefix_path($to);
+		return includes\Resources::getInstance()->prefix_path($to);
 	}
 
 	/*
