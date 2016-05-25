@@ -3,7 +3,7 @@
 require_once("vendor/autoload.php");
 
 // FUTURE PSR4 Custom plugin autoloader function
-/*spl_autoload_register( function($class){
+spl_autoload_register( function($class){
 	$prefix = "WBF\\";
 	$plugin_path = plugin_dir_path( __FILE__ );
 	$base_dir = $plugin_path."src/";
@@ -23,7 +23,7 @@ require_once("vendor/autoload.php");
 	if (file_exists($file)) {
 		require_once $file;
 	}
-});*/
+});
 
 spl_autoload_register('wbf_autoloader');
 
@@ -33,18 +33,7 @@ spl_autoload_register('wbf_autoloader');
  * @since 0.1.4
  */
 function wbf_autoloader($class) {
-
-	$prefix = "WBF\\";
-	$has_prefix = function() use($class,$prefix){
-		// does the class use the namespace prefix?
-		$len = strlen($prefix);
-		if (strncmp($prefix, $class, $len) !== 0) {
-			// no...
-			return false;
-		}
-		return true;
-	};
-
+	
     //Load Options Framework Classes
     if (preg_match("/^Options_Framework_/", $class)) {
         $filename = "class-" . strtolower(preg_replace("/_/", "-", $class)) . ".php";
@@ -55,73 +44,8 @@ function wbf_autoloader($class) {
 	        \WBF\includes\Utilities::locate_file('vendor/options-framework/' . $filename, true);
         }
     }
-
-    if (preg_match("/conditions/", $class) && $has_prefix()) {
-        $childclass = explode('\\', $class);
-        $name = end($childclass);
-	    \WBF\includes\Utilities::locate_file('admin/conditions/'.$name.'.php', true);
-    }
-
-    if (preg_match("/modules/", $class) && $has_prefix()) {
-        $childclass = explode('\\', $class);
-        $name = end($childclass);
-        $module = $childclass[2];
-	    \WBF\includes\Utilities::locate_file('modules/'.$module.'/'.$name.'.php', true);
-    }
 	
     switch ($class) {
-	    case "WBF":
-	    case "WBF\\WBF":
-		    require_once "WBF.php";
-		    break;
-	    case 'WBF\includes\Resources':
-		    \WBF\includes\Utilities::locate_file('includes/Resources.php', true);
-		    break;
-	    case 'WBF\includes\AssetsManager':
-		    \WBF\includes\Utilities::locate_file('includes/AssetsManager.php', true);
-		    break;
-	    case 'WBF\includes\mvc\View':
-		    \WBF\includes\Utilities::locate_file('includes/mvc/View.php', true);
-		    break;
-		case 'WBF\includes\mvc\View_Interface':
-			\WBF\includes\Utilities::locate_file('includes/mvc/View_Interface.php', true);
-			break;
-		case 'WBF\includes\mvc\HTMLView':
-			\WBF\includes\Utilities::locate_file('includes/mvc/HTMLView.php', true);
-			break;
-	    case 'WBF\includes\License_Interface':
-			\WBF\includes\Utilities::locate_file('includes/license-interface.php', true);
-		    break;
-	    case 'WBF\includes\License':
-			\WBF\includes\Utilities::locate_file('includes/class-license.php', true);
-		    break;
-	    case 'WBF\includes\License_Exception':
-			\WBF\includes\Utilities::locate_file('includes/class-license-exception.php', true);
-		    break;
-        case 'WBF\admin\License_Manager':
-			\WBF\includes\Utilities::locate_file('admin/license-manager.php', true);
-            break;
-        case 'WBF\admin\Notice_Manager':
-	        \WBF\includes\Utilities::locate_file('admin/notice-manager.php', true);
-            break;
-        case 'WBF\includes\Plugin_Update_Checker':
-	        \WBF\includes\Utilities::locate_file('includes/plugin-update-checker.php', true);
-            break;
-	    case 'WBF\includes\Theme_Update_Checker':
-		    \WBF\includes\Utilities::locate_file('includes/theme-update-checker.php', true);
-		    break;
-	    case 'WBF\includes\compiler\Styles_Compiler':
-		    \WBF\includes\Utilities::locate_file('includes/compiler/class-styles-compiler.php', true);
-		    break;
-	    case 'WBF\includes\compiler\Base_Compiler':
-		    \WBF\includes\Utilities::locate_file('includes/compiler/interface-base-compiler.php', true);
-		    break;
-        case 'WBF\includes\compiler\less\Less_Cache':
-	        \WBF\includes\Utilities::locate_file('includes/compiler/less/Less_Cache.php', true);
-            break;
-        case 'WBF\includes\compiler\less\Less_Compiler':
-	        \WBF\includes\Utilities::locate_file('includes/compiler/less/Less_Compiler.php', true);
-            break;
 	    case 'Mobile_Detect':
 		    \WBF\includes\Utilities::locate_file('vendor/mobiledetect/mobiledetectlib/Mobile_Detect.php', true);
 		    break;

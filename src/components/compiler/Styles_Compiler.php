@@ -1,6 +1,6 @@
 <?php
 
-namespace WBF\includes\compiler;
+namespace WBF\components\compiler;
 use \Exception;
 use \WP_Error;
 

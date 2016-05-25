@@ -8,13 +8,9 @@
  *
  */
 
-// Register autoloader for non-composer installations
-if (!class_exists('Less_Parser')) {
-    require_once dirname(__FILE__).'/lib/Less/Autoloader.php';
-    Less_Autoloader::register();
-}
+namespace WBF\components\compiler\less\lib\Lessphp;
 
-class lessc{
+class Lessc{
 
     static public $VERSION = Less_Version::less_version;
 

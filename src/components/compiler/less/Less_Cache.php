@@ -1,6 +1,6 @@
 <?php
 
-namespace WBF\includes\compiler\less;
+namespace WBF\components\compiler\less;
 
 class Less_Cache extends \Less_Cache{
 

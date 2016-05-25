@@ -1,7 +1,7 @@
 <?php
 
-namespace WBF\includes\compiler\less;
-use WBF\includes\compiler\Base_Compiler;
+namespace WBF\components\compiler\less;
+use WBF\components\compiler\Base_Compiler;
 use \Exception;
 use WBF\includes\Utilities;
 

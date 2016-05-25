@@ -1,6 +1,6 @@
 <?php
 
-require_once( dirname(__FILE__).'/Cache.php');
+namespace WBF\components\compiler\less\lib\Lessphp;
 
 /**
  * Class for parsing and compiling less files into css

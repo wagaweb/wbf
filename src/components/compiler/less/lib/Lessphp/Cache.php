@@ -1,6 +1,6 @@
 <?php
 
-require_once( dirname(__FILE__).'/Version.php');
+namespace WBF\components\compiler\less\lib\Lessphp;
 
 /**
  * Utility for handling the generation and caching of css files
