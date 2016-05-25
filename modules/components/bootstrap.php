@@ -25,7 +25,7 @@ function module_init(){
 add_action("wbf_after_setup_theme",'\WBF\modules\components\module_init');
 
 function setup_components(){
-    //ComponentsManager::setupComponentsFilters();
+    ComponentsManager::setupComponentsFilters();
     ComponentsManager::setupRegisteredComponents(); //Loads setup() methods of components
 }
 add_action("wbf_init",'\WBF\modules\components\setup_components', 12);
