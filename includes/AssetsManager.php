@@ -64,7 +64,8 @@ class AssetsManager {
 				'i10n' => [], //the Localication array for wp_localize_script
 				'type' => '', //js or css
 				'enqueue_callback' => false, //A valid callable that must be return true or false
-				'in_footer' => false //Used for scripts
+				'in_footer' => false, //Used for scripts
+				'enqueue' => true //If FALSE the script\css will only be registered
 			]);
 			if(!file_exists($param['path'])) continue;
 			if(isset($param['version']) && $param['version']){
