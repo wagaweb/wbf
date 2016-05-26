@@ -14,6 +14,10 @@ class ComponentsManager {
 	
 	static $wp_menu_slug = "wbf_components";
 
+	const STATE_ENABLED = "enabled";
+
+	const STATE_DISABLED = "disabled";
+
     /**
      * Add hooks, detect components into components directory and updates relative options
      * 
@@ -523,121 +527,9 @@ class ComponentsManager {
         }
     }
 
-	/**
-     * Display the component page
-     */
-    static function components_admin_page() {
-
-		$options_updated_flag = false;
-
-        if(isset($_POST['reset'])){
-            self::reset_components_state();
-			$options_updated_flag = true;
-        }
-
-        $registered_components = self::getAllComponents();
-
-        if(isset($_POST['submit-components-options'])){
-	        $is_active_component_option = function($opt_name) use($registered_components){
-		        preg_match("/^([a-zA-Z0-9]+)_/",$opt_name,$matches);
-		        if(isset($matches[1])){
-			        $component_name = $matches[1];
-			        if(isset($registered_components[$component_name])){
-				        $component_data = $registered_components[$component_name];
-				        if(self::is_active($component_data) && array_key_exists($component_name,$registered_components)){
-					        return true;
-				        }
-			        }
-		        }
-		        return false;
-	        };
-
-            $of_config_id = Framework::get_options_root_id();
-            $of_options = Framework::get_options_values();
-            $must_update = false;
-            if(isset($_POST[$of_config_id])){
-	            $options_to_update = $_POST[$of_config_id];
-	            //Add to $ootions_to_update the disabled checkbox:
-	            foreach($of_options as $opt_name => $opt_value){
-	                if($is_active_component_option($opt_name)){
-		                if(!isset($options_to_update[$opt_name]) && Framework::get_option_type($opt_name) == "checkbox"){
-			                $options_to_update[$opt_name] = false; //If an option does not exists in $_POST then, it is a checkbox that was set to 0, so change the value...
-			                $of_options[$opt_name] = false;
-		                }
-		                if(isset($options_to_update[$opt_name]) && Framework::get_option_type($opt_name) == "multicheck"){
-			                foreach($options_to_update[$opt_name] as $k => $v){
-				                //The current checkbox value does not exists in the theme_options array, so add it...
-				                if(!array_key_exists($k,$of_options[$opt_name])){
-					                $of_options[$opt_name][$k] = "1";
-					                $must_update = true; //in this case, always force update
-				                }
-			                }
-			                //Now se to "false" all disabled checkbox, and to "1" all enabled checkbox
-			                foreach($of_options[$opt_name] as $k => $v){
-				                if(!isset($options_to_update[$opt_name][$k])){
-					                $options_to_update[$opt_name][$k] = false;
-				                }else{
-					                $options_to_update[$opt_name][$k] = "1";
-				                }
-			                }
-		                }elseif(isset($of_options[$opt_name]) && Framework::get_option_type($opt_name) == "multicheck"){
-                            //Now se to "false" all disabled checkbox, and to "1" all enabled checkbox
-                            foreach($of_options[$opt_name] as $k => $v){
-                                if(!isset($options_to_update[$opt_name][$k])){
-                                    $options_to_update[$opt_name][$k] = false;
-                                }else{
-                                    $options_to_update[$opt_name][$k] = "1";
-                                }
-                            }
-                        }
-	                }
-                }
-	            //Check if we must update something...
-	            foreach($options_to_update as $opt_name => $opt_value){
-		            if( (isset($of_options[$opt_name]) && $of_options[$opt_name] != $opt_value) || !isset($of_options[$opt_name]) ){
-			            $of_options[$opt_name] = $opt_value;
-			            $must_update = true;
-		            }
-	            }
-            }
-
-            if($must_update){
-	            Framework::update_theme_options($of_options);
-			}
-
-            //Set the flag that tells that the components was saved at least once
-            $theme = wp_get_theme();
-            $components_already_saved = (array) get_option( "wbf_components_saved_once", array() );
-            if(!in_array($theme->get_stylesheet(),$components_already_saved)){
-		        $components_already_saved[] = $theme->get_stylesheet();
-		        update_option("wbf_components_saved_once", $components_already_saved);
-            }
-
-			$options_updated_flag = true;
-        }
-
-        $components_options = Organizer::getInstance()->get_group("components");
-        $compiled_components_options = array();
-        $current_element = "";
-        foreach($components_options as $key => $option){
-            if($option['type'] == "heading"){
-                $current_element = preg_replace("/ Component/","",$option['name']);
-                $compiled_components_options[$current_element] = array();
-                continue;
-            }
-            $compiled_components_options[$current_element][] = $components_options[$key];
-        }
-
-        (new HTMLView("modules/components/views/components_page.php","wbf"))->clean()->display([
-            'registered_components' => $registered_components,
-            'compiled_components_options' => $compiled_components_options,
-			'last_error' => (isset($_GET['enable']) || isset($_GET['disable'])) && !empty(self::$last_error)? self::$last_error : false,
-			'options_updated_flag' => $options_updated_flag
-        ]);
-    }
-
     /**
      * Force enable a component
+     *
      * @param $component_name
      * @throws \Exception
      */
@@ -650,97 +542,109 @@ class ComponentsManager {
     }
 
     /**
-     * Enable a component or throw an error
+     * Enable a component
+     *
      * @param $component_name
      * @param bool $child_component
+     *
+     * @use self::switch_component_state()
+     *
      * @throws \Exception
      */
     static function enable( $component_name, $child_component = false ) {
-        //chiamo onActivate() del componente
-        $registered_components = ! $child_component ? self::get_parent_registered_components() : self::get_child_registered_components();
-        if ( array_key_exists( $component_name, $registered_components ) ) {
-            $component = $registered_components[ $component_name ];
-            require_once( $component['file'] );
-            $className = ComponentFactory::get_component_class_name($component_name);
-	        if(!class_exists($className)){
-		        $className = $className."Component"; //legacy compatibility
-	        }
-            if ( class_exists( $className ) ) {
-                $oComponent = new $className( $component );
-                $oComponent->onActivate();
-                $oComponent->active = true;
-                $registered_components[ $component_name ]['enabled'] = true;
-                if ( ! $child_component ) {
-                    self::update_parent_registered_components( $registered_components );
-                } //update the WP Option of registered component
-                else {
-                    self::update_child_registered_components( $registered_components );
-                } //update the WP Option of registered component
-                self::update_global_components_vars();
-            } else {
-                throw new \Exception( sprintf( __( "Component class (%s) not defined. Unable to activate the component.", "wbf" ), $component_name ) );
-            }
-        } else {
-            throw new \Exception( sprintf( __( "Component %s not found among registered components. Unable to activate the component.","wbf" ), $component_name ) );
-        }
+	    self::switch_component_state($component_name, self::STATE_ENABLED, $child_component);
     }
 
     /**
-     * Disable a component ot throw an error
+     * Disable a component
+     *
      * @param $component_name
      * @param bool $child_component
+     *
+     * @use self::switch_component_state()
+     *
      * @throws \Exception
      */
     static function disable( $component_name, $child_component = false ) {
-        //chiamo onDeactivate() del componente
-        $registered_components = ! $child_component ? self::get_parent_registered_components() : self::get_child_registered_components();
-        if ( array_key_exists( $component_name, $registered_components ) ) {
-            $component = $registered_components[ $component_name ];
-            require_once( $component['file'] );
-            $className = ComponentFactory::get_component_class_name($component_name);
-	        if(!class_exists($className)){
-		        $className = $className."Component"; //legacy compatibility
-	        }
-            if ( class_exists( $className ) ) {
-                $oComponent = new $className( $component );
-                $oComponent->onDeactivate();
-                $oComponent->active = false;
-            }
-            $registered_components[ $component_name ]['enabled'] = false; //If there is no class defined (eg. due to an previous error), then simply disable the component
-            if ( ! $child_component ) {
-                self::update_parent_registered_components( $registered_components );
-            } //update the WP Option of registered component
-            else {
-                self::update_child_registered_components( $registered_components );
-            } //update the WP Option of registered component
-            self::update_global_components_vars();
-        } else {
-            throw new \Exception( __( "Component not found among registered components. Unable to deactivate the component.","wbf"));
-        }
+	    self::switch_component_state($component_name, self::STATE_DISABLED, $child_component);
     }
 
-    static function is_child_component( $registered_component ) {
-        if ( is_array( $registered_component ) ) {
-            if ( $registered_component['child_component'] == true ) {
+	/**
+	 * Enable or disable a component
+	 *
+	 * @param string $component_name
+	 * @param string $state
+	 * @param bool|false $child_component
+	 *
+	 * @throws \Exception
+	 */
+	private function switch_component_state($component_name, $state, $child_component = false){
+		$registered_components = ! $child_component ? self::get_parent_registered_components() : self::get_child_registered_components();
+		if(array_key_exists( $component_name, $registered_components)){
+			try{
+				$component_params = $registered_components[ $component_name ];
+				$oComponent = ComponentFactory::create($component_params);
+				if($oComponent instanceof Component){
+					//enable or disable
+					if($state == self::STATE_ENABLED){
+						$oComponent->onActivate();
+						$oComponent->active = true;
+						$registered_components[ $component_name ]['enabled'] = true;
+					}else{
+						$oComponent->onDeactivate();
+						$oComponent->active = false;
+						$registered_components[ $component_name ]['enabled'] = false;
+					}
+					//update the WP Option of registered component
+					if(!$child_component){
+						self::update_parent_registered_components($registered_components);
+					}
+					else{
+						self::update_child_registered_components($registered_components);
+					}
+					self::update_global_components_vars();
+				}
+			}catch(\Exception $e){
+				throw new \Exception($e->getMessage());
+			}
+		} else {
+			throw new \Exception( __( "Component not found among registered components. Unable to deactivate the component.","wbf"));
+		}
+	}
+
+	/**
+	 * Checks if $registered_component is a child component.
+	 *
+	 * @param array $registered_component (a component in array form)
+	 *
+	 * @return bool
+	 */
+    static function is_child_component($registered_component){
+        if(is_array($registered_component)){
+            if ( $registered_component['child_component'] == true ){
                 return true;
             }
-        } else {
+        }else{
             $components = ComponentsManager::getAllComponents();
-            foreach ( $components as $name => $c ) {
-                if ( $name == $registered_component ) {
-                    if ( $c->is_child_component == true ) {
+            foreach($components as $name => $c){
+                if($name == $registered_component){
+                    if($c->is_child_component == true){
                         return true;
                     }
                 }
             }
         }
-
         return false;
     }
 
+	/**
+	 * Reset components state
+	 *
+	 * @throws \Exception
+	 */
     static function reset_components_state(){
         $default_components = apply_filters("wbf_default_components",array());
-        $registered_components = \WBF\modules\components\ComponentsManager::getAllComponents();
+        $registered_components = self::getAllComponents();
         foreach($registered_components as $c_name => $c_data){
             if(!isset($c_data->is_child_component)){
 	            $c_data->is_child_component = false;
@@ -753,7 +657,7 @@ class ComponentsManager {
     }
 
     /**
-     * Delete the options which stores the registere components
+     * Delete the options which stores the registered components
      */
     static function reset_registered_components(){
         delete_option("waboot_registered_components");
@@ -764,14 +668,115 @@ class ComponentsManager {
     }
 
 	/**
-	 * Checks if a class is a sub class of Component
-	 *
-	 * @param $classname
-	 *
-	 * @return bool
+	 * Display the component page
 	 */
-	private static function is_component($classname){
-		if(!class_exists($classname)) return false;
-		return is_subclass_of($classname,'\WBF\modules\components\Component');
+	static function components_admin_page() {
+
+		$options_updated_flag = false;
+
+		if(isset($_POST['reset'])){
+			self::reset_components_state();
+			$options_updated_flag = true;
+		}
+
+		$registered_components = self::getAllComponents();
+
+		if(isset($_POST['submit-components-options'])){
+			$is_active_component_option = function($opt_name) use($registered_components){
+				preg_match("/^([a-zA-Z0-9]+)_/",$opt_name,$matches);
+				if(isset($matches[1])){
+					$component_name = $matches[1];
+					if(isset($registered_components[$component_name])){
+						$component_data = $registered_components[$component_name];
+						if(self::is_active($component_data) && array_key_exists($component_name,$registered_components)){
+							return true;
+						}
+					}
+				}
+				return false;
+			};
+
+			$of_config_id = Framework::get_options_root_id();
+			$of_options = Framework::get_options_values();
+			$must_update = false;
+			if(isset($_POST[$of_config_id])){
+				$options_to_update = $_POST[$of_config_id];
+				//Add to $ootions_to_update the disabled checkbox:
+				foreach($of_options as $opt_name => $opt_value){
+					if($is_active_component_option($opt_name)){
+						if(!isset($options_to_update[$opt_name]) && Framework::get_option_type($opt_name) == "checkbox"){
+							$options_to_update[$opt_name] = false; //If an option does not exists in $_POST then, it is a checkbox that was set to 0, so change the value...
+							$of_options[$opt_name] = false;
+						}
+						if(isset($options_to_update[$opt_name]) && Framework::get_option_type($opt_name) == "multicheck"){
+							foreach($options_to_update[$opt_name] as $k => $v){
+								//The current checkbox value does not exists in the theme_options array, so add it...
+								if(!array_key_exists($k,$of_options[$opt_name])){
+									$of_options[$opt_name][$k] = "1";
+									$must_update = true; //in this case, always force update
+								}
+							}
+							//Now se to "false" all disabled checkbox, and to "1" all enabled checkbox
+							foreach($of_options[$opt_name] as $k => $v){
+								if(!isset($options_to_update[$opt_name][$k])){
+									$options_to_update[$opt_name][$k] = false;
+								}else{
+									$options_to_update[$opt_name][$k] = "1";
+								}
+							}
+						}elseif(isset($of_options[$opt_name]) && Framework::get_option_type($opt_name) == "multicheck"){
+							//Now se to "false" all disabled checkbox, and to "1" all enabled checkbox
+							foreach($of_options[$opt_name] as $k => $v){
+								if(!isset($options_to_update[$opt_name][$k])){
+									$options_to_update[$opt_name][$k] = false;
+								}else{
+									$options_to_update[$opt_name][$k] = "1";
+								}
+							}
+						}
+					}
+				}
+				//Check if we must update something...
+				foreach($options_to_update as $opt_name => $opt_value){
+					if( (isset($of_options[$opt_name]) && $of_options[$opt_name] != $opt_value) || !isset($of_options[$opt_name]) ){
+						$of_options[$opt_name] = $opt_value;
+						$must_update = true;
+					}
+				}
+			}
+
+			if($must_update){
+				Framework::update_theme_options($of_options);
+			}
+
+			//Set the flag that tells that the components was saved at least once
+			$theme = wp_get_theme();
+			$components_already_saved = (array) get_option( "wbf_components_saved_once", array() );
+			if(!in_array($theme->get_stylesheet(),$components_already_saved)){
+				$components_already_saved[] = $theme->get_stylesheet();
+				update_option("wbf_components_saved_once", $components_already_saved);
+			}
+
+			$options_updated_flag = true;
+		}
+
+		$components_options = Organizer::getInstance()->get_group("components");
+		$compiled_components_options = array();
+		$current_element = "";
+		foreach($components_options as $key => $option){
+			if($option['type'] == "heading"){
+				$current_element = preg_replace("/ Component/","",$option['name']);
+				$compiled_components_options[$current_element] = array();
+				continue;
+			}
+			$compiled_components_options[$current_element][] = $components_options[$key];
+		}
+
+		(new HTMLView("modules/components/views/components_page.php","wbf"))->clean()->display([
+			'registered_components' => $registered_components,
+			'compiled_components_options' => $compiled_components_options,
+			'last_error' => (isset($_GET['enable']) || isset($_GET['disable'])) && !empty(self::$last_error)? self::$last_error : false,
+			'options_updated_flag' => $options_updated_flag
+		]);
 	}
 }

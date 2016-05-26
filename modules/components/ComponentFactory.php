@@ -25,8 +25,9 @@ class ComponentFactory {
 		}
 		if(class_exists($class_name)){
 			return new $class_name($component_params);
+		}else{
+			throw new \Exception( sprintf( __( "Component class (%s) not defined. Unable to activate the component.", "wbf" ), $component_params['nicename'] ) );
 		}
-		return false;
 	}
 
 	/**
