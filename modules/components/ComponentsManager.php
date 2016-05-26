@@ -43,6 +43,13 @@ class ComponentsManager {
             if ($stylesheet != ""){
                 wp_enqueue_style('waboot-theme-components-style', $stylesheet, array(), '1.0.0', 'all'); //Custom Theme Options CSS
             }
+	        if(defined("OPTIONS_FRAMEWORK_URL")){
+		        // Enqueue custom option panel JS
+		        wp_enqueue_script( 'options-custom', OPTIONS_FRAMEWORK_URL . 'js/options-custom.js', array(
+			        'jquery',
+			        'wp-color-picker'
+		        ), Framework::VERSION );
+	        }
             /*if(WBF_ENV == "dev"){
                 wp_register_script('component-page-script',WBF_URL."/assets/src/js/admin/components-page.js",array('jquery'));
             }else{

@@ -155,6 +155,9 @@ class PluginCore {
 		add_filter( 'wbf/modules/options/priority', function(){
 			return 11;
 		});
+		add_filter( 'wbf/modules/components/priority', function(){
+			return 12;
+		});
 	}
 
 	/*
