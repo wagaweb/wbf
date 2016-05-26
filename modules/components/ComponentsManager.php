@@ -3,6 +3,7 @@
 namespace WBF\modules\components;
 
 
+use WBF\admin\Notice_Manager;
 use WBF\includes\mvc\HTMLView;
 use WBF\modules\options\Framework;
 use WBF\modules\options\Organizer;
@@ -82,7 +83,7 @@ class ComponentsManager {
                 if ( ! array_key_exists( $component_name, $registered_components ) ) {
                     $registered_components[ $component_name ] = array(
                       'nicename'        => $component_name,
-	                  'class_name'      => isset($component_data['Class Name']) && $component_data['Class Name'] != "" ? $component_data['Class Name'] : self::get_component_class_name($component_name),
+	                  'class_name'      => isset($component_data['Class Name']) && $component_data['Class Name'] != "" ? $component_data['Class Name'] : ComponentFactory::get_component_class_name($component_name),
                       'file'            => $file,
                       'child_component' => $child_theme,
                       'enabled'         => false
@@ -310,20 +311,25 @@ class ComponentsManager {
 	 * Updates global $registered_components
 	 *
 	 * @use self::retrieve_components()
-	 * 
+	 * @use self::instance_component()
+	 *
+	 * @param bool|false $registered_components
+	 *
 	 * @return array
 	 */
-    static function update_global_components_vars(){
-        global $registered_components;
+    static function update_global_components_vars($registered_components = false){
+		if(!$registered_components){
+			global $registered_components;
+		}
         $components = self::retrieve_components();
 	    foreach($components as $c){
-		    require_once( $c['file'] );
-		    $class_name = self::get_component_class_name($c['nicename']);
-		    if(!class_exists($class_name)){
-			    $class_name = $class_name."Component";
-		    }
-		    if(class_exists($class_name)){
-			    $registered_components[$c['nicename']] = new $class_name($c);
+		    try{
+			    $oComponent = ComponentFactory::create($c);
+			    if($oComponent instanceof Component){
+				    $registered_components[$c['nicename']] = $oComponent;
+			    }
+		    }catch(\Exception $e){
+			    if(function_exists("WBF")) WBF()->notice_manager->add_notice($c['nicename']."_error",$e->getMessage(),"error","_flash_");
 		    }
 	    }
 	    return $registered_components;
@@ -655,7 +661,7 @@ class ComponentsManager {
         if ( array_key_exists( $component_name, $registered_components ) ) {
             $component = $registered_components[ $component_name ];
             require_once( $component['file'] );
-            $className = self::get_component_class_name($component_name);
+            $className = ComponentFactory::get_component_class_name($component_name);
 	        if(!class_exists($className)){
 		        $className = $className."Component"; //legacy compatibility
 	        }
@@ -691,7 +697,7 @@ class ComponentsManager {
         if ( array_key_exists( $component_name, $registered_components ) ) {
             $component = $registered_components[ $component_name ];
             require_once( $component['file'] );
-            $className = self::get_component_class_name($component_name);
+            $className = ComponentFactory::get_component_class_name($component_name);
 	        if(!class_exists($className)){
 		        $className = $className."Component"; //legacy compatibility
 	        }
@@ -756,33 +762,6 @@ class ComponentsManager {
             delete_option( "{$template_name}_registered_components");
         }
     }
-
-	/**
-	 * Return an instance of Component
-	 * 
-	 * @param $component_params
-	 * 
-	 * @return Component
-	 */
-	private function instance_component($component_params){
-		$loaded_components = self::getLoadedComponents();
-		$registered_components = self::getAllComponents();
-		
-	}
-
-	/**
-	 * Returns the component class name
-	 *
-	 * @param $component_name
-	 *
-	 * @return string
-	 */
-	private static function get_component_class_name($component_name){
-		//return ucfirst( $component_name ) . "Component";
-		$class_name = ucfirst( $component_name );
-		$parts = implode('_', array_map("ucfirst", explode('_', $class_name)));
-		return $parts;
-	}
 
 	/**
 	 * Checks if a class is a sub class of Component
