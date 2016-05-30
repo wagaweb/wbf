@@ -48,7 +48,7 @@
  * Enjoy!
  */
 
-namespace WBF\includes\mvc;
+namespace WBF\components\mvc;
 
 class HTMLView extends View implements View_Interface{
 	/**

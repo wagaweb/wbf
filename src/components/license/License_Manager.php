@@ -1,11 +1,11 @@
 <?php
 
-namespace WBF\admin;
+namespace WBF\components\license;
 
-use WBF\includes\License;
-use WBF\includes\License_Exception;
-use WBF\includes\mvc\HTMLView;
-use WBF\includes\Theme_Update_Checker;
+use WBF\components\license\License;
+use WBF\components\license\License_Exception;
+use WBF\components\mvc\HTMLView;
+use WBF\components\customupdater\Theme_Update_Checker;
 
 class License_Manager{
 
@@ -172,7 +172,7 @@ class License_Manager{
 
 	/**
 	 * Register a new license
-	 * @param \WBF\includes\License $license
+	 * @param \WBF\components\license\License $license
 	 * @return License
 	 */
 	static function register(License $license, $type){
@@ -214,7 +214,7 @@ class License_Manager{
 	 * Checks if a specified theme has a license registered
 	 * @param $theme_slug
 	 *
-	 * @return \WBF\includes\License|bool
+	 * @return \WBF\components\license\License|bool
 	 */
 	static function theme_has_license($theme_slug){
 		return self::get($theme_slug,"theme");

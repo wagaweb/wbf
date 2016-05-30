@@ -1,6 +1,6 @@
 <?php
 
-namespace WBF\includes\pluginsframework;
+namespace WBF\components\pluginsframework;
 
 /**
  * Define the internationalization functionality.

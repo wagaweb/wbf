@@ -1,9 +1,9 @@
 <?php
 
-namespace wbf\includes\mvc;
+namespace wbf\components\mvc;
 
-use WBF\includes\pluginsframework\Plugin;
-use WBF\includes\Utilities;
+use WBF\components\pluginsframework\Plugin;
+use WBF\components\utils\Utilities;
 
 abstract class View{
 	/**
@@ -20,7 +20,7 @@ abstract class View{
 	 * Initialize a new view. If the $plugin argument is not provided, the template file will be searched into stylesheet and template directories.
 	 *
 	 * @param string $relative_file_path a path to the view file starting from the theme or plugin directory
-	 * @param string|\WBF\includes\pluginsframework\Plugin  $plugin a plugin directory name or an instance of \WBF\includes\pluginsframework\Plugin
+	 * @param string|\WBF\components\pluginsframework\Plugin  $plugin a plugin directory name or an instance of \WBF\includes\pluginsframework\Plugin
 	 *
 	 * @throws \Exception
 	 */

@@ -1,8 +1,8 @@
 <?php
 
-namespace WBF\includes;
+namespace WBF\components\license;
 
-use WBF\admin\License_Manager;
+use WBF\components\license\License_Manager;
 
 abstract class License{
 	var $nicename = "License";

@@ -5,8 +5,6 @@ use WBF\components\compiler\Base_Compiler;
 use \Exception;
 use WBF\includes\Utilities;
 
-require_once( \WBF::get_path()."includes/compiler/interface-base-compiler.php" );
-
 class Less_Compiler implements Base_Compiler{
     public $compile_sets = array();
 	public $sources_path = "";
@@ -59,12 +57,10 @@ class Less_Compiler implements Base_Compiler{
     function compile($name,$args = []){
         try{
 	        global $wp_filesystem;
-	        require_once( \WBF::get_path()."includes/compiler/less/Less_Cache.php" );
-	        require_once( \WBF::get_path()."includes/compiler/compiler-utils.php" );
-
+	        
 	        $args = wp_parse_args($args,$this->compile_sets[$name]);
 
-	        $args['input'] = \WBF\includes\compiler\parse_input_file($args['input']);
+	        $args['input'] = \WBF\components\compiler\Utilities::parse_input_file($args['input']);
 	        $less_files = array(
 		        $args['input'] => $args['import_url'],
 	        );

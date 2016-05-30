@@ -1,6 +1,6 @@
 <?php
 
-namespace WBF\includes\pluginsframework;
+namespace WBF\components\pluginsframework;
 
 /**
  * Register all actions and filters for the plugin.

@@ -1,12 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: wagadev
- * Date: 21/01/15
- * Time: 12.24
- */
 
-namespace WBF\admin\conditions;
+namespace WBF\components\notices\conditions;
 
 use WBF\modules\components\ComponentsManager;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace WBF\admin\conditions;
+namespace WBF\components\notices\conditions;
 
 class FileIsPresent implements Condition{
     var $file;

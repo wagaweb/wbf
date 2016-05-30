@@ -1,8 +1,9 @@
 <?php
 
-namespace WBF\includes;
+namespace WBF\components\customupdater;
 
-use WBF\admin\Notice_Manager;
+use WBF\components\license\License;
+use WBF\components\notices\Notice_Manager;
 
 //require_once get_option( "wbf_path" ) . "/vendor/yahnis-elsts/plugin-update-checker/plugin-update-checker.php";
 

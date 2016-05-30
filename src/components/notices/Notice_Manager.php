@@ -1,6 +1,6 @@
 <?php
 
-namespace WBF\admin;
+namespace WBF\components\notices;
 
 class Notice_Manager {
 

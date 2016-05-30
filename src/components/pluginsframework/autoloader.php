@@ -1,6 +1,6 @@
 <?php
 
-namespace WBF\includes\pluginsframework;
+namespace WBF\components\pluginsframework;
 
 spl_autoload_register( 'WBF\includes\pluginsframework\plugin_autoload' );
 

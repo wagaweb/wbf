@@ -1,6 +1,6 @@
 <?php
 
-namespace WBF\includes\pluginsframework;
+namespace WBF\components\pluginsframework;
 
 use WBF\admin\License_Manager;
 use WBF\admin\Notice_Manager;

@@ -1,6 +1,6 @@
 <?php
 
-namespace WBF\includes;
+namespace WBF\components\utils;
 
 class Utilities{
 

@@ -2,6 +2,8 @@
 
 namespace WBF\components\compiler\less;
 
+require_once( dirname(__FILE__).'/lib/Lessphp/Version.php');
+
 class Less_Cache extends \Less_Cache{
 
     /**

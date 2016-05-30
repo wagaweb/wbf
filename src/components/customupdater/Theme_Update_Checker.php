@@ -1,9 +1,10 @@
 <?php
 
-namespace WBF\includes;
+namespace WBF\components\customupdater;
 
-use WBF\admin\License_Manager;
-use WBF\admin\Notice_Manager;
+use WBF\components\license\License;
+use WBF\components\license\License_Manager;
+use WBF\components\notices\Notice_Manager;
 
 class Theme_Update_Checker extends \ThemeUpdateChecker{
 
@@ -109,7 +110,7 @@ class Theme_Update_Checker extends \ThemeUpdateChecker{
 	public function update_state_option($new_state){
 		$state = get_option($this->optionName);
 		if ( empty($state) ){
-			$state = new \StdClass;
+			$state = new \stdClass();
 			$state->lastCheck = 0;
 			$state->checkedVersion = '';
 			$state->update = null;

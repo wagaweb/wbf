@@ -1,7 +1,5 @@
 <?php
 
-namespace WBF\components\compiler\less\lib\Lessphp;
-
 /**
  * Release numbers
  *

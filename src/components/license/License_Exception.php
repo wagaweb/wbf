@@ -1,6 +1,6 @@
 <?php
 
-namespace WBF\includes;
+namespace WBF\components\license;
 
 class License_Exception extends \Exception{
 
