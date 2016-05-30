@@ -49,18 +49,6 @@ function wbf_autoloader($class) {
 	    case 'Mobile_Detect':
 		    \WBF\includes\Utilities::locate_file('vendor/mobiledetect/mobiledetectlib/Mobile_Detect.php', true);
 		    break;
-        case "Less_Cache":
-	        \WBF\includes\Utilities::locate_file('includes/compiler/less/vendor/Lessphp/Cache.php', true);
-            break;
-        case "Less_Parser":
-	        \WBF\includes\Utilities::locate_file('includes/compiler/less/vendor/Lessphp/Less.php', true);
-            break;
-        case "lessc":
-	        \WBF\includes\Utilities::locate_file('includes/compiler/less/vendor/Lessphp/lessc.inc.php', true);
-            break;
-        case "Less_Version":
-	        \WBF\includes\Utilities::locate_file('includes/compiler/less/vendor/Lessphp/Version.php', true);
-            break;
         case "BootstrapNavMenuWalker":
 	        \WBF\includes\Utilities::locate_file('vendor/BootstrapNavMenuWalker.php', true);
             break;

@@ -6,6 +6,8 @@ use WBF\components\license\License;
 use WBF\components\license\License_Manager;
 use WBF\components\notices\Notice_Manager;
 
+require_once( dirname(__FILE__).'/vendor/theme-update-checker.php');
+
 class Theme_Update_Checker extends \ThemeUpdateChecker{
 
 	/**

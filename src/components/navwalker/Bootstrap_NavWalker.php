@@ -1,6 +1,10 @@
 <?php
 
-class WabootNavMenuWalker extends BootstrapNavMenuWalker {
+namespace WBF\components\navwalker;
+
+require_once( dirname(__FILE__).'/vendor/BootstrapNavMenuWalker.php');
+
+class Bootstrap_NavWalker extends \BootstrapNavMenuWalker {
 
     /**
      * Menu Fallback
