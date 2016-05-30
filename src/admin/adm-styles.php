@@ -8,8 +8,8 @@
 function wbf_admin_styles() {
 	$styles = [
 		'wbf-admin-style' => [
-			'uri' => \WBF\includes\Resources::getInstance()->prefix_url('admin/css/admin.css'),
-			'path' => \WBF\includes\Resources::getInstance()->prefix_path('admin/css/admin.css'),
+			'uri' => \WBF\includes\Resources::getInstance()->prefix_url('assets/dist/css/admin.css'),
+			'path' => \WBF\includes\Resources::getInstance()->prefix_path('assets/dist/css/admin.css'),
 			'type' => 'css'	
 		]
 	];
@@ -25,6 +25,6 @@ add_action('admin_enqueue_scripts', 'wbf_admin_styles');
  * @uses add_editor_style()
  */
 function wbf_editor_styles() {
-	add_editor_style('wbf/admin/css/tinymce.css');
+	add_editor_style('wbf/assets/dist/css/tinymce.css');
 }
 add_action('admin_init', 'wbf_editor_styles');
