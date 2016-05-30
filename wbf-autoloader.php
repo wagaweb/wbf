@@ -24,5 +24,3 @@ spl_autoload_register( function($class){
 		require_once $file;
 	}
 });
-
-spl_autoload_register('wbf_autoloader');
