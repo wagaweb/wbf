@@ -12,7 +12,7 @@ if(!function_exists("waboot_breadcrumb_trail")):
 	 * @param array $args
 	 */
 	function waboot_breadcrumb_trail( $args = array() ){
-		wbf_breadcrumb_trail($args);
+		\WBF\components\breadcrumb\wbf_breadcrumb_trail($args);
 	}
 endif;
 

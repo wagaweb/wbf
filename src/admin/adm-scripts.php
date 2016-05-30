@@ -21,7 +21,7 @@ function wbf_admin_scripts(){
 			'type' => 'js',
 		]
 	];
-	$am = new \WBF\includes\AssetsManager($scripts);
+	$am = new \WBF\components\assets\AssetsManager($scripts);
 	$am->enqueue();
 }
 add_action( 'admin_enqueue_scripts', 'wbf_admin_scripts', 99);

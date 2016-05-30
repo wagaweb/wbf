@@ -314,7 +314,7 @@ class PluginCore {
 			}
 		}
 
-		$modules_dir = self::get_path()."modules";
+		$modules_dir = self::get_path()."src/modules";
 		$dirs = array_filter(glob($modules_dir."/*"), 'is_dir');
 		$dirs = apply_filters("wbf/modules/available", $dirs); //Allow developers to add\delete modules
 		foreach($dirs as $d){
@@ -635,7 +635,7 @@ class PluginCore {
 		}
 
 		// Breadcrumbs
-		wbf_locate_file( '/src/components/breadcrumb/functions', true);
+		wbf_locate_file( '/src/components/breadcrumb/functions.php', true);
 		/*if(!class_exists("Breadcrumb_Trail") && !function_exists("breadcrumb_trail")){
 			wbf_locate_file( '/src/components/breadcrumb/vendor/breadcrumb-trail.php', true);
 			wbf_locate_file( '/src/components/breadcrumb/WBF_Breadcrumb_Trail.php', true);

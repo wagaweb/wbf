@@ -13,7 +13,7 @@ function wbf_admin_styles() {
 			'type' => 'css'	
 		]
 	];
-	$am = new \WBF\includes\AssetsManager($styles);
+	$am = new \WBF\components\assets\AssetsManager($styles);
 	$am->enqueue();
 }
 add_action('admin_enqueue_scripts', 'wbf_admin_styles');

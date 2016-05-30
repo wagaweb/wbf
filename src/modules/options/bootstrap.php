@@ -13,7 +13,7 @@
 
 namespace WBF\modules\options;
 
-use WBF\includes\Utilities;
+use WBF\components\utils\Utilities;
 
 require_once "CustomizerManager.php";
 require_once "functions.php";
