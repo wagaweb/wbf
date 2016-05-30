@@ -38,7 +38,8 @@
       "src/components/customupdater/vendor/",
       "src/components/bredcrumb/vendor/",
       "src/components/navwalker/vendor/",
-      "vendor/options-framework/"
+      "vendor/options-framework/",
+      "vendor/acf/"
     ],
     "exclude-from-classmap": [
       "**/tests/"
