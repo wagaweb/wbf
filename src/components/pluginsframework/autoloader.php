@@ -2,6 +2,8 @@
 
 namespace WBF\components\pluginsframework;
 
+require_once("vendor/autoload.php");
+
 spl_autoload_register( 'WBF\includes\pluginsframework\plugin_autoload' );
 
 function plugin_autoload( $class ) {

@@ -1,0 +1,15 @@
+{
+  "name": "waga/wbf/navwalker",
+  "description": "An helper component for Wordpress NavWalkers",
+  "homepage": "http://www.waga.it",
+  "version": "1.0.0",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Waga Team",
+      "email": "dev@waga.it",
+      "homepage": "http://www.waga.it",
+      "role": "Developer"
+    }
+  ]
+}
