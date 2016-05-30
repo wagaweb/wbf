@@ -31,7 +31,7 @@ if( ! class_exists('\WBF\WBF') ) :
 	}
 
 	//Utilities
-	require_once('includes/utilities.php');
+	require_once('src/includes/utilities.php');
 
 	//Define directory
 	if(!defined("WBF_DIRECTORY")){
@@ -68,9 +68,6 @@ if( ! class_exists('\WBF\WBF') ) :
 	require_once("wbf-autoloader.php");
 	require_once("backup-functions.php");
 	include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-
-	//Require the framework
-	require_once "PluginCore.php";
 
 	//Backward compatibility
 	class WBF extends \WBF\PluginCore{}

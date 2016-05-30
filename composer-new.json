@@ -17,7 +17,17 @@
   "require": {
     "composer/installers": "^1.0",
     "mgargano/simplehtmldom": "dev-master",
-    "mobiledetect/mobiledetectlib": "~2.8.20"
+    "mobiledetect/mobiledetectlib": "~2.8.20",
+    "waga/wbf/assets": "*",
+    "waga/wbf/breadcrumb": "*",
+    "waga/wbf/compiler": "*",
+    "waga/wbf/customupdater": "*",
+    "waga/wbf/license": "*",
+    "waga/wbf/mvc": "*",
+    "waga/wbf/navwalker": "*",
+    "waga/wbf/notices": "*",
+    "waga/wbf/pluginsframework": "*",
+    "waga/wbf/utils": "*"
   },
   "autoload": {
     "psr-4": {
@@ -26,7 +36,7 @@
     "classmap": [
       "src/components/compiler/less/lib/",
       "src/components/customupdater/vendor/",
-      "src/components/breadcrumb/vendor/",
+      "src/components/bredcrumb/vendor/",
       "src/components/navwalker/vendor/",
       "vendor/options-framework/",
       "vendor/acf/",
