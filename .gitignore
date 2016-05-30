@@ -7,7 +7,7 @@ npm-debug.log
 ## COMPILED
 ############
 assets/dist/js/wbf-admin.min.js
-assets/dist/js/includes/scripts/wbfgmap.min.js
+assets/dist/js/includes/wbfgmap.min.js
 assets/dist/css/tinymce.css
 assets/dist/css/admin.css
 assets/dist/css/optionsframework.css
