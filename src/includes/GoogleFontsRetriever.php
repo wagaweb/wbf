@@ -1,6 +1,6 @@
 <?php
 
-namespace WBF;
+namespace WBF\includes;
 
 class GoogleFontsRetriever{
     const api_url = "https://www.googleapis.com/webfonts/v1/webfonts";

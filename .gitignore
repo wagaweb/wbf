@@ -21,8 +21,14 @@ assets/src/js/admin/wbf-admin-bundle.js
 vendor/autoload.php
 vendor/mgargano
 vendor/composer
-vendor/yahnis-elsts
 vendor/mobiledetect
+
+############
+## VENDORS (components)
+############
+
+src/components/customupdater/vendor/**
+!src/components/customupdater/vendor/theme-update-checker.php
 
 ############
 ## VENDORS (bower)

@@ -35,7 +35,7 @@ class Styles_Compiler{
 		if(!isset($base_compiler)){
 			$base_compiler = [
 				'require_path' => "less/Less_Compiler.php",
-				'class_name' => '\WBF\includes\compiler\less\Less_Compiler'
+				'class_name' => '\WBF\components\compiler\less\Less_Compiler'
 			];
 		}
 

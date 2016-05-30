@@ -2,6 +2,8 @@
 
 namespace WBF\modules\options;
 
+use WBF\includes\GoogleFontsRetriever;
+
 class FontSelector
 {
 	public function init(){
@@ -269,7 +271,7 @@ class FontSelector
 				else return false;
 			}
 		}
-		$gfontfetcher = \WBF\GoogleFontsRetriever::getInstance();
+		$gfontfetcher = GoogleFontsRetriever::getInstance();
 		if(DOING_AJAX){
             if(self::isOSFont($familyname)){
                 $font_info = self::getOSFontProps($familyname);

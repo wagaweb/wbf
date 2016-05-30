@@ -5,7 +5,7 @@ namespace WBF\components\customupdater;
 use WBF\components\license\License;
 use WBF\components\notices\Notice_Manager;
 
-//require_once get_option( "wbf_path" ) . "/vendor/yahnis-elsts/plugin-update-checker/plugin-update-checker.php";
+require_once "vendor/autoload.php";
 
 class Plugin_Update_Checker extends \PluginUpdateChecker{
 

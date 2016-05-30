@@ -1,6 +1,6 @@
 <?php
 
-require_once "class-utilities.php";
+use WBF\components\utils\Utilities;
 
 if(!function_exists("wbf_get_sanitized_blogname")):
 	/**
@@ -9,7 +9,7 @@ if(!function_exists("wbf_get_sanitized_blogname")):
 	 * @return string
 	 */
 	function wbf_get_sanitized_blogname(){
-		return \WBF\includes\Utilities::get_sanitized_blogname();
+		return Utilities::get_sanitized_blogname();
 	}
 endif;
 
@@ -21,7 +21,7 @@ if(!function_exists('wbf_get_template_part')):
 	 * @param null $name
 	 */
 	function wbf_get_template_part($slug, $name = null){
-		\WBF\includes\Utilities::get_template_part($slug,$name);
+		Utilities::get_template_part($slug,$name);
 	}
 endif;
 
@@ -36,7 +36,7 @@ if(!function_exists("wbf_locate_file")):
 	 * @throws \Exception
 	 */
 	function wbf_locate_file($file, $load = false, $require_once = true){
-		return \WBF\includes\Utilities::locate_file($file,$load,$require_once);
+		return Utilities::locate_file($file,$load,$require_once);
 	}
 endif;
 
@@ -50,7 +50,7 @@ if(!function_exists('wbf_locate_template')):
 	 * @return string
 	 */
 	function wbf_locate_template($templates, $load = false, $require_once = true ) {
-		return \WBF\includes\Utilities::locate_template($templates,$load,$require_once);
+		return Utilities::locate_template($templates,$load,$require_once);
 	}
 endif;
 
@@ -65,7 +65,7 @@ if (!function_exists( 'wbf_locate_template_uri' )):
      * @return string The URI of the file if one is located.
      */
     function wbf_locate_template_uri($template_names){
-        return \WBF\includes\Utilities::locate_template_uri($template_names);
+        return Utilities::locate_template_uri($template_names);
     }
 endif;
 
@@ -77,7 +77,7 @@ if (!function_exists( "wbf_get_filtered_post_types" )):
 	 * @return array
 	 */
 	function wbf_get_filtered_post_types($blacklist = array()){
-		return \WBF\includes\Utilities::get_filtered_post_types($blacklist);
+		return Utilities::get_filtered_post_types($blacklist);
 	}
 endif;
 
@@ -85,20 +85,20 @@ if (!function_exists( "wbf_get_posts" )) :
 	/**
 	 * Get posts while preserving memory
 	 *
-	 * @param callable $callback a function that will be called for each post. You can use it to additionally filter the posts. If it returns true, the post will be added to output array.
+	 * @param Closure $callback a function that will be called for each post. You can use it to additionally filter the posts. If it returns true, the post will be added to output array.
 	 * @param array    $args normal arguments for WP_Query
 	 * @param bool     $include_meta the post meta will be included in the post object (default to FALSE)
 	 *
 	 * @return array of posts
 	 */
-	function wbf_get_posts(\closure $callback = null, $args = array(), $include_meta = false){
-		return \WBF\includes\Utilities::recursive_get_posts($callback,$args,$include_meta);
+	function wbf_get_posts(\Closure $callback = null, $args = array(), $include_meta = false){
+		return Utilities::recursive_get_posts($callback,$args,$include_meta);
 	}
 endif;
 
 if (!function_exists( "wbf_admin_show_message" )) :
     function wbf_admin_show_message($m, $type) {
-	    \WBF\includes\Utilities::admin_show_message($m,$type);
+	    Utilities::admin_show_message($m,$type);
     }
 endif;
 
@@ -114,7 +114,7 @@ if (!function_exists("wbf_add_admin_notice")) :
 	 * @param array $args (category[default:base], condition[default:null], cond_args[default:null])
 	 */
 	function wbf_add_admin_notice($id,$message,$level,$args = []){
-		\WBF\includes\Utilities::add_admin_notice($id,$message,$level,$args);
+		Utilities::add_admin_notice($id,$message,$level,$args);
 	}
 endif;
 
@@ -239,7 +239,7 @@ if ( !function_exists("get_post_thumbnail_src") ) :
 	 * @return mixed
 	 */
 	function get_post_thumbnail_src($post_id,$size=null){
-		return \WBF\includes\Utilities::get_post_thumbnail_src($post_id,$size);
+		return Utilities::get_post_thumbnail_src($post_id,$size);
 	}
 endif;
 
@@ -250,7 +250,7 @@ if ( !function_exists("get_current_url") ) :
 	 * @return string
 	 */
 	function get_current_url() {
-		return \WBF\includes\Utilities::get_current_url();
+		return Utilities::get_current_url();
 	}
 endif;
 
@@ -261,7 +261,7 @@ if ( !function_exists("get_wp_current_url") ) :
 	 * @return string
 	 */
 	function wp_get_current_url(){
-		return \WBF\includes\Utilities::wp_get_current_url();
+		return Utilities::wp_get_current_url();
 	}
 endif;
 
@@ -273,7 +273,7 @@ if ( !function_exists("array_neighbor") ) :
 	 * @return array
 	 */
 	function array_neighbor($arr, $key){
-		return \WBF\includes\Utilities::array_neighbor($arr,$key);
+		return Utilities::array_neighbor($arr,$key);
 	}
 endif;
 
@@ -286,7 +286,7 @@ if ( !function_exists("recursive_array_search") ) :
 	 * @return bool|int|string
 	 */
 	function recursive_array_search($needle,$haystack) {
-		return \WBF\includes\Utilities::recursive_array_search($needle,$haystack);
+		return Utilities::recursive_array_search($needle,$haystack);
 	}
 endif;
 
@@ -298,7 +298,7 @@ if ( !function_exists("remote_file_size") ) :
 	 * @return int as file size in byte
 	 */
 	function remote_file_size($url){
-		return \WBF\includes\Utilities::remote_file_size($url);
+		return Utilities::remote_file_size($url);
 	}
 endif;
 
@@ -311,7 +311,7 @@ if ( !function_exists("formatBytes") ) :
 	 * @return string human readable file size (2,87 МB)
 	 */
 	function formatBytes($bytes, $precision = 2) {
-		return \WBF\includes\Utilities::formatBytes($bytes,$precision);
+		return Utilities::formatBytes($bytes,$precision);
 	}
 endif;
 
@@ -324,7 +324,7 @@ if ( !function_exists("listFolderFiles") ) :
 	 * @return array
 	 */
 	function listFolderFiles($dir,$extension = "php"){
-		return \WBF\includes\Utilities::listFolderFiles($dir,$extension);
+		return Utilities::listFolderFiles($dir,$extension);
 	}
 endif;
 
@@ -338,7 +338,7 @@ if ( !function_exists("createdir") ) :
 	 * @throws Exception
 	 */
 	function createdir($path,$chmod = 0777){
-		return \WBF\includes\Utilities::mkdir($path,$chmod);
+		return Utilities::mkdir($path,$chmod);
 	}
 endif;
 
@@ -348,7 +348,7 @@ if ( !function_exists("deltree") ) :
 	 * @param string $dir the directory path
 	 */
 	function deltree($dir){
-		\WBF\includes\Utilities::deltree($dir);
+		Utilities::deltree($dir);
 	}
 endif;
 
@@ -360,7 +360,7 @@ if ( !function_exists("url_to_path") ) :
 	 * @return mixed
 	 */
 	function url_to_path($url){
-		return \WBF\includes\Utilities::url_to_path($url);
+		return Utilities::url_to_path($url);
 	}
 endif;
 
@@ -372,7 +372,7 @@ if ( !function_exists("path_to_url") ) :
 	 * @return mixed
 	 */
 	function path_to_url($path){
-		return \WBF\includes\Utilities::path_to_url($path);
+		return Utilities::path_to_url($path);
 	}
 endif;
 
@@ -384,7 +384,7 @@ if ( !function_exists("count_digit") ) :
 	 * @return int
 	 */
 	function count_digit($number){
-		return \WBF\includes\Utilities::count_digit($number);
+		return Utilities::count_digit($number);
 	}
 endif;
 
@@ -396,6 +396,6 @@ if ( !function_exists("get_timezone_offset") ) :
 	 * @return int;
 	 */
 	function get_timezone_offset($remote_tz, $origin_tz = null) {
-		return \WBF\includes\Utilities::get_timezone_offset($remote_tz,$origin_tz);
+		return Utilities::get_timezone_offset($remote_tz,$origin_tz);
 	}
 endif;

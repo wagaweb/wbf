@@ -2,6 +2,9 @@
 
 namespace WBF;
 
+use WBF\components\customupdater\Plugin_Update_Checker;
+use WBF\includes\GoogleFontsRetriever;
+
 class PluginCore {
 
 	/**
@@ -10,7 +13,7 @@ class PluginCore {
 	var $options;
 
 	/**
-	 * @var \WBF\includes\Plugin_Update_Checker
+	 * @var \WBF\components\customupdater\Plugin_Update_Checker
 	 */
 	var $update_instance;
 
@@ -35,7 +38,7 @@ class PluginCore {
 	var $mobile_detect;
 
 	/**
-	 * @var \WBF\admin\Notice_Manager
+	 * @var components\notices\Notice_Manager
 	 */
 	var $notice_manager;
 
@@ -204,7 +207,7 @@ class PluginCore {
 	static function set_styles_compiler($args,$base_compiler = null){
 		global $wbf_styles_compiler;
 		if(!isset($wbf_styles_compiler) || !$wbf_styles_compiler){
-			$GLOBALS['wbf_styles_compiler'] = new \WBF\includes\compiler\Styles_Compiler($args,$base_compiler);
+			$GLOBALS['wbf_styles_compiler'] = new components\compiler\Styles_Compiler($args,$base_compiler);
 		}
 	}
 
@@ -239,7 +242,7 @@ class PluginCore {
 	 * @return string
 	 */
 	static function get_copyright(){
-		$v = new \WBF\includes\mvc\HTMLView("views/admin/copyright.php","wbf");
+		$v = new components\mvc\HTMLView("views/admin/copyright.php","wbf");
 
 		$label = "WBF";
 		$version = self::version;
@@ -552,10 +555,10 @@ class PluginCore {
 
 	function do_global_theme_customizations(){
 		// Global Customization
-		wbf_locate_file( '/public/theme-customs.php', true );
+		wbf_locate_file( '/src/public/theme-customs.php', true );
 
 		// Email encoder
-		wbf_locate_file( '/public/email-encoder.php', true );
+		wbf_locate_file( '/src/public/email-encoder.php', true );
 	}
 
 	/**
@@ -584,17 +587,17 @@ class PluginCore {
 		load_textdomain( 'wbf', self::get_path() . 'languages/wbf-'.get_locale().".mo");
 
 		if(!isset($wbf_notice_manager)){
-			$GLOBALS['wbf_notice_manager'] = new \WBF\admin\Notice_Manager(); // Loads notice manager. The notice manager can be already loaded by plugins constructor prior this point.
+			$GLOBALS['wbf_notice_manager'] = new components\notices\Notice_Manager(); // Loads notice manager. The notice manager can be already loaded by plugins constructor prior this point.
 			$this->notice_manager = &$GLOBALS['wbf_notice_manager'];
 		}
 
 		// Load the CSS
-		wbf_locate_file( '/public/public-styles.php', true );
-		wbf_locate_file( '/admin/adm-styles.php', true );
+		wbf_locate_file( '/src/public/public-styles.php', true );
+		wbf_locate_file( '/src/admin/adm-styles.php', true );
 
 		// Load scripts
 		//locate_template( '/wbf/public/scripts.php', true );
-		wbf_locate_file( '/admin/adm-scripts.php', true );
+		wbf_locate_file( '/src/admin/adm-scripts.php', true );
 
 		if($this->options['do_global_theme_customizations']){
 			$this->do_global_theme_customizations();
@@ -606,8 +609,7 @@ class PluginCore {
 		}
 
 		// Google Fonts
-		wbf_locate_file('/includes/google-fonts-retriever.php', true);
-		if(class_exists("WBF\\GoogleFontsRetriever")) $GLOBALS['wbf_gfont_fetcher'] = \WBF\GoogleFontsRetriever::getInstance();
+		if(class_exists("WBF\\includes\\GoogleFontsRetriever")) $GLOBALS['wbf_gfont_fetcher'] = GoogleFontsRetriever::getInstance();
 	}
 
 	/**
@@ -619,7 +621,7 @@ class PluginCore {
 		if($this->options['check_for_updates']){
 			//Set update server
 			if(self::is_plugin()){
-				$this->update_instance = new \WBF\includes\Plugin_Update_Checker(
+				$this->update_instance = new Plugin_Update_Checker(
 					"http://update.waboot.org/?action=get_metadata&slug=wbf&type=plugin", //$metadataUrl
 					self::get_path()."wbf.php", //$pluginFile
 					"wbf", //$slug
@@ -633,10 +635,12 @@ class PluginCore {
 		}
 
 		// Breadcrumbs
-		if(!class_exists("Breadcrumb_Trail") && !function_exists("breadcrumb_trail")){
-			wbf_locate_file( '/vendor/breadcrumb-trail.php', true);
-			wbf_locate_file( '/public/breadcrumb-trail.php', true );
-		}
+		wbf_locate_file( '/src/components/breadcrumb/functions', true);
+		/*if(!class_exists("Breadcrumb_Trail") && !function_exists("breadcrumb_trail")){
+			wbf_locate_file( '/src/components/breadcrumb/vendor/breadcrumb-trail.php', true);
+			wbf_locate_file( '/src/components/breadcrumb/WBF_Breadcrumb_Trail.php', true);
+		}*/
+
 
 		if(function_exists('\WBF\modules\options\of_check_options_deps')) \WBF\modules\options\of_check_options_deps(); //Check if theme options dependencies are met
 		$GLOBALS['wbf_notice_manager']->enqueue_notices(); //Display notices
