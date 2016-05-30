@@ -11,5 +11,10 @@
       "homepage": "http://www.waga.it",
       "role": "Developer"
     }
-  ]
+  ],
+  "autoload": {
+    "classmap": [
+      "vendor/BootstrapNavMenuWalker.php"
+    ]
+  }
 }
