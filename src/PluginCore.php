@@ -242,7 +242,7 @@ class PluginCore {
 	 * @return string
 	 */
 	static function get_copyright(){
-		$v = new components\mvc\HTMLView("views/admin/copyright.php","wbf");
+		$v = new components\mvc\HTMLView("src/views/admin/copyright.php","wbf");
 
 		$label = "WBF";
 		$version = self::version;

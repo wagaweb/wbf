@@ -2,7 +2,7 @@
 
 namespace WBF\modules\options;
 
-use WBF\includes\mvc\HTMLView;
+use WBF\components\mvc\HTMLView;
 
 class Admin extends \Options_Framework_Admin{
 
@@ -358,7 +358,7 @@ class Admin extends \Options_Framework_Admin{
      * @since 1.7.0
      */
     function options_page() {
-		$v = new HTMLView("modules/options/views/admin/options-page.php","wbf");
+		$v = new HTMLView("src/modules/options/views/admin/options-page.php","wbf");
 		$v->clean()->display([
 			'menu' => $this->menu_settings(),
 			'tabs' => GUI::optionsframework_tabs()

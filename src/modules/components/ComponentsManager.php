@@ -3,7 +3,7 @@
 namespace WBF\modules\components;
 
 
-use WBF\includes\mvc\HTMLView;
+use WBF\components\mvc\HTMLView;
 use WBF\modules\options\Framework;
 use WBF\modules\options\Organizer;
 
@@ -611,7 +611,7 @@ class ComponentsManager {
             $compiled_components_options[$current_element][] = $components_options[$key];
         }
 
-        (new HTMLView("modules/components/views/components_page.php","wbf"))->clean()->display([
+        (new HTMLView("src/modules/components/views/components_page.php","wbf"))->clean()->display([
             'registered_components' => $registered_components,
             'compiled_components_options' => $compiled_components_options,
 			'last_error' => (isset($_GET['enable']) || isset($_GET['disable'])) && !empty(self::$last_error)? self::$last_error : false,

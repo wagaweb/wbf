@@ -57,7 +57,7 @@ class License_Manager{
 	 * Callback for displaying the licenses page
 	 */
 	static function license_page(){
-		$v = new HTMLView("views/admin/license-manager.php","wbf");
+		$v = new HTMLView("src/views/admin/license-manager.php","wbf");
 		$vars = [
 			'has_theme_licenses' => self::has_theme_licenses(),
 			'has_plugin_licenses' => self::has_plugin_licenses(),
