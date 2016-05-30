@@ -6,14 +6,14 @@ npm-debug.log
 ############
 ## COMPILED
 ############
-admin/js/wbf-admin.min.js
-includes/scripts/wbfgmap.min.js
-admin/css/tinymce.css
-admin/css/admin.css
-admin/css/optionsframework.css
-admin/css/componentsframework.css
-admin/css/pagebuilder.css
-assets/src/js/admin/wbf-admin-bundle.js
+assets/dist/js/wbf-admin.min.js
+assets/dist/js/includes/scripts/wbfgmap.min.js
+assets/dist/css/tinymce.css
+assets/dist/css/admin.css
+assets/dist/css/optionsframework.css
+assets/dist/css/componentsframework.css
+assets/dist/css/pagebuilder.css
+assets/dist/js/wbf-admin-bundle.js
 
 ############
 ## VENDORS (composer)

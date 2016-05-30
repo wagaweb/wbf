@@ -9,11 +9,11 @@ module.exports = function (grunt) {
             dev: {
                 options: {},
                 files: {
-                    'admin/css/tinymce.css': 'assets/src/less/tinymce.less',
-                    'admin/css/admin.css': 'assets/src/less/admin.less',
-                    'admin/css/optionsframework.css': 'assets/src/less/optionsframework.less',
-                    'admin/css/componentsframework.css': 'assets/src/less/componentsframework.less',
-                    'admin/css/pagebuilder.css': 'assets/src/less/pagebuilder.less'
+                    'assets/dist/css/tinymce.css': 'assets/src/less/tinymce.less',
+                    'assets/dist/css/admin.css': 'assets/src/less/admin.less',
+                    'assets/dist/css/optionsframework.css': 'assets/src/less/optionsframework.less',
+                    'assets/dist/css/componentsframework.css': 'assets/src/less/componentsframework.less',
+                    'assets/dist/css/pagebuilder.css': 'assets/src/less/pagebuilder.less'
                 }
             },
             production: {
@@ -46,7 +46,7 @@ module.exports = function (grunt) {
         browserify: {
             dist: {
                 src: ['assets/src/js/admin/wbf-admin.js'],
-                dest: 'assets/src/js/admin/wbf-admin-bundle.js'
+                dest: 'assets/dist/js/admin/wbf-admin-bundle.js'
             }
         },
         uglify: {
@@ -56,13 +56,13 @@ module.exports = function (grunt) {
             },
             dist: {
                 files: {
-                    'admin/js/wbf-admin.min.js': ['assets/src/js/admin/wbf-admin-bundle.js'],
+                    'assets/dist/js/wbf-admin.min.js': ['assets/dist/js/admin/wbf-admin-bundle.js'],
+                    'assets/dist/js/includes/wbfgmap.min.js': ['assets/js/src/includes/wbfgmap/markerclusterer.js','assets/js/src/includes/wbfgmap/acfmap.js']
                     /*'admin/js/admin.min.js': ['assets/src/js/admin/admin.js'],
-                    'admin/js/acf-fields.min.js': ['assets/src/js/admin/acf-fields/*.js'],
-                    'admin/js/code-editor.min.js': ['assets/src/js/admin/code-editor.js'],
-                    'admin/js/components-page.min.js': ['assets/src/js/admin/components-page.js'],
-                    'admin/js/font-selector.min.js': ['assets/src/js/admin/font-selector.js'],*/
-                    'includes/scripts/wbfgmap.min.js': ['assets/src/js/includes/wbfgmap/markerclusterer.js','assets/src/js/includes/wbfgmap/acfmap.js']
+                     'admin/js/acf-fields.min.js': ['assets/src/js/admin/acf-fields/*.js'],
+                     'admin/js/code-editor.min.js': ['assets/src/js/admin/code-editor.js'],
+                     'admin/js/components-page.min.js': ['assets/src/js/admin/components-page.js'],
+                     'admin/js/font-selector.min.js': ['assets/src/js/admin/font-selector.js'],*/
                 }
             }
         },

@@ -245,7 +245,7 @@ class FontSelector
 	}
 
 	static function getFonts(){
-		$gfontfetcher = \WBF\GoogleFontsRetriever::getInstance();
+		$gfontfetcher = GoogleFontsRetriever::getInstance();
 
 		$os_fonts = self::getOSFonts();
 		$g_fonts = $gfontfetcher->get_webfonts();
