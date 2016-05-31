@@ -577,6 +577,11 @@ class PluginCore {
 	function after_setup_theme() {
 		global $wbf_notice_manager;
 
+		if(!isset($wbf_notice_manager)){
+			$GLOBALS['wbf_notice_manager'] = new components\notices\Notice_Manager(); // Loads notice manager. The notice manager can be already loaded by plugins constructor prior this point.
+			$this->notice_manager = &$GLOBALS['wbf_notice_manager'];
+		}
+
 		$this->options = apply_filters("wbf/options",$this->options);
 
 		$this->wp_menu_slug = "wbf_options";
@@ -587,11 +592,6 @@ class PluginCore {
 
 		// Make framework available for translation.
 		load_textdomain( 'wbf', self::get_path() . 'languages/wbf-'.get_locale().".mo");
-
-		if(!isset($wbf_notice_manager)){
-			$GLOBALS['wbf_notice_manager'] = new components\notices\Notice_Manager(); // Loads notice manager. The notice manager can be already loaded by plugins constructor prior this point.
-			$this->notice_manager = &$GLOBALS['wbf_notice_manager'];
-		}
 
 		// Load the CSS
 		wbf_locate_file( '/src/public/public-styles.php', true );
