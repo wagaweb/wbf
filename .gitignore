@@ -26,8 +26,7 @@ vendor/mobiledetect
 ############
 ## VENDORS (components)
 ############
-
-src/components/customupdater/vendor/**
+src/components/**/vendor/**
 !src/components/customupdater/vendor/theme-update-checker.php
 
 ############
