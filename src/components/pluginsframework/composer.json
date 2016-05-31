@@ -15,6 +15,6 @@
   "require": {
     "waga/wbf/notices": "*",
     "waga/wbf/license": "*",
-    "waga/wbf/customupdater": "*"
+    "waga/wbf/utils": "*"
   }
 }
