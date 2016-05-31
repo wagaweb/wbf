@@ -7,7 +7,7 @@ namespace WBF\components\assets;
  *
  * A simple assets manager. This class is just a draft.
  *
- * @version 0.1.0
+ * @version 0.2.0
  *
  * @package WBF\includes
  */
