@@ -1,6 +1,6 @@
 <?php
 
-namespace wbf\components\mvc;
+namespace WBF\components\mvc;
 
 interface View_Interface{
 	public function display($vars = []);

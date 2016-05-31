@@ -1,6 +1,6 @@
 <?php
 
-namespace wbf\components\mvc;
+namespace WBF\components\mvc;
 
 use WBF\components\pluginsframework\Plugin;
 use WBF\components\utils\Utilities;
