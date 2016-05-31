@@ -173,7 +173,7 @@
 	margin-bottom:10px;
 }
 #optionsframework .screenshot .remove-image {
-	background:url("../images/ico-delete.png") no-repeat;
+	background:url("../../../assets/images/icons/ico-delete.png") no-repeat;
 	border:medium none;
 	bottom:4px;
 	display:block;

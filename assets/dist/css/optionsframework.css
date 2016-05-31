@@ -46,43 +46,43 @@ div#optionsframework-wrap div.nav-tab-wrapper .nav-tab {
   background-color: #f1f1f1;
   background-position: 10px center;
   background-repeat: no-repeat;
-  background-image: url("../images/icons/behaviour-icon.svg");
+  background-image: url("../../images/icons/behaviour-icon.svg");
 }
 div#optionsframework-wrap div.nav-tab-wrapper .layout-tab {
-  background-image: url("../images/icons/layout-icon.svg");
+  background-image: url("../../images/icons/layout-icon.svg");
 }
 div#optionsframework-wrap div.nav-tab-wrapper .backgrounds-tab {
-  background-image: url("../images/icons/backgrounds-icon.svg");
+  background-image: url("../../images/icons/backgrounds-icon.svg");
 }
 div#optionsframework-wrap div.nav-tab-wrapper .style-tab {
-  background-image: url("../images/icons/style-icon.svg");
+  background-image: url("../../images/icons/style-icon.svg");
 }
 div#optionsframework-wrap div.nav-tab-wrapper .typography-tab {
-  background-image: url("../images/icons/typography-icon.svg");
+  background-image: url("../../images/icons/typography-icon.svg");
 }
 div#optionsframework-wrap div.nav-tab-wrapper .topnav-tab {
-  background-image: url("../images/icons/top-nav-icon.svg");
+  background-image: url("../../images/icons/top-nav-icon.svg");
 }
 div#optionsframework-wrap div.nav-tab-wrapper .header-tab {
-  background-image: url("../images/icons/header-icon.svg");
+  background-image: url("../../images/icons/header-icon.svg");
 }
 div#optionsframework-wrap div.nav-tab-wrapper .footer-tab {
-  background-image: url("../images/icons/closure-icon.svg");
+  background-image: url("../../images/icons/closure-icon.svg");
 }
 div#optionsframework-wrap div.nav-tab-wrapper .postspages-tab {
-  background-image: url("../images/icons/behaviour-icon.svg");
+  background-image: url("../../images/icons/behaviour-icon.svg");
 }
 div#optionsframework-wrap div.nav-tab-wrapper .blog-tab {
-  background-image: url("../images/icons/blog-icon.svg");
+  background-image: url("../../images/icons/blog-icon.svg");
 }
 div#optionsframework-wrap div.nav-tab-wrapper .postmeta-tab {
-  background-image: url("../images/icons/posts-icon.svg");
+  background-image: url("../../images/icons/posts-icon.svg");
 }
 div#optionsframework-wrap div.nav-tab-wrapper .social-tab {
-  background-image: url("../images/icons/social-icon.svg");
+  background-image: url("../../images/icons/social-icon.svg");
 }
 div#optionsframework-wrap div.nav-tab-wrapper .customcss-tab {
-  background-image: url("../images/icons/custom-css.svg");
+  background-image: url("../../images/icons/custom-css.svg");
 }
 div#optionsframework-wrap div.nav-tab-wrapper .nav-tab-active {
   background-color: #fff;
@@ -348,7 +348,7 @@ div#optionsframework-wrap #optionsframework-metabox {
   width: 100%;
 }
 #optionsframework #section-waboot_body_bgcolor {
-  background-image: url("../images/style/body-background-color.png");
+  background-image: url("../../images/style/body-background-color.png");
 }
 #optionsframework .style .section {
   width: 33.3333%;
@@ -472,28 +472,28 @@ div#optionsframework-wrap #optionsframework-metabox {
   padding-left: 0;
 }
 #optionsframework #section-waboot_social_facebook {
-  background-image: url("../images/social/facebook.png");
+  background-image: url("../../images/social/facebook.png");
 }
 #optionsframework #section-waboot_social_twitter {
-  background-image: url("../images/social/twitter.png");
+  background-image: url("../../images/social/twitter.png");
 }
 #optionsframework #section-waboot_social_google {
-  background-image: url("../images/social/googleplus.png");
+  background-image: url("../../images/social/googleplus.png");
 }
 #optionsframework #section-waboot_social_youtube {
-  background-image: url("../images/social/youtube.png");
+  background-image: url("../../images/social/youtube.png");
 }
 #optionsframework #section-waboot_social_pinterest {
-  background-image: url("../images/social/pinterest.png");
+  background-image: url("../../images/social/pinterest.png");
 }
 #optionsframework #section-waboot_social_linkedin {
-  background-image: url("../images/social/linkedin.png");
+  background-image: url("../../images/social/linkedin.png");
 }
 #optionsframework #section-waboot_social_instagram {
-  background-image: url("../images/social/instagram.png");
+  background-image: url("../../images/social/instagram.png");
 }
 #optionsframework #section-waboot_social_feedrss {
-  background-image: url("../images/social/rss.png");
+  background-image: url("../../images/social/rss.png");
 }
 #optionsframework #section-waboot_custom_css {
   width: 100%;
