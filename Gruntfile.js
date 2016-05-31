@@ -173,7 +173,7 @@ module.exports = function (grunt) {
     grunt.registerTask('default', ['watch']);
 
     //Setup task
-    grunt.registerTask('setup', ['bower-install', 'jsmin', 'less:dev']);
+    grunt.registerTask('setup', ['component-composer-update', 'bower-install', 'jsmin', 'less:dev']);
 
     //Concat and beautify js
     grunt.registerTask('js', ['jsbeautifier','browserify:dist']);
@@ -192,6 +192,29 @@ module.exports = function (grunt) {
             console.log(stdout);
             cb();
         });
+    });
+
+    //Runs composer update for framework components
+    grunt.registerTask('component-composer-update',function(){
+        var exec = require('child_process').execSync;
+        var glob = require('glob');
+        var path = require('path');
+        var composer_dirs = [
+            'src/components/*'
+        ];
+        var cb = this.async(); //see http://gruntjs.com/creating-tasks
+        for(var i = 0, len = composer_dirs.length; i < len; i++){
+            glob(composer_dirs[i],function(err,dirs){
+                for(var k = 0; k < dirs.length; k++){
+                    var cwd = dirs[k];
+                    console.log("*** Exec composer into "+cwd);
+                    exec('composer update', {cwd: cwd}, function(err, stdout, stderr) {
+                        console.log(stdout);
+                        cb();
+                    });
+                }
+            })
+        }
     });
 
     //Runs bower update
