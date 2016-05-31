@@ -24,7 +24,7 @@
 			<ul>
 				<li><a class="nav-tab" id="component-main-tab" data-show-comp-settings='component-main' href="#component-main">Available components</a></li>
 				<?php foreach($registered_components as $comp_data): if(!\WBF\modules\components\ComponentsManager::is_active($comp_data)) continue; ?>
-					<li><a class="nav-tab" id="component-<?php echo $comp_data['nicename']; ?>-link" data-show-comp-settings='component-<?php echo $comp_data['nicename']; ?>' href="#component-<?php echo $comp_data['nicename']; ?>"><?php echo ucfirst($comp_data['nicename']); ?></a></li>
+					<li><a class="nav-tab" id="component-<?php echo $comp_data->name; ?>-link" data-show-comp-settings='component-<?php echo $comp_data->name; ?>' href="#component-<?php echo $comp_data->name; ?>"><?php echo ucfirst($comp_data->name); ?></a></li>
 				<?php endforeach; ?>
 			</ul>
 		</div>
@@ -49,8 +49,8 @@
 							</tfoot>
 							<tbody id="the-list">
 								<?php $i=1; foreach($registered_components as $comp_data): ?>
-								<tr id="<?php echo $comp_data['nicename']; ?>" class="<?php WBF\modules\components\print_component_status( $comp_data ); ?> <?php if($i%2 == 0) echo "even"; else echo "odd"; ?>">
-									<?php $data = \WBF\modules\components\ComponentsManager::get_component_data($comp_data['file']); ?>
+								<tr id="<?php echo $comp_data->name; ?>" class="<?php WBF\modules\components\print_component_status( $comp_data ); ?> <?php if($i%2 == 0) echo "even"; else echo "odd"; ?>">
+									<?php $data = \WBF\modules\components\ComponentsManager::get_component_data($comp_data->file); ?>
 									<th></th>
 									<th class="component-data column-description desc">
 										<strong><?php echo $data['Name']; ?></strong>
@@ -60,8 +60,8 @@
 												<p class="child-component-notice">
 													<?php _e("This is a component of the current child theme", "wbf"); ?>
 													<?php
-													if(isset($comp_data['override'])) {
-														if($comp_data['override']){
+													if(isset($comp_data->override)) {
+														if($comp_data->override){
 															_e(", and <strong>override a core component</strong>", "wbf");
 														}
 													}
@@ -93,11 +93,11 @@
 										<div class="row-actions visible">
 											<div class="wb-onoffswitch">
 												<?php if(!\WBF\modules\components\ComponentsManager::is_active($comp_data)): ?>
-													<input id="<?php echo $comp_data['nicename']; ?>_status" class="checkbox of-input wb-onoffswitch-checkbox" type="checkbox" name="components_status[<?php echo $comp_data['nicename']; ?>]" >
+													<input id="<?php echo $comp_data->name; ?>_status" class="checkbox of-input wb-onoffswitch-checkbox" type="checkbox" name="components_status[<?php echo $comp_data->name; ?>]" >
 												<?php else: ?>
-													<input id="<?php echo $comp_data['nicename']; ?>_status" class="checkbox of-input wb-onoffswitch-checkbox" type="checkbox" name="components_status[<?php echo $comp_data['nicename']; ?>]" checked="checked">
+													<input id="<?php echo $comp_data->name; ?>_status" class="checkbox of-input wb-onoffswitch-checkbox" type="checkbox" name="components_status[<?php echo $comp_data->name; ?>]" checked="checked">
 												<?php endif; ?>
-												<label class="wb-onoffswitch-label" for="<?php echo $comp_data['nicename']; ?>_status"><span class="wb-onoffswitch-inner"></span>
+												<label class="wb-onoffswitch-label" for="<?php echo $comp_data->name; ?>_status"><span class="wb-onoffswitch-inner"></span>
 													<span class="wb-onoffswitch-switch"></span>
 												</label>
 											</div>
@@ -109,9 +109,9 @@
 						</table>
 					</div>
 					<?php foreach($registered_components as $comp_data): if(!\WBF\modules\components\ComponentsManager::is_active($comp_data)) continue; ?>
-					<div id="component-<?php echo $comp_data['nicename']; ?>" class="group" style="display: none;">
-						<h3><?php _e(sprintf("%s Component Settings",ucfirst($comp_data['nicename'])),"wbf"); ?></h3>
-						<?php \WBF\modules\options\GUI::optionsframework_fields($compiled_components_options[$comp_data['nicename']]); ?>
+					<div id="component-<?php echo $comp_data->name; ?>" class="group" style="display: none;">
+						<h3><?php _e(sprintf("%s Component Settings",ucfirst($comp_data->name)),"wbf"); ?></h3>
+						<?php \WBF\modules\options\GUI::optionsframework_fields($compiled_components_options[$comp_data->name]); ?>
 					<?php //</div> not necessary (is echoed from GUI::optionsframework_fields )... THIS MUST BE CHANGED AS SOON AS POSSIBLE, IT'S JUST SO WRONG! ?>
 					<?php endforeach; ?>
 					<div id="componentframework-submit">

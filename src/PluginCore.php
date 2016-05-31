@@ -2,8 +2,10 @@
 
 namespace WBF;
 
+use WBF\components\assets\AssetsManager;
 use WBF\components\customupdater\Plugin_Update_Checker;
 use WBF\includes\GoogleFontsRetriever;
+use WBF\includes\Resources;
 
 class PluginCore {
 
@@ -650,23 +652,70 @@ class PluginCore {
 	 * Register libraries used by WBF ecosystem
 	 */
 	function register_libs(){
-		/*
-		 * STYLES
-		 */
-		wp_register_style("jquery-ui-style","//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css",array(),false,"all");
-		wp_register_style("owlcarousel-css",WBF_URL."/vendor/owlcarousel/assets/owl.carousel.css");
-		/*
-		 * SCRIPTS
-		 */
-		wp_register_script('gmapapi', 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places', array('jquery'), false, false );
-		if(defined("WBF_ENV") && WBF_ENV == "dev"){
-			wp_register_script("wbfgmapmc",WBF_URL."/assets/src/js/includes/wbfgmap/markerclusterer.js",array("jquery","gmapapi"),false,true);
-			wp_register_script("wbfgmap",WBF_URL."/assets/src/js/includes/wbfgmap/acfmap.js",array("jquery","gmapapi","wbfgmapmc"),false,true);
+		$res = Resources::getInstance();
+		$libs = [
+			"jquery-ui-style" => [
+				'uri' => "//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css",
+				'type' => 'css',
+				'enqueue' => false
+			],
+			"owlcarousel-css" => [
+				'uri' => $res->prefix_url("/vendor/owlcarousel/assets/owl.carousel.css"),
+				'path' => $res->prefix_path("/vendor/owlcarousel/assets/owl.carousel.css"),
+				'type' => 'css',
+				'enqueue' => false
+			],
+			"gmapapi" => [
+				"uri" => 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places',
+				'type' => "js",
+				'deps' => ['jquery'],
+				'enqueue' => false
+			],
+			"imagesLoaded-js" => [
+				"uri" => $res->prefix_url("/vendor/imagesloaded/imagesloaded.pkgd.min.js"),
+				"path" => $res->prefix_path("/vendor/imagesloaded/imagesloaded.pkgd.min.js"),
+				"type" => "js",
+				'enqueue' => false,
+				'in_footer' => true,
+			],
+			"owlcarousel-js" => [
+				"uri" => $res->prefix_url("/vendor/owlcarousel/owl.carousel.min.js"),
+				"path" => $res->prefix_path("/vendor/owlcarousel/owl.carousel.min.js"),
+				"type" => "js",
+				'enqueue' => false,
+				'in_footer' => true,
+			]
+		];
+		if(defined("WBF_ENV") && WBF_ENV == "dev" || SCRIPT_DEBUG){
+			$libs["wbfgmapmc"] = [
+				"uri" => $res->prefix_url("/assets/src/js/includes/wbfgmap/markerclusterer.js"),
+				"path" => $res->prefix_path("/assets/src/js/includes/wbfgmap/markerclusterer.js"),
+				"deps" => ["jquery","gmapapi"],
+				"type" => "js",
+				'enqueue' => false,
+				'in_footer' => true,
+			];
+			$libs["wbfgmap"] = [
+				"uri" => $res->prefix_url("/assets/src/js/includes/wbfgmap/acfmap.js"),
+				"path" => $res->prefix_path("/assets/src/js/includes/wbfgmap/acfmap.js"),
+				"deps" => ["jquery","gmapapi","wbfgmapmc"],
+				"type" => "js",
+				'enqueue' => false,
+				'in_footer' => true,
+			];
 		}else{
-			wp_register_script("wbfgmap",WBF_URL."/includes/scripts/wbfgmap.min.js",array("jquery","gmapapi"),false,true);
+			$libs["wbfgmap"] = [
+				"uri" => $res->prefix_url("/assets/js/includes/wbfgmap.min.js"),
+				"path" => $res->prefix_path("/assets/js/includes/wbfgmap.min.js"),
+				"deps" => ["jquery","gmapapi"],
+				"type" => "js",
+				'enqueue' => false,
+				'in_footer' => true,
+			];
 		}
-		wp_register_script("imagesLoaded-js",WBF_URL."/vendor/imagesloaded/imagesloaded.pkgd.min.js",[],false,true);
-		wp_register_script("owlcarousel-js",WBF_URL."/vendor/owlcarousel/owl.carousel.min.js",array("jquery"),false,true);
+		
+		$a = new AssetsManager($libs);
+		$a->enqueue();
 	}
 
 	/**

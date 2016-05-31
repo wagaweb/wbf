@@ -59,7 +59,7 @@ class AssetsManager {
 			$param = wp_parse_args($param,[
 				'uri' => '', //A valid uri
 				'path' => '', //A valid path
-				'version' => false, //If FALSE, the filemtime will be used
+				'version' => false, //If FALSE, the filemtime will be used (if path is set)
 				'deps' => [], //Dependencies
 				'i10n' => [], //the Localication array for wp_localize_script
 				'type' => '', //js or css
@@ -67,11 +67,16 @@ class AssetsManager {
 				'in_footer' => false, //Used for scripts
 				'enqueue' => true //If FALSE the script\css will only be registered
 			]);
-			if(!file_exists($param['path'])) continue;
+			if($param['path'] != "" && !file_exists($param['path'])) continue;
 			if(isset($param['version']) && $param['version']){
 				$version = $param['version'];
 			}else{
-				$version = filemtime($param['path']);
+				//Get version
+				if($param['path'] != "" && file_exists($param['path'])){
+					$version = filemtime($param['path']);	
+				}else{
+					$version = false;
+				}
 			}
 			if($param['type'] == "js"){
 				wp_register_script($name,$param['uri'],$param['deps'],$version,$param['in_footer']);

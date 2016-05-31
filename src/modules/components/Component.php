@@ -46,6 +46,10 @@ class Component {
       'post_type' => '*',
       'node_id' => '*'
     ];
+	/**
+	 * @var bool
+	 */
+	var $override = false;
 
 	/**
 	 * Component constructor.
@@ -66,6 +70,9 @@ class Component {
             $this->directory = rtrim(get_root_components_directory(),"/")."/".$this->name;
 	        $this->relative_path = get_root_dirname()."/".$this->name;
         }
+	    if(isset($component['override'])){
+		    $this->override = $component['override'];
+	    }
     }
 
     /**
@@ -75,7 +82,7 @@ class Component {
      */
     public function detectFilters(){
 		static $filters_updated_flag;
-	    if(isset($filters_updated_flag) && $filters_updated_flag) return; //the method was already called at least once
+	    //if(isset($filters_updated_flag) && $filters_updated_flag) return; //the method was already called at least once
 
         //Detect the filters
         if(\WBF\modules\options\of_get_option($this->name."_selective_disable","0") == 1){
@@ -280,5 +287,9 @@ class Component {
 		}else{
 			return false;
 		}
+	}
+	
+	public function is_active(){
+		return $this->active;
 	}
 }
