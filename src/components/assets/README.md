@@ -1,110 +1,66 @@
-# MVC
-MVC paradigm for Wordpress templates.
+# Assets Manager
+A simple Assets Manager tailored for Wordpress.
 
-This component provide the ability to effectively split code from templates in Wordpress.
+It as some interesting features:
+- If a path is provided, the asset (js or css) will be enqueued only if the file exists, so you get no 404.
+- If a path is provided, the Assets Manager will use `filemtime()` as asset version. This will prevent browser to serve a cached version of the asset if the file was modified.
+- You can provide a callback for each asset to do additional checks before deciding whether enqueue the asset or not.
 
-## Usage of HTMLView
-HTMLView is the default view type provided by component. You can use is to display HTML templates.
-
-- Create a new instance of HTMLView:
+## Usage
+- Create an array of assets:
 ```php
-$v = new \WBF\components\mvc\HTMLView("path/to/template.php");
-```
-- Assign some vars to the template and display it
-```php
-$vars = [
-    'title' => "Hello World"
+$libs = [
+    "my-style" => [
+        'uri' => "...",
+        'type' => 'css',
+    ],
+    "my-js" => [
+        'uri' => "...",
+        'path' => "...",
+        'type' => 'js',
+        'enqueue' => false
+    ]
 ];
-$v->clean()->display();
 ```
-- In template.php you can:
+- Instance a new object and enqueue
 ```php
-<?php echo $title; ?>
+$a = new AssetsManager($libs);
+$a->enqueue();
 ```
-
-The View has some really interesting features:
-- You can provide a path relative to the current theme or relative to a plugin. The template file will be enqueued in a template hierarchy array, so you can override the template file by placing a new template with the same name/path in a child theme. If the path is relative to a plugin, any similiar template found in child theme or in parent theme will override the original template.
+You can pass a number of arguments to AssetsManager constructor:
 ```php
-//If you are in a twentysixteen child called "foobar"...
-$v = new \WBF\components\mvc\HTMLView("path/to/template.php");
-/* Will looking for (in order):
-/wp-content/themes/foobar/path/to/template.php
-/wp-content/themes/twentysixteen/path/to/template.php
-*/
+[
+	'uri' => '', //A valid uri
+	'path' => '', //A valid path
+	'version' => false, //If FALSE, the filemtime will be used (if path is set)
+	'deps' => [], //Dependencies
+	'i10n' => [], //the Localication array for wp_localize_script
+	'type' => '', //js or css
+	'enqueue_callback' => false, //A valid callable that must be return true or false
+	'in_footer' => false, //Used for scripts
+	'enqueue' => true //If FALSE the script\css will only be registered
+]
 ```
-- Without the `clean()` the template comes wrapped in a standard Wordpress admin page wrapper:
-```html
-<div class="wrap">
-    Page Title
-    ...
-</div>
-```
-- You can easily cache the $vars array to boost performances. The same task can be tedious with a simple `require`.
-- You can easily implement some other templating systems by extending View.
-
-### Use default page wrapper
+### Localization
+You can use `i10n` key to pass an array for `wp_localize_script()`.
+See [wp_localize_script()](https://codex.wordpress.org/Function_Reference/wp_localize_script) for further informations.
 ```php
-$v = new \WBF\components\mvc\HTMLView("path/to/template.php");
-$v->display([
-    'page_title' => "My awesome title",
-    'my_name' => "Maya"
+$libs = [
+    'my-js' => [
+    	'i10n' => [
+    	    'name' => myValue
+    	    'params' => [
+    	        'foo' => 'bar',
+    	        'baz' => true
+    	    ]
+    	]
+	]
+]
+```
+Is equivalent to
+```php
+wp_localize_script( 'my-js', 'myValue', [
+    'foo' => 'bar',
+    'baz' => true
 ]);
-```
-With template.php:
-```php
-Hello <?php echo $my_name ?>!
-```
-Will display:
-```html
-<div class="wrap">
-    <h1>My awesome title</h1>
-    Hello Maya!
-</div>
-```
-
-### Use custom page wrapper
-```php
-$v = new \WBF\components\mvc\HTMLView("path/to/template.php");
-$v->display([
-    'page_title' => "My awesome title",
-    'wrapper_class' => "my_wrap",
-    'wrapper_el' => "section"
-    'title_wrapper' => "<span>%s</span>"
-    'my_name' => "Maya"
-]);
-```
-With template.php:
-```php
-Hello <?php echo $my_name ?>!
-```
-Will display:
-```html
-<section class="my_wrap">
-    <span>My awesome title</span>
-    Hello Maya!
-</section>
-```
-
-### Use a plugin template
-```php
-//If you are in a twentysixteen child called "foobar"...
-$v = new \WBF\components\mvc\HTMLView("views/template.php","myplugin");
-/* Will looking for (in order):
-/wp-content/plugins/myplugin/views/template.php
-/wp-content/themes/foobar/myplugin/views/template.php
-/wp-content/themes/twentysixteen/myplugin/views/template.php
-*/
-```
-It also supports a `\WBF\components\pluginsframework\Plugin` instance as plugin. In this case, the method `$plugin->get_src_dir()` will be use to prepend the relative path.
-
-## Extending
-The component provide an abstract class **View** and an interface **View_Interface** to allows developers to implement their own templating mechanism.
-
-```php
-use \WBF\components\mvc\View;
-use \WBF\components\mvc\View_Interface;
-
-class TwigTemplate extends View implements View_Interface{
-    //...
-}
 ```
