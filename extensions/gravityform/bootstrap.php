@@ -24,4 +24,4 @@ function wbf_gravityform_support_for_betteremail( $notification, $form, $entry )
 	$notification['disableAutoformat'] = true;
 	return $notification;
 }
-add_filter('gform_notification', 'wbf_gravityform_support_for_betteremail', 10, 3);
+add_filter('gform_notification', 'WBF\extensions\gravityform\wbf_gravityform_support_for_betteremail', 10, 3);
