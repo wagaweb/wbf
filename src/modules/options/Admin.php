@@ -370,7 +370,7 @@ class Admin{
 		}
 
 		// Enqueue custom option panel JS
-		wp_enqueue_script( 'options-custom', OPTIONS_FRAMEWORK_DIRECTORY . 'js/options-custom.js', array( 'jquery', 'wp-color-picker' ) );
+		wp_enqueue_script( 'options-custom', \WBF::prefix_url('assets/src/js/controllers/options-custom.js'), array( 'jquery', 'wp-color-picker' ) );
 		// Enqueue core CSS
 		$core_stylesheet = \WBF::prefix_url('assets/dist/css/optionsframework.css');
 		if ($core_stylesheet != ""){

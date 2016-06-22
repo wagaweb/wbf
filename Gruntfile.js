@@ -45,8 +45,8 @@ module.exports = function (grunt) {
         },
         browserify: {
             dist: {
-                src: ['assets/src/js/admin/wbf-admin.js'],
-                dest: 'assets/dist/js/admin/wbf-admin-bundle.js'
+                src: ['assets/src/js/wbf-admin.js'],
+                dest: 'assets/dist/js/wbf-admin-bundle.js'
             }
         },
         uglify: {
@@ -56,13 +56,8 @@ module.exports = function (grunt) {
             },
             dist: {
                 files: {
-                    'assets/dist/js/wbf-admin.min.js': ['assets/dist/js/admin/wbf-admin-bundle.js'],
-                    'assets/dist/js/includes/wbfgmap.min.js': ['assets/js/src/includes/wbfgmap/markerclusterer.js','assets/js/src/includes/wbfgmap/acfmap.js']
-                    /*'admin/js/admin.min.js': ['assets/src/js/admin/admin.js'],
-                     'admin/js/acf-fields.min.js': ['assets/src/js/admin/acf-fields/*.js'],
-                     'admin/js/code-editor.min.js': ['assets/src/js/admin/code-editor.js'],
-                     'admin/js/components-page.min.js': ['assets/src/js/admin/components-page.js'],
-                     'admin/js/font-selector.min.js': ['assets/src/js/admin/font-selector.js'],*/
+                    'assets/dist/js/wbf-admin.min.js': ['assets/dist/js/wbf-admin-bundle.js'],
+                    'assets/dist/js/includes/wbfgmap.min.js': ['assets/src/js/includes/wbfgmap/markerclusterer.js','assets/src/js/includes/wbfgmap/acfmap.js']
                 }
             }
         },
