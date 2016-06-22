@@ -44,7 +44,7 @@ class ComponentsManager {
             }
 	        if(defined("OPTIONS_FRAMEWORK_URL")){
 		        // Enqueue custom option panel JS
-		        wp_enqueue_script( 'options-custom', OPTIONS_FRAMEWORK_URL . 'js/options-custom.js', array('jquery', 'wp-color-picker'), Framework::VERSION );
+		        wp_enqueue_script( 'options-custom', OPTIONS_FRAMEWORK_URL . 'js/options-custom.js', array('jquery', 'wp-color-picker'));
 	        }
             /*if(WBF_ENV == "dev"){
                 wp_register_script('component-page-script',WBF_URL."/assets/src/js/admin/components-page.js",array('jquery'));
