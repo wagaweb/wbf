@@ -4,7 +4,7 @@ namespace WBF\modules\options;
 
 use WBF\components\mvc\HTMLView;
 
-class Admin extends \Options_Framework_Admin{
+class Admin{
 
 	var $wp_menu_slug = "themeoptions-manager";
 
@@ -42,6 +42,26 @@ class Admin extends \Options_Framework_Admin{
         $menu = $this->menu_settings();
         $this->of_app_screen = add_theme_page($menu['page_title'],$menu['menu_title'],$menu['capability'],$menu['menu_slug']);
     }*/
+
+	/**
+	 * Registers the settings
+	 *
+	 * @legacy
+	 *
+	 * @since 1.7.0
+	 */
+	function settings_init() {
+
+		// Load Options Framework Settings
+		$optionsframework_settings = get_option( 'optionsframework' );
+
+		// Registers the settings fields and callback
+		register_setting( 'optionsframework', $optionsframework_settings['id'],  array ( $this, 'validate_options' ) );
+
+		// Displays notice after options save
+		add_action( 'optionsframework_after_validate', array( $this, 'save_options_notice' ) );
+
+	}
 
 	/**
 	 * Add a subpage called "Theme Options" to the Waboot Menu
@@ -319,6 +339,18 @@ class Admin extends \Options_Framework_Admin{
 	}
 
 	/**
+	 * Loads the required stylesheets
+	 *
+	 * @legacy
+	 *
+	 * @since 1.7.0
+	 */
+	function enqueue_admin_styles() {
+		wp_enqueue_style( 'optionsframework', OPTIONS_FRAMEWORK_DIRECTORY . 'css/optionsframework.css', array());
+		wp_enqueue_style( 'wp-color-picker' );
+	}
+
+	/**
 	 * Loads the required javascript
 	 *
 	 * @since 1.7.0
@@ -329,10 +361,7 @@ class Admin extends \Options_Framework_Admin{
 		}
 
 		// Enqueue custom option panel JS
-		wp_enqueue_script( 'options-custom', OPTIONS_FRAMEWORK_DIRECTORY . 'js/options-custom.js', array(
-			'jquery',
-			'wp-color-picker'
-		), Framework::VERSION );
+		wp_enqueue_script( 'options-custom', OPTIONS_FRAMEWORK_DIRECTORY . 'js/options-custom.js', array( 'jquery', 'wp-color-picker' ) );
 		// Enqueue core CSS
 		$core_stylesheet = \WBF::prefix_url('assets/dist/css/optionsframework.css');
 		if ($core_stylesheet != ""){
@@ -345,6 +374,18 @@ class Admin extends \Options_Framework_Admin{
 		}
 		// Inline scripts from options-interface.php
 		add_action( 'admin_head', array( $this, 'of_admin_head' ) );
+	}
+
+	/**
+	 * Inline scripts from options-interface.php
+	 *
+	 * @hooked 'admin_head'
+	 *
+	 * @legacy
+	 */
+	function of_admin_head() {
+		// Hook to add custom scripts
+		do_action( 'optionsframework_custom_scripts' );
 	}
 
     /**
@@ -374,6 +415,10 @@ class Admin extends \Options_Framework_Admin{
 	 * validates the inputs.
 	 *
 	 * @uses $_POST['reset'] to restore default options
+	 *
+	 * @param $input
+	 *
+	 * @return array
 	 */
 	function validate_options( $input ) {
 
@@ -451,5 +496,16 @@ class Admin extends \Options_Framework_Admin{
 	 */
 	function get_default_values() {
 		return Framework::get_default_values();
+	}
+
+	/**
+	 * Display message when options have been saved
+	 *
+	 * @hooked 'optionsframework_after_validate'
+	 *
+	 * @legacy
+	 */
+	function save_options_notice(){
+		add_settings_error('options-framework', 'save_options', __('Options saved.', 'textdomain'), 'updated fade');
 	}
 }

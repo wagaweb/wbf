@@ -4,7 +4,7 @@ namespace WBF\modules\options;
 
 use WBF\components\mvc\HTMLView;
 
-class GUI extends \Options_Framework_Interface {
+class GUI{
 	static function getOrganizer(){
 		return Organizer::getInstance();
 	}

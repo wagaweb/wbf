@@ -4,7 +4,7 @@ namespace WBF\modules\options;
 
 use WBF\includes\Utilities;
 
-class Framework extends \Options_Framework {
+class Framework{
 
 	/**
 	 * @var Admin

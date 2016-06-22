@@ -2,7 +2,7 @@
 
 namespace WBF\modules\options;
 
-class MediaUploader extends \Options_Framework_Media_Uploader {
+class MediaUploader{
 
 	/**
 	 * Media Uploader Using the WordPress Media Library.
@@ -14,7 +14,6 @@ class MediaUploader extends \Options_Framework_Media_Uploader {
 	 * string $_desc - An optional description of the field.
 	 *
 	 */
-
 	static function optionsframework_uploader( $_id, $_value, $_desc = '', $_name = '' ) {
 
 		$optionsframework_settings = get_option( 'optionsframework' );
@@ -101,6 +100,17 @@ class MediaUploader extends \Options_Framework_Media_Uploader {
 	}
 
 	/**
+	 * Initialize the media uploader class
+	 *
+	 * @legacy
+	 *
+	 * @since 1.7.0
+	 */
+	public function init() {
+		add_action('admin_enqueue_scripts', array($this, 'optionsframework_media_scripts'));
+	}
+
+	/**
 	 * Enqueue scripts for file uploader
 	 */
 	function optionsframework_media_scripts( $hook ) {
@@ -115,7 +125,7 @@ class MediaUploader extends \Options_Framework_Media_Uploader {
 			wp_enqueue_media();
 		}
 
-		wp_register_script( 'of-media-uploader', OPTIONS_FRAMEWORK_DIRECTORY . 'js/media-uploader.js', array( 'jquery' ), Framework::VERSION );
+		wp_register_script( 'of-media-uploader', OPTIONS_FRAMEWORK_DIRECTORY . 'js/media-uploader.js', array( 'jquery' ) );
 		wp_enqueue_script( 'of-media-uploader' );
 		wp_localize_script( 'of-media-uploader', 'optionsframework_l10n', array(
 			'upload' => __( 'Upload', 'textdomain' ),
