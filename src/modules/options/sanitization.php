@@ -64,19 +64,19 @@ function of_sanitize_textarea(  $input) {
     return $output;
 }
 
-add_filter( 'of_sanitize_textarea', 'of_sanitize_textarea' );
+add_filter( 'of_sanitize_textarea', 'WBF\modules\options\of_sanitize_textarea' );
 
 /* Select */
 
-add_filter( 'of_sanitize_select', 'of_sanitize_enum', 10, 2);
+add_filter( 'of_sanitize_select', '\WBF\modules\options\of_sanitize_enum', 10, 2);
 
 /* Radio */
 
-add_filter( 'of_sanitize_radio', 'of_sanitize_enum', 10, 2);
+add_filter( 'of_sanitize_radio', '\WBF\modules\options\of_sanitize_enum', 10, 2);
 
 /* Images */
 
-add_filter( 'of_sanitize_images', 'of_sanitize_enum', 10, 2);
+add_filter( 'of_sanitize_images', '\WBF\modules\options\of_sanitize_enum', 10, 2);
 
 /* Checkbox */
 
@@ -88,7 +88,7 @@ function of_sanitize_checkbox( $input ) {
     }
     return $output;
 }
-add_filter( 'of_sanitize_checkbox', 'of_sanitize_checkbox' );
+add_filter( 'of_sanitize_checkbox', '\WBF\modules\options\of_sanitize_checkbox' );
 
 /* Multicheck */
 
@@ -106,11 +106,11 @@ function of_sanitize_multicheck( $input, $option ) {
     }
     return $output;
 }
-add_filter( 'of_sanitize_multicheck', 'of_sanitize_multicheck', 10, 2 );
+add_filter( 'of_sanitize_multicheck', '\WBF\modules\options\of_sanitize_multicheck', 10, 2 );
 
 /* Color Picker */
 
-add_filter( 'of_sanitize_color', 'of_sanitize_hex' );
+add_filter( 'of_sanitize_color', '\WBF\modules\options\of_sanitize_hex' );
 
 /* Uploader */
 
@@ -122,7 +122,7 @@ function of_sanitize_upload( $input ) {
     }
     return $output;
 }
-add_filter( 'of_sanitize_upload', 'of_sanitize_upload' );
+add_filter( 'of_sanitize_upload', '\WBF\modules\options\of_sanitize_upload' );
 
 /* Editor */
 
@@ -136,7 +136,7 @@ function of_sanitize_editor($input) {
     }
     return $output;
 }
-add_filter( 'of_sanitize_editor', 'of_sanitize_editor' );
+add_filter( 'of_sanitize_editor', '\WBF\modules\options\of_sanitize_editor' );
 
 /* Allowed Tags */
 
@@ -153,7 +153,7 @@ function of_sanitize_allowedposttags( $input ) {
     $output = wpautop(wp_kses( $input, $allowedposttags));
     return $output;
 }
-add_filter( 'of_sanitize_info', 'of_sanitize_allowedposttags' );
+add_filter( 'of_sanitize_info', '\WBF\modules\options\of_sanitize_allowedposttags' );
 
 /* Check that the key value sent is valid */
 
@@ -184,7 +184,7 @@ function of_sanitize_background( $input ) {
 
     return $output;
 }
-add_filter( 'of_sanitize_background', 'of_sanitize_background' );
+add_filter( 'of_sanitize_background', '\WBF\modules\options\of_sanitize_background' );
 
 function of_sanitize_background_repeat( $value ) {
     $recognized = of_recognized_background_repeat();
@@ -193,7 +193,7 @@ function of_sanitize_background_repeat( $value ) {
     }
     return apply_filters( 'of_default_background_repeat', current( $recognized ) );
 }
-add_filter( 'of_background_repeat', 'of_sanitize_background_repeat' );
+add_filter( 'of_background_repeat', '\WBF\modules\options\of_sanitize_background_repeat' );
 
 function of_sanitize_background_position( $value ) {
     $recognized = of_recognized_background_position();
@@ -202,7 +202,7 @@ function of_sanitize_background_position( $value ) {
     }
     return apply_filters( 'of_default_background_position', current( $recognized ) );
 }
-add_filter( 'of_background_position', 'of_sanitize_background_position' );
+add_filter( 'of_background_position', '\WBF\modules\options\of_sanitize_background_position' );
 
 function of_sanitize_background_attachment( $value ) {
     $recognized = of_recognized_background_attachment();
@@ -211,8 +211,7 @@ function of_sanitize_background_attachment( $value ) {
     }
     return apply_filters( 'of_default_background_attachment', current( $recognized ) );
 }
-add_filter( 'of_background_attachment', 'of_sanitize_background_attachment' );
-
+add_filter( 'of_background_attachment', '\WBF\modules\options\of_sanitize_background_attachment' );
 
 /* Typography */
 
@@ -251,8 +250,7 @@ function of_sanitize_font_size( $value ) {
     }
     return apply_filters( 'of_default_font_size', $recognized );
 }
-add_filter( 'of_font_size', 'of_sanitize_font_size' );
-
+add_filter( 'of_font_size', '\WBF\modules\options\of_sanitize_font_size' );
 
 function of_sanitize_font_style( $value ) {
     $recognized = of_recognized_font_styles();
@@ -261,8 +259,7 @@ function of_sanitize_font_style( $value ) {
     }
     return apply_filters( 'of_default_font_style', current( $recognized ) );
 }
-add_filter( 'of_font_style', 'of_sanitize_font_style' );
-
+add_filter( 'of_font_style', '\WBF\modules\options\of_sanitize_font_style' );
 
 function of_sanitize_font_weight( $value ) {
     $recognized = of_recognized_font_weight();
@@ -271,8 +268,7 @@ function of_sanitize_font_weight( $value ) {
     }
     return apply_filters( 'of_default_font_weight', current( $recognized ) );
 }
-add_filter( 'of_font_weight', 'of_sanitize_font_weight' );
-
+add_filter( 'of_font_weight', '\WBF\modules\options\of_sanitize_font_weight' );
 
 function of_sanitize_font_face( $value ) {
     $recognized = of_recognized_font_faces();
@@ -281,7 +277,7 @@ function of_sanitize_font_face( $value ) {
     }
     return apply_filters( 'of_default_font_face', current( $recognized ) );
 }
-add_filter( 'of_font_face', 'of_sanitize_font_face' );
+add_filter( 'of_font_face', '\WBF\modules\options\of_sanitize_font_face' );
 
 /**
  * Get recognized background repeat settings
@@ -342,7 +338,6 @@ function of_recognized_background_attachment() {
  * @return   string
  *
  */
-
 function of_sanitize_hex( $hex, $default = '' ) {
     if ( of_validate_hex( $hex ) ) {
         return $hex;
@@ -359,7 +354,6 @@ function of_sanitize_hex( $hex, $default = '' ) {
  *
  * @return   array
  */
-
 function of_recognized_font_sizes() {
     $sizes = range( 9, 71 );
     $sizes = apply_filters( 'of_recognized_font_sizes', $sizes );
@@ -411,7 +405,6 @@ function of_recognized_font_styles() {
     return apply_filters( 'of_recognized_font_styles', $default );
 }
 
-
 /**
  * Get recognized font weigth.
  *
@@ -449,7 +442,6 @@ function of_recognized_font_weight() {
  * @return   bool
  *
  */
-
 function of_validate_hex( $hex ) {
     $hex = trim( $hex );
     /* Strip recognized prefixes. */
