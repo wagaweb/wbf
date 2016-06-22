@@ -3,7 +3,7 @@
  * @package   Options Module
  * @author    Riccardo D'Angelo <riccardo@waga.it>, WAGA <dev@waga.it>
  * @license   GPL-2.0+
- * @link      http://www.waboot.io
+ * @link      http://www.waboot.com
  * 
  * Based on Devin Price' Options_Framework
  */

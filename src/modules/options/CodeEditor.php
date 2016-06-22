@@ -1,11 +1,16 @@
 <?php
+/**
+ * @package   Options Module
+ * @author    Riccardo D'Angelo <riccardo@waga.it>, WAGA <dev@waga.it>
+ * @license   GPL-2.0+
+ * @link      http://www.waboot.com
+ * @copyright WAGA.it
+ *
+ * Based on Devin Price' Options_Framework
+ */
 
 namespace WBF\modules\options;
 
-/**
- * @package   Options_Framework
- * @author    Riccardo D'Angelo <me@riccardodangelo.com>
- */
 class CodeEditor {
 	static function optionsframework_codeditor( $_id, $_value, $_desc = '', $_name = '', $_lang = 'css' ) {
 		$optionsframework_settings = get_option( 'optionsframework' );
