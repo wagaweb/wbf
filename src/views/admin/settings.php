@@ -13,6 +13,20 @@
 								<?php echo $data['value']; ?>
 							<?php endif; ?>
 						</td>
+						<?php if($slug == "plugins"): ?>
+						<td class="desc">
+							<p>
+								<strong><?php _ex("Usage:","Settings page","wbf"); ?></strong>
+							</p>
+							<p>
+								<code>$plugin = \WBF\components\pluginsframework\Plugin::get_instances_of("<?php echo $data['name']; ?>");<br />
+									$plugin['core']-> ...<br />
+									$plugin['public']-> ...<br />
+									$plugin['admin']-> ...<br />
+								</code>
+							</p>
+						</td>
+						<?php endif; ?>
 					</tr>
 				<?php else: ?>
 					<tr>

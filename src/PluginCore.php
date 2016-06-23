@@ -6,6 +6,8 @@ use WBF\components\assets\AssetsManager;
 use WBF\components\customupdater\Plugin_Update_Checker;
 use WBF\components\license\License_Manager;
 use WBF\components\mvc\HTMLView;
+use WBF\components\pluginsframework\Plugin;
+use WBF\components\pluginsframework\TemplatePlugin;
 use WBF\includes\GoogleFontsRetriever;
 use WBF\includes\Resources;
 
@@ -748,7 +750,7 @@ class PluginCore {
 		$menu['58'] = $menu['59']; //move the separator before "Appearance" one position up
 		$wbf_menu = add_menu_page( $page_title, $menu_label, "edit_theme_options", $menu_slug, [$this,"options_page"], "dashicons-text", 59 );
 		do_action("wbf_admin_submenu",$menu_slug);
-		$wbf_info_submenu = add_submenu_page($menu_slug,__("WBF Status","wbf"),__("WBF Status","wbf"),"edit_theme_options","wbf_status",[$this,"settings_page"]);
+		$wbf_info_submenu = add_submenu_page($menu_slug,__("WBF Status","wbf"),__("WBF Status","wbf"),"manage_options","wbf_status",[$this,"settings_page"]);
 	}
 
 	/**
@@ -955,13 +957,32 @@ class PluginCore {
 				]
 			],
 			'modules' => [
-				'title' => _x("Modules","Setting page","wbf"),
+				'title' => _x("Loaded Modules","Setting page","wbf"),
 				'data' => $this->modules
 			],
 			'extensions' => [
-				'title' => _x("Extensions","Setting page","wbf"),
+				'title' => _x("Loaded Extensions","Setting page","wbf"),
 				'data' => $this->get_extensions()
 			],
+			'plugins' => [
+				'title' => _x("Loaded Plugins","Settings page","wbf"),
+				'data' => call_user_func(function(){
+					$loaded_plugins = Plugin::get_loaded_plugins();
+					$plugins = [];
+					if(!empty($loaded_plugins)){
+						foreach($loaded_plugins as $slug => $plugin){
+							$plugins[$slug] = [
+								'name' => $plugin->get_plugin_name(),
+								'value' => [
+									'version' => $plugin->get_version(),
+									'templates' => $plugin instanceof TemplatePlugin ? $plugin->get_registered_templates() : [],
+								]
+							];
+						}
+					}
+					return $plugins;
+				})
+			]
 		];
 
 		$v->display([
