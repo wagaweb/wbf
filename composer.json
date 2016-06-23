@@ -28,6 +28,7 @@
       "src/components/customupdater/vendor/",
       "src/components/breadcrumb/vendor/",
       "src/components/navwalker/vendor/",
+      "src/includes/waboot-plugin/",
       "vendor/options-framework/",
       "vendor/acf/",
       "src/modules/",
