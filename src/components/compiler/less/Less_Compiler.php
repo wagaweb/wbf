@@ -3,7 +3,7 @@
 namespace WBF\components\compiler\less;
 use WBF\components\compiler\Base_Compiler;
 use \Exception;
-use WBF\includes\Utilities;
+use WBF\components\utils\Utilities;
 
 class Less_Compiler implements Base_Compiler{
     public $compile_sets = array();

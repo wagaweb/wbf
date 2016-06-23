@@ -2,6 +2,8 @@
 
 namespace WBF\includes;
 
+use WBF\components\utils\Utilities;
+
 class Resources{
 
 	/**
