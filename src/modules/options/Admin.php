@@ -422,6 +422,8 @@ class Admin{
 	 *
 	 * This runs after the submit/reset button has been clicked and
 	 * validates the inputs.
+	 * 
+	 * @hooked via register_setting( 'optionsframework', $optionsframework_settings['id'],  array ( $this, 'validate_options' ) );
 	 *
 	 * @uses $_POST['reset'] to restore default options
 	 *
@@ -477,12 +479,19 @@ class Admin{
 				}
 			}
 
+			if($option['type'] == "csseditor" && isset($input[$id])){
+				//Special case for CSS editor
+				xdebug_break();
+			}
+
 			// For a value to be submitted to database it must pass through a sanitization filter
 			if ( has_filter( 'of_sanitize_' . $option['type'] ) ) {
 				if(isset($input[$id])){ //[WABOOT MOD]
 					$clean[$id] = apply_filters( 'of_sanitize_' . $option['type'], $input[$id], $option );
 				}
 			}
+
+			//NOTE: if no sanitize filter is provided at this point, the option value is lost.
 		}
 
 		// Hook to run after validation

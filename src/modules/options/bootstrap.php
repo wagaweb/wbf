@@ -41,18 +41,6 @@ add_action("wp_ajax_gfontfetcher_getFontInfo",'\WBF\modules\options\FontSelector
 add_action("wp_ajax_nopriv_gfontfetcher_getFontInfo",'WBF\modules\options\FontSelector::getFontInfo');
 
 /**
- * Sanitize functions
- */
-add_filter( 'of_sanitize_csseditor', '\of_sanitize_textarea' );
-add_filter( 'of_sanitize_typography', '\WBF\modules\options\of_sanitize_typography' );
-
-/**
- * Allow "a", "embed" and "script" tags in theme options text boxes
- */
-remove_filter( 'of_sanitize_text', 'sanitize_text_field' );
-add_filter( 'of_sanitize_text', '\WBF\modules\options\custom_sanitize_text' );
-
-/**
  * Adds theme options generated css
  */
 add_action( 'wp_enqueue_scripts', '\WBF\modules\options\add_client_custom_css', 99 );

@@ -11,7 +11,6 @@ jQuery(document).ready(function($) {
     component_page_view.init_interface();
     //Init code editor view
     var code_editor_view = require("./views/code-editor.js");
-    code_editor_view.init_jq_plugin();
     code_editor_view.init_interface();
     //Init font selector
     if(!_.isUndefined(wbfData.wbfOfFonts)){

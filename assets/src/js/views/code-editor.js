@@ -15,7 +15,8 @@ module.exports = {
                     var my_option_group = $(this).closest(".group");
                     var my_options_group_link = $("a#" + my_option_group.attr("id") + "-tab");
                     var my_mode = $(this).attr("data-lang");
-                    var editor = $(this).codemirror({
+
+                    var editor = CodeMirror.fromTextArea($(this)[0],{
                         mode: {name: my_mode, globalVars: true},
                         lineNumbers: true,
                         theme: "ambiance",
@@ -27,8 +28,10 @@ module.exports = {
                             }
                         })()
                     });
+
                     editors.push(editor);
-                    my_options_group_link.bind("click", function () {
+
+                    my_options_group_link.on("click", function () {
                         setTimeout(function () {
                             editor.refresh();
                         }, 1000);
@@ -36,55 +39,5 @@ module.exports = {
                 });
             }, 1500);
         }
-
-        /*$("a#options-group-2-tab").on("click",function(){
-         setTimeout(function(){
-         _.each(editors,function(element,index,list){
-         element.refresh();
-         });
-         }, 1000);
-         });*/
-    },
-    init_jq_plugin: function(){
-        jQuery.fn.codemirror = function (options) {
-            var $ = jQuery;
-
-            var result = this;
-
-            var settings = $.extend({
-                'mode': 'javascript',
-                'lineNumbers': false,
-                'runmode': false
-            }, options);
-
-            if(typeof CodeMirror == "undefined"){
-                return;
-            }
-
-            if (settings.runmode) this.each(function () {
-                var obj = $(this);
-                var accum = [], gutter = [], size = 0;
-                var callback = function (string, style) {
-                    if (string == "\n") {
-                        accum.push("<br>");
-                        gutter.push('<pre>' + (++size) + '</pre>');
-                    }
-                    else if (style) {
-                        accum.push("<span class=\"cm-" + CodeMirror.htmlEscape(style) + "\">" + CodeMirror.htmlEscape(string) + "</span>");
-                    }
-                    else {
-                        accum.push(CodeMirror.htmlEscape(string));
-                    }
-                };
-                CodeMirror.runMode(obj.val(), settings.mode, callback);
-                $('<div class="CodeMirror">' + (settings.lineNumbers ? ('<div class="CodeMirror-gutter"><div class="CodeMirror-gutter-text">' + gutter.join('') + '</div></div>') : '<!--gutter-->') + '<div class="CodeMirror-lines">' + (settings.lineNumbers ? '<div style="position: relative; margin-left: ' + size.toString().length + 'em;">' : '<div>') + '<pre class="cm-s-default">' + accum.join('') + '</pre></div></div></div>').insertAfter(obj);
-                obj.hide();
-            });
-            else this.each(function () {
-                result = CodeMirror.fromTextArea(this, settings);
-            });
-
-            return result;
-        };
     }
 };

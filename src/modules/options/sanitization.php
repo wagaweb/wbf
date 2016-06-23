@@ -10,39 +10,6 @@
 
 namespace WBF\modules\options;
 
-function custom_sanitize_text( $input ) {
-    global $allowedposttags;
-
-    $custom_allowedtags["a"] = array(
-      "href"   => array(),
-      "target" => array(),
-      "id"     => array(),
-      "class"  => array()
-    );
-
-    $custom_allowedtags = array_merge( $custom_allowedtags, $allowedposttags );
-    $output             = wp_kses( $input, $custom_allowedtags );
-
-    return $output;
-}
-
-function of_sanitize_typography( $input ) {
-
-    $output = wp_parse_args( $input, array(
-      'family'  => '',
-      'style'  => array(),
-      'charset' => array(),
-      'color' => ''
-    ) );
-
-    /*$output['family'] = apply_filters( 'of_sanitize_text', $output['family'] );
-    $output['style'] = apply_filters( 'of_sanitize_text', $output['style'] );
-    $output['charset'] = apply_filters( 'of_sanitize_text', $output['charset'] );*/
-    $output['color'] = apply_filters( 'of_sanitize_color', $output['color'] );
-
-    return $output;
-}
-
 /*
  * LEGACY PART:
  * Following parts are unmodified from the orignal work by @author Devin Price <devin@wptheming.com>
@@ -64,7 +31,7 @@ function of_sanitize_textarea(  $input) {
     return $output;
 }
 
-add_filter( 'of_sanitize_textarea', 'WBF\modules\options\of_sanitize_textarea' );
+add_filter( 'of_sanitize_textarea', '\WBF\modules\options\of_sanitize_textarea' );
 
 /* Select */
 
@@ -458,4 +425,53 @@ function of_validate_hex( $hex ) {
     else {
         return true;
     }
+}
+
+/*
+ * CUSTOM PART
+ */
+
+/**
+ * Custom Sanitize functions
+ */
+add_filter( 'of_sanitize_csseditor', '\WBF\modules\options\of_sanitize_textarea' );
+add_filter( 'of_sanitize_typography', '\WBF\modules\options\of_sanitize_typography' );
+
+/**
+ * Allow "a", "embed" and "script" tags in theme options text boxes
+ */
+remove_filter( 'of_sanitize_text', 'sanitize_text_field' );
+add_filter( 'of_sanitize_text', '\WBF\modules\options\custom_sanitize_text' );
+
+function custom_sanitize_text( $input ) {
+	global $allowedposttags;
+
+	$custom_allowedtags["a"] = array(
+		"href"   => array(),
+		"target" => array(),
+		"id"     => array(),
+		"class"  => array()
+	);
+
+	$custom_allowedtags = array_merge( $custom_allowedtags, $allowedposttags );
+	$output             = wp_kses( $input, $custom_allowedtags );
+
+	return $output;
+}
+
+function of_sanitize_typography( $input ) {
+
+	$output = wp_parse_args( $input, array(
+		'family'  => '',
+		'style'  => array(),
+		'charset' => array(),
+		'color' => ''
+	) );
+
+	/*$output['family'] = apply_filters( 'of_sanitize_text', $output['family'] );
+	$output['style'] = apply_filters( 'of_sanitize_text', $output['style'] );
+	$output['charset'] = apply_filters( 'of_sanitize_text', $output['charset'] );*/
+	$output['color'] = apply_filters( 'of_sanitize_color', $output['color'] );
+
+	return $output;
 }
