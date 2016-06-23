@@ -12,7 +12,7 @@
     "tests"
   ],
   "dependencies": {
-    "codemirror": "~4.7.0",
+    "codemirror": "~5.16.0",
     "imagesloaded": "~3.2.0",
     "jquery-modal": "~0.6.0",
     "bootstrap": "~3.3.5"
