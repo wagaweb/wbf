@@ -207,4 +207,17 @@ class TemplatePlugin extends Plugin implements TemplatePlugin_Interface {
 
 		return $paths;
 	}
+
+	/**
+	 * Getter of registered templates
+	 *
+	 * @return array
+	 */
+	public function get_registered_templates(){
+		$tpl = [
+			'cpt_templates' => $this->ctp_templates,
+			'std_templates' => $this->templates
+		];
+		return $tpl;
+	}
 }
