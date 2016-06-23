@@ -6,8 +6,8 @@
 function wbf_admin_scripts(){
 	$scripts = [
 		"wbf-admin" => [
-			'uri' => defined("SCRIPT_DEBUG") && SCRIPT_DEBUG ? \WBF\includes\Resources::getInstance()->prefix_url("assets/src/js/wbf-admin-bundle.js") : \WBF\includes\Resources::getInstance()->prefix_url("assets/dist/js/wbf-admin.min.js"),
-			'path' => defined("SCRIPT_DEBUG") && SCRIPT_DEBUG ? \WBF\includes\Resources::getInstance()->prefix_path("assets/src/js/wbf-admin-bundle.js") : \WBF\includes\Resources::getInstance()->prefix_path("assets/dist/js/wbf-admin.min.js"),
+			'uri' => defined("SCRIPT_DEBUG") && SCRIPT_DEBUG ? \WBF\includes\Resources::getInstance()->prefix_url("assets/dist/js/wbf-admin-bundle.js") : \WBF\includes\Resources::getInstance()->prefix_url("assets/dist/js/wbf-admin.min.js"),
+			'path' => defined("SCRIPT_DEBUG") && SCRIPT_DEBUG ? \WBF\includes\Resources::getInstance()->prefix_path("assets/dist/js/wbf-admin-bundle.js") : \WBF\includes\Resources::getInstance()->prefix_path("assets/dist/js/wbf-admin.min.js"),
 			'deps' => apply_filters("wbf/js/admin/deps",["jquery","backbone","underscore"]),
 			'i10n' => [
 				'name' => 'wbfData',
