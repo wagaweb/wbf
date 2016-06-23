@@ -4,6 +4,8 @@ namespace WBF;
 
 use WBF\components\assets\AssetsManager;
 use WBF\components\customupdater\Plugin_Update_Checker;
+use WBF\components\license\License_Manager;
+use WBF\components\mvc\HTMLView;
 use WBF\includes\GoogleFontsRetriever;
 use WBF\includes\Resources;
 
@@ -147,7 +149,7 @@ class PluginCore {
 
 		//Init License Manager: //todo: move to plugin framweork?
 		if(class_exists('\WBF\admin\License_Manager')){
-			\WBF\admin\License_Manager::init();
+			License_Manager::init();
 		}
 
 		//Additional settings:
@@ -223,7 +225,7 @@ class PluginCore {
 		//todo: this is ugly, we could expose a function like register_wbf_admin_page()
 		$valid_pages = [
 			self::getInstance()->wp_menu_slug,
-			\WBF\modules\components\ComponentsManager::$wp_menu_slug,
+			modules\components\ComponentsManager::$wp_menu_slug,
 			'wbf_licenses'
 		];
 
@@ -367,7 +369,7 @@ class PluginCore {
 			}
 		}
 
-		$exts_dir = self::get_path()."extensions";
+		$exts_dir = self::get_path()."src/extensions";
 		$dirs = array_filter(glob($exts_dir."/*"), 'is_dir');
 		$dirs = apply_filters("wbf/extensions/available", $dirs); //Allow developers to add\delete extensions
 		foreach($dirs as $d){
@@ -746,6 +748,7 @@ class PluginCore {
 		$menu['58'] = $menu['59']; //move the separator before "Appearance" one position up
 		$wbf_menu = add_menu_page( $page_title, $menu_label, "edit_theme_options", $menu_slug, [$this,"options_page"], "dashicons-text", 59 );
 		do_action("wbf_admin_submenu",$menu_slug);
+		$wbf_info_submenu = add_submenu_page($menu_slug,__("WBF Status","wbf"),__("WBF Status","wbf"),"edit_theme_options","wbf_status",[$this,"settings_page"]);
 	}
 
 	/**
@@ -913,20 +916,57 @@ class PluginCore {
 	}
 
 	/**
-	 * Waboot options page for further uses
+	 * Placeholder callback
 	 */
-	public function options_page() {
-		/*$options_framework_admin = new Waboot_Options_Framework_Admin;
-		$options_framework_admin->options_page();*/
-		return true;
-		?>
-		<div class="wrap">
-			<h2><?php _e( "Waboot Options", "wbf" ); ?></h2>
+	public function options_page(){
+		return;
+	}
 
-			<p>
-				--- Placeholder ---
-			</p>
-		</div>
-		<?php
+	/**
+	 * WBF options page (for now it just display info about WBF current status)
+	 */
+	public function settings_page() {
+		$v = new HTMLView("src/views/admin/settings.php","wbf");
+
+		$data = [
+			'engine_info' => [
+				'title' => _x("Engine information","Setting page","wbf"),
+				'data' => [
+					'version' => [
+						'name' => _x("Version","Setting Page","wbf"),
+						'value' => get_plugin_data(dirname(dirname(__FILE__))."/wbf.php")['Version'],
+					],
+					'path' => [
+						'name' => _x("Pathname","Setting Page","wbf"),
+						'value' => $this->resources->get_path()
+					],
+					'url' => [
+						'name' => _x("URL","Setting Page","wbf"),
+						'value' => $this->resources->get_url()
+					],
+					'wd' => [
+						'name' => _x("Working directory","Setting Page","wbf"),
+						'value' => $this->resources->get_working_directory()
+					],
+					'startup_options' => [
+						'name' => _x("Startup options","Setting page"."wbf"),
+						'value' => $this->options
+					]
+				]
+			],
+			'modules' => [
+				'title' => _x("Modules","Setting page","wbf"),
+				'data' => $this->modules
+			],
+			'extensions' => [
+				'title' => _x("Extensions","Setting page","wbf"),
+				'data' => $this->get_extensions()
+			],
+		];
+
+		$v->display([
+			'page_title' => __("WBF Status"),
+			'sections' => $data
+		]);
 	}
 }
