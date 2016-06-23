@@ -2,7 +2,9 @@
 
 require_once("vendor/autoload.php");
 
-// FUTURE PSR4 Custom plugin autoloader function
+/**
+ * PS4 Autoloader
+ */
 spl_autoload_register( function($class){
 	$prefix = "WBF\\";
 	$plugin_path = plugin_dir_path( __FILE__ );
