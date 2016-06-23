@@ -479,11 +479,6 @@ class Admin{
 				}
 			}
 
-			if($option['type'] == "csseditor" && isset($input[$id])){
-				//Special case for CSS editor
-				xdebug_break();
-			}
-
 			// For a value to be submitted to database it must pass through a sanitization filter
 			if ( has_filter( 'of_sanitize_' . $option['type'] ) ) {
 				if(isset($input[$id])){ //[WABOOT MOD]

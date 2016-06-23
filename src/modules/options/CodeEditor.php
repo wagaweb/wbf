@@ -15,7 +15,27 @@ use WBF\components\assets\AssetsManager;
 use WBF\includes\Resources;
 
 class CodeEditor {
-	static function optionsframework_codeditor( $_id, $_value, $_desc = '', $_name = '', $_lang = 'css' ) {
+
+	/**
+	 * Init editor actions. Called by Framework->init()
+	 */
+	public function init() {
+		add_action( 'admin_enqueue_scripts', array( $this, 'scripts' ) );
+		add_action( 'updated_option', array( $this, 'on_save' ), 10, 3 );
+	}
+
+	/**
+	 * Display the editor
+	 *
+	 * @param $_id
+	 * @param $_value
+	 * @param string $_desc
+	 * @param string $_name
+	 * @param string $_lang
+	 *
+	 * @return string
+	 */
+	static function display($_id, $_value, $_desc = '', $_name = '', $_lang = 'css'){
 		$optionsframework_settings = get_option( 'optionsframework' );
 
 		// Gets the unique option id
@@ -55,13 +75,10 @@ class CodeEditor {
 		return $output;
 	}
 
-	public function init() {
-		add_action( 'admin_enqueue_scripts', array( $this, 'optionsframework_codeditor_scripts' ) );
-		add_action( 'updated_option', array( $this, 'optionsframework_codeditor_save' ), 10, 3 );
-	}
-
 	/**
 	 * Get all options that are registered as css editor
+	 *
+	 * @return array
 	 */
 	public function get_csseditor_options(){
 		$options = Framework::get_registered_options();
@@ -74,7 +91,14 @@ class CodeEditor {
 		return $css_editor_options;
 	}
 
-	function optionsframework_codeditor_scripts( $hook ) {
+	/**
+	 * Enqueue CSS Editor scripts
+	 *
+	 * @param $hook
+	 *
+	 * @throws \Exception
+	 */
+	function scripts( $hook ) {
 		if(!of_is_admin_framework_page($hook)){
 			return;
 		}
@@ -142,7 +166,7 @@ class CodeEditor {
 	 * @param $old_value
 	 * @param $value
 	 */
-	function optionsframework_codeditor_save( $option, $old_value, $value ) {
+	function on_save( $option, $old_value, $value ) {
         if(!is_admin()) return;
 		if(is_array($value)){
 			$valid_options = $this->get_csseditor_options();
@@ -153,10 +177,13 @@ class CodeEditor {
 			}
 			if(isset($content) && is_array($content)){
 				$new_css = implode("\n",$content);
-				$filename = "client-custom.css"; //todo: make file name customizable
-				$filepath = WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR."/".$filename;
-				if(is_dir(dirname($filepath))){
-					$result = file_put_contents( $filepath, $new_css );
+				$filename = apply_filters("wbf/modules/options/custom_css_filename","client-custom.css");
+				if(is_string($filename)){
+					$filepath = WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR."/".$filename;
+					if(is_dir(dirname($filepath))){
+						//Create the file
+						$result = file_put_contents( $filepath, $new_css );
+					}
 				}
 			}
 		}

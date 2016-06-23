@@ -124,7 +124,7 @@ class GUI{
 
 	                // Waboot CSS Editor [WABOOT MOD]
 	                case "csseditor":
-	                    $output .= CodeEditor::optionsframework_codeditor($value['id'], $val, null);
+	                    $output .= CodeEditor::display($value['id'], $val, null);
 	                    break;
 
 	                // Typography [WABOOT MOD]
