@@ -1,6 +1,6 @@
 WBF Modules
 ===================
-Modules implements framework main functionalities.
+Modules implements plugin main functionalities.
 
 Modules are loaded during `after_setup_theme` hook with a priority of `10`.
 
