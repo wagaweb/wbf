@@ -6,7 +6,6 @@
  * @link      http://www.waboot.com
  * @copyright WAGA.it
  *
- * Based on Devin Price' Options_Framework
  */
 
 namespace WBF\modules\options;

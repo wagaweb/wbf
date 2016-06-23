@@ -11,7 +11,7 @@
 
 namespace WBF\modules\options;
 
-use WBF\includes\Utilities;
+use WBF\components\utils\Utilities;
 
 class Framework{
 

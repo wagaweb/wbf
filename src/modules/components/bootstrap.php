@@ -1,13 +1,13 @@
 <?php
-/*
+/**
  * WBF Component Framework
  *
  * As all other modules, keep in mind that this piece of code will be executed during "after_setup_theme"
  *
- * @package   Behaviors Framework
- * @author    Riccardo D'Angelo <riccardo@waga.it>
- * @license   copyrighted
- * @link      http://www.waga.it
+ * @package   Components Module
+ * @author    Riccardo D'Angelo <riccardo@waga.it>, WAGA <dev@waga.it>
+ * @license   GPL-2.0+
+ * @link      http://www.waboot.com
  * @copyright WAGA.it
  */
 
