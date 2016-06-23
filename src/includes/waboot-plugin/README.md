@@ -1,0 +1,1 @@
+These are legacy files for older plugin. Will be removed.
