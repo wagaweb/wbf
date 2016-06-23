@@ -10,8 +10,6 @@
 
 namespace WBF\modules\options;
 
-use WBF\includes\compiler\Styles_Compiler;
-
 class CustomizerManager{
 
 	static $setting_type = "wbf_theme_option";
