@@ -2,9 +2,13 @@
 
 namespace WBF\components\pluginsframework;
 
-require_once("vendor/autoload.php");
+require_once dirname(dirname(dirname(dirname(__FILE__))))."/vendor/autoload.php";
 
-spl_autoload_register( 'WBF\includes\pluginsframework\plugin_autoload' );
+/*
+ * The following autoloader is now deprecated
+ */
+
+//spl_autoload_register( 'WBF\includes\pluginsframework\plugin_autoload' );
 
 function plugin_autoload( $class ) {
 	$wbf_path = defined("WBF_DIRECTORY") ? WBF_DIRECTORY : get_option( "wbf_path" );

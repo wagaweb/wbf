@@ -2,14 +2,10 @@
 
 namespace WBF\components\pluginsframework;
 
-use WBF\admin\License_Manager;
-use WBF\admin\Notice_Manager;
-use WBF\includes\License;
-use WBF\includes\Plugin_Update_Checker;
-
-interface Plugin_Interface {
-
-}
+use WBF\components\license\License_Manager;
+use WBF\components\notices\Notice_Manager;
+use WBF\components\license\License;
+use WBF\components\customupdater\Plugin_Update_Checker;
 
 class Plugin {
 	/**
@@ -400,5 +396,18 @@ class Plugin {
 		}else{
 			return [];
 		}
+	}
+
+	/**
+	 * Get loaded plugin instances
+	 *
+	 * @return array
+	 */
+	static function get_loaded_plugins(){
+		global $wbf_loaded_plugins;
+		if(isset($wbf_loaded_plugins) && is_array($wbf_loaded_plugins)){
+			return $wbf_loaded_plugins;
+		}
+		return [];
 	}
 }
