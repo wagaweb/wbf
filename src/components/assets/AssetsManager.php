@@ -32,8 +32,8 @@ class AssetsManager {
 	 * Adds a single asset
 	 * @param array $args
 	 */
-	public function add_asset($args){
-		$this->assets[] = $args;
+	public function add_asset($name,$args){
+		$this->assets[$name] = $args;
 	}
 
 	/**
@@ -41,8 +41,8 @@ class AssetsManager {
 	 * @param array $assets
 	 */
 	public function add_assets($assets){
-		foreach($assets as $args){
-			$this->add_asset($args);
+		foreach($assets as $name => $args){
+			$this->add_asset($name,$args);
 		}
 	}
 
