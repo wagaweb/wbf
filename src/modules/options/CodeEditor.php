@@ -11,6 +11,9 @@
 
 namespace WBF\modules\options;
 
+use WBF\components\assets\AssetsManager;
+use WBF\includes\Resources;
+
 class CodeEditor {
 	static function optionsframework_codeditor( $_id, $_value, $_desc = '', $_name = '', $_lang = 'css' ) {
 		$optionsframework_settings = get_option( 'optionsframework' );
@@ -76,38 +79,56 @@ class CodeEditor {
 			return;
 		}
 
-        wp_register_script('codemirror', WBF_URL . '/vendor/codemirror/lib/codemirror.js');
-        wp_register_style('codemirror-css', WBF_URL . '/vendor/codemirror/lib/codemirror.css');
+		$res = [
+			'codemirror' => [
+				'uri' => Resources::getInstance()->prefix_url('vendor/codemirror/lib/codemirror.js'),
+				'path' => Resources::getInstance()->prefix_path('vendor/codemirror/lib/codemirror.js'),
+				'type' => 'js'
+			],
+			'codemirror-css' => [
+				'uri' => Resources::getInstance()->prefix_url('vendor/codemirror/lib/codemirror.css'),
+				'path' => Resources::getInstance()->prefix_path('vendor/codemirror/lib/codemirror.css'),
+				'type' => 'css'
+			],
+			//Modes
+			'codemirror-mode-css' => [
+				'uri' => Resources::getInstance()->prefix_url('vendor/codemirror/mode/css/css.js'),
+				'path' => Resources::getInstance()->prefix_path('vendor/codemirror/mode/css/css.js'),
+				'type' => 'css'
+			],
+			//Addons
+			'codemirror-addon-hint' => [
+				'uri' => Resources::getInstance()->prefix_url('vendor/codemirror/addon/hint/show-hint.js'),
+				'path' => Resources::getInstance()->prefix_path('vendor/codemirror/addon/hint/show-hint.js'),
+				'type' => 'js'
+			],
+			'codemirror-addon-hint-style' => [
+				'uri' => Resources::getInstance()->prefix_url('vendor/codemirror/addon/hint/show-hint.css'),
+				'path' => Resources::getInstance()->prefix_path('vendor/codemirror/addon/hint/show-hint.css'),
+				'type' => 'css'
+			],
+			'codemirror-addon-hint-css' => [
+				'uri' => Resources::getInstance()->prefix_url('vendor/codemirror/addon/hint/css-hint.js'),
+				'path' => Resources::getInstance()->prefix_path('vendor/codemirror/addon/hint/css-hint.js'),
+				'deps' => ['codemirror','codemirror-addon-hint'],
+				'type' => 'js'
+			],
+			//Themes
+			'codemirror-theme-ambiance' => [
+				'uri' => Resources::getInstance()->prefix_url('vendor/codemirror/theme/ambiance.css'),
+				'path' => Resources::getInstance()->prefix_path('vendor/codemirror/theme/ambiance.css'),
+				'type' => 'css'
+			]
+		];
+		
+		$am = new AssetsManager($res);
+		$am->enqueue();
+		
         /*if(WBF_ENV == "dev"){
             wp_register_script('of-waboot-codeditor', WBF_URL . '/assets/src/js/admin/code-editor.js', array('jquery', 'codemirror', 'underscore'), Framework::VERSION );
         }else{
             wp_register_script('of-waboot-codeditor', WBF_URL . '/admin/js/code-editor.min.js', array('jquery', 'codemirror', 'underscore'), Framework::VERSION );
         }*/
-		//Modes
-        wp_register_script('codemirror-mode-css', WBF_URL . '/vendor/codemirror/mode/css/css.js', array('codemirror'));
-
-		//Addons
-        wp_register_script('codemirror-addon-hint', WBF_URL . '/vendor/codemirror/addon/hint/show-hint.js');
-        wp_register_style('codemirror-addon-hint-style', WBF_URL . '/vendor/codemirror/addon/hint/show-hint.css');
-        wp_register_script('codemirror-addon-hint-css', WBF_URL . '/vendor/codemirror/addon/hint/css-hint.js', array(
-				'codemirror',
-				'codemirror-addon-hint'
-			) );
-
-		//Themes
-        wp_register_style('codemirror-theme-ambiance', WBF_URL . '/vendor/codemirror/theme/ambiance.css');
-
-		/**
-		 * Enqueues
-		 */
-		wp_enqueue_script( 'codemirror' );
-		wp_enqueue_style( 'codemirror-css' );
-
-		wp_enqueue_script( 'codemirror-mode-css' );
-		wp_enqueue_script( 'codemirror-addon-hint' );
-		wp_enqueue_style( 'codemirror-addon-hint-style' );
-		wp_enqueue_script( 'codemirror-addon-hint-css' );
-		wp_enqueue_style( 'codemirror-theme-ambiance' );
 
 		//wp_enqueue_script( 'of-waboot-codeditor' );
 	}
