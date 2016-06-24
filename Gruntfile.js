@@ -1,8 +1,5 @@
 module.exports = function (grunt) {
-
-    // load all tasks
-    require('load-grunt-tasks')(grunt, {scope: 'devDependencies'});
-
+    
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         less: {
@@ -23,26 +20,6 @@ module.exports = function (grunt) {
                 files: ['<%= less.dev.files %>']
             }
         },
-        jshint: {
-            all: ['assets/src/js/**/*.js'],
-            options: {
-                browser: true,
-                curly: false,
-                eqeqeq: false,
-                eqnull: true,
-                expr: true,
-                immed: true,
-                newcap: true,
-                noarg: true,
-                smarttabs: true,
-                sub: true,
-                undef: false
-            }
-        },
-        jsbeautifier: {
-            files: ['admin/js/*.js', 'public/js/*.js','includes/scripts/*.js','includes/scripts/**/*.js'],
-            options: {}
-        },
         browserify: {
             dist: {
                 src: ['assets/src/js/wbf-admin.js'],
@@ -59,32 +36,6 @@ module.exports = function (grunt) {
                     'assets/dist/js/wbf-admin.min.js': ['assets/dist/js/wbf-admin-bundle.js'],
                     'assets/dist/js/includes/wbfgmap.min.js': ['assets/src/js/includes/wbfgmap/markerclusterer.js','assets/src/js/includes/wbfgmap/acfmap.js']
                 }
-            }
-        },
-        pot: {
-            options: {
-                text_domain: 'wbf',
-                dest: 'languages/',
-                keywords: [
-                    '__:1',
-                    '_e:1',
-                    '_x:1,2c',
-                    'esc_html__:1',
-                    'esc_html_e:1',
-                    'esc_html_x:1,2c',
-                    'esc_attr__:1',
-                    'esc_attr_e:1',
-                    'esc_attr_x:1,2c',
-                    '_ex:1,2c',
-                    '_n:1,2',
-                    '_nx:1,2,4c',
-                    '_n_noop:1,2',
-                    '_nx_noop:1,2,3c'
-                ]
-            },
-            files: {
-                src: ['*.php','admin/**/*.php','includes/**/*.php','public/**/*.php'],
-                expand: true
             }
         },
         copy: {
@@ -159,6 +110,17 @@ module.exports = function (grunt) {
             }*/
         }
     });
+    
+    /*
+     * Load tasks
+     */
+
+    grunt.loadNpmTasks('grunt-browserify');
+    grunt.loadNpmTasks('grunt-contrib-compress');
+    grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-contrib-less');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-watch');
 
     /*
      *  Register tasks
@@ -171,7 +133,7 @@ module.exports = function (grunt) {
     grunt.registerTask('setup', ['component-composer-update', 'bower-install', 'jsmin', 'less:dev']);
 
     //Concat and beautify js
-    grunt.registerTask('js', ['jsbeautifier','browserify:dist']);
+    grunt.registerTask('js', ['browserify:dist']);
 
     //Concat, beautify and minify js
     grunt.registerTask('jsmin', ['js', 'uglify']);

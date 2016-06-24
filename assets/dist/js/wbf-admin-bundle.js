@@ -201,20 +201,19 @@ module.exports = {
 
         });
 
-        if($("#imageContainer").length > 0){
-            $('#imageContainer').sortable({
-                stop: function(event, ui) {
-                    var newImgArray = $('.imgGalleryAdmin');
-                    $('#imgId').val('');
-                    var imgIds = [];
-                    $.each(newImgArray, function(index, value){
-                        imgIds.push($(value).attr('data-id'));
-                    });
-                    $('#imgId').val(imgIds);
-                }
-            });
-            $('#imageContainer').disableSelection();
-        }
+        $('#imageContainer').sortable({
+            stop: function(event, ui) {
+                var newImgArray = $('.imgGalleryAdmin');
+                $('#imgId').val('');
+                var imgIds = [];
+                $.each(newImgArray, function(index, value){
+                    imgIds.push($(value).attr('data-id'));
+                });
+                $('#imgId').val(imgIds);
+            }
+        });
+        $('#imageContainer').disableSelection();
+
 
     }
 };
@@ -252,7 +251,8 @@ module.exports = {
                     var my_option_group = $(this).closest(".group");
                     var my_options_group_link = $("a#" + my_option_group.attr("id") + "-tab");
                     var my_mode = $(this).attr("data-lang");
-                    var editor = $(this).codemirror({
+
+                    var editor = CodeMirror.fromTextArea($(this)[0],{
                         mode: {name: my_mode, globalVars: true},
                         lineNumbers: true,
                         theme: "ambiance",
@@ -264,8 +264,10 @@ module.exports = {
                             }
                         })()
                     });
+
                     editors.push(editor);
-                    my_options_group_link.bind("click", function () {
+
+                    my_options_group_link.on("click", function () {
                         setTimeout(function () {
                             editor.refresh();
                         }, 1000);
@@ -273,56 +275,6 @@ module.exports = {
                 });
             }, 1500);
         }
-
-        /*$("a#options-group-2-tab").on("click",function(){
-         setTimeout(function(){
-         _.each(editors,function(element,index,list){
-         element.refresh();
-         });
-         }, 1000);
-         });*/
-    },
-    init_jq_plugin: function(){
-        jQuery.fn.codemirror = function (options) {
-            var $ = jQuery;
-
-            var result = this;
-
-            var settings = $.extend({
-                'mode': 'javascript',
-                'lineNumbers': false,
-                'runmode': false
-            }, options);
-
-            if(typeof CodeMirror == "undefined"){
-                return;
-            }
-
-            if (settings.runmode) this.each(function () {
-                var obj = $(this);
-                var accum = [], gutter = [], size = 0;
-                var callback = function (string, style) {
-                    if (string == "\n") {
-                        accum.push("<br>");
-                        gutter.push('<pre>' + (++size) + '</pre>');
-                    }
-                    else if (style) {
-                        accum.push("<span class=\"cm-" + CodeMirror.htmlEscape(style) + "\">" + CodeMirror.htmlEscape(string) + "</span>");
-                    }
-                    else {
-                        accum.push(CodeMirror.htmlEscape(string));
-                    }
-                };
-                CodeMirror.runMode(obj.val(), settings.mode, callback);
-                $('<div class="CodeMirror">' + (settings.lineNumbers ? ('<div class="CodeMirror-gutter"><div class="CodeMirror-gutter-text">' + gutter.join('') + '</div></div>') : '<!--gutter-->') + '<div class="CodeMirror-lines">' + (settings.lineNumbers ? '<div style="position: relative; margin-left: ' + size.toString().length + 'em;">' : '<div>') + '<pre class="cm-s-default">' + accum.join('') + '</pre></div></div></div>').insertAfter(obj);
-                obj.hide();
-            });
-            else this.each(function () {
-                result = CodeMirror.fromTextArea(this, settings);
-            });
-
-            return result;
-        };
     }
 };
 },{}],7:[function(require,module,exports){
@@ -420,7 +372,6 @@ jQuery(document).ready(function($) {
     component_page_view.init_interface();
     //Init code editor view
     var code_editor_view = require("./views/code-editor.js");
-    code_editor_view.init_jq_plugin();
     code_editor_view.init_interface();
     //Init font selector
     if(!_.isUndefined(wbfData.wbfOfFonts)){
@@ -432,6 +383,7 @@ jQuery(document).ready(function($) {
     //Init behavior view
     var behavior_view = require("./views/behavior.js");
     behavior_view.init_interface();
+    //
 });
 
 },{"./controllers/font-selector.js":1,"./views/acf-fields.js":2,"./views/behavior.js":5,"./views/code-editor.js":6,"./views/component-page.js":7,"./views/font-selector.js":8}]},{},[9]);
