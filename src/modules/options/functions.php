@@ -122,6 +122,17 @@ function of_options_save($option, $old_value, $value){
                 if(isset($opt_data['recompile_styles']) && $opt_data['recompile_styles']){
                     $must_recompile_flag = true;
                 }
+	            /*
+	             * Check if must perform some post actions
+	             */
+	            if(isset($opt_data['save_action']) && is_string($opt_data['save_action']) && $opt_data['save_action'] != ""){
+		            $action = $opt_data['save_action'];
+		            if($action == "recompile_styles"){
+			            $must_recompile_flag = true;
+		            }else{
+			            $on_save_callbacks[] = $action; //Build up a callback stack
+		            }
+	            }
                 /*
                  * Check theme options dependencies
                  *
@@ -163,16 +174,32 @@ function of_options_save($option, $old_value, $value){
             }
         }
 
-	    /**
+	    /*
 	     * If the "Reset to defaults" button was pressed
 	     */
 	    if(isset($_POST['reset'])){
 		    $must_recompile_flag = true;
 	    }
 
+	    /*
+	     * Recompile styles if needed
+	     */
         if($must_recompile_flag){
 	        of_recompile_styles($value);
         }
+
+	    /*
+	     * Call che callbacks if needed
+	     */
+	    if(isset($on_save_callbacks) && !empty($on_save_callbacks)){
+		    $on_save_callbacks = array_unique($on_save_callbacks);
+		    foreach($on_save_callbacks as $cb){
+			    $cb = trim($cb);
+			    if(function_exists($cb)){
+				    call_user_func($cb,$option,$old_value,$value);
+			    }
+		    }
+	    }
 
         if(!empty($deps_to_achieve)){
             $wbf_notice_manager->clear_notices("theme_opt_component_deps");
