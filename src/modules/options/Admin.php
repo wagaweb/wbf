@@ -18,8 +18,6 @@ class Admin{
 	var $wp_menu_slug = "themeoptions-manager";
 
 	public function init() {
-		//@since 0.13.12 we have removed the parent init, so the original filter "of_options" will never be called.
-		//parent::init();
 		$all_options = Framework::get_registered_options();
 
 		// Checks if options are available
