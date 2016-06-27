@@ -11,5 +11,8 @@
       "homepage": "http://www.waga.it",
       "role": "Developer"
     }
-  ]
+  ],
+  "require": {
+    "waga/wbf/utils": "*"
+  }
 }

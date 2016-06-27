@@ -1,6 +1,6 @@
 {
-  "name": "waga/wbf/mvc",
-  "description": "An helper component for MVC in Wordpress",
+  "name": "waga/wbf/pluginsframework",
+  "description": "An helper component for Wordpress plugin development",
   "homepage": "http://www.waga.it",
   "version": "1.0.0",
   "license": "proprietary",
@@ -11,5 +11,10 @@
       "homepage": "http://www.waga.it",
       "role": "Developer"
     }
-  ]
+  ],
+  "require": {
+    "waga/wbf/notices": "*",
+    "waga/wbf/license": "*",
+    "waga/wbf/utils": "*"
+  }
 }

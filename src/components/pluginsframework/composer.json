@@ -11,10 +11,5 @@
       "homepage": "http://www.waga.it",
       "role": "Developer"
     }
-  ],
-  "require": {
-    "waga/wbf/notices": "*",
-    "waga/wbf/license": "*",
-    "waga/wbf/utils": "*"
-  }
+  ]
 }
