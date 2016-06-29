@@ -174,7 +174,7 @@ class Plugin_Update_Checker extends \PluginUpdateChecker{
 		} else if ( in_array($currentFilter, array('load-plugins.php', 'load-update.php')) ) {
 			//Also check more often on the "Plugins" page and /wp-admin/update.php.
 			$timeout = 3600;
-		} else if ( $this->throttleRedundantChecks && ($this->getUpdate() !== null) ) {
+		} else if ( isset($this->throttleRedundantChecks) && $this->throttleRedundantChecks && ($this->getUpdate() !== null) ) {
 			//Check less frequently if it's already known that an update is available.
 			$timeout = $this->throttledCheckPeriod * 3600;
 		} else if ( defined('DOING_CRON') && constant('DOING_CRON') ) {
