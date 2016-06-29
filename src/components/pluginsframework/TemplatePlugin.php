@@ -5,6 +5,7 @@ namespace WBF\components\pluginsframework;
 class TemplatePlugin extends Plugin implements TemplatePlugin_Interface {
 	protected $templates;
 	protected $ctp_templates;
+	protected $wc_templates;
 	protected $templates_paths;
 
 	public function __construct( $plugin_name, $dir, $version = "1.0.0" ) {
@@ -12,10 +13,12 @@ class TemplatePlugin extends Plugin implements TemplatePlugin_Interface {
 		$this->templates       = array();
 		$this->templates_paths = array();
 		$this->ctp_templates   = array();
+		$this->wc_templates    = array();
 		$this->loader->add_filter( 'page_attributes_dropdown_pages_args', $this, "register_templates" );
 		$this->loader->add_filter( 'wp_insert_post_data', $this, "register_templates" );
 		$this->loader->add_filter( 'template_include', $this, "view_template" );
 		$this->loader->add_filter( 'wbf/get_template_part/base_paths', $this, 'add_template_base_path', 10, 2 );
+		$this->loader->add_filter( 'woocommerce_locate_template',$this,"override_wc_templates", 11, 3);
 	}
 
 	/**
@@ -40,19 +43,55 @@ class TemplatePlugin extends Plugin implements TemplatePlugin_Interface {
 	/**
 	 * Adds a template to the WP template hierarchy
 	 * 
-	 * @param string $template_name the name of the template (must match WP template hierarchy scheme)
-	 * @param string|null $path the complete path to the template. If null, $this->get_src_dir()."templates/".$template_name will be taken.
+	 * @param string $template_name 	the name of the template (must match WP template hierarchy scheme)
+	 * @param string|null $path 		the complete path to the template. If null, $this->get_src_dir()."templates/".$template_name will be taken.
 	 *
-	 * @return array the registered templates
+	 * @return array 					the registered templates
 	 */
 	public function add_cpt_template( $template_name, $path = null ) {
 		$this->ctp_templates[] = $template_name;
 		if(!isset($path)){
 			$this->templates_paths[ $template_name ] = $this->get_src_dir()."templates/".$template_name;
 		}
-
 		return $this->ctp_templates;
 	}
+
+	/**
+	 * Adds a template to the Woocommerce template hierarchy
+	 *
+	 * @param string $template_name 	the name of the template (must match WP template hierarchy scheme)
+	 * @param string|null $path 		the complete path to the template. If null, $this->get_src_dir()."templates/".$template_name will be taken.
+	 *
+	 * @return array 					the registered templates
+	 */
+	public function add_wc_template( $template_name, $path = null ){
+		$this->wc_templates[] = $template_name;
+		if(!isset($path)){
+			$this->templates_paths[ $template_name ] = $this->get_src_dir()."templates/woocommerce/".$template_name;
+		}
+		return $this->wc_templates;
+	}
+
+	/*
+	 * 
+	 */
+	public function override_wc_templates($template, $template_name, $template_path){
+
+		remove_filter("woocommerce_locate_template",[$this,"override_wc_templates"],11);
+
+		//Check if theme has a template for current post\page
+		$file = wc_locate_template($template_name);
+
+		//Check if plugin has a template for current post\page
+		if ( $file == "" && is_array($this->wc_templates) && in_array( $template_name, $this->wc_templates ) ) {
+			$file = $this->templates_paths[ $template_name ];
+
+			return $file;
+		}
+
+		return $template;
+	}
+	
 
 	/**
 	 * Adds plugin templates to the pages cache in order to trick WordPress
