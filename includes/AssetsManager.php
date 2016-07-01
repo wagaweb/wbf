@@ -7,7 +7,7 @@ namespace WBF\includes;
  *
  * A simple assets manager. This class is just a draft.
  *
- * @version 0.1.0
+ * @version 0.2.0
  *
  * @package WBF\includes
  */
@@ -30,10 +30,12 @@ class AssetsManager {
 
 	/**
 	 * Adds a single asset
+	 *
+	 * @param $name
 	 * @param array $args
 	 */
-	public function add_asset($args){
-		$this->assets[] = $args;
+	public function add_asset($name,$args){
+		$this->assets[$name] = $args;
 	}
 
 	/**
@@ -41,8 +43,8 @@ class AssetsManager {
 	 * @param array $assets
 	 */
 	public function add_assets($assets){
-		foreach($assets as $args){
-			$this->add_asset($args);
+		foreach($assets as $name => $args){
+			$this->add_asset($name,$args);
 		}
 	}
 
