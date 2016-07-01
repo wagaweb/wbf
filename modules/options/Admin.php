@@ -375,6 +375,8 @@ class Admin extends \Options_Framework_Admin{
 	 */
 	function validate_options( $input ) {
 
+		$current_options = Framework::get_options_values();
+		
 		/*
 		 * Restore Defaults.
 		 *
@@ -408,24 +410,27 @@ class Admin extends \Options_Framework_Admin{
 			}
 
 			$id = preg_replace( '/[^a-zA-Z0-9._\-]/', '', strtolower( $option['id'] ) );
-
-			// Set checkbox to false if it wasn't sent in the $_POST
-			if ( 'checkbox' == $option['type'] && ! isset( $input[$id] ) ) {
-				$input[$id] = false;
-			}
-
-			// Set each item in the multicheck to false if it wasn't sent in the $_POST
-			if ( 'multicheck' == $option['type'] && ! isset( $input[$id] ) ) {
-				foreach ( $option['options'] as $key => $value ) {
-					$input[$id][$key] = false;
+			
+			if(!array_key_exists($id,$input) && isset($current_options[$option['id']])){
+				//Here we are parsing an options not included among the saved ones. So we keep the already saved value.
+				$clean[$option['id']] = $current_options[$option['id']];
+			}else{
+				// Set checkbox to false if it wasn't sent in the $_POST
+				if ( 'checkbox' == $option['type'] && ! isset( $input[$id] ) ) {
+					$input[$id] = false;
 				}
-			}
-
-			// For a value to be submitted to database it must pass through a sanitization filter
-			if ( has_filter( 'of_sanitize_' . $option['type'] ) ) {
-				if(isset($input[$id])){ //[WABOOT MOD]
-					$clean[$id] = apply_filters( 'of_sanitize_' . $option['type'], $input[$id], $option );
+				// Set each item in the multicheck to false if it wasn't sent in the $_POST
+				if ( 'multicheck' == $option['type'] && ! isset( $input[$id] ) ) {
+					foreach ( $option['options'] as $key => $value ) {
+						$input[$id][$key] = false;
+					}
 				}
+				// For a value to be submitted to database it must pass through a sanitization filter
+				if ( has_filter( 'of_sanitize_' . $option['type'] ) ) {
+					if(isset($input[$id])){ //[WABOOT MOD]
+						$clean[$id] = apply_filters( 'of_sanitize_' . $option['type'], $input[$id], $option );
+					}
+				}				
 			}
 		}
 
