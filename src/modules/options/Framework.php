@@ -328,4 +328,27 @@ class Framework{
 		}
 		return $results;
 	}
+
+	/**
+	 * Checks if $options is an option that can contain values (eg: not heading or info)
+	 *
+	 * @param $option
+	 *
+	 * @return bool
+	 */
+	static function is_valuable_option($option){
+		return $option['type'] != "heading" && $option['type'] != "info";
+	}
+
+	/**
+	 * Sanitize and standardize an option in
+	 * 
+	 * @param $id
+	 *
+	 * @return mixed
+	 */
+	static function sanitize_option_id($id){
+		$id = preg_replace( '/[^a-zA-Z0-9._\-]/', '', strtolower( $id ) );
+		return $id;
+	}
 }
