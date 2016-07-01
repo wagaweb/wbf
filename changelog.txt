@@ -1,8 +1,13 @@
 == Change log ==
 
+Version 0.13.15 -
+---------------------------------
+- Fix: Fix callback filtro "gform_notification" per la estensione Gravity Form
+- Fix: Ora al salvataggio delle theme options non vengono più resettate le opzioni dei componenti
+- Fix: Fix nomi degli stili nell'AssetsManager
+
 Version 0.13.14 - 25/05/2016
 ---------------------------------
-
 - Tweak: Refactoring Component Framework
 
 Version 0.13.13 - 25/05/2016
