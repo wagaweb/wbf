@@ -30,12 +30,12 @@ class GUI{
 
         // Gets the unique option id
         if ($optionsframework_settings) {
-            $option_name = $optionsframework_settings;
+            $options_db_key = $optionsframework_settings;
         } else {
-            $option_name = 'optionsframework';
+            $options_db_key = 'optionsframework';
         };
 
-        $settings = get_option($option_name);
+        $saved_options = get_option($options_db_key);
         if(!isset($options)){
             $options = &Framework::get_registered_options();
         }
@@ -46,114 +46,113 @@ class GUI{
 		$options = apply_filters("wbf/modules/options/gui/options_to_render",$options);
 
 	    if(is_array($options) && !empty($options)){
-            foreach ($options as $value) {
+            foreach ($options as $current_option) {
 
 	            $val = '';
 	            $select_value = '';
 	            $output = '';
 
 	            // Set default value to $val
-	            if (isset($value['std'])) {
-	                $val = $value['std'];
+	            if (isset($current_option['std'])) {
+	                $val = $current_option['std'];
 	            }
 
 	            // If the option is already saved, override $val
-	            if (($value['type'] != 'heading') && ($value['type'] != 'info')) {
-	                if (isset($settings[($value['id'])])) {
-	                    $val = $settings[($value['id'])];
-	                    // Striping slashes of non-array options
-	                    if (!is_array($val)) {
-	                        $val = stripslashes($val);
-	                    }
-	                }
-	            }
+                if(isset($saved_options[$current_option['id']])){
+                    $val = $saved_options[($current_option['id'])];
+                    // Striping slashes of non-array options
+                    if(!is_array($val)) {
+                        $val = stripslashes($val);
+                    }
+                }
 
 	            // If there is a description save it for labels
-	            $explain_value = '';
-	            if (isset($value['desc'])) {
-	                $explain_value = $value['desc'];
+	            $current_option_description = '';
+	            if(isset($current_option['desc'])) {
+	                $current_option_description = $current_option['desc'];
+		            $current_option_description = wp_kses($current_option_description, $allowedtags);
 	            }
 
 	            // Wrap all options
-	            if (($value['type'] != "heading") && ($value['type'] != "info")) {
+	            if(Framework::is_valuable_option($current_option)){
 
 	                // Keep all ids lowercase with no spaces
-	                $value['id'] = preg_replace('/[^a-zA-Z0-9._\-]/', '', strtolower($value['id']));
+	                $current_option['id'] = preg_replace('/[^a-zA-Z0-9._\-]/', '', strtolower($current_option['id']));
 
-	                $id = 'section-' . $value['id'];
+	                $id = 'section-' . $current_option['id'];
 
 	                $class = 'section';
-	                if (isset($value['type'])) {
-	                    $class .= ' section-' . $value['type'];
+	                if (isset($current_option['type'])) {
+	                    $class .= ' section-' . $current_option['type'];
 	                }
-	                if (isset($value['class'])) {
-	                    $class .= ' ' . $value['class'];
+	                if (isset($current_option['class'])) {
+	                    $class .= ' ' . $current_option['class'];
 	                }
 
 	                $output .= '<div id="' . esc_attr($id) . '" class="' . esc_attr($class) . '">' . "\n";
-	                if (isset($value['name'])) {
-	                    $output .= '<h4 class="heading">' . esc_html($value['name']) . '</h4>' . "\n";
+	                if (isset($current_option['name'])) {
+	                    $output .= '<h4 class="heading">' . esc_html($current_option['name']) . '</h4>' . "\n";
 	                }
-	                if (($value['type'] != "heading") && ($value['type'] != "info")) {
-	                    if (($value['type'] != "checkbox") && ($value['type'] != "editor")) {
-	                        $output .= '<div class="explain">' . wp_kses($explain_value, $allowedtags) . '</div>' . "\n";
+	                if (($current_option['type'] != "heading") && ($current_option['type'] != "info")) {
+	                    if (($current_option['type'] != "checkbox") && ($current_option['type'] != "editor")) {
+	                        $output .= '<div class="explain">' . $current_option_description . '</div>' . "\n";
 	                    }
 	                }
-	                if ($value['type'] != 'editor') {
+	                if ($current_option['type'] != 'editor') {
 	                    $output .= '<div class="option">' . "\n" . '<div class="controls">' . "\n";
 	                } else {
 	                    $output .= '<div class="option">' . "\n" . '<div>' . "\n";
 	                }
 	            }
 
-	            if (has_filter('optionsframework_' . $value['type'])) {
-	                $output .= apply_filters('optionsframework_' . $value['type'], $option_name, $value, $val);
+	            if (has_filter('optionsframework_' . $current_option['type'])) {
+	                $output .= apply_filters('optionsframework_' . $current_option['type'], $options_db_key, $current_option, $val);
 	            }
 
-	            switch ($value['type']) {
+	            switch ($current_option['type']) {
 
 	                // Basic text input
 	                case 'text':
-	                    $output .= '<input id="' . esc_attr($value['id']) . '" class="of-input" name="' . esc_attr($option_name . '[' . $value['id'] . ']') . '" type="text" value="' . esc_attr($val) . '" />';
+	                    $output .= '<input id="' . esc_attr($current_option['id']) . '" class="of-input" name="' . esc_attr($options_db_key . '[' . $current_option['id'] . ']') . '" type="text" value="' . esc_attr($val) . '" />';
 	                    break;
 
 	                // Password input
 	                case 'password':
-	                    $output .= '<input id="' . esc_attr($value['id']) . '" class="of-input" name="' . esc_attr($option_name . '[' . $value['id'] . ']') . '" type="password" value="' . esc_attr($val) . '" />';
+	                    $output .= '<input id="' . esc_attr($current_option['id']) . '" class="of-input" name="' . esc_attr($options_db_key . '[' . $current_option['id'] . ']') . '" type="password" value="' . esc_attr($val) . '" />';
 	                    break;
 
 	                // Waboot CSS Editor [WABOOT MOD]
 	                case "csseditor":
-	                    $output .= CodeEditor::display($value['id'], $val, null);
+	                    $output .= CodeEditor::display($current_option['id'], $val, null);
 	                    break;
 
 	                // Typography [WABOOT MOD]
 		            // Waboot GFont Selector [WABOOT MOD]
 	                case 'typography':
 	                case "gfont":
-						$output .= FontSelector::output($value['id'], $val, $value['std']);
+						$output .= FontSelector::output($current_option['id'], $val, $current_option['std']);
 						break;
 
 	                // Textarea
 	                case 'textarea':
 	                    $rows = '8';
 
-	                    if (isset($value['settings']['rows'])) {
-	                        $custom_rows = $value['settings']['rows'];
+	                    if (isset($current_option['settings']['rows'])) {
+	                        $custom_rows = $current_option['settings']['rows'];
 	                        if (is_numeric($custom_rows)) {
 	                            $rows = $custom_rows;
 	                        }
 	                    }
 
 	                    $val = stripslashes($val);
-	                    $output .= '<textarea id="' . esc_attr($value['id']) . '" class="of-input" name="' . esc_attr($option_name . '[' . $value['id'] . ']') . '" rows="' . $rows . '">' . esc_textarea($val) . '</textarea>';
+	                    $output .= '<textarea id="' . esc_attr($current_option['id']) . '" class="of-input" name="' . esc_attr($options_db_key . '[' . $current_option['id'] . ']') . '" rows="' . $rows . '">' . esc_textarea($val) . '</textarea>';
 	                    break;
 
 	                // Select Box
 	                case 'select':
-	                    $output .= '<select class="of-input" name="' . esc_attr($option_name . '[' . $value['id'] . ']') . '" id="' . esc_attr($value['id']) . '">';
+	                    $output .= '<select class="of-input" name="' . esc_attr($options_db_key . '[' . $current_option['id'] . ']') . '" id="' . esc_attr($current_option['id']) . '">';
 
-	                    foreach ($value['options'] as $key => $option) {
+	                    foreach ($current_option['options'] as $key => $option) {
 	                        $output .= '<option' . selected($val, $key, false) . ' value="' . esc_attr($key) . '">' . esc_html($option) . '</option>';
 	                    }
 	                    $output .= '</select>';
@@ -162,17 +161,17 @@ class GUI{
 
 	                // Radio Box
 	                case "radio":
-	                    $name = $option_name . '[' . $value['id'] . ']';
-	                    foreach ($value['options'] as $key => $option) {
-	                        $id = $option_name . '-' . $value['id'] . '-' . $key;
+	                    $name = $options_db_key . '[' . $current_option['id'] . ']';
+	                    foreach ($current_option['options'] as $key => $option) {
+	                        $id = $options_db_key . '-' . $current_option['id'] . '-' . $key;
 	                        $output .= '<div class="radio-wrapper"><input class="of-input of-radio" type="radio" name="' . esc_attr($name) . '" id="' . esc_attr($id) . '" value="' . esc_attr($key) . '" ' . checked($val, $key, false) . ' /><label for="' . esc_attr($id) . '">' . esc_html($option) . '</label></div>';
 	                    }
 	                    break;
 
 	                // Image Selectors
 	                case "images":
-	                    $name = $option_name . '[' . $value['id'] . ']';
-	                    foreach ($value['options'] as $key => $option) {
+	                    $name = $options_db_key . '[' . $current_option['id'] . ']';
+	                    foreach ($current_option['options'] as $key => $option) {
 	                        $selected = '';
 	                        if ($val != '' && ($val == $key)) {
 	                            $selected = ' of-radio-img-selected';
@@ -184,34 +183,34 @@ class GUI{
 	                            $option_value = $option;
 	                        }
 
-	                        $output .= '<input type="radio" id="' . esc_attr($value['id'] . '_' . $key) . '" class="of-radio-img-radio" value="' . esc_attr($key) . '" name="' . esc_attr($name) . '" ' . checked($val, $key, false) . ' />';
+	                        $output .= '<input type="radio" id="' . esc_attr($current_option['id'] . '_' . $key) . '" class="of-radio-img-radio" value="' . esc_attr($key) . '" name="' . esc_attr($name) . '" ' . checked($val, $key, false) . ' />';
 	                        $output .= '<div class="of-radio-img-label">' . esc_html($key) . '</div>';
 	                        $output .= '<div class="option-wrap">';
 	                        if(is_array($option) && isset($option['label'])){
 	                            $output .= '<span>'. esc_attr($option['label']) . '</span>';
 	                        }
-	                        $output .= '<img src="' . esc_url($option_value) . '" alt="' . $option_value . '" class="of-radio-img-img' . $selected . '" onclick="document.getElementById(\'' . esc_attr($value['id'] . '_' . $key) . '\').checked=true;" /></div>';
+	                        $output .= '<img src="' . esc_url($option_value) . '" alt="' . $option_value . '" class="of-radio-img-img' . $selected . '" onclick="document.getElementById(\'' . esc_attr($current_option['id'] . '_' . $key) . '\').checked=true;" /></div>';
 	                    }
 	                    break;
 
 	                // Checkbox
 	                case "checkbox":
 	                    $output .= '<div class="wb-onoffswitch">';
-	                    $output .= '<div class="check_wrapper"><input id="' . esc_attr($value['id']) . '" class="checkbox of-input wb-onoffswitch-checkbox" type="checkbox" name="' . esc_attr($option_name . '[' . $value['id'] . ']') . '" ' . checked($val, 1, false) . ' />';
-	                    $output .= '<label class="wb-onoffswitch-label" for="' . esc_attr($value['id']) . '"><span class="wb-onoffswitch-inner"></span><span class="wb-onoffswitch-switch"></span></label></div>';
+	                    $output .= '<div class="check_wrapper"><input id="' . esc_attr($current_option['id']) . '" class="checkbox of-input wb-onoffswitch-checkbox" type="checkbox" name="' . esc_attr($options_db_key . '[' . $current_option['id'] . ']') . '" ' . checked($val, 1, false) . ' />';
+	                    $output .= '<label class="wb-onoffswitch-label" for="' . esc_attr($current_option['id']) . '"><span class="wb-onoffswitch-inner"></span><span class="wb-onoffswitch-switch"></span></label></div>';
 	                    $output .= '</div>';
-	                    $output .= '<span class="explain">' . wp_kses($explain_value, $allowedtags) . '</span>';
+	                    $output .= '<span class="explain">' . $current_option_description . '</span>';
 	                    break;
 
 	                // Multicheck
 	                case "multicheck":
-	                    foreach ($value['options'] as $key => $option) {
+	                    foreach ($current_option['options'] as $key => $option) {
 	                        $checked = '';
 	                        $label = $option;
 	                        $option = preg_replace('/[^a-zA-Z0-9._\-]/', '', strtolower($key));
 
-	                        $id = $option_name . '-' . $value['id'] . '-' . $option;
-	                        $name = $option_name . '[' . $value['id'] . '][' . $option . ']';
+	                        $id = $options_db_key . '-' . $current_option['id'] . '-' . $option;
+	                        $name = $options_db_key . '[' . $current_option['id'] . '][' . $option . ']';
 
 	                        if (isset($val[$option])) {
 	                            $checked = checked($val[$option], 1, false);
@@ -224,18 +223,18 @@ class GUI{
 	                // Color picker
 	                case "color":
 	                    $default_color = '';
-	                    if (isset($value['std'])) {
-	                        if ($val != $value['std']) {
-	                            $default_color = ' data-default-color="' . $value['std'] . '" ';
+	                    if (isset($current_option['std'])) {
+	                        if ($val != $current_option['std']) {
+	                            $default_color = ' data-default-color="' . $current_option['std'] . '" ';
 	                        }
 	                    }
-	                    $output .= '<input name="' . esc_attr($option_name . '[' . $value['id'] . ']') . '" id="' . esc_attr($value['id']) . '" class="of-color"  type="text" value="' . esc_attr($val) . '"' . $default_color . ' />';
+	                    $output .= '<input name="' . esc_attr($options_db_key . '[' . $current_option['id'] . ']') . '" id="' . esc_attr($current_option['id']) . '" class="of-color"  type="text" value="' . esc_attr($val) . '"' . $default_color . ' />';
 
 	                    break;
 
 	                // Uploader
 	                case "upload":
-	                    $output .= MediaUploader::optionsframework_uploader($value['id'], $val, null);
+	                    $output .= MediaUploader::optionsframework_uploader($current_option['id'], $val, null);
 
 	                    break;
 
@@ -246,19 +245,19 @@ class GUI{
 
 	                    // Background Color
 	                    $default_color = '';
-	                    if (isset($value['std']['color'])) {
-	                        if ($val != $value['std']['color']) {
-	                            $default_color = ' data-default-color="' . $value['std']['color'] . '" ';
+	                    if (isset($current_option['std']['color'])) {
+	                        if ($val != $current_option['std']['color']) {
+	                            $default_color = ' data-default-color="' . $current_option['std']['color'] . '" ';
 	                        }
 	                    }
-	                    $output .= '<input name="' . esc_attr($option_name . '[' . $value['id'] . '][color]') . '" id="' . esc_attr($value['id'] . '_color') . '" class="of-color of-background-color"  type="text" value="' . esc_attr($background['color']) . '"' . $default_color . ' />';
+	                    $output .= '<input name="' . esc_attr($options_db_key . '[' . $current_option['id'] . '][color]') . '" id="' . esc_attr($current_option['id'] . '_color') . '" class="of-color of-background-color"  type="text" value="' . esc_attr($background['color']) . '"' . $default_color . ' />';
 
 	                    // Background Image
 	                    if (!isset($background['image'])) {
 	                        $background['image'] = '';
 	                    }
 
-	                    $output .= MediaUploader::optionsframework_uploader($value['id'], $background['image'], null, esc_attr($option_name . '[' . $value['id'] . '][image]'));
+	                    $output .= MediaUploader::optionsframework_uploader($current_option['id'], $background['image'], null, esc_attr($options_db_key . '[' . $current_option['id'] . '][image]'));
 
 	                    $class = 'of-background-properties';
 	                    if ('' == $background['image']) {
@@ -267,7 +266,7 @@ class GUI{
 	                    $output .= '<div class="' . esc_attr($class) . '">';
 
 	                    // Background Repeat
-	                    $output .= '<select class="of-background of-background-repeat" name="' . esc_attr($option_name . '[' . $value['id'] . '][repeat]') . '" id="' . esc_attr($value['id'] . '_repeat') . '">';
+	                    $output .= '<select class="of-background of-background-repeat" name="' . esc_attr($options_db_key . '[' . $current_option['id'] . '][repeat]') . '" id="' . esc_attr($current_option['id'] . '_repeat') . '">';
 	                    $repeats = of_recognized_background_repeat();
 
 	                    foreach ($repeats as $key => $repeat) {
@@ -276,7 +275,7 @@ class GUI{
 	                    $output .= '</select>';
 
 	                    // Background Position
-	                    $output .= '<select class="of-background of-background-position" name="' . esc_attr($option_name . '[' . $value['id'] . '][position]') . '" id="' . esc_attr($value['id'] . '_position') . '">';
+	                    $output .= '<select class="of-background of-background-position" name="' . esc_attr($options_db_key . '[' . $current_option['id'] . '][position]') . '" id="' . esc_attr($current_option['id'] . '_position') . '">';
 	                    $positions = of_recognized_background_position();
 
 	                    foreach ($positions as $key => $position) {
@@ -285,7 +284,7 @@ class GUI{
 	                    $output .= '</select>';
 
 	                    // Background Attachment
-	                    $output .= '<select class="of-background of-background-attachment" name="' . esc_attr($option_name . '[' . $value['id'] . '][attachment]') . '" id="' . esc_attr($value['id'] . '_attachment') . '">';
+	                    $output .= '<select class="of-background of-background-attachment" name="' . esc_attr($options_db_key . '[' . $current_option['id'] . '][attachment]') . '" id="' . esc_attr($current_option['id'] . '_attachment') . '">';
 	                    $attachments = of_recognized_background_attachment();
 
 	                    foreach ($attachments as $key => $attachment) {
@@ -298,20 +297,20 @@ class GUI{
 
 	                // Editor
 	                case 'editor':
-	                    $output .= '<div class="explain">' . wp_kses($explain_value, $allowedtags) . '</div>' . "\n";
+	                    $output .= '<div class="explain">' . $current_option_description . '</div>' . "\n";
 	                    echo $output;
-	                    $textarea_name = esc_attr($option_name . '[' . $value['id'] . ']');
+	                    $textarea_name = esc_attr($options_db_key . '[' . $current_option['id'] . ']');
 	                    $default_editor_settings = array(
 	                        'textarea_name' => $textarea_name,
 	                        'media_buttons' => false,
 	                        'tinymce' => array('plugins' => 'wordpress')
 	                    );
 	                    $editor_settings = array();
-	                    if (isset($value['settings'])) {
-	                        $editor_settings = $value['settings'];
+	                    if (isset($current_option['settings'])) {
+	                        $editor_settings = $current_option['settings'];
 	                    }
 	                    $editor_settings = array_merge($default_editor_settings, $editor_settings);
-	                    wp_editor($val, $value['id'], $editor_settings);
+	                    wp_editor($val, $current_option['id'], $editor_settings);
 	                    $output = '';
 	                    break;
 
@@ -319,22 +318,22 @@ class GUI{
 	                case "info":
 	                    $id = '';
 	                    $class = 'section';
-	                    if (isset($value['id'])) {
-	                        $id = 'id="' . esc_attr($value['id']) . '" ';
+	                    if (isset($current_option['id'])) {
+	                        $id = 'id="' . esc_attr($current_option['id']) . '" ';
 	                    }
-	                    if (isset($value['type'])) {
-	                        $class .= ' section-' . $value['type'];
+	                    if (isset($current_option['type'])) {
+	                        $class .= ' section-' . $current_option['type'];
 	                    }
-	                    if (isset($value['class'])) {
-	                        $class .= ' ' . $value['class'];
+	                    if (isset($current_option['class'])) {
+	                        $class .= ' ' . $current_option['class'];
 	                    }
 
 	                    $output .= '<div ' . $id . 'class="' . esc_attr($class) . '">' . "\n";
-	                    if (isset($value['name'])) {
-	                        $output .= '<h4 class="heading">' . esc_html($value['name']) . '</h4>' . "\n";
+	                    if (isset($current_option['name'])) {
+	                        $output .= '<h4 class="heading">' . esc_html($current_option['name']) . '</h4>' . "\n";
 	                    }
-	                    if ($value['desc']) {
-	                        $output .= apply_filters('of_sanitize_info', $value['desc']) . "\n";
+	                    if ($current_option['desc']) {
+	                        $output .= apply_filters('of_sanitize_info', $current_option['desc']) . "\n";
 	                    }
 	                    $output .= '</div>' . "\n";
 	                    break;
@@ -346,14 +345,14 @@ class GUI{
 	                        $output .= '</div>' . "\n";
 	                    }
 	                    $class = '';
-	                    $class = !empty($value['id']) ? $value['id'] : $value['name'];
+	                    $class = !empty($current_option['id']) ? $current_option['id'] : $current_option['name'];
 	                    $class = preg_replace('/[^a-zA-Z0-9._\-]/', '', strtolower($class));
 	                    $output .= '<div id="options-group-' . $counter . '" class="group ' . $class . '">';
-	                    $output .= '<h3>' . esc_html($value['name']) . '</h3>' . "\n";
+	                    $output .= '<h3>' . esc_html($current_option['name']) . '</h3>' . "\n";
 	                    break;
 	            }
 
-	            if (($value['type'] != "heading") && ($value['type'] != "info")) {
+	            if (($current_option['type'] != "heading") && ($current_option['type'] != "info")) {
 	                $output .= '</div>';
 	                $output .= '</div></div>' . "\n";
 	            }
