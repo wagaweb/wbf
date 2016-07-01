@@ -451,40 +451,51 @@ class Admin{
 		 * to be compatible with the theme customizer introduced in WordPress 3.4
 		 */
 
+		$current_options = Framework::get_options_values();
+
 		$clean = array();
 		$options = & Framework::get_registered_options();
-		foreach ( $options as $option ) {
-
-			if ( ! isset( $option['id'] ) ) {
+		foreach($options as $option){
+			
+			if(!isset($option['id'])){
 				continue;
 			}
 
-			if ( ! isset( $option['type'] ) ) {
+			if(!isset($option['type'])){
 				continue;
 			}
 
-			$id = preg_replace( '/[^a-zA-Z0-9._\-]/', '', strtolower( $option['id'] ) );
+			$id = Framework::sanitize_option_id($option['id']);
 
-			// Set checkbox to false if it wasn't sent in the $_POST
-			if ( 'checkbox' == $option['type'] && ! isset( $input[$id] ) ) {
-				$input[$id] = false;
-			}
-
-			// Set each item in the multicheck to false if it wasn't sent in the $_POST
-			if ( 'multicheck' == $option['type'] && ! isset( $input[$id] ) ) {
-				foreach ( $option['options'] as $key => $value ) {
-					$input[$id][$key] = false;
+			if(!array_key_exists($id,$input) && isset($current_options[$option['id']])){
+				//Here we are parsing an options not included among the saved ones. So we keep the already saved value.
+				$clean[$option['id']] = $current_options[$option['id']];
+			}else{
+				switch($option['type']){
+					case "checkbox":
+						if(!isset($input[$id])){
+							// Set checkbox to false if it wasn't sent in the $_POST
+							$input[$id] = false;
+						}
+						break;
+					case "multicheck":
+						if(!isset($input[$id])){
+							// Set each item in the multicheck to false if it wasn't sent in the $_POST
+							foreach($option['options'] as $key => $value ) {
+								$input[$id][$key] = false;
+							}
+						}
+						break;
 				}
-			}
-
-			// For a value to be submitted to database it must pass through a sanitization filter
-			if ( has_filter( 'of_sanitize_' . $option['type'] ) ) {
-				if(isset($input[$id])){ //[WABOOT MOD]
-					$clean[$id] = apply_filters( 'of_sanitize_' . $option['type'], $input[$id], $option );
+				// For a value to be submitted to database it must pass through a sanitization filter
+				if( has_filter( 'of_sanitize_' . $option['type'] ) ) {
+					if(isset($input[$id])){
+						$sanitized_value = apply_filters( 'of_sanitize_' . $option['type'], $input[$id], $option );
+						$clean[$id] = $sanitized_value;
+					}
 				}
+				//NOTE: if no sanitize filter is provided at this point, the option value is lost.
 			}
-
-			//NOTE: if no sanitize filter is provided at this point, the option value is lost.
 		}
 
 		// Hook to run after validation
