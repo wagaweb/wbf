@@ -5,6 +5,7 @@ Version 0.13.15 - 04/07/2016
 - Fix: Fix callback filtro "gform_notification" per la estensione Gravity Form
 - Fix: Ora al salvataggio delle theme options non vengono più resettate le opzioni dei componenti
 - Fix: Fix nomi degli stili nell'AssetsManager
+- Fix: Sistemati alcuni dettagli CSS
 - Vendor: inserito ACF 5.3.9.2
 - Tweak: Ora le immagini delle theme options e gli stili relativi sono esterni al framework
 
