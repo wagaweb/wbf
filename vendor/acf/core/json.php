@@ -69,13 +69,14 @@ class acf_json {
 	function delete_field_group( $field_group ) {
 		
 		// validate
-		if( !acf_get_setting('json') ) {
-		
-			return;
-			
-		}
+		if( !acf_get_setting('json') ) return;
 		
 		
+		// WP appends '__trashed' to end of 'key' (post_name) 
+		$field_group['key'] = str_replace('__trashed', '', $field_group['key']);
+		
+		
+		// delete
 		acf_delete_json_field_group( $field_group['key'] );
 		
 	}
@@ -194,25 +195,18 @@ function acf_write_json_field_group( $field_group ) {
 	
 	
 	// bail early if dir does not exist
-	if( !is_writable($path) ) {
-	
-		return false;
-		
-	}
+	if( !is_writable($path) ) return false;
 	
 	
-	// extract field group ID
+	// prepare for export
 	$id = acf_extract_var( $field_group, 'ID' );
+	$field_group = acf_prepare_field_group_for_export( $field_group );
 	
-	
+
 	// add modified time
 	$field_group['modified'] = get_post_modified_time('U', true, $id, true);
 	
 	
-	// prepare fields
-	$field_group['fields'] = acf_prepare_fields_for_export( $field_group['fields'] );
-		
-		
 	// write file
 	$f = fopen("{$path}/{$file}", 'w');
 	fwrite($f, acf_json_encode( $field_group ));

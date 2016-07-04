@@ -70,10 +70,7 @@ class acf_field_checkbox extends acf_field {
 		
 		
 		// hiden input
-		acf_hidden_input(array(
-			'type'	=> 'hidden',
-			'name'	=> $field['name'],
-		));
+		acf_hidden_input( array('name' => $field['name']) );
 		
 		
 		// vars
@@ -200,7 +197,7 @@ class acf_field_checkbox extends acf_field {
 		
 		// encode choices (convert from array)
 		$field['choices'] = acf_encode_choices($field['choices']);
-		$field['default_value'] = acf_encode_choices($field['default_value']);
+		$field['default_value'] = acf_encode_choices($field['default_value'], false);
 				
 		
 		// choices
@@ -271,7 +268,7 @@ class acf_field_checkbox extends acf_field {
 		
 		// decode choices (convert to array)
 		$field['choices'] = acf_decode_choices($field['choices']);
-		$field['default_value'] = acf_decode_choices($field['default_value']);
+		$field['default_value'] = acf_decode_choices($field['default_value'], true);
 		
 		
 		// return
@@ -316,6 +313,31 @@ class acf_field_checkbox extends acf_field {
 		
 		// return
 		return $value;
+	}
+	
+	
+	/*
+	*  translate_field
+	*
+	*  This function will translate field settings
+	*
+	*  @type	function
+	*  @date	8/03/2016
+	*  @since	5.3.2
+	*
+	*  @param	$field (array)
+	*  @return	$field
+	*/
+	
+	function translate_field( $field ) {
+		
+		// translate
+		$field['choices'] = acf_translate( $field['choices'] );
+		
+		
+		// return
+		return $field;
+		
 	}
 	
 }

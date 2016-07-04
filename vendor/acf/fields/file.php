@@ -46,7 +46,7 @@ class acf_field_file extends acf_field {
 			'select'		=> __("Select File",'acf'),
 			'edit'			=> __("Edit File",'acf'),
 			'update'		=> __("Update File",'acf'),
-			'uploadedTo'	=> __("uploaded to this post",'acf'),
+			'uploadedTo'	=> __("Uploaded to this post",'acf'),
 		);
 		
 		
@@ -91,9 +91,9 @@ class acf_field_file extends acf_field {
 		$o = array(
 			'icon'		=> '',
 			'title'		=> '',
-			'size'		=> '',
 			'url'		=> '',
-			'name'		=> '',
+			'filesize'	=> '',
+			'filename'	=> '',
 		);
 		
 		$div = array(
@@ -104,25 +104,31 @@ class acf_field_file extends acf_field {
 		);
 		
 		
-		// has value
-		if( $field['value'] && is_numeric($field['value']) ) {
+		// has value?
+		if( $field['value'] ) {
 			
 			$file = get_post( $field['value'] );
 			
 			if( $file ) {
 				
-				$div['class'] .= ' has-value';
-				
 				$o['icon'] = wp_mime_type_icon( $file->ID );
 				$o['title']	= $file->post_title;
-				$o['size'] = @size_format(filesize( get_attached_file( $file->ID ) ));
+				$o['filesize'] = @size_format(filesize( get_attached_file( $file->ID ) ));
 				$o['url'] = wp_get_attachment_url( $file->ID );
 				
 				$explode = explode('/', $o['url']);
-				$o['name'] = end( $explode );	
+				$o['filename'] = end( $explode );	
 							
 			}
 			
+			
+			// url exists
+			if( $o['url'] ) {
+				
+				$div['class'] .= ' has-value';
+			
+			}
+						
 		}
 				
 ?>
@@ -139,19 +145,19 @@ class acf_field_file extends acf_field {
 				<strong data-name="title"><?php echo $o['title']; ?></strong>
 			</p>
 			<p>
-				<strong><?php _e('File Name', 'acf'); ?>:</strong>
-				<a data-name="name" href="<?php echo $o['url']; ?>" target="_blank"><?php echo $o['name']; ?></a>
+				<strong><?php _e('File name', 'acf'); ?>:</strong>
+				<a data-name="filename" href="<?php echo $o['url']; ?>" target="_blank"><?php echo $o['filename']; ?></a>
 			</p>
 			<p>
-				<strong><?php _e('File Size', 'acf'); ?>:</strong>
-				<span data-name="size"><?php echo $o['size']; ?></span>
+				<strong><?php _e('File size', 'acf'); ?>:</strong>
+				<span data-name="filesize"><?php echo $o['filesize']; ?></span>
 			</p>
 			
 			<ul class="acf-hl acf-soh-target">
 				<?php if( $uploader != 'basic' ): ?>
-					<li><a class="acf-icon dark" data-name="edit" href="#"><i class="acf-sprite-edit"></i></a></li>
+					<li><a class="acf-icon -pencil dark" data-name="edit" href="#"></a></li>
 				<?php endif; ?>
-				<li><a class="acf-icon dark" data-name="remove" href="#"><i class="acf-sprite-delete"></i></a></li>
+				<li><a class="acf-icon -cancel dark" data-name="remove" href="#"></a></li>
 			</ul>
 		</div>
 	</div>
@@ -166,7 +172,7 @@ class acf_field_file extends acf_field {
 			
 		<?php else: ?>
 			
-			<p style="margin:0;"><?php _e('No File selected','acf'); ?> <a data-name="add" class="acf-button" href="#"><?php _e('Add File','acf'); ?></a></p>
+			<p style="margin:0;"><?php _e('No file selected','acf'); ?> <a data-name="add" class="acf-button button" href="#"><?php _e('Add File','acf'); ?></a></p>
 			
 		<?php endif; ?>
 		
@@ -290,11 +296,11 @@ class acf_field_file extends acf_field {
 	function format_value( $value, $post_id, $field ) {
 		
 		// bail early if no value
-		if( empty($value) ) {
+		if( empty($value) ) return false;
 		
-			return $value;
-			
-		}
+		
+		// bail early if not numeric (error message)
+		if( !is_numeric($value) ) return false;
 		
 		
 		// convert to int
@@ -336,7 +342,7 @@ class acf_field_file extends acf_field {
 	    return($vars);
 	    
 	}
-	   	
+	
 	
 	/*
 	*  update_value()
@@ -356,26 +362,23 @@ class acf_field_file extends acf_field {
 	
 	function update_value( $value, $post_id, $field ) {
 		
-		// array?
-		if( is_array($value) && isset($value['ID']) ) {
+		// numeric
+		if( is_numeric($value) ) return $value;
 		
-			return $value['ID'];	
-			
-		}
+		
+		// array?
+		if( is_array($value) && isset($value['ID']) ) return $value['ID'];
 		
 		
 		// object?
-		if( is_object($value) && isset($value->ID) ) {
-		
-			return $value->ID;
-			
-		}
+		if( is_object($value) && isset($value->ID) ) return $value->ID;
 		
 		
 		// return
 		return $value;
+		
 	}
-	
+		
 	
 	/*
 	*  wp_prepare_attachment_for_js

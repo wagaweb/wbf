@@ -83,6 +83,19 @@ class acf_field_oembed extends acf_field {
 		$embed = @wp_oembed_get( $url, $res );
 		
 		
+		// try shortcode
+		if( !$embed ) {
+			
+			 // global
+			global $wp_embed;
+			
+			
+			// get emebed
+			$embed = $wp_embed->shortcode($res, $url);
+		
+		}
+				
+		
 		// return
 		return $embed;
 	}
@@ -199,9 +212,7 @@ class acf_field_oembed extends acf_field {
 			<input data-name="search-input" type="text" placeholder="<?php _e("Enter URL", 'acf'); ?>" autocomplete="off" />
 		</div>
 		
-		<a data-name="clear-button" href="#" class="acf-icon light acf-soh-target">
-			<i class="acf-sprite-delete"></i>
-		</a>
+		<a data-name="clear-button" href="#" class="acf-icon -cancel grey acf-soh-target"></a>
 		
 	</div>
 	<div class="canvas">
@@ -220,7 +231,7 @@ class acf_field_oembed extends acf_field {
 			<?php endif; ?>
 		</div>
 		
-		<i class="acf-sprite-media hide-if-value"></i>
+		<i class="acf-icon -picture hide-if-value"></i>
 		
 	</div>
 	

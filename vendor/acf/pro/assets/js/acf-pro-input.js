@@ -11,7 +11,7 @@
 			'get_fields' : 'get_fields',
 		},
 		
-		get_fields : function( $fields ){
+		get_fields: function( $fields ){
 			
 			// remove clone fields
 			$fields = $fields.not('.acf-clone .acf-field');
@@ -36,87 +36,100 @@
 		*  @return	n/a
 		*/
 		
-		refresh: function(){
+		refresh: function( $el ){
 			
 			// reference
 			var self = this;
 			
 			
-			// loop over all table layouts
-			$('.acf-input-table.table-layout').each(function(){
-				
-				// vars
-				var $table = $(this);
-				
-				
-				// loop over th
-				$table.find('> thead th.acf-th').each(function(){
-					
-					// vars
-					var $th = $(this),
-						$td = $table.find('> tbody > tr > td[data-key="' + $th.attr('data-key') + '"]');
-					
-					
-					// clear class
-					$td.removeClass('appear-empty');
-					$th.removeClass('hidden-by-conditional-logic');
-					
-					
-					// remove clone if needed
-					if( $td.length > 1 ) {
-						
-						$td = $td.not(':last');
-						
-					}
-					
-					
-					// add classes
-					if( $td.not('.hidden-by-conditional-logic').length == 0 ) {
-						
-						$th.addClass('hidden-by-conditional-logic');
-						
-					} else {
-						
-						$td.addClass('appear-empty');
-						
-					}
-					
-				});
-				
-				
-				// render table widths
-				self.render_table( $table );
-				
-			});
+			// defaults
+			$el = $el || false;
 			
-		},
-		
-		render_table : function( $table ){
 			
-			//console.log( 'render_table %o', $table);
-			// bail early if table is row layout
-			if( $table.hasClass('row-layout') ) {
-			
+			// if is row
+			if( $el && $el.is('tr') ) {
+				
+				self.render_table( $el.closest('table') );
+				
 				return;
 				
 			}
 			
 			
+			// find and rener all tables
+			$('.acf-table', $el).each(function(){
+				
+				self.render_table( $(this) );
+				
+			});
+			
+		},
+		
+		render_table: function( $table ){
+			
 			// vars
-			var $th = $table.find('> thead > tr > th'),
+			var $ths = $table.find('> thead th.acf-th'),
+				colspan = 1,
 				available_width = 100;
 			
 			
+			// bail early if no $ths
+			if( !$ths.exists() ) {
+				
+				return;
+				
+			}
+			
+			
+			// render th/td visibility
+			$ths.each(function(){
+				
+				// vars
+				var $th = $(this),
+					key = $th.attr('data-key'),
+					$td = $table.find('td[data-key="' + key + '"]');
+				
+				
+				// clear class
+				$td.removeClass('appear-empty');
+				$th.removeClass('hidden-by-conditional-logic');
+				
+				
+				// no td
+				if( !$td.exists() ) {
+					
+					// do nothing
+				
+				// if all td are hidden
+				} else if( $td.not('.hidden-by-conditional-logic').length == 0 ) {
+					
+					$th.addClass('hidden-by-conditional-logic');
+				
+				// if 1 or more td are visible
+				} else {
+					
+					$td.filter('.hidden-by-conditional-logic').addClass('appear-empty');
+					
+				}
+				
+			});
+			
+			
+			
 			// clear widths
-			$th.css('width', 'auto');
+			$ths.css('width', 'auto');
 			
 			
-			// update $th
-			$th = $th.not('.order, .remove, .hidden-by-conditional-logic');
+			// update $ths
+			$ths = $ths.not('.hidden-by-conditional-logic');
+			
+			
+			// set colspan
+			colspan = $ths.length;
 			
 			
 			// set custom widths first
-			$th.filter('[data-width]').each(function(){
+			$ths.filter('[data-width]').each(function(){
 				
 				// vars
 				var width = parseInt( $(this).attr('data-width') );
@@ -132,15 +145,15 @@
 			});
 			
 			
-			// update $th
-			$th = $th.not('[data-width]');
+			// update $ths
+			$ths = $ths.not('[data-width]');
 			
 			
 			// set custom widths first
-			$th.each(function(){
+			$ths.each(function(){
 				
 				// cal width
-				var width = available_width / $th.length;
+				var width = available_width / $ths.length;
 				
 				
 				// set width
@@ -148,7 +161,13 @@
 				
 			});
 			
-		}
+			
+			// update colspan
+			$table.find('.acf-row .acf-field.-collapsed-target').removeAttr('colspan');
+			$table.find('.acf-row.-collapsed .acf-field.-collapsed-target').attr('colspan', colspan);
+			
+		},
+		
 		
 	});
 
@@ -161,6 +180,7 @@
 		type: 'repeater',
 		$el: null,
 		$input: null,
+		$table: null,
 		$tbody: null,
 		$clone: null,
 		
@@ -171,94 +191,33 @@
 		},
 		
 		events: {
-			'click .acf-repeater-add-row': 		'add',
-			'click .acf-repeater-remove-row': 	'remove',
+			'click a[data-event="add-row"]': 		'_add',
+			'click a[data-event="remove-row"]': 	'_remove',
+			'click a[data-event="collapse-row"]': 	'_collapse',
+			'mouseenter td.order': 					'_mouseenter'
 		},
 		
 		focus: function(){
 			
+			// vars
 			this.$el = this.$field.find('.acf-repeater:first');
 			this.$input = this.$field.find('input:first');
-			this.$tbody = this.$el.find('tbody:first');
+			this.$table = this.$field.find('table:first');
+			this.$tbody = this.$table.children('tbody');
 			this.$clone = this.$tbody.children('tr.acf-clone');
 			
+			
+			// get options
 			this.o = acf.get_data( this.$el );
+			
+			
+			// min / max
+			this.o.min = this.o.min || 0;
+			this.o.max = this.o.max || 0;
 			
 		},
 		
 		initialize: function(){
-			
-			// CSS fix
-			this.$tbody.on('mouseenter', 'tr.acf-row', function( e ){
-				
-				// vars
-				var $tr = $(this),
-					$td = $tr.children('.remove'),
-					$a = $td.find('.acf-repeater-add-row'),
-					margin = ( $td.height() / 2 ) + 9; // 9 = padding + border
-				
-				
-				// css
-				$a.css('margin-top', '-' + margin + 'px' );
-				
-			});
-			
-			
-			// sortable
-			if( this.o.max != 1 ) {
-				
-				// reference
-				var self = this,
-					$tbody = this.$tbody,
-					$field = this.$field;
-					
-				
-				$tbody.one('mouseenter', 'td.order', function( e ){
-					
-					$tbody.unbind('sortable').sortable({
-					
-						items					: '> tr',
-						handle					: '> td.order',
-						forceHelperSize			: true,
-						forcePlaceholderSize	: true,
-						scroll					: true,
-						
-						start: function(event, ui) {
-							
-							// focus
-							self.doFocus($field);
-							
-							acf.do_action('sortstart', ui.item, ui.placeholder);
-							
-			   			},
-			   			
-			   			stop: function(event, ui) {
-							
-							// render
-							self.render();
-							
-							acf.do_action('sortstop', ui.item, ui.placeholder);
-							
-			   			},
-			   			
-			   			update: function(event, ui) {
-				   			
-				   			// trigger change
-							self.$input.trigger('change');
-							
-				   		}
-			   			
-					});
-				
-				});
-				
-			}
-
-			
-			// set column widths
-			// no longer needed due to refresh action in acf.pro model
-			//acf.pro.render_table( this.$el.children('table') );
-			
 			
 			// disable clone inputs
 			this.$clone.find('input, textarea, select').attr('disabled', 'disabled');
@@ -290,7 +249,7 @@
 			// update order numbers
 			this.$tbody.children().each(function(i){
 				
-				$(this).children('td.order').html( i+1 );
+				$(this).find('> td.order > span').html( i+1 );
 				
 			});
 			
@@ -298,11 +257,11 @@
 			// empty?
 			if( this.count() == 0 ) {
 			
-				this.$el.addClass('empty');
+				this.$el.addClass('-empty');
 				
 			} else {
 			
-				this.$el.removeClass('empty');
+				this.$el.removeClass('-empty');
 				
 			}
 			
@@ -310,28 +269,20 @@
 			// row limit reached
 			if( this.o.max > 0 && this.count() >= this.o.max ) {
 				
-				this.$el.addClass('disabled');
-				this.$el.find('> .acf-hl .acf-button').addClass('disabled');
+				this.$el.find('> .acf-actions .button').addClass('disabled');
 				
 			} else {
 				
-				this.$el.removeClass('disabled');
-				this.$el.find('> .acf-hl .acf-button').removeClass('disabled');
+				this.$el.find('> .acf-actions .button').removeClass('disabled');
 				
 			}
 			
 		},
 		
-		add: function( e ){
+		add: function( $tr ){
 			
-			// find $before
-			var $before	= this.$clone;
-			
-			if( e && e.$el.is('.acf-icon') ) {
-			
-				$before	= e.$el.closest('.acf-row');
-				
-			}
+			// defaults
+			$tr = $tr || this.$clone;
 			
 			
 			// validate
@@ -342,31 +293,29 @@
 				
 			}
 			
-		
-			// create and add the new field
-			var new_id = acf.get_uniqid(),
-				html = this.$clone.outerHTML();
+			
+			// reference
+			var $field = this.$field;
 				
 				
-			// replace acfcloneindex
-			var html = html.replace(/(="[\w-\[\]]+?)(acfcloneindex)/g, '$1' + new_id),
-				$html = $( html );
+			// duplicate
+			$el = acf.duplicate( this.$clone );
 			
-			
+						
 			// remove clone class
-			$html.removeClass('acf-clone');
+			$el.removeClass('acf-clone');
 			
 			
 			// enable inputs (ignore inputs disabled for life)
-			$html.find('input, textarea, select').not('.acf-disabled').removeAttr('disabled');
+			$el.find('input, textarea, select').not('.acf-disabled').removeAttr('disabled');
 			
 			
-			// add row
-			$before.before( $html );
+			// move row
+			$tr.before( $el );
 			
 			
-			// trigger mouseenter on parent repeater to work out css margin on add-row button
-			this.$field.parents('.acf-row').trigger('mouseenter');
+			// focus (may have added sub repeater)
+			this.doFocus($field);
 			
 			
 			// update order
@@ -377,25 +326,20 @@
 			acf.validation.remove_error( this.$field );
 			
 			
-			// setup fields
-			acf.do_action('append', $html);
+			// sync collapsed order
+			this.sync();
 			
 			
 			// return
-			return $html;
+			return $el;
+			
 		},
 		
-		remove: function( e ){
+		remove: function( $tr ){
 			
 			// reference
-			var self = this,
-				$field = this.$field;
-			
-			
-			// vars
-			var $tr = e.$el.closest('.acf-row'),
-				$table = $tr.closest('table');
-			
+			var self = this;
+				
 			
 			// validate
 			if( this.count() <= this.o.min ) {
@@ -417,24 +361,161 @@
 			
 			
 				// render
-				self.doFocus($field).render();
+				self.render();
 				
 				
-				// trigger mouseenter on parent repeater to work out css margin on add-row button
-				$field.closest('.acf-row').trigger('mouseenter');
+				// sync collapsed order
+				self.sync();
 				
 				
-				// trigger conditional logic render
-				// when removing a row, there may not be a need for some appear-empty cells
-				if( $table.hasClass('table-layout') ) {
-					
-					acf.conditional_logic.render( $table );
-					
-				}
-				
+				// refersh field (hide/show columns)
+				acf.do_action('refresh', self.$field);
 				
 			});
 			
+		},
+		
+		sync: function(){
+			
+			// vars
+			var name = 'collapsed_' + this.$field.data('key'),
+				collapsed = [];
+			
+			
+			// populate collapsed value
+			this.$tbody.children().each(function( i ){
+				
+				if( $(this).hasClass('-collapsed') ) {
+				
+					collapsed.push( i );
+					
+				}
+				
+			});
+			
+			
+			// update
+			acf.update_user_setting( name, collapsed.join(',') );	
+			
+		},
+		
+		
+		/*
+		*  events
+		*
+		*  these functions are fired for this fields events
+		*
+		*  @type	function
+		*  @date	17/09/2015
+		*  @since	5.2.3
+		*
+		*  @param	e
+		*  @return	n/a
+		*/
+		
+		_mouseenter: function( e ){ //console.log('_mouseenter');
+			
+			// bail early if already sortable
+			if( this.$tbody.hasClass('ui-sortable') ) return;
+			
+			
+			// bail early if max 1 row
+			if( this.o.max == 1 ) return;
+			
+			
+			// reference
+			var self = this;
+			
+			
+			// add sortable
+			this.$tbody.sortable({
+				items: '> tr',
+				handle: '> td.order',
+				forceHelperSize: true,
+				forcePlaceholderSize: true,
+				scroll: true,
+				start: function(event, ui) {
+					
+					acf.do_action('sortstart', ui.item, ui.placeholder);
+					
+	   			},
+	   			stop: function(event, ui) {
+					
+					// render
+					self.render();
+					
+					acf.do_action('sortstop', ui.item, ui.placeholder);
+					
+	   			},
+	   			update: function(event, ui) {
+		   			
+		   			// trigger change
+					self.$input.trigger('change');
+					
+		   		}
+	   			
+			});
+			
+		},
+		
+		_add: function( e ){ //console.log('_add');
+			
+			// vars
+			$row = false;
+			
+			
+			// row add
+			if( e.$el.hasClass('acf-icon') ) {
+			
+				$row = e.$el.closest('.acf-row');
+				
+			}
+			
+			
+			// add
+			this.add( $row );
+				
+		},
+		
+		_remove: function( e ){ //console.log('_remove');
+			
+			this.remove( e.$el.closest('.acf-row') );
+			
+		},
+		
+		_collapse: function( e ){ //console.log('_collapse');
+			
+			// vars
+			var $tr = e.$el.closest('.acf-row');
+			
+			
+			// reference
+			var $field = this.$field;
+			
+			
+			// open row
+			if( $tr.hasClass('-collapsed') ) {
+				
+				$tr.removeClass('-collapsed');
+				
+				acf.do_action('show', $tr, 'collapse');
+				
+			} else {
+				
+				$tr.addClass('-collapsed');
+				
+				acf.do_action('hide', $tr, 'collapse');
+				
+			}
+			
+			
+			// sync
+			this.set('$field', $field).sync();
+			
+			
+			// refersh field (hide/show columns)
+			acf.do_action('refresh', this.$field);
+						
 		}
 		
 	});	
@@ -458,17 +539,20 @@
 		},
 		
 		events: {
-			'click .acf-fc-remove': 		'remove',
-			'click .acf-fc-layout-handle':	'toggle',
-			'click .acf-fc-popup li a':		'add',
-			'click .acf-fc-add': 			'open_popup',
-			'blur .acf-fc-popup .focus':	'close_popup'
+			'click [data-event="add-layout"]': 			'_open',
+			'click [data-event="remove-layout"]': 		'_remove',
+			'click [data-event="collapse-layout"]':		'_collapse',
+			'click .acf-fc-layout-handle':				'_collapse',
+			'click .acf-fc-popup a':					'_add',
+			'blur .acf-fc-popup .focus':				'_close',
+			'mouseenter .acf-fc-layout-handle': 		'_mouseenter'
 		},
 		
 		focus: function(){
 			
+			// vars
 			this.$el = this.$field.find('.acf-flexible-content:first');
-			this.$input = this.$field.find('input:first');
+			this.$input = this.$el.siblings('input');
 			this.$values = this.$el.children('.values');
 			this.$clones = this.$el.children('.clones');
 			
@@ -483,64 +567,13 @@
 			
 		},
 		
-		count : function(){
+		count: function(){
 			
 			return this.$values.children('.layout').length;
 			
 		},
 		
 		initialize: function(){
-			
-			// sortable
-			if( this.o.max != 1 ) {
-				
-				// reference
-				var self = this,
-					$values = this.$values,
-					$field = this.$field;
-					
-				
-				$values.one('mouseenter', '.acf-fc-layout-handle', function( e ){
-					
-					$values.unbind('sortable').sortable({
-					
-						items					: '> .layout',
-						handle					: '> .acf-fc-layout-handle',
-						forceHelperSize			: true,
-						forcePlaceholderSize	: true,
-						scroll					: true,
-						
-						start: function(event, ui) {
-							
-							// focus
-							self.doFocus($field);
-							
-							acf.do_action('sortstart', ui.item, ui.placeholder);
-							
-			   			},
-			   			
-			   			stop: function(event, ui) {
-							
-							// render
-							self.render();
-							
-							acf.do_action('sortstop', ui.item, ui.placeholder);
-							
-			   			},
-			   			
-			   			update: function(event, ui) {
-				   			
-				   			// trigger change
-							self.$input.trigger('change');
-							
-				   		}
-				   		
-					});
-				
-				});
-				
-			}
-			
 			
 			// disable clone inputs
 			this.$clones.find('input, textarea, select').attr('disabled', 'disabled');
@@ -563,10 +596,14 @@
 		
 		render: function(){
 			
+			// vars
+			var self = this;
+			
+			
 			// update order numbers
 			this.$values.children('.layout').each(function( i ){
 			
-				$(this).find('> .acf-fc-layout-handle .fc-layout-order').html( i+1 );
+				$(this).find('> .acf-fc-layout-handle .acf-fc-layout-order').html( i+1 );
 				
 			});
 			
@@ -586,19 +623,32 @@
 			// row limit reached
 			if( this.o.max > 0 && this.count() >= this.o.max ) {
 				
-				this.$el.addClass('disabled');
-				this.$el.find('> .acf-hl .acf-button').addClass('disabled');
+				this.$el.find('> .acf-actions .button').addClass('disabled');
 				
 			} else {
 				
-				this.$el.removeClass('disabled');
-				this.$el.find('> .acf-hl .acf-button').removeClass('disabled');
+				this.$el.find('> .acf-actions .button').removeClass('disabled');
 				
 			}
 			
 		},
+		
+		render_layout: function( $layout ){
 			
-		validate_add : function( layout ){
+			// update order number
+			
+			
+			
+			// update text
+/*
+			var data = acf.serialize_form($layout);
+			
+			console.log( data );
+*/
+			
+		},
+			
+		validate_add: function( layout ){
 			
 			// vadiate max
 			if( this.o.max > 0 && this.count() >= this.o.max ) {
@@ -656,7 +706,7 @@
 			
 		},
 		
-		validate_remove : function( layout ){
+		validate_remove: function( layout ){
 			
 			// vadiate min
 			if( this.o.min > 0 && this.count() <= this.o.min ) {
@@ -709,7 +759,152 @@
 			
 		},
 		
-		open_popup : function( e ){
+		sync: function(){
+			
+			// vars
+			var name = 'collapsed_' + this.$field.data('key'),
+				collapsed = [];
+			
+			
+			// populate collapsed value
+			this.$values.children('.layout').each(function( i ){
+				
+				if( $(this).hasClass('-collapsed') ) {
+				
+					collapsed.push( i );
+					
+				}
+				
+			});
+			
+			
+			// update
+			acf.update_user_setting( name, collapsed.join(',') );
+			
+		},
+		
+		add: function( layout, $before ){
+			
+			// defaults
+			$before = $before || false;
+			
+					
+			// bail early if validation fails
+			if( !this.validate_add(layout) ) {
+			
+				return false;
+				
+			}
+			
+			
+			// reference
+			var $field = this.$field;
+			
+			
+			// vars
+			var $clone = this.$clones.children('.layout[data-layout="' + layout + '"]');
+			
+			
+			// duplicate
+			$el = acf.duplicate( $clone );
+			
+			
+			// enable inputs (ignore inputs disabled for life)
+			$el.find('input, textarea, select').not('.acf-disabled').removeAttr('disabled');
+			
+				
+			// hide no values message
+			this.$el.children('.no-value-message').hide();
+			
+			
+			// add row
+			if( $before ) {
+				
+				 $before.before( $el );
+				 
+			} else {
+				
+				this.$values.append( $el );
+				
+			}
+			
+			
+			// focus (may have added sub flexible content)
+			this.doFocus($field);
+			
+			
+			// update order
+			this.render();
+			
+			
+			// validation
+			acf.validation.remove_error( this.$field );
+			
+			
+			// sync collapsed order
+			this.sync();
+			
+		},
+		
+		
+		/*
+		*  events
+		*
+		*  these functions are fired for this fields events
+		*
+		*  @type	function
+		*  @date	17/09/2015
+		*  @since	5.2.3
+		*
+		*  @param	e
+		*  @return	n/a
+		*/
+		
+		_mouseenter: function( e ){ //console.log('_mouseenter');
+			
+			// bail early if already sortable
+			if( this.$values.hasClass('ui-sortable') ) return;
+			
+			
+			// bail early if max 1 row
+			if( this.o.max == 1 ) return;
+			
+			
+			// reference
+			var self = this;
+			
+			
+			// sortable
+			this.$values.sortable({
+				items: '> .layout',
+				handle: '> .acf-fc-layout-handle',
+				forceHelperSize: true,
+				forcePlaceholderSize: true,
+				scroll: true,
+				start: function(event, ui) {
+					
+					acf.do_action('sortstart', ui.item, ui.placeholder);
+					
+	   			},
+	   			stop: function(event, ui) {
+					
+					// render
+					self.render();
+					
+					acf.do_action('sortstop', ui.item, ui.placeholder);
+					
+	   			},
+	   			update: function(event, ui) {
+		   			
+		   			// trigger change
+					self.$input.trigger('change');
+					
+		   		}
+			});
+			
+		},
+		
+		_open: function( e ){ //console.log('_open');
 			
 			// reference
 			var $values = this.$values;
@@ -792,10 +987,9 @@
 			
 			
 			// within layout?
-			if( e.$el.attr('data-before') ) {
-			
-				$popup.addClass('within-layout');
-				$popup.closest('.layout').addClass('popup-open');
+			if( e.$el.closest('.acf-fc-layout-controlls').exists() ) {
+				
+				$popup.closest('.layout').addClass('-open');
 				
 			}
 			
@@ -825,19 +1019,17 @@
 			
 		},
 		
-		close_popup: function( e ){
+		_close: function( e ){ //console.log('_close');
 			
-			var $popup = e.$el.parent();
+			var $popup = e.$el.parent(),
+				$layout = $popup.closest('.layout');
 			
 			
 			// hide controlls?
-			if( $popup.closest('.layout').exists() ) {
-			
-				$popup.closest('.layout').removeClass('popup-open');
-				
-			}
+			$layout.removeClass('-open');
 			
 			
+			// remove popup
 			setTimeout(function(){
 				
 				$popup.remove();
@@ -846,69 +1038,28 @@
 			
 		},
 		
-		add : function( e ){
+		_add: function( e ){ //console.log('_add');
 						
 			// vars
 			var $popup = e.$el.closest('.acf-fc-popup'),
-				layout = e.$el.attr('data-layout');
-			
-						
-			// bail early if validation fails
-			if( !this.validate_add(layout) ) {
-			
-				return;
-				
-			}
-			
-			
-			// create and add the new layout
-			var new_id = acf.get_uniqid(),
-				html = this.$clones.children('.layout[data-layout="' + layout + '"]').outerHTML();
-				
-				
-			// replace acfcloneindex
-			var html = html.replace(/(="[\w-\[\]]+?)(acfcloneindex)/g, '$1' + new_id),
-				$html = $( html );
-			
-			
-			// enable inputs (ignore inputs disabled for life)
-			$html.find('input, textarea, select').not('.acf-disabled').removeAttr('disabled');
-			
-							
-			// hide no values message
-			this.$el.children('.no-value-message').hide();
-			
-			
-			// remove class
-			$html.removeClass('acf-clone');
-			
-			
-			// add row
-			this.$values.append( $html ); 
+				layout = e.$el.attr('data-layout'),
+				$before = false;
 			
 			
 			// move row
-			if( $popup.hasClass('within-layout') ) {
+			if( $popup.closest('.acf-fc-layout-controlls').exists() ) {
 			
-				$popup.closest('.layout').before( $html );
+				$before = $popup.closest('.layout');
 			
 			}
-						
-			
-			// setup fields
-			acf.do_action('append', $html);
 			
 			
-			// update order
-			this.render();
-			
-			
-			// validation
-			acf.validation.remove_error( this.$field );
+			// add row
+			this.add( layout, $before );
 			
 		},
 		
-		remove: function( e ){
+		_remove: function( e ){ //console.log('_remove');
 			
 			// reference
 			var self = this;
@@ -944,9 +1095,13 @@
 			// remove
 			acf.remove_el( $layout, function(){
 				
+				// update order
+				self.render();
+			
+			
 				// trigger change to allow attachment save
 				self.$input.trigger('change');
-			
+				
 			
 				if( end_height > 0 ) {
 				
@@ -954,56 +1109,74 @@
 					
 				}
 				
+				
+				// sync collapsed order
+				self.sync();
+				
 			}, end_height);
 			
 		},
 
-		toggle : function( e ){
+		_collapse: function( e ){ //console.log('_collapse');
 			
 			// vars
 			var $layout	= e.$el.closest('.layout');
 			
 			
-			if( $layout.attr('data-toggle') == 'closed' ) {
+			// open
+			if( $layout.hasClass('-collapsed') ) {
 			
-				$layout.attr('data-toggle', 'open');
-				$layout.children('.acf-input-table').show();
+				$layout.removeClass('-collapsed');
 				
-				// refresh layout
 				acf.do_action('refresh', $layout);
-				
+			
+			// close
 			} else {
 				
-				$layout.attr('data-toggle', 'closed');
-				$layout.children('.acf-input-table').hide();
+				$layout.addClass('-collapsed');
 				
 			}
 			
 			
-			// sync local storage (collapsed)
+			// sync collapsed order
 			this.sync();
 			
-		},
-		
-		sync : function(){
 			
 			// vars
-			var name = 'acf_collapsed_' + acf.get_data(this.$field, 'key'),
-				collapsed = [];
+			var data = acf.serialize( $layout );
 			
-			this.$values.children('.layout').each(function( i ){
-				
-				if( $(this).attr('data-toggle') == 'closed' ) {
-				
-					collapsed.push( i );
-					
-				}
-				
+			
+			// append
+			$.extend(data, {
+				action: 	'acf/fields/flexible_content/layout_title',
+				field_key: 	this.$field.data('key'),
+				post_id: 	acf.get('post_id'),
+				i: 			$layout.index(),
+				layout:		$layout.data('layout'),
 			});
 			
-			acf.update_cookie( name, collapsed.join('|') );	
+			
+			// ajax get title HTML
+			$.ajax({
+		    	url			: acf.get('ajaxurl'),
+				dataType	: 'html',
+				type		: 'post',
+				data		: data,
+				success: function( html ){
+					
+					// bail early if no html
+					if( !html ) return;
+					
+					
+					// update html
+					$layout.find('> .acf-fc-layout-handle').html( html );
+					
+				}
+			});
+
 			
 		}
+		
 	});	
 	
 
@@ -1015,6 +1188,10 @@
 		
 		type: 'gallery',
 		$el: null,
+		$main: null,
+		$side: null,
+		$attachments: null,
+		//$attachment: null,
 		
 		actions: {
 			'ready':	'initialize',
@@ -1024,23 +1201,40 @@
 		},
 		
 		events: {
-			'click .acf-gallery-attachment': 		'select_attachment',
-			'click .remove-attachment':				'remove_attachment',
-			'click .edit-attachment':				'edit_attachment',
-			'click .update-attachment': 			'update_attachment',
-			'click .add-attachment':				'add_attachment',
-			'click .close-sidebar':					'close_sidebar',
-			'change .acf-gallery-side input':		'update_attachment',
-			'change .acf-gallery-side textarea':	'update_attachment',
-			'change .acf-gallery-side select':		'update_attachment',
-			'change .bulk-actions':					'sort'
+			'click .acf-gallery-attachment': 		'_select',
+			'click .acf-gallery-add':				'_add',
+			'click .acf-gallery-remove':			'_remove',
+			'click .acf-gallery-close':				'_close',
+			'change .acf-gallery-sort':				'_sort',
+			'click .acf-gallery-edit':				'_edit',
+			'click .acf-gallery-update': 			'_update',
+			
+			'change .acf-gallery-side input':		'_update',
+			'change .acf-gallery-side textarea':	'_update',
+			'change .acf-gallery-side select':		'_update'
 		},
+		
+		
+		/*
+		*  focus
+		*
+		*  This function will setup variables when focused on a field
+		*
+		*  @type	function
+		*  @date	12/04/2016
+		*  @since	5.3.8
+		*
+		*  @param	n/a
+		*  @return	n/a
+		*/
 		
 		focus: function(){
 			
-			this.$el = this.$field.find('.acf-gallery').first();
-			this.$values = this.$el.children('.values');
-			this.$clones = this.$el.children('.clones');
+			// el
+			this.$el = this.$field.find('.acf-gallery:first');
+			this.$main = this.$el.children('.acf-gallery-main');
+			this.$side = this.$el.children('.acf-gallery-side');
+			this.$attachments = this.$main.children('.acf-gallery-attachments');
 			
 			
 			// get options
@@ -1053,39 +1247,20 @@
 			
 		},
 		
-		get_attachment: function( id ){
-			
-			// defaults
-			id = id || '';
-			
-			
-			// vars
-			var selector = '.acf-gallery-attachment';
-			
-			
-			// update selector
-			if( id === 'active' ) {
-				
-				selector += '.active';
-				
-			} else if( id ) {
-				
-				selector += '[data-id="' + id  + '"]';
-				
-			}
-			
-			
-			// return
-			return this.$el.find( selector );
-			
-		},
 		
-		count: function(){
-			
-			return this.get_attachment().length;
-			
-		},
-
+		/*
+		*  initialize
+		*
+		*  This function will initialize the field
+		*
+		*  @type	function
+		*  @date	12/04/2016
+		*  @since	5.3.8
+		*
+		*  @param	n/a
+		*  @return	n/a
+		*/
+		
 		initialize: function(){
 			
 			// reference
@@ -1094,7 +1269,7 @@
 				
 					
 			// sortable
-			this.$el.find('.acf-gallery-attachments').unbind('sortable').sortable({
+			this.$attachments.unbind('sortable').sortable({
 				
 				items					: '.acf-gallery-attachment',
 				forceHelperSize			: true,
@@ -1133,7 +1308,7 @@
 			// resize
 			$(window).on('resize', function(){
 				
-				self.doFocus( $field ).resize();
+				self.set('$field', $field).resize();
 				
 			});
 			
@@ -1146,15 +1321,76 @@
 			this.resize();
 					
 		},
-
+		
+		
+		/*
+		*  resize
+		*
+		*  This function will resize the columns
+		*
+		*  @type	function
+		*  @date	20/04/2016
+		*  @since	5.3.8
+		*
+		*  @param	$post_id (int)
+		*  @return	$post_id (int)
+		*/
+		
+		resize: function(){
+			
+			// vars
+			var min = 100,
+				max = 175,
+				columns = 4,
+				width = this.$el.width();
+			
+			
+			// get width
+			for( var i = 4; i < 20; i++ ) {
+			
+				var w = width/i;
+				
+				if( min < w && w < max ) {
+				
+					columns = i;
+					break;
+					
+				}
+				
+			}
+			
+			
+			// max columns css is 8
+			columns = Math.min(columns, 8);
+			
+			
+			// update data
+			this.$el.attr('data-columns', columns);
+			
+		},
+		
+		
+		/*
+		*  render
+		*
+		*  This function will render classes etc
+		*
+		*  @type	function
+		*  @date	19/04/2016
+		*  @since	5.3.8
+		*
+		*  @param	n/a
+		*  @return	n/a
+		*/
+		
 		render: function() {
 			
 			// vars
-			var $select = this.$el.find('.bulk-actions'),
-				$a = this.$el.find('.add-attachment');
+			var $select = this.$main.find('.acf-gallery-sort'),
+				$a = this.$main.find('.acf-gallery-add');
 			
 			
-			// disable select
+			// disable a
 			if( this.o.max > 0 && this.count() >= this.o.max ) {
 			
 				$a.addClass('disabled');
@@ -1165,107 +1401,456 @@
 				
 			}
 			
-		},
-		
-		sort: function( e ){
 			
-			// vars
-			var sort = e.$el.val();
+			// disable select
+			if( !this.count() ) {
 			
+				$select.addClass('disabled');
+				
+			} else {
 			
-			// validate
-			if( !sort ) {
-			
-				return;
+				$select.removeClass('disabled');
 				
 			}
 			
-			
-			// vars
-			var data = acf.prepare_for_ajax({
-				action		: 'acf/fields/gallery/get_sort_order',
-				field_key	: acf.get_field_key(this.$field),
-				post_id		: acf.get('post_id'),
-				ids			: [],
-				sort		: sort
-			});
-			
-			
-			// find and add attachment ids
-			this.get_attachment().each(function(){
-				
-				data.ids.push( $(this).attr('data-id') );
-				
-			});
-			
-			
-			// get results
-		    var xhr = $.ajax({
-		    	url			: acf.get('ajaxurl'),
-				dataType	: 'json',
-				type		: 'post',
-				cache		: false,
-				data		: data,
-				context		: this,
-				success		: this.sort_success
-			});
-			
 		},
 		
-		sort_success: function( json ) {
 		
-			// validate
-			if( !acf.is_ajax_success(json) ) {
-			
-				return;
-				
-			}
-			
-			
-			// reverse order
-			json.data.reverse();
-			
-			
-			// loop over json
-			for( i in json.data ) {
-				
-				var id = json.data[ i ],
-					$attachment = this.get_attachment(id);
-				
-				
-				// prepend attachment
-				this.$el.find('.acf-gallery-attachments').prepend( $attachment );
-				
-			};
-			
-		},
+		/*
+		*  open_sidebar
+		*
+		*  This function will open the gallery sidebar
+		*
+		*  @type	function
+		*  @date	19/04/2016
+		*  @since	5.3.8
+		*
+		*  @param	n/a
+		*  @return	n/a
+		*/
 		
-		clear_selection: function(){
+		open_sidebar: function(){
 			
-			this.get_attachment().removeClass('active');
-			
-		},
-		
-		select_attachment: function( e ){
-			
-			// vars
-			var $attachment = e.$el;
+			// add class
+			this.$el.addClass('sidebar-open');
 			
 			
-			// bail early if already active
-			if( $attachment.hasClass('active') ) {
-				
-				return;
-				
-			}
+			// hide bulk actions
+			this.$main.find('.acf-gallery-sort').hide();
 			
 			
 			// vars
-			var id = $attachment.attr('data-id');
+			var width = this.$el.width() / 3;
+			
+			
+			// set minimum width
+			width = parseInt( width );
+			width = Math.max( width, 350 );
+			
+			
+			// animate
+			this.$side.children('.acf-gallery-side-inner').css({ 'width' : width-1 });
+			this.$side.animate({ 'width' : width-1 }, 250);
+			this.$main.animate({ 'right' : width }, 250);
+						
+		},
+		
+		
+		/*
+		*  _close
+		*
+		*  event listener
+		*
+		*  @type	function
+		*  @date	12/04/2016
+		*  @since	5.3.8
+		*
+		*  @param	e (event)
+		*  @return	n/a
+		*/
+		
+		_close: function( e ){
+			
+			this.close_sidebar();
+			
+		},
+		
+		
+		/*
+		*  close_sidebar
+		*
+		*  This function will open the gallery sidebar
+		*
+		*  @type	function
+		*  @date	19/04/2016
+		*  @since	5.3.8
+		*
+		*  @param	n/a
+		*  @return	n/a
+		*/
+		
+		close_sidebar: function(){
+			
+			// remove class
+			this.$el.removeClass('sidebar-open');
+			
+			
+			// vars
+			var $select = this.$el.find('.acf-gallery-sort');
 			
 			
 			// clear selection
-			this.clear_selection();
+			this.get_attachment('active').removeClass('active');
+			
+			
+			// disable sidebar
+			this.$side.find('input, textarea, select').attr('disabled', 'disabled');
+			
+			
+			// animate
+			this.$main.animate({ right: 0 }, 250);
+			this.$side.animate({ width: 0 }, 250, function(){
+				
+				$select.show();
+				
+				$(this).find('.acf-gallery-side-data').html('');
+				
+			});
+			
+		},
+		
+		
+		/*
+		*  count
+		*
+		*  This function will return the number of attachemnts
+		*
+		*  @type	function
+		*  @date	12/04/2016
+		*  @since	5.3.8
+		*
+		*  @param	n/a
+		*  @return	n/a
+		*/
+		
+		count: function(){
+			
+			return this.get_attachments().length;
+			
+		},
+		
+		
+		/*
+		*  get_attachments
+		*
+		*  description
+		*
+		*  @type	function
+		*  @date	19/04/2016
+		*  @since	5.3.8
+		*
+		*  @param	$post_id (int)
+		*  @return	$post_id (int)
+		*/
+		
+		get_attachments: function(){
+			
+			return this.$attachments.children('.acf-gallery-attachment');
+			
+		},
+		
+		
+		/*
+		*  get_attachment
+		*
+		*  This function will return an attachment
+		*
+		*  @type	function
+		*  @date	19/04/2016
+		*  @since	5.3.8
+		*
+		*  @param	id (string)
+		*  @return	$el
+		*/
+		
+		get_attachment: function( s ){
+			
+			// defaults
+			s = s || 0;
+			
+			
+			// update selector
+			if( s === 'active' ) {
+				
+				s = '.active';
+				
+			} else {
+				
+				s = '[data-id="' + s  + '"]';
+				
+			}
+			
+			
+			// return
+			return this.$attachments.children( '.acf-gallery-attachment'+s );
+			
+		},
+		
+		
+		/*
+		*  render_attachment
+		*
+		*  This functin will render an attachemnt
+		*
+		*  @type	function
+		*  @date	20/04/2016
+		*  @since	5.3.8
+		*
+		*  @param	$post_id (int)
+		*  @return	$post_id (int)
+		*/
+		
+		render_attachment: function( id, data ){
+			
+			// prepare
+			data = this.prepare(data);
+			
+			
+			// vars
+			var $attachment = this.get_attachment(id),
+				$margin = $attachment.find('.margin'),
+				$img = $attachment.find('img'),
+				$filename = $attachment.find('.filename'),
+				$input = $attachment.find('input[type="hidden"]');
+			
+			
+			// thumbnail
+			var thumbnail = data.url;
+			
+			
+			// icon
+			if( data.type !== 'image' ) {
+				
+				thumbnail = acf._e('media', 'default_icon');
+				
+				$attachment.addClass('-icon');
+				
+			}
+			
+			
+			// update els
+		 	$img.attr({
+			 	'src': thumbnail,
+			 	'alt': data.alt,
+			 	'title': data.title
+			});
+		 	$filename.text(data.filename);
+		 	
+		 	
+			// vars
+			var val = '';
+			
+			
+			// WP attachment
+			if( data.id ) {
+				
+				val = data.id;
+			
+			}
+			
+			
+			// update val
+		 	acf.val( $input, val );
+		 				
+		},
+		
+		
+		_add: function( e ){
+			
+			// validate
+			if( this.o.max > 0 && this.count() >= this.o.max ) {
+			
+				acf.validation.add_warning( this.$field, acf._e('gallery', 'max'));
+				
+				return;
+				
+			}
+			
+			
+			// reference
+			var self = this,
+				$field = this.$field;
+			
+			
+			// popup
+			var frame = acf.media.popup({
+				
+				title:		acf._e('gallery', 'select'),
+				mode:		'select',
+				type:		'',
+				field:		this.$field.data('key'),
+				multiple:	'add',
+				library:	this.o.library,
+				mime_types: this.o.mime_types,
+				select: function( attachment, i ) {
+					
+					// add
+					self.set('$field', $field).add_attachment( attachment, i );
+					
+				}
+			});
+			
+			
+			// modify DOM
+			frame.on('content:activate:browse', function(){
+				
+				self.render_collection( frame );
+				
+				frame.content.get().collection.on( 'reset add', function(){
+				    
+					self.render_collection( frame );
+				    
+			    });
+				
+			});
+			
+		},
+		
+		
+		/*
+		*  add_attachment
+		*
+		*  This function will add an attachment
+		*
+		*  @type	function
+		*  @date	20/04/2016
+		*  @since	5.3.8
+		*
+		*  @param	$post_id (int)
+		*  @return	$post_id (int)
+		*/
+		
+		add_attachment: function( data, i ){
+			
+			// defaults
+			i = i || 0;
+			
+			
+			// prepare
+			data = this.prepare(data);	
+			
+			
+			// validate
+			if( this.o.max > 0 && this.count() >= this.o.max ) return;
+			
+			
+			// is image already in gallery?
+			if( this.get_attachment(data.id).exists() ) return;
+			
+			
+			// vars
+			var name = this.$el.find('input[type="hidden"]:first').attr('name');
+
+			
+			// html
+			var html = [
+			'<div class="acf-gallery-attachment acf-soh" data-id="' + data.id + '">',
+				'<input type="hidden" value="' + data.id + '" name="' + name + '[]">',
+				'<div class="margin" title="">',
+					'<div class="thumbnail">',
+						'<img src="" alt="">',
+					'</div>',
+					'<div class="filename"></div>',
+				'</div>',
+				'<div class="actions acf-soh-target">',
+					'<a href="#" class="acf-icon -cancel dark acf-gallery-remove" data-id="' + data.id + '"></a>',
+				'</div>',
+			'</div>'].join('');
+			
+			var $html = $(html);
+			
+			
+			// append
+			this.$attachments.append( $html );
+			
+			
+			// more to beginning
+			if( this.o.insert === 'prepend' ) {
+				
+				// vars
+				var $before = this.$attachments.children(':eq('+i+')');
+				
+				
+				// move
+				if( $before.exists() ) {
+					
+					$before.before( $html );
+					
+				}
+				
+			}
+						
+			
+			// render data
+			this.render_attachment( data.id, data );
+			
+			
+			// render
+			this.render();	
+			
+		},
+		
+		
+		/*
+		*  _select
+		*
+		*  event listener
+		*
+		*  @type	function
+		*  @date	12/04/2016
+		*  @since	5.3.8
+		*
+		*  @param	e (event)
+		*  @return	n/a
+		*/
+		
+		_select: function( e ){
+			
+			// vars
+			var id = e.$el.data('id');
+			
+			
+			// select
+			this.select_attachment(id);
+			
+		},
+		
+		
+		/*
+		*  select_attachment
+		*
+		*  This function will select an attachment for editing
+		*
+		*  @type	function
+		*  @date	20/04/2016
+		*  @since	5.3.8
+		*
+		*  @param	$post_id (int)
+		*  @return	$post_id (int)
+		*/
+		
+		select_attachment: function( id ){
+			
+			// vars
+			var $attachment = this.get_attachment(id);
+			
+			
+			// bail early if already active
+			if( $attachment.hasClass('active') ) return;
+			
+			
+			// clear selection
+			this.get_attachment('active').removeClass('active');
 			
 			
 			// add selection
@@ -1281,68 +1866,84 @@
 			
 		},
 		
-		open_sidebar: function(){
+		
+		/*
+		*  prepare
+		*
+		*  This function will prepare an object of attachment data
+		*  selecting a library image vs embed an image via url return different data
+		*  this function will keep the 2 consistent
+		*
+		*  @type	function
+		*  @date	12/04/2016
+		*  @since	5.3.8
+		*
+		*  @param	attachment (object)
+		*  @return	data (object)
+		*/
+		
+		prepare: function( attachment ) {
 			
-			// add class
-			this.$el.addClass('sidebar-open');
+			// defaults
+			attachment = attachment || {};
 			
 			
-			// hide bulk actions
-			this.$el.find('.bulk-actions').hide();
+			// bail ealry if already valid
+			if( attachment._valid ) return attachment;
 			
 			
 			// vars
-			var width = this.$el.width() / 3;
+			var data = {
+				id: '',
+				url: '',
+				alt: '',
+				title: '',
+				filename: ''
+			};
 			
 			
-			// set minimum width
-			width = parseInt( width );
-			width = Math.max( width, 350 );
+			// wp image
+			if( attachment.id ) {
+				
+				// update data
+				data = attachment.attributes;
+				
+				
+				// maybe get preview size
+				data.url = acf.maybe_get(data, 'sizes.'+this.o.preview_size+'.url', data.url);
+				
+			}
 			
 			
-			// animate
-			this.$el.find('.acf-gallery-side-inner').css({ 'width' : width-1 });
-			this.$el.find('.acf-gallery-side').animate({ 'width' : width-1 }, 250);
-			this.$el.find('.acf-gallery-main').animate({ 'right' : width }, 250);
-						
+			// valid
+			data._valid = true;
+			
+	    	
+	    	// return
+	    	return data;
+			
 		},
 		
-		close_sidebar: function(){
-			
-			// remove class
-			this.$el.removeClass('sidebar-open');
-			
-			
-			// vars
-			var $select = this.$el.find('.bulk-actions');
-			
-			
-			// deselect attachmnet
-			this.clear_selection();
-			
-			
-			// disable sidebar
-			this.$el.find('.acf-gallery-side').find('input, textarea, select').attr('disabled', 'disabled');
-			
-			
-			// animate
-			this.$el.find('.acf-gallery-main').animate({ right: 0 }, 250);
-			this.$el.find('.acf-gallery-side').animate({ width: 0 }, 250, function(){
-				
-				$select.show();
-				
-				$(this).find('.acf-gallery-side-data').html( '' );
-				
-			});
-			
-		},
+		
+		/*
+		*  fetch
+		*
+		*  This function will fetch the sidebar html to edit an attachment 
+		*
+		*  @type	function
+		*  @date	19/04/2016
+		*  @since	5.3.8
+		*
+		*  @param	n/a
+		*  @return	n/a
+		*/
 		
 		fetch: function( id ){
 			
 			// vars
 			var data = acf.prepare_for_ajax({
 				action		: 'acf/fields/gallery/get_attachment',
-				field_key	: acf.get_field_key(this.$field),
+				field_key	: this.$field.data('key'),
 				nonce		: acf.get('nonce'),
 				post_id		: acf.get('post_id'),
 				id			: id
@@ -1357,6 +1958,23 @@
 			}
 			
 			
+			// add custom attachment
+			if( typeof id === 'string' && id.indexOf('_') === 0 ) {
+				
+				// vars
+				var val = this.get_attachment(id).find('input[type="hidden"]').val();
+				
+				
+				// parse json
+				val = $.parseJSON(val);
+				
+				
+				// append
+				data.attachment = val;
+				
+			}
+			
+			
 			// get results
 		    var xhr = $.ajax({
 		    	url			: acf.get('ajaxurl'),
@@ -1365,7 +1983,7 @@
 				cache		: false,
 				data		: data,
 				context		: this,
-				success		: this.render_fetch
+				success		: this.fetch_success
 			});
 			
 			
@@ -1374,18 +1992,14 @@
 			
 		},
 		
-		render_fetch: function( html ){
+		fetch_success: function( html ){
 			
 			// bail early if no html
-			if( !html ) {
-				
-				return;	
-				
-			}
+			if( !html ) return;
 			
 			
 			// vars
-			var $side = this.$el.find('.acf-gallery-side-data');
+			var $side = this.$side.find('.acf-gallery-side-data');
 			
 			
 			// render
@@ -1413,25 +2027,123 @@
 			
 		},
 		
-		update_attachment: function(){
+		
+		/*
+		*  _sort
+		*
+		*  event listener
+		*
+		*  @type	function
+		*  @date	12/04/2016
+		*  @since	5.3.8
+		*
+		*  @param	e (event)
+		*  @return	n/a
+		*/
+		
+		_sort: function( e ){
 			
 			// vars
-			var $a = this.$el.find('.update-attachment')
-				$form = this.$el.find('.acf-gallery-side-data'),
-				data = acf.serialize_form( $form );
+			var sort = e.$el.val();
+			
+			
+			// validate
+			if( !sort ) return;
+			
+			
+			// vars
+			var data = acf.prepare_for_ajax({
+				action		: 'acf/fields/gallery/get_sort_order',
+				field_key	: this.$field.data('key'),
+				post_id		: acf.get('post_id'),
+				ids			: [],
+				sort		: sort
+			});
+			
+			
+			// find and add attachment ids
+			this.get_attachments().each(function(){
 				
+				// vars
+				var id = $(this).attr('data-id');
+				
+				
+				// bail early if no id (insert from url)
+				if( !id ) return;
+				
+				
+				// append
+				data.ids.push(id);
+				
+			});
+			
+			
+			// get results
+		    var xhr = $.ajax({
+		    	url:		acf.get('ajaxurl'),
+				dataType:	'json',
+				type:		'post',
+				cache:		false,
+				data:		data,
+				context:	this,
+				success:	this._sort_success
+			});
+		},
+		
+		_sort_success: function( json ) {
 				
 			// validate
-			if( $a.attr('disabled') ) {
+			if( !acf.is_ajax_success(json) ) return;
 			
-				return false;
+			
+			// reverse order
+			json.data.reverse();
+			
+			
+			// loop over json
+			for( i in json.data ) {
+				
+				var id = json.data[ i ],
+					$attachment = this.get_attachment(id);
+				
+				
+				// prepend attachment
+				this.$attachments.prepend( $attachment );
 				
 			}
+		},
+		
+		
+		/*
+		*  _update
+		*
+		*  event listener
+		*
+		*  @type	function
+		*  @date	12/04/2016
+		*  @since	5.3.8
+		*
+		*  @param	e (event)
+		*  @return	n/a
+		*/
+		
+		_update: function(){
+			
+			// vars
+			var $submit = this.$side.find('.acf-gallery-update'),
+				$edit = this.$side.find('.acf-gallery-edit'),
+				$form = this.$side.find('.acf-gallery-side-data'),
+				id = $edit.data('id'),
+				data = acf.serialize_form( $form );
+			
+			
+			// validate
+			if( $submit.attr('disabled') ) return false;
 			
 			
 			// add attr
-			$a.attr('disabled', 'disabled');
-			$a.before('<i class="acf-loading"></i>');
+			$submit.attr('disabled', 'disabled');
+			$submit.before('<i class="acf-loading"></i>');
 			
 			
 			// append AJAX action		
@@ -1450,143 +2162,144 @@
 				dataType	: 'json',
 				complete	: function( json ){
 					
-					$a.removeAttr('disabled');
-					$a.prev('.acf-loading').remove();
+					$submit.removeAttr('disabled');
+					$submit.prev('.acf-loading').remove();
 					
 				}
 			});
 			
 		},
 		
-		add: function( a ){
-			
-			// validate
-			if( this.o.max > 0 && this.count() >= this.o.max ) {
-			
-				acf.validation.add_warning( this.$field, acf._e('gallery', 'max'));
-				
-				return;
-				
-			}
-			
-			
-			// vars
-			var thumb_url = a.url,
-				thumb_class = 'acf-gallery-attachment acf-soh',
-				filename = '',
-				name = this.$el.find('[data-name="ids"]').attr('name');
-
-			
-			// title
-			if( a.type !== 'image' && a.filename ) {
-				
-				filename = '<div class="filename">' + a.filename + '</div>';
-				
-			}
-			
-			
-			// icon
-			if( !thumb_url ) {
-				
-				thumb_url = a.icon;
-				thumb_class += ' is-mime-icon';
-				
-			}
-			
-			
-			// html
-			var html = [
-			'<div class="' + thumb_class + '" data-id="' + a.id + '">',
-				'<input type="hidden" value="' + a.id + '" name="' + name + '[]">',
-				'<div class="margin" title="' + a.filename + '">',
-					'<div class="thumbnail">',
-						'<img src="' + thumb_url + '">',
-					'</div>',
-					filename,
-				'</div>',
-				'<div class="actions acf-soh-target">',
-					'<a href="#" class="acf-icon dark remove-attachment" data-id="' + a.id + '">',
-						'<i class="acf-sprite-delete"></i>',
-					'</a>',
-				'</div>',
-			'</div>'].join('');
-			
-			
-			// append
-			this.$el.find('.acf-gallery-attachments').append( html );
-			
-			
-			// render
-			this.render();
-			
-		},
 		
-		edit_attachment:function( e ){
-			
-			// reference
-			var self = this;
-			
-			
-			// vars
-			var id = acf.get_data(e.$el, 'id');
-			
-			
-			// popup
-			var frame = acf.media.popup({
-				
-				title:		acf._e('image', 'edit'),
-				button:		acf._e('image', 'update'),
-				mode:		'edit',
-				id:			id,
-				select:		function( attachment ){
-					
-					// override url
-					if( acf.isset(attachment, 'attributes', 'sizes', self.o.preview_size, 'url') ) {
-			    	
-				    	attachment.url = attachment.attributes.sizes[ self.o.preview_size ].url;
-				    	
-			    	}
-			    	
-			    	
-			    	// update image
-			    	self.get_attachment(id).find('img').attr( 'src', attachment.url );
-				 	
-				 	
-				 	// render sidebar
-					self.fetch( id );
-					
-				}
-			});
-						
-		},
+		/*
+		*  _remove
+		*
+		*  event listener
+		*
+		*  @type	function
+		*  @date	12/04/2016
+		*  @since	5.3.8
+		*
+		*  @param	e (event)
+		*  @return	n/a
+		*/
 		
-		remove_attachment: function( e ){
+		_remove: function( e ){
 			
 			// prevent event from triggering click on attachment
 			e.stopPropagation();
 			
 			
 			// vars
-			var id = acf.get_data(e.$el, 'id');
+			var id = e.$el.data('id');
 			
 			
-			// deselect attachmnet
-			this.clear_selection();
+			// select
+			this.remove_attachment(id);
 			
+		},
+		
+		
+		/*
+		*  remove_attachment
+		*
+		*  This function will remove an attachment
+		*
+		*  @type	function
+		*  @date	20/04/2016
+		*  @since	5.3.8
+		*
+		*  @param	$post_id (int)
+		*  @return	$post_id (int)
+		*/
+		
+		remove_attachment: function( id ){
 			
-			// update sidebar
+			// close sidebar (if open)
 			this.close_sidebar();
 			
 			
-			// remove image
+			// remove attachment
 			this.get_attachment(id).remove();
 			
 			
-			// render
+			// render (update classes)
 			this.render();
 			
+		},
+		
+		
+		/*
+		*  _edit
+		*
+		*  event listener
+		*
+		*  @type	function
+		*  @date	12/04/2016
+		*  @since	5.3.8
+		*
+		*  @param	e (event)
+		*  @return	n/a
+		*/
+		
+		_edit:function( e ){
+			
+			// vars
+			var id = e.$el.data('id');
+			
+			
+			// select
+			this.edit_attachment(id);
+						
+		},
+		
+		
+		/*
+		*  edit_attachment
+		*
+		*  This function will create a WP popup to edit an attachment
+		*
+		*  @type	function
+		*  @date	20/04/2016
+		*  @since	5.3.8
+		*
+		*  @param	$post_id (int)
+		*  @return	$post_id (int)
+		*/
+		
+		edit_attachment: function( id ){
+			
+			// reference
+			var self = this,
+				$field = this.$field;
+			
+			
+			// vars
+			var attachment = id,
+				$attachment = this.get_attachment(id);
+			
+			
+			// popup
+			var frame = acf.media.popup({
+				mode:		'edit',
+				title:		acf._e('image', 'edit'),
+				button:		acf._e('image', 'update'),
+				attachment:	attachment,
+				select:		function( attachment ){
+					
+					// render attachment
+					self.set('$field', $field).render_attachment( id, attachment );
+					
+				 	
+				 	// render sidebar
+					self.fetch( id );
+					
+				}
+			});
 			
 		},
+		
+		
 		
 		render_collection: function( frame ){
 			
@@ -1628,137 +2341,8 @@
 					
 				}
 			
-			
 			}, 10);
-
-				
-		},
-		
-		add_attachment: function( e ){
 			
-			// validate
-			if( this.o.max > 0 && this.count() >= this.o.max ) {
-			
-				acf.validation.add_warning( this.$field, acf._e('gallery', 'max'));
-				
-				return;
-				
-			}
-			
-			
-			// vars
-			var preview_size = this.o.preview_size;
-			
-			
-			// reference
-			var self = this,
-				$field = this.$field;
-			
-			
-			// popup
-			var frame = acf.media.popup({
-				
-				title:		acf._e('gallery', 'select'),
-				mode:		'select',
-				type:		'',
-				field:		acf.get_field_key(this.$field),
-				multiple:	'add',
-				library:	this.o.library,
-				mime_types: this.o.mime_types,
-				
-				select: function( attachment, i ) {
-					
-					// vars
-					var atts = attachment.attributes;
-					
-					
-					// focus
-					self.doFocus($field);
-							
-							
-					// is image already in gallery?
-					if( self.get_attachment(atts.id).exists() ) {
-					
-						return;
-						
-					}
-					
-					//console.log( attachment );
-			    	
-			    	// vars
-			    	var a = {
-				    	id:			atts.id,
-				    	type:		atts.type,
-				    	icon:		atts.icon,
-				    	filename:	atts.filename,
-				    	url:		''
-			    	};
-			    	
-			    	
-			    	// type
-			    	if( a.type === 'image' ) {
-				    	
-				    	a.url = acf.maybe_get(atts, 'sizes.'+preview_size+'.url', atts.url);
-				    	
-			    	} else {
-				    	
-				    	a.url = acf.maybe_get(atts, 'thumb.src', '');
-				    	
-				    }
-				    
-				    
-			    	// add file to field
-			        self.add( a );
-					
-				}
-			});
-			
-			
-			// modify DOM
-			frame.on('content:activate:browse', function(){
-				
-				self.render_collection( frame );
-				
-				frame.content.get().collection.on( 'reset add', function(){
-				    
-					self.render_collection( frame );
-				    
-			    });
-				
-			});
-			
-		},
-		
-		resize: function(){
-			
-			// vars
-			var min = 100,
-				max = 175,
-				columns = 4,
-				width = this.$el.width();
-			
-			
-			// get width
-			for( var i = 4; i < 20; i++ ) {
-			
-				var w = width/i;
-				
-				if( min < w && w < max ) {
-				
-					columns = i;
-					break;
-					
-				}
-				
-			}
-			
-			
-			// max columns css is 8
-			columns = Math.min(columns, 8);
-			
-			
-			// update data
-			this.$el.attr('data-columns', columns);
 		}
 		
 	});

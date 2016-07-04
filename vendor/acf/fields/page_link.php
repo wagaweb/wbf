@@ -92,20 +92,7 @@ class acf_field_page_link extends acf_field {
 		// load field
 		$field = acf_get_field( $options['field_key'] );
 		
-		if( !$field ) {
-		
-			return false;
-			
-		}
-		
-		
-		// WPML
-		if( $options['lang'] ) {
-		
-			global $sitepress;
-			$sitepress->switch_lang( $options['lang'] );
-			
-		}
+		if( !$field ) return false;
 		
 		
 		// update $args
@@ -157,6 +144,10 @@ class acf_field_page_link extends acf_field {
 		$args = apply_filters('acf/fields/page_link/query/key=' . $field['key'], $args, $field, $options['post_id'] );
 		
 		
+		// is search
+		$is_search = !empty( $args['s'] );
+		
+		
 		// add archives to $r
 		if( $args['paged'] == 1 ) {
 			
@@ -183,7 +174,7 @@ class acf_field_page_link extends acf_field {
 			
 			
 			// search
-			if( !empty($args['s']) ) {
+			if( $is_search ) {
 				
 				foreach( array_keys($archives) as $i ) {
 					
@@ -210,7 +201,6 @@ class acf_field_page_link extends acf_field {
 			}
 			
 		}
-		
 		
 		
 		// get posts grouped by post type
@@ -241,7 +231,7 @@ class acf_field_page_link extends acf_field {
 				
 				
 				// order by search
-				if( !empty($args['s']) ) {
+				if( $is_search ) {
 					
 					$posts = acf_order_by_search( $posts, $args['s'] );
 					
@@ -289,7 +279,7 @@ class acf_field_page_link extends acf_field {
 	function ajax_query() {
 		
 		// validate
-		if( empty($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'acf_nonce') ) {
+		if( !acf_verify_ajax() ) {
 		
 			die();
 			
@@ -330,28 +320,14 @@ class acf_field_page_link extends acf_field {
 	*  @return	(string)
 	*/
 	
-	function get_post_title( $post, $field, $post_id = 0 ) {
+	function get_post_title( $post, $field, $post_id = 0, $is_search = 0 ) {
 		
 		// get post_id
-		if( !$post_id ) {
-			
-			$form_data = acf_get_setting('form_data');
-			
-			if( !empty($form_data['post_id']) ) {
-				
-				$post_id = $form_data['post_id'];
-				
-			} else {
-				
-				$post_id = get_the_ID();
-				
-			}
-			
-		}
+		if( !$post_id ) $post_id = acf_get_form_data('post_id');
 		
 		
 		// vars
-		$title = acf_get_post_title( $post );
+		$title = acf_get_post_title( $post, $is_search );
 			
 		
 		// filters
@@ -387,16 +363,12 @@ class acf_field_page_link extends acf_field {
 		// get selected post ID's
 		$post__in = array();
 		
-		foreach( array_keys($value) as $k ) {
+		foreach( $value as $k => $v ) {
 			
-			if( is_numeric($value[ $k ]) ) {
-				
-				// convert to int
-				$value[ $k ] = intval($value[ $k ]);
-				
+			if( is_numeric($v) ) {
 				
 				// append to $post__in
-				$post__in[] = $value[ $k ];
+				$post__in[] = (int) $v;
 				
 			}
 			
@@ -427,15 +399,14 @@ class acf_field_page_link extends acf_field {
 			
 			if( is_numeric($v) ) {
 				
-				// find matching $post
-				foreach( $posts as $post ) {
+				// extract first post
+				$post = array_shift( $posts );
+				
+				
+				// append
+				if( $post ) {
 					
-					if( $post->ID == $v ) {
-						
-						$return[] = $post;
-						break;
-						
-					}
+					$return[] = $post;
 					
 				}
 				

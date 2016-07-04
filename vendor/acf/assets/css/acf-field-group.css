@@ -12,8 +12,7 @@
 *
 *---------------------------------------------------------------------------------------------*/
 #minor-publishing-actions,
-#misc-publishing-actions #visibility,
-#misc-publishing-actions .curtime {
+#misc-publishing-actions #visibility {
   display: none;
 }
 #minor-publishing {
@@ -35,6 +34,10 @@
 #acf-field-group-options > .inside {
   padding: 0;
   margin: 0;
+}
+#acf-field-group-fields {
+  border: 0 none;
+  box-shadow: none;
 }
 #acf-field-group-fields > .handlediv,
 #acf-field-group-fields > .hndle {
@@ -84,10 +87,10 @@
 }
 .acf-field-object.ui-sortable-helper {
   border-top-color: #fff;
-  box-shadow: 0 0 0 1px #dfdfdf, 0 1px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 0 1px #DFDFDF, 0 1px 4px rgba(0, 0, 0, 0.1);
 }
 .acf-field-object.ui-sortable-placeholder {
-  box-shadow: 0 -1px 0 0 #dfdfdf;
+  box-shadow: 0 -1px 0 0 #DFDFDF;
   visibility: visible !important;
   background: #F9F9F9;
   border-top-color: transparent;
@@ -110,10 +113,17 @@
   word-wrap: break-word;
 }
 .acf-field-object .handle .acf-icon {
-  margin: 1px 5px 0 0;
+  margin: 1px 0 0;
   cursor: move;
   background: transparent;
   float: left;
+  height: 28px;
+  line-height: 28px;
+  width: 28px;
+  font-size: 13px;
+  color: #444;
+  position: relative;
+  z-index: 1;
 }
 .acf-field-object .handle strong {
   display: block;
@@ -121,6 +131,9 @@
   font-size: 14px;
   line-height: 14px;
   min-height: 14px;
+}
+.acf-field-object.open > .handle .acf-required {
+  color: #fff;
 }
 .acf-field-object .handle .row-options {
   visibility: hidden;
@@ -136,52 +149,54 @@
 }
 /* field object handle (open) */
 .acf-field-object.open > .handle {
-  background: #3595BC;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#46afdb), to(#3199c5));
-  /* Safari 4+, Chrome */
-  background-image: -webkit-linear-gradient(top, #46afdb, #3199c5);
-  /* Chrome 10+, Safari 5.1+, iOS 5+ */
-  background-image: -moz-linear-gradient(top, #46afdb, #3199c5);
-  /* Firefox 3.6-15 */
-  background-image: -o-linear-gradient(top, #46afdb, #3199c5);
-  /* Opera 11.10+ */
-  background-image: linear-gradient(to bottom, #46afdb, #3199c5);
-  /* Firefox 16+ */
-  border: #268FBB solid 1px;
+  background: #00a0d2;
+  border: #0092bf solid 1px;
   text-shadow: #268FBB 0 1px 0;
-  box-shadow: inset #5FC8F4 0 1px 0 0;
   color: #fff;
   position: relative;
   margin: -1px -1px 0 -1px;
 }
 .acf-field-object.open > .handle a {
   color: #fff !important;
+  -webkit-transition: none;
+  -moz-transition: none;
+  -o-transition: none;
+  transition: none;
+}
+.acf-field-object.open > .handle .row-options a:hover {
+  text-decoration: underline;
 }
 .acf-field-object.open > .handle .acf-icon {
   border-color: #fff;
+  color: #fff;
 }
 /* field object settings */
-.acf-field-object .settings {
+.acf-field-object > .settings {
   display: none;
   width: 100%;
 }
-.acf-field-object .location-groups {
+.acf-field-object > .settings > .acf-table {
+  border: none;
+}
+/* conditional logic */
+.acf-field-object .rule-groups {
   margin-top: 10px;
 }
 /* field object keys */
 .acf-field-object .handle .pre-field-key {
-  background: #F9F9F9;
   border: #E1E1E1 solid 1px;
-  padding: 5px;
+  margin: 4px 0 0 -6px;
+  padding: 5px 5px 5px 11px;
   font: inherit;
-  margin: 3px 0 0;
   float: left;
-  border-radius: 3px;
+  border-radius: 0 3px 3px 0;
   display: none;
+  border-left: none;
+  font-size: 12px;
+  line-height: 12px;
 }
 .acf-field-object.open > .handle .pre-field-key {
-  border-color: #268FBB;
-  background: transparent;
+  border-color: #FAFCFD;
 }
 .show-field-keys .acf-field-object .handle .pre-field-key {
   display: block;
@@ -197,37 +212,35 @@
 * Postbox: Locations
 *
 *---------------------------------------------------------------------------------------------*/
-.location-groups h4 {
+.rule-groups h4 {
   margin: 15px 0 5px;
 }
-.location-groups .location-group {
+.rule-groups .rule-group {
   margin: 0 0 5px;
 }
-.location-groups .location-group h4 {
+.rule-groups .rule-group h4 {
   margin: 0 0 3px;
 }
-.location-groups .location-group td.param {
+.rule-groups .rule-group td.param {
   width: 35%;
 }
-.location-groups .location-group td.operator {
+.rule-groups .rule-group td.operator {
   width: 20%;
 }
-.location-groups .location-group td.add {
+.rule-groups .rule-group td.add {
   width: 40px;
 }
-.location-groups .location-group td.remove {
+.rule-groups .rule-group td.remove {
   width: 28px;
   vertical-align: middle;
+  visibility: hidden;
 }
-.location-groups .location-group tr .location-remove-rule {
-  display: none;
-}
-.location-groups .location-group tr:hover .location-remove-rule {
-  display: block;
+.rule-groups .rule-group tr:hover td.remove {
+  visibility: visible;
 }
 /* Don't allow user to delete the first field group */
-.location-groups .location-group:first-child tr:first-child .location-remove-rule {
-  display: none !important;
+.rule-groups .rule-group:first-child tr:first-child td.remove {
+  visibility: hidden !important;
 }
 /*---------------------------------------------------------------------------------------------
 *
@@ -273,8 +286,11 @@ table.conditional-logic-rules tbody td {
 .acf-field-object-tab .li-field-name {
   visibility: hidden;
 }
-.layout-table .acf-field-object-tab tr[data-name="warning"] {
-  display: table-row !important;
+.acf-field-object-tab .acf-error-message {
+  display: none;
+}
+.acf-field-list[data-layout="table"] .acf-field-object-tab .acf-error-message {
+  display: block;
 }
 .acf-field-object + .acf-field-object-tab {
   margin-top: 6px;
@@ -335,4 +351,26 @@ html[dir="rtl"] .acf-field-object.open > .handle .acf-icon {
 html[dir="rtl"] .acf-field-object.open > .handle .li-field-order {
   padding-left: 0 !important;
   padding-right: 15px !important;
+}
+/*---------------------------------------------------------------------------------------------
+*
+*  Device
+*
+*---------------------------------------------------------------------------------------------*/
+@media only screen and (max-width: 850px) {
+  tr.acf-field,
+  td.acf-label,
+  td.acf-input {
+    display: block !important;
+    width: auto !important;
+    border: 0 none !important;
+  }
+  tr.acf-field {
+    border-top: #ededed solid 1px !important;
+    margin-bottom: 0 !important;
+  }
+  td.acf-label {
+    background: transparent !important;
+    padding-bottom: 0 !important;
+  }
 }

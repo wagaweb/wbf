@@ -28,6 +28,7 @@ class acf_compatibility {
 		add_filter('acf/get_valid_field/type=wysiwyg',		array($this, 'get_valid_wysiwyg_field'), 20, 1);
 		add_filter('acf/get_valid_field/type=date_picker',	array($this, 'get_valid_date_picker_field'), 20, 1);
 		add_filter('acf/get_valid_field/type=taxonomy',		array($this, 'get_valid_taxonomy_field'), 20, 1);
+		add_filter('acf/get_valid_field/type=date_time_picker',	array($this, 'get_valid_date_time_picker_field'), 20, 1);
 		
 		
 		// field groups
@@ -35,12 +36,16 @@ class acf_compatibility {
 		
 		
 		// settings
-		add_action('acf/init',								array($this, 'init'), 20);
+		add_filter('acf/settings/show_admin',				array($this, 'settings_acf_lite'), 5, 1);
+		add_filter('acf/settings/l10n_textdomain',			array($this, 'settings_export_textdomain'), 5, 1);
+		add_filter('acf/settings/l10n_field',				array($this, 'settings_export_translate'), 5, 1);
+		add_filter('acf/settings/l10n_field_group',			array($this, 'settings_export_translate'), 5, 1);
+		
 	}
 	
 	
 	/*
-	*  init
+	*  settings
 	*
 	*  description
 	*
@@ -52,14 +57,33 @@ class acf_compatibility {
 	*  @return	$post_id (int)
 	*/
 	
-	function init() {
+	function settings_acf_lite( $setting ) {
 		
+		// 5.0.0 - removed ACF_LITE
 		if( defined('ACF_LITE') && ACF_LITE ) {
 			
-			acf_update_setting('show_admin', false);
+			$setting = false;
 			
 		}
-			
+		
+		
+		// return
+		return $setting;
+		
+	}
+	
+	function settings_export_textdomain( $setting ) {
+		
+		// 5.3.3 - changed filter name
+		return acf_get_setting( 'export_textdomain', $setting );
+		
+	}
+	
+	function settings_export_translate( $setting ) {
+		
+		// 5.3.3 - changed filter name
+		return acf_get_setting( 'export_translate', $setting );
+		
 	}
 	
 	
@@ -128,20 +152,6 @@ class acf_compatibility {
 				
 			}
 		 	
-		}
-		
-		
-		// wrap classes have changed (5.2.7)
-		if( acf_get_compatibility('field_wrapper_class') ) {
-			
-			$field['wrapper']['class'] .= " field_type-{$field['type']}";
-			
-			if( $field['key'] ) {
-				
-				$field['wrapper']['class'] .= " field_key-{$field['key']}";
-				
-			}
-			
 		}
 		
 		
@@ -363,6 +373,57 @@ class acf_compatibility {
 		}
 		
 		
+		// return
+		return $field;
+		
+	}
+	
+	
+	/*
+	*  get_valid_date_time_picker_field
+	*
+	*  This function will provide compatibility with existing 3rd party fields
+	*
+	*  @type	function
+	*  @date	23/04/2014
+	*  @since	5.0.0
+	*
+	*  @param	$field (array)
+	*  @return	$field
+	*/
+	
+	function get_valid_date_time_picker_field( $field ) {
+		
+		// 3rd party date time picker
+		// https://github.com/soderlind/acf-field-date-time-picker
+		if( !empty($field['time_format']) ) {
+			
+			// extract vars
+			$time_format = acf_extract_var( $field, 'time_format' );
+			$date_format = acf_extract_var( $field, 'date_format' );
+			$get_as_timestamp = acf_extract_var( $field, 'get_as_timestamp' );
+			
+			
+			// convert from js to php
+			$time_format = acf_convert_time_to_php( $time_format );
+			$date_format = acf_convert_date_to_php( $date_format );
+			
+			
+			// append settings
+			$field['return_format'] = $date_format . ' ' . $time_format;
+			$field['display_format'] = $date_format . ' ' . $time_format;
+			
+			
+			// timestamp
+			if( $get_as_timestamp === 'true' ) {
+				
+				$field['return_format'] = 'U';
+				
+			}
+			
+		}
+		
+
 		// return
 		return $field;
 		

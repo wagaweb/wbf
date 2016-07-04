@@ -1,8 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Advanced Custom Fields Pro\n"
-"POT-Creation-Date: 2015-06-26 17:58+0200\n"
-"PO-Revision-Date: 2015-07-17 08:51+1000\n"
+"Project-Id-Version: Advanced Custom Fields Pro v5.2.9\n"
+"Report-Msgid-Bugs-To: http://support.advancedcustomfields.com\n"
+"POT-Creation-Date: 2015-08-11 23:16+0200\n"
+"PO-Revision-Date: 2016-04-07 10:30+1000\n"
 "Last-Translator: Elliot Condon <e@elliotcondon.com>\n"
 "Language-Team: \n"
 "Language: fi\n"
@@ -10,12 +11,14 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.8.1\n"
-"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
 "esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
 "_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-WPHeader: acf.php\n"
+"X-Textdomain-Support: yes\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.js\n"
 
@@ -23,86 +26,98 @@ msgstr ""
 msgid "Advanced Custom Fields"
 msgstr "Advanced Custom Fields"
 
-#: acf.php:253
+#: acf.php:205 admin/admin.php:61
 msgid "Field Groups"
 msgstr "Kenttäryhmät"
 
-#: acf.php:254
+#: acf.php:206
 msgid "Field Group"
 msgstr "Kenttäryhmä"
 
-#: acf.php:255 acf.php:287 admin/admin.php:56
-#: pro/fields/flexible-content.php:521
+#: acf.php:207 acf.php:239 admin/admin.php:62
+#: pro/fields/flexible-content.php:517
 msgid "Add New"
 msgstr "Lisää uusi"
 
-#: acf.php:256
+#: acf.php:208
 msgid "Add New Field Group"
 msgstr "Lisää uusi kenttäryhmä"
 
-#: acf.php:257
+#: acf.php:209
 msgid "Edit Field Group"
 msgstr "Muokkaa kenttäryhmää"
 
-#: acf.php:258
+#: acf.php:210
 msgid "New Field Group"
 msgstr "Lisää uusi kenttäryhmä"
 
-#: acf.php:259
+#: acf.php:211
 msgid "View Field Group"
 msgstr "Katso kenttäryhmää"
 
-#: acf.php:260
+#: acf.php:212
 msgid "Search Field Groups"
 msgstr "Etsi kenttäryhmiä"
 
-#: acf.php:261
+#: acf.php:213
 msgid "No Field Groups found"
 msgstr "Kenttäryhmiä ei löytynyt"
 
-#: acf.php:262
+#: acf.php:214
 msgid "No Field Groups found in Trash"
 msgstr "Kenttäryhmiä ei löytynyt roskakorista"
 
-#: acf.php:285 admin/field-group.php:178 admin/field-group.php:209
-#: admin/field-group.php:248 admin/field-groups.php:487
+#: acf.php:237 admin/field-group.php:182 admin/field-group.php:213
+#: admin/field-groups.php:519
 msgid "Fields"
 msgstr "Kentät"
 
-#: acf.php:286
+#: acf.php:238
 msgid "Field"
 msgstr "Kenttä"
 
-#: acf.php:288
+#: acf.php:240
 msgid "Add New Field"
 msgstr "Lisää uusi kenttä"
 
-#: acf.php:289
+#: acf.php:241
 msgid "Edit Field"
 msgstr "Muokkaa kenttää"
 
-#: acf.php:290 admin/views/field-group-fields.php:18
-#: admin/views/settings-info.php:109
+#: acf.php:242 admin/views/field-group-fields.php:18
+#: admin/views/settings-info.php:111
 msgid "New Field"
 msgstr "Uusi kenttä"
 
-#: acf.php:291
+#: acf.php:243
 msgid "View Field"
 msgstr "Näytä kenttä"
 
-#: acf.php:292
+#: acf.php:244
 msgid "Search Fields"
 msgstr "Etsi kenttiä"
 
-#: acf.php:293
+#: acf.php:245
 msgid "No Fields found"
 msgstr "Kenttiä ei löytynyt"
 
-#: acf.php:294
+#: acf.php:246
 msgid "No Fields found in Trash"
 msgstr "Kenttiä ei löytynyt roskakorista"
 
-#: admin/admin.php:52 admin/views/field-group-options.php:94
+#: acf.php:268 admin/field-group.php:283 admin/field-groups.php:583
+#: admin/views/field-group-options.php:18
+msgid "Disabled"
+msgstr ""
+
+#: acf.php:273
+#, php-format
+msgid "Disabled <span class=\"count\">(%s)</span>"
+msgid_plural "Disabled <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
+
+#: admin/admin.php:57 admin/views/field-group-options.php:120
 msgid "Custom Fields"
 msgstr "Lisäkentät"
 
@@ -134,281 +149,275 @@ msgstr "Kenttäryhmä ajoitettu."
 msgid "Field group draft updated."
 msgstr "Luonnos kenttäryhmästä päivitetty"
 
-#: admin/field-group.php:172
+#: admin/field-group.php:176
 msgid "Move to trash. Are you sure?"
 msgstr "Haluatko varmasti siirtää roskakoriin?"
 
-#: admin/field-group.php:173
+#: admin/field-group.php:177
 msgid "checked"
 msgstr "valittu"
 
-#: admin/field-group.php:174
+#: admin/field-group.php:178
 msgid "No toggle fields available"
 msgstr "Ei toggle kenttiä saatavilla"
 
-#: admin/field-group.php:175
+#: admin/field-group.php:179
 msgid "Field group title is required"
 msgstr "Kenttäryhmän otsikko on pakollinen"
 
-#: admin/field-group.php:176 api/api-field-group.php:609
+#: admin/field-group.php:180 api/api-field-group.php:607
 msgid "copy"
 msgstr "kopioi"
 
-#: admin/field-group.php:177
+#: admin/field-group.php:181
 #: admin/views/field-group-field-conditional-logic.php:67
 #: admin/views/field-group-field-conditional-logic.php:162
 #: admin/views/field-group-locations.php:23
-#: admin/views/field-group-locations.php:131 core/media.php:150
+#: admin/views/field-group-locations.php:131 api/api-helpers.php:3262
 msgid "or"
 msgstr "tai"
 
-#: admin/field-group.php:179
+#: admin/field-group.php:183
 msgid "Parent fields"
 msgstr "Yläkentät"
 
-#: admin/field-group.php:180
+#: admin/field-group.php:184
 msgid "Sibling fields"
 msgstr "Serkkukentät"
 
-#: admin/field-group.php:181
+#: admin/field-group.php:185
 msgid "Move Custom Field"
 msgstr "Siirrä muokattua kenttää"
 
-#: admin/field-group.php:182
+#: admin/field-group.php:186
 msgid "This field cannot be moved until its changes have been saved"
 msgstr "Tätä kenttää ei voi siirtää ennen kuin muutokset on talletettu"
 
-#: admin/field-group.php:183
+#: admin/field-group.php:187
 msgid "Null"
 msgstr "Tyhjä"
 
-#: admin/field-group.php:184 core/input.php:128
+#: admin/field-group.php:188 core/input.php:128
 msgid "The changes you made will be lost if you navigate away from this page"
 msgstr "Tekemäsi muutokset menetetään, jos siirryt pois tältä sivulta"
 
-#: admin/field-group.php:185
+#: admin/field-group.php:189
 msgid "The string \"field_\" may not be used at the start of a field name"
 msgstr "Merkkijonoa \"field_\" ei saa käyttää kenttänimen alussa"
 
-#: admin/field-group.php:210
+#: admin/field-group.php:214
 msgid "Location"
 msgstr "Sijainti"
 
-#: admin/field-group.php:211 pro/api/api-options-page.php:22
-#: pro/api/api-options-page.php:23
-msgid "Options"
-msgstr "Asetukset"
-
-#: admin/field-group.php:252
-msgid "Show Field Keys"
-msgstr "Näytä kenttäavain"
+#: admin/field-group.php:215
+msgid "Settings"
+msgstr ""
 
 #: admin/field-group.php:253
-#: admin/views/field-group-field-conditional-logic.php:40
-#: admin/views/field-group-field.php:137 fields/checkbox.php:246
-#: fields/message.php:117 fields/page_link.php:568 fields/page_link.php:582
-#: fields/post_object.php:437 fields/post_object.php:451 fields/select.php:411
-#: fields/select.php:425 fields/select.php:439 fields/select.php:453
-#: fields/taxonomy.php:772 fields/taxonomy.php:786 fields/taxonomy.php:800
-#: fields/taxonomy.php:814 fields/user.php:457 fields/user.php:471
-#: fields/wysiwyg.php:384 pro/admin/views/settings-updates.php:93
-msgid "Yes"
-msgstr "Kyllä"
+msgid "Field Keys"
+msgstr ""
 
-#: admin/field-group.php:254
-#: admin/views/field-group-field-conditional-logic.php:41
-#: admin/views/field-group-field.php:138 fields/checkbox.php:247
-#: fields/message.php:118 fields/page_link.php:569 fields/page_link.php:583
-#: fields/post_object.php:438 fields/post_object.php:452 fields/select.php:412
-#: fields/select.php:426 fields/select.php:440 fields/select.php:454
-#: fields/taxonomy.php:687 fields/taxonomy.php:773 fields/taxonomy.php:787
-#: fields/taxonomy.php:801 fields/taxonomy.php:815 fields/user.php:458
-#: fields/user.php:472 fields/wysiwyg.php:385
-#: pro/admin/views/settings-updates.php:103
-msgid "No"
-msgstr "Ei"
+#: admin/field-group.php:283 admin/views/field-group-options.php:17
+msgid "Active"
+msgstr ""
 
-#: admin/field-group.php:713
+#: admin/field-group.php:744
 msgid "Front Page"
 msgstr "Etusivu"
 
-#: admin/field-group.php:714
+#: admin/field-group.php:745
 msgid "Posts Page"
 msgstr "Artikkelit -sivu"
 
-#: admin/field-group.php:715
+#: admin/field-group.php:746
 msgid "Top Level Page (no parent)"
 msgstr "Ylätason sivu (sivu, jolla ei ole vanhempia)"
 
-#: admin/field-group.php:716
+#: admin/field-group.php:747
 msgid "Parent Page (has children)"
 msgstr "Vanhempi sivu (sivu, jolla on alasivuja)"
 
-#: admin/field-group.php:717
+#: admin/field-group.php:748
 msgid "Child Page (has parent)"
 msgstr "Lapsi sivu (sivu, jolla on vanhempi)"
 
-#: admin/field-group.php:733
+#: admin/field-group.php:764
 msgid "Default Template"
 msgstr "Oletus sivupohja"
 
-#: admin/field-group.php:755
+#: admin/field-group.php:786
 msgid "Logged in"
 msgstr "Kirjautunut sisään"
 
-#: admin/field-group.php:756
+#: admin/field-group.php:787
 msgid "Viewing front end"
 msgstr "Käyttää front endiä"
 
-#: admin/field-group.php:757
+#: admin/field-group.php:788
 msgid "Viewing back end"
 msgstr "Käyttää back endiä"
 
-#: admin/field-group.php:776
+#: admin/field-group.php:807
 msgid "Super Admin"
 msgstr "Super pääkäyttäjä"
 
-#: admin/field-group.php:787 admin/field-group.php:795
-#: admin/field-group.php:809 admin/field-group.php:816
-#: admin/field-group.php:831 admin/field-group.php:841 fields/file.php:235
-#: fields/image.php:226 pro/fields/gallery.php:655
+#: admin/field-group.php:818 admin/field-group.php:826
+#: admin/field-group.php:840 admin/field-group.php:847
+#: admin/field-group.php:862 admin/field-group.php:872 fields/file.php:235
+#: fields/image.php:226 pro/fields/gallery.php:653
 msgid "All"
 msgstr "Kaikki"
 
-#: admin/field-group.php:796
+#: admin/field-group.php:827
 msgid "Add / Edit"
 msgstr "Lisää / Muokkaa"
 
-#: admin/field-group.php:797
+#: admin/field-group.php:828
 msgid "Register"
 msgstr "Rekisteröi"
 
-#: admin/field-group.php:1028
+#: admin/field-group.php:1059
 msgid "Move Complete."
 msgstr "Siirto valmis."
 
-#: admin/field-group.php:1029
+#: admin/field-group.php:1060
 #, php-format
 msgid "The %s field can now be found in the %s field group"
 msgstr "Kenttä %s löytyy nyt %s-kenttäryhmästä"
 
-#: admin/field-group.php:1031
+#: admin/field-group.php:1062
 msgid "Close Window"
 msgstr "Sulje ikkuna"
 
-#: admin/field-group.php:1066
+#: admin/field-group.php:1097
 msgid "Please select the destination for this field"
 msgstr "Valitse kohde kenttälle"
 
-#: admin/field-group.php:1073
+#: admin/field-group.php:1104
 msgid "Move Field"
 msgstr "Siirrä kenttä"
 
-#: admin/field-groups.php:109
+#: admin/field-groups.php:74
+#, php-format
+msgid "Active <span class=\"count\">(%s)</span>"
+msgid_plural "Active <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
+
+#: admin/field-groups.php:142
 #, php-format
 msgid "Field group duplicated. %s"
 msgstr "Kenttäryhmä monistettu. %s"
 
-#: admin/field-groups.php:113
+#: admin/field-groups.php:146
 #, php-format
 msgid "%s field group duplicated."
 msgid_plural "%s field groups duplicated."
 msgstr[0] "%s kenttäryhmä monistettu."
 msgstr[1] "%s kenttäryhmät monistettu."
 
-#: admin/field-groups.php:195
+#: admin/field-groups.php:228
 #, php-format
 msgid "Field group synchronised. %s"
 msgstr "Kenttäryhmä synkronoitu. %s"
 
-#: admin/field-groups.php:199
+#: admin/field-groups.php:232
 #, php-format
 msgid "%s field group synchronised."
 msgid_plural "%s field groups synchronised."
 msgstr[0] "%s kenttäryhmä synkronoitu."
 msgstr[1] "%s kenttäryhmät synkronoitu."
 
-#: admin/field-groups.php:370
+#: admin/field-groups.php:403 admin/field-groups.php:573
 msgid "Sync available"
 msgstr "Synkronointi saatavissa"
 
-#: admin/field-groups.php:486
+#: admin/field-groups.php:516
 msgid "Title"
 msgstr "Otsikko"
 
-#: admin/field-groups.php:544 admin/settings-info.php:76
+#: admin/field-groups.php:517 admin/views/field-group-options.php:98
+#: admin/views/update-network.php:20 admin/views/update-network.php:28
+msgid "Description"
+msgstr "Kuvaus"
+
+#: admin/field-groups.php:518 admin/views/field-group-options.php:10
+msgid "Status"
+msgstr ""
+
+#: admin/field-groups.php:616 admin/settings-info.php:76
 #: pro/admin/views/settings-updates.php:111
 msgid "Changelog"
 msgstr "Muutosloki"
 
-#: admin/field-groups.php:545
+#: admin/field-groups.php:617
 msgid "See what's new in"
 msgstr "Katso mitä uutta löytyy"
 
-#: admin/field-groups.php:545
+#: admin/field-groups.php:617
 msgid "version"
 msgstr "versiosta"
 
-#: admin/field-groups.php:547
+#: admin/field-groups.php:619
 msgid "Resources"
 msgstr "Resurssit"
 
-#: admin/field-groups.php:549
+#: admin/field-groups.php:621
 msgid "Getting Started"
 msgstr "Miten pääset alkuun"
 
-#: admin/field-groups.php:550 pro/admin/settings-updates.php:73
+#: admin/field-groups.php:622 pro/admin/settings-updates.php:73
 #: pro/admin/views/settings-updates.php:17
 msgid "Updates"
 msgstr "Päivitykset"
 
-#: admin/field-groups.php:551
+#: admin/field-groups.php:623
 msgid "Field Types"
 msgstr "Kenttätyypit"
 
-#: admin/field-groups.php:552
+#: admin/field-groups.php:624
 msgid "Functions"
 msgstr "Funktiot"
 
-#: admin/field-groups.php:553
+#: admin/field-groups.php:625
 msgid "Actions"
 msgstr "Toiminnot"
 
-#: admin/field-groups.php:554 fields/relationship.php:719
+#: admin/field-groups.php:626 fields/relationship.php:718
 msgid "Filters"
 msgstr "Suodattimet"
 
-#: admin/field-groups.php:555
+#: admin/field-groups.php:627
 msgid "'How to' guides"
 msgstr "\"Miten\" oppaat"
 
-#: admin/field-groups.php:556
+#: admin/field-groups.php:628
 msgid "Tutorials"
 msgstr "Oppaat"
 
-#: admin/field-groups.php:561
+#: admin/field-groups.php:633
 msgid "Created by"
 msgstr "Tekijä"
 
-#: admin/field-groups.php:596
+#: admin/field-groups.php:673
 msgid "Duplicate this item"
 msgstr "Monista tämä kohde"
 
-#: admin/field-groups.php:596 admin/field-groups.php:605
-#: admin/views/field-group-field.php:58 pro/fields/flexible-content.php:520
+#: admin/field-groups.php:673 admin/field-groups.php:685
+#: admin/views/field-group-field.php:58 pro/fields/flexible-content.php:516
 msgid "Duplicate"
 msgstr "Monista"
 
-#: admin/field-groups.php:635
+#: admin/field-groups.php:724
 #, php-format
 msgid "Select %s"
 msgstr "Valitse %s"
 
-#: admin/field-groups.php:641
+#: admin/field-groups.php:730
 msgid "Synchronise field group"
 msgstr "Synkronoi kenttäryhmä"
 
-#: admin/field-groups.php:641 admin/field-groups.php:656
+#: admin/field-groups.php:730 admin/field-groups.php:750
 msgid "Sync"
 msgstr "Synkronointi"
 
@@ -420,45 +429,6 @@ msgstr "Lisäosat"
 msgid "<b>Error</b>. Could not load add-ons list"
 msgstr "<b>Virhe</b>. Lisäosa luetteloa ei voitu ladata"
 
-#: admin/settings-export.php:54 admin/views/settings-export-generate.php:9
-#: admin/views/settings-export.php:3
-msgid "Import / Export"
-msgstr "Tuonti / vienti"
-
-#: admin/settings-export.php:147 admin/settings-export.php:361
-msgid "No field groups selected"
-msgstr "Ei kenttäryhmää valittu"
-
-#: admin/settings-export.php:184
-msgid "No file selected"
-msgstr "Ei tiedostoa valittu"
-
-#: admin/settings-export.php:197
-msgid "Error uploading file. Please try again"
-msgstr "Virhe ladattaessa tiedostoa. Ole hyvä ja yritä uudelleen."
-
-#: admin/settings-export.php:206
-msgid "Incorrect file type"
-msgstr "Virheellinen tiedostomuoto"
-
-#: admin/settings-export.php:223
-msgid "Import file empty"
-msgstr "Tuotu tiedosto on tyhjä"
-
-#: admin/settings-export.php:319
-#, php-format
-msgid "<b>Success</b>. Import tool added %s field groups: %s"
-msgstr "<b>Onnistui!</b> Tuontityökalu lisäsi %s kenttäryhmään: %s"
-
-#: admin/settings-export.php:328
-#, php-format
-msgid ""
-"<b>Warning</b>. Import tool detected %s field groups already exist and have "
-"been ignored: %s"
-msgstr ""
-"<b>Varoitus!</b> Tuontityökalu havaitsi %s kenttäryhmää on jo olemassa ja "
-"siksi ne jätettiin huomiotta: %s\t"
-
 #: admin/settings-info.php:50
 msgid "Info"
 msgstr "Info"
@@ -466,6 +436,45 @@ msgstr "Info"
 #: admin/settings-info.php:75
 msgid "What's New"
 msgstr "Katso mitä uutta"
+
+#: admin/settings-tools.php:54 admin/views/settings-tools-export.php:9
+#: admin/views/settings-tools.php:31
+msgid "Tools"
+msgstr ""
+
+#: admin/settings-tools.php:151 admin/settings-tools.php:365
+msgid "No field groups selected"
+msgstr "Ei kenttäryhmää valittu"
+
+#: admin/settings-tools.php:188
+msgid "No file selected"
+msgstr "Ei tiedostoa valittu"
+
+#: admin/settings-tools.php:201
+msgid "Error uploading file. Please try again"
+msgstr "Virhe ladattaessa tiedostoa. Ole hyvä ja yritä uudelleen."
+
+#: admin/settings-tools.php:210
+msgid "Incorrect file type"
+msgstr "Virheellinen tiedostomuoto"
+
+#: admin/settings-tools.php:227
+msgid "Import file empty"
+msgstr "Tuotu tiedosto on tyhjä"
+
+#: admin/settings-tools.php:323
+#, php-format
+msgid "<b>Success</b>. Import tool added %s field groups: %s"
+msgstr "<b>Onnistui!</b> Tuontityökalu lisäsi %s kenttäryhmään: %s"
+
+#: admin/settings-tools.php:332
+#, php-format
+msgid ""
+"<b>Warning</b>. Import tool detected %s field groups already exist and have "
+"been ignored: %s"
+msgstr ""
+"<b>Varoitus!</b> Tuontityökalu havaitsi %s kenttäryhmää on jo olemassa ja "
+"siksi ne jätettiin huomiotta: %s\t"
 
 #: admin/update.php:113
 msgid "Upgrade ACF"
@@ -486,6 +495,30 @@ msgstr "Päivitä tietokanta"
 #: admin/views/field-group-field-conditional-logic.php:29
 msgid "Conditional Logic"
 msgstr "Ehdollinen logiikka"
+
+#: admin/views/field-group-field-conditional-logic.php:40
+#: admin/views/field-group-field.php:137 fields/checkbox.php:246
+#: fields/message.php:117 fields/page_link.php:568 fields/page_link.php:582
+#: fields/post_object.php:434 fields/post_object.php:448 fields/select.php:411
+#: fields/select.php:425 fields/select.php:439 fields/select.php:453
+#: fields/tab.php:172 fields/taxonomy.php:770 fields/taxonomy.php:784
+#: fields/taxonomy.php:798 fields/taxonomy.php:812 fields/user.php:457
+#: fields/user.php:471 fields/wysiwyg.php:384
+#: pro/admin/views/settings-updates.php:93
+msgid "Yes"
+msgstr "Kyllä"
+
+#: admin/views/field-group-field-conditional-logic.php:41
+#: admin/views/field-group-field.php:138 fields/checkbox.php:247
+#: fields/message.php:118 fields/page_link.php:569 fields/page_link.php:583
+#: fields/post_object.php:435 fields/post_object.php:449 fields/select.php:412
+#: fields/select.php:426 fields/select.php:440 fields/select.php:454
+#: fields/tab.php:173 fields/taxonomy.php:685 fields/taxonomy.php:771
+#: fields/taxonomy.php:785 fields/taxonomy.php:799 fields/taxonomy.php:813
+#: fields/user.php:458 fields/user.php:472 fields/wysiwyg.php:385
+#: pro/admin/views/settings-updates.php:103
+msgid "No"
+msgstr "Ei"
 
 #: admin/views/field-group-field-conditional-logic.php:65
 msgid "Show this field if"
@@ -535,12 +568,12 @@ msgstr "Siirrä"
 msgid "Delete field"
 msgstr "Poista kenttä"
 
-#: admin/views/field-group-field.php:60 pro/fields/flexible-content.php:519
+#: admin/views/field-group-field.php:60 pro/fields/flexible-content.php:515
 msgid "Delete"
 msgstr "Poista"
 
-#: admin/views/field-group-field.php:68 fields/oembed.php:214
-#: fields/taxonomy.php:888
+#: admin/views/field-group-field.php:68 fields/oembed.php:212
+#: fields/taxonomy.php:886
 msgid "Error"
 msgstr "Virhe"
 
@@ -568,7 +601,7 @@ msgstr "Yksi sana, ei välilyöntejä. Alaviivat ja viivamerkit ovat sallittuja.
 msgid "Field Type"
 msgstr "Kenttätyyppi"
 
-#: admin/views/field-group-field.php:118 fields/tab.php:110
+#: admin/views/field-group-field.php:118 fields/tab.php:143
 msgid "Instructions"
 msgstr "Ohjeet"
 
@@ -604,11 +637,11 @@ msgstr "Sulje kenttä"
 msgid "Order"
 msgstr "Järjestys"
 
-#: admin/views/field-group-fields.php:30 pro/fields/flexible-content.php:545
+#: admin/views/field-group-fields.php:30 pro/fields/flexible-content.php:541
 msgid "Label"
 msgstr "Nimiö"
 
-#: admin/views/field-group-fields.php:31 pro/fields/flexible-content.php:558
+#: admin/views/field-group-fields.php:31 pro/fields/flexible-content.php:554
 msgid "Name"
 msgstr "Nimi"
 
@@ -652,7 +685,7 @@ msgstr "Näytä tämä kenttäryhmä, jos"
 msgid "Post"
 msgstr "Artikkeli"
 
-#: admin/views/field-group-locations.php:42 fields/relationship.php:725
+#: admin/views/field-group-locations.php:42 fields/relationship.php:724
 msgid "Post Type"
 msgstr "Artikkelityyppi"
 
@@ -729,76 +762,79 @@ msgstr "Kommentti"
 msgid "Widget"
 msgstr "Vimpain"
 
-#: admin/views/field-group-options.php:10
-msgid "Order No."
-msgstr "Järjestysnumero"
-
-#: admin/views/field-group-options.php:11
-msgid "Field groups are created in order from lowest to highest"
-msgstr ""
-"Kenttäryhmät luodaan järjestyksessä alkaen pienimmästä järjestysnumerosta"
-
-#: admin/views/field-group-options.php:21
-msgid "Position"
-msgstr "Sijainti"
-
-#: admin/views/field-group-options.php:28
-msgid "High (after title)"
-msgstr "Korkea (otsikon jälkeen)"
-
-#: admin/views/field-group-options.php:29
-msgid "Normal (after content)"
-msgstr "Normaali (sisällön jälkeen)"
-
-#: admin/views/field-group-options.php:30
-msgid "Side"
-msgstr "Reuna"
-
-#: admin/views/field-group-options.php:38
+#: admin/views/field-group-options.php:25
 msgid "Style"
 msgstr "Tyyli"
 
-#: admin/views/field-group-options.php:45
+#: admin/views/field-group-options.php:32
 msgid "Standard (WP metabox)"
 msgstr "Standardi (WP metalaatikko)"
 
-#: admin/views/field-group-options.php:46
+#: admin/views/field-group-options.php:33
 msgid "Seamless (no metabox)"
 msgstr "Saumaton (ei metalaatikkoa)"
 
-#: admin/views/field-group-options.php:53
+#: admin/views/field-group-options.php:40
+msgid "Position"
+msgstr "Sijainti"
+
+#: admin/views/field-group-options.php:47
+msgid "High (after title)"
+msgstr "Korkea (otsikon jälkeen)"
+
+#: admin/views/field-group-options.php:48
+msgid "Normal (after content)"
+msgstr "Normaali (sisällön jälkeen)"
+
+#: admin/views/field-group-options.php:49
+msgid "Side"
+msgstr "Reuna"
+
+#: admin/views/field-group-options.php:57
 msgid "Label placement"
 msgstr "Nimiön sijainti"
 
-#: admin/views/field-group-options.php:60 fields/tab.php:126
+#: admin/views/field-group-options.php:64 fields/tab.php:159
 msgid "Top aligned"
 msgstr "Tasaa ylös"
 
-#: admin/views/field-group-options.php:61 fields/tab.php:127
+#: admin/views/field-group-options.php:65 fields/tab.php:160
 msgid "Left Aligned"
 msgstr "Tasaa vasemmalle"
 
-#: admin/views/field-group-options.php:68
+#: admin/views/field-group-options.php:72
 msgid "Instruction placement"
 msgstr "Ohjeen sijainti"
 
-#: admin/views/field-group-options.php:75
+#: admin/views/field-group-options.php:79
 msgid "Below labels"
 msgstr "Tasaa nimiön alapuolelle"
 
-#: admin/views/field-group-options.php:76
+#: admin/views/field-group-options.php:80
 msgid "Below fields"
 msgstr "Tasaa kentän alapuolelle"
 
-#: admin/views/field-group-options.php:83
+#: admin/views/field-group-options.php:87
+msgid "Order No."
+msgstr "Järjestysnumero"
+
+#: admin/views/field-group-options.php:88
+msgid "Field groups with a lower order will appear first"
+msgstr ""
+
+#: admin/views/field-group-options.php:99
+msgid "Shown in field group list"
+msgstr ""
+
+#: admin/views/field-group-options.php:109
 msgid "Hide on screen"
 msgstr "Piilota näytöltä"
 
-#: admin/views/field-group-options.php:84
+#: admin/views/field-group-options.php:110
 msgid "<b>Select</b> items to <b>hide</b> them from the edit screen."
 msgstr "<b>Valitse</b> kohteita <b>piilottaaksesi</b> ne muokkausnäkymästä."
 
-#: admin/views/field-group-options.php:84
+#: admin/views/field-group-options.php:110
 msgid ""
 "If multiple field groups appear on an edit screen, the first field group's "
 "options will be used (the one with the lowest order number)"
@@ -806,59 +842,59 @@ msgstr ""
 "Jos muokkausnäkymässä on useita kenttäryhmiä, ensimmäisen (pienin "
 "järjestysnumero) kenttäryhmän piilotusasetuksia käytetään"
 
-#: admin/views/field-group-options.php:91
+#: admin/views/field-group-options.php:117
 msgid "Permalink"
 msgstr "Kestolinkki"
 
-#: admin/views/field-group-options.php:92
+#: admin/views/field-group-options.php:118
 msgid "Content Editor"
 msgstr "Sisältöeditori"
 
-#: admin/views/field-group-options.php:93
+#: admin/views/field-group-options.php:119
 msgid "Excerpt"
 msgstr "Katkelma"
 
-#: admin/views/field-group-options.php:95
+#: admin/views/field-group-options.php:121
 msgid "Discussion"
 msgstr "Keskustelu"
 
-#: admin/views/field-group-options.php:96
+#: admin/views/field-group-options.php:122
 msgid "Comments"
 msgstr "Kommentit"
 
-#: admin/views/field-group-options.php:97
+#: admin/views/field-group-options.php:123
 msgid "Revisions"
 msgstr "Tarkastettu"
 
-#: admin/views/field-group-options.php:98
+#: admin/views/field-group-options.php:124
 msgid "Slug"
 msgstr "Polkutunnus (slug)"
 
-#: admin/views/field-group-options.php:99
+#: admin/views/field-group-options.php:125
 msgid "Author"
 msgstr "Kirjoittaja"
 
-#: admin/views/field-group-options.php:100
+#: admin/views/field-group-options.php:126
 msgid "Format"
 msgstr "Muoto"
 
-#: admin/views/field-group-options.php:101
+#: admin/views/field-group-options.php:127
 msgid "Page Attributes"
 msgstr "Sivun attribuutit"
 
-#: admin/views/field-group-options.php:102 fields/relationship.php:738
+#: admin/views/field-group-options.php:128 fields/relationship.php:737
 msgid "Featured Image"
 msgstr "Artikkelikuva"
 
-#: admin/views/field-group-options.php:103
+#: admin/views/field-group-options.php:129
 msgid "Categories"
 msgstr "Kategoriat"
 
-#: admin/views/field-group-options.php:104
+#: admin/views/field-group-options.php:130
 msgid "Tags"
 msgstr "Avainsanat"
 
-#: admin/views/field-group-options.php:105
+#: admin/views/field-group-options.php:131
 msgid "Send Trackbacks"
 msgstr "Lähetä paluuviitteet"
 
@@ -869,71 +905,6 @@ msgstr "Lataa ja asenna"
 #: admin/views/settings-addons.php:42
 msgid "Installed"
 msgstr "Asennettu"
-
-#: admin/views/settings-export-generate.php:13
-msgid "Export Field Groups to PHP"
-msgstr "Vie kenttäryhmä PHP:llä"
-
-#: admin/views/settings-export-generate.php:17
-msgid ""
-"The following code can be used to register a local version of the selected "
-"field group(s). A local field group can provide many benefits such as faster "
-"load times, version control & dynamic fields/settings. Simply copy and paste "
-"the following code to your theme's functions.php file or include it within "
-"an external file."
-msgstr ""
-"Tällä koodilla voit rekisteröidä valitut kenttäryhmät paikallisesti. "
-"Paikallinen kenttäryhmä tarjoaa monia etuja, kuten nopeammat latausajat, "
-"versionhallinnan & dynaamiset kentät/asetukset. Kopioi ja liitä koodi "
-"teemasi functions.php tiedostoon tai sisällytä se ulkoisen tiedoston avulla."
-
-#: admin/views/settings-export.php:7
-msgid "Export Field Groups"
-msgstr "Vie kenttäryhmiä"
-
-#: admin/views/settings-export.php:10
-msgid ""
-"Select the field groups you would like to export and then select your export "
-"method. Use the download button to export to a .json file which you can then "
-"import to another ACF installation. Use the generate button to export to PHP "
-"code which you can place in your theme."
-msgstr ""
-"Valitse kenttäryhmät, jotka haluat viedä ja valitse sitten vientimetodisi. "
-"Käytä Lataa-painiketta viedäksesi .json-tiedoston, jonka voit sitten tuoda "
-"toisessa ACF asennuksessa. Käytä Generoi-painiketta luodaksesi PHP koodia, "
-"jonka voit sijoittaa teemaasi."
-
-#: admin/views/settings-export.php:20
-msgid "Select Field Groups"
-msgstr "Valitse kenttäryhmät"
-
-#: admin/views/settings-export.php:56
-msgid "Download export file"
-msgstr "Lataa vientitiedosto"
-
-#: admin/views/settings-export.php:57
-msgid "Generate export code"
-msgstr "Generoi vientikoodi"
-
-#: admin/views/settings-export.php:110
-msgid "Import Field Groups"
-msgstr "Tuo kenttäryhmiä"
-
-#: admin/views/settings-export.php:113
-msgid ""
-"Select the Advanced Custom Fields JSON file you would like to import. When "
-"you click the import button below, ACF will import the field groups."
-msgstr ""
-"Valitse JSON-tiedosto, jonka haluat tuoda. Kenttäryhmät tuodaan, kun "
-"klikkaat Tuo-painiketta."
-
-#: admin/views/settings-export.php:123 fields/file.php:46
-msgid "Select File"
-msgstr "Valitse tiedosto"
-
-#: admin/views/settings-export.php:132
-msgid "Import"
-msgstr "Tuo"
 
 #: admin/views/settings-info.php:9
 msgid "Welcome to Advanced Custom Fields"
@@ -948,15 +919,15 @@ msgstr ""
 "Kiitos, että päivitit! ACF %s on suurempi ja parempi kuin koskaan ennen. "
 "Toivomme, että pidät siitä."
 
-#: admin/views/settings-info.php:25
+#: admin/views/settings-info.php:23
 msgid "A smoother custom field experience"
 msgstr "Sujuvampi kenttien muokkaus kokemus"
 
-#: admin/views/settings-info.php:30
+#: admin/views/settings-info.php:28
 msgid "Improved Usability"
 msgstr "Käytettävyyttä parannettu"
 
-#: admin/views/settings-info.php:31
+#: admin/views/settings-info.php:29
 msgid ""
 "Including the popular Select2 library has improved both usability and speed "
 "across a number of field types including post object, page link, taxonomy "
@@ -966,11 +937,11 @@ msgstr ""
 "nopeutta erilaisissa kenttätyypeissä kuten artikkelioliossa, sivun linkissä, "
 "taksonomiassa ja valinnassa."
 
-#: admin/views/settings-info.php:35
+#: admin/views/settings-info.php:33
 msgid "Improved Design"
 msgstr "Parantunut muotoilu"
 
-#: admin/views/settings-info.php:36
+#: admin/views/settings-info.php:34
 msgid ""
 "Many fields have undergone a visual refresh to make ACF look better than "
 "ever! Noticeable changes are seen on the gallery, relationship and oEmbed "
@@ -980,11 +951,11 @@ msgstr ""
 "paremmalta kuin koskaan ennen! Huomattavat muutokset ovat nähtävissä "
 "Galleria, Suodata artikkeleita ja oEmbed (uusi) kentissä!"
 
-#: admin/views/settings-info.php:40
+#: admin/views/settings-info.php:38
 msgid "Improved Data"
 msgstr "Parannetut data"
 
-#: admin/views/settings-info.php:41
+#: admin/views/settings-info.php:39
 msgid ""
 "Redesigning the data architecture has allowed sub fields to live "
 "independently from their parents. This allows you to drag and drop fields in "
@@ -994,22 +965,22 @@ msgstr ""
 "riippumattomuuden vanhemmistaan. Tämän muutoksen myötä voit vetää ja "
 "tiputtaa kenttiä riippumatta kenttähierarkiasta"
 
-#: admin/views/settings-info.php:47
+#: admin/views/settings-info.php:45
 msgid "Goodbye Add-ons. Hello PRO"
 msgstr "Hyvästi lisäosat. Tervetuloa PRO"
 
-#: admin/views/settings-info.php:52
+#: admin/views/settings-info.php:50
 msgid "Introducing ACF PRO"
 msgstr "Esittelyssä ACF PRO"
 
-#: admin/views/settings-info.php:53
+#: admin/views/settings-info.php:51
 msgid ""
 "We're changing the way premium functionality is delivered in an exciting way!"
 msgstr ""
 "Muutamme erinomaisesti tapaa, jolla korkealuokkaiset toiminnallisuudet "
 "toimitetaan!"
 
-#: admin/views/settings-info.php:54
+#: admin/views/settings-info.php:52
 #, php-format
 msgid ""
 "All 4 premium add-ons have been combined into a new <a href=\"%s\">Pro "
@@ -1021,11 +992,11 @@ msgstr ""
 "kehittäjien lisenssejä, joten korkealuokkaiset toiminnallisuudet ovat nyt "
 "edullisimpia ja saavutettavampia kuin koskaan ennen!"
 
-#: admin/views/settings-info.php:58
+#: admin/views/settings-info.php:56
 msgid "Powerful Features"
 msgstr "Tehokkaat ominaisuudet"
 
-#: admin/views/settings-info.php:59
+#: admin/views/settings-info.php:57
 msgid ""
 "ACF PRO contains powerful features such as repeatable data, flexible content "
 "layouts, a beautiful gallery field and the ability to create extra admin "
@@ -1035,16 +1006,16 @@ msgstr ""
 "sisältö layoutit, kaunis galleriakenttä sekä mahdollisuus luoda ylimääräisiä "
 "ylläpitäjän asetussivuja!"
 
-#: admin/views/settings-info.php:60
+#: admin/views/settings-info.php:58
 #, php-format
 msgid "Read more about <a href=\"%s\">ACF PRO features</a>."
 msgstr "Lue lisää <a href=\"%s\">ACF PRO:n ominaisuuksista</a>."
 
-#: admin/views/settings-info.php:64
+#: admin/views/settings-info.php:62
 msgid "Easy Upgrading"
 msgstr "Helppo päivitys"
 
-#: admin/views/settings-info.php:65
+#: admin/views/settings-info.php:63
 #, php-format
 msgid ""
 "To help make upgrading easy, <a href=\"%s\">login to your store account</a> "
@@ -1053,7 +1024,7 @@ msgstr ""
 "Tehdäksesi päivityksen helpoksi, <a href=\"%s\">Kirjaudu kauppaan</a> ja "
 "lataa ilmainen kopio ACF PRO:sta!"
 
-#: admin/views/settings-info.php:66
+#: admin/views/settings-info.php:64
 #, php-format
 msgid ""
 "We also wrote an <a href=\"%s\">upgrade guide</a> to answer any questions, "
@@ -1064,33 +1035,33 @@ msgstr ""
 "kysymyksiin. Jos jokin asia vielä vaivaa mieltäsi, ota yhteyttä "
 "asiakaspalveluumme <a href=\"%s\">neuvontapalvelun</a> kautta."
 
-#: admin/views/settings-info.php:74
+#: admin/views/settings-info.php:72
 msgid "Under the Hood"
 msgstr "Konepellin alla"
 
-#: admin/views/settings-info.php:79
+#: admin/views/settings-info.php:77
 msgid "Smarter field settings"
 msgstr "Älykkäämmät kenttäasetukset"
 
-#: admin/views/settings-info.php:80
+#: admin/views/settings-info.php:78
 msgid "ACF now saves its field settings as individual post objects"
 msgstr "ACF tallentaa nyt kenttäasetukset yksittäisenä artikkelioliona"
 
-#: admin/views/settings-info.php:84
+#: admin/views/settings-info.php:82
 msgid "More AJAX"
 msgstr "Enemmän AJAXia"
 
-#: admin/views/settings-info.php:85
+#: admin/views/settings-info.php:83
 msgid "More fields use AJAX powered search to speed up page loading"
 msgstr ""
 "Useammat kentät käyttävät AJAX käyttöistä hakua ja näin sivujen lataus "
 "nopeutuu"
 
-#: admin/views/settings-info.php:89
+#: admin/views/settings-info.php:87
 msgid "Local JSON"
 msgstr "Paikallinen JSON"
 
-#: admin/views/settings-info.php:90
+#: admin/views/settings-info.php:88
 msgid "New auto export to JSON feature improves speed"
 msgstr "Uusi automaattinen JSON-vienti parantaa nopeutta"
 
@@ -1122,63 +1093,63 @@ msgstr ""
 "Kentät voidaan nyt linkittää kommentteihin, vimpaimiin ja kaikkiin käyttäjä "
 "lomakkeisiin!"
 
-#: admin/views/settings-info.php:110
+#: admin/views/settings-info.php:112
 msgid "A new field for embedding content has been added"
 msgstr "Lisättiin uusi kenttä sisällön upottamiseen"
 
-#: admin/views/settings-info.php:114
+#: admin/views/settings-info.php:116
 msgid "New Gallery"
 msgstr "Uusi galleria"
 
-#: admin/views/settings-info.php:115
+#: admin/views/settings-info.php:117
 msgid "The gallery field has undergone a much needed facelift"
 msgstr "Galleriakenttä on käynyt läpi suuresti tarvitun kasvojenkohotuksen"
 
-#: admin/views/settings-info.php:119
+#: admin/views/settings-info.php:121
 msgid "New Settings"
 msgstr "Uudet asetukset"
 
-#: admin/views/settings-info.php:120
+#: admin/views/settings-info.php:122
 msgid ""
 "Field group settings have been added for label placement and instruction "
 "placement"
 msgstr ""
 "Kenttäryhmien asetuksiin lisättiin määritykset nimiön ja ohjeiden sijainnille"
 
-#: admin/views/settings-info.php:124
+#: admin/views/settings-info.php:128
 msgid "Better Front End Forms"
 msgstr "Paremmat Front Endin lomakkeet"
 
-#: admin/views/settings-info.php:125
+#: admin/views/settings-info.php:129
 msgid "acf_form() can now create a new post on submission"
 msgstr "acf_form() voi nyt luoda uuden artikkelin pyydettäessä"
 
-#: admin/views/settings-info.php:129
+#: admin/views/settings-info.php:133
 msgid "Better Validation"
 msgstr "Parempi validointi"
 
-#: admin/views/settings-info.php:130
+#: admin/views/settings-info.php:134
 msgid "Form validation is now done via PHP + AJAX in favour of only JS"
 msgstr ""
 "Lomakkeen validointi tehdään nyt PHP + AJAX sen sijaan, että käytettäisiin "
 "pelkästään JS:ää"
 
-#: admin/views/settings-info.php:134
+#: admin/views/settings-info.php:138
 msgid "Relationship Field"
 msgstr "Suodata artikkeleita -kenttä"
 
-#: admin/views/settings-info.php:135
+#: admin/views/settings-info.php:139
 msgid ""
 "New Relationship field setting for 'Filters' (Search, Post Type, Taxonomy)"
 msgstr ""
 "Uudet Suodata artikkeleita -kentän asetukset 'Suodattamille' (Etsi, "
 "Artikkelityyppi, Taksonomia)"
 
-#: admin/views/settings-info.php:139
+#: admin/views/settings-info.php:145
 msgid "Moving Fields"
 msgstr "Kenttien siirtäminen"
 
-#: admin/views/settings-info.php:140
+#: admin/views/settings-info.php:146
 msgid ""
 "New field group functionality allows you to move a field between groups & "
 "parents"
@@ -1186,19 +1157,19 @@ msgstr ""
 "Uusi kenttäryhmien toiminnallisuus sallii sinun siirtää kenttiä ryhmien & "
 "vanhempien välillä"
 
-#: admin/views/settings-info.php:144 fields/page_link.php:36
+#: admin/views/settings-info.php:150 fields/page_link.php:36
 msgid "Page Link"
 msgstr "Sivun URL"
 
-#: admin/views/settings-info.php:145
+#: admin/views/settings-info.php:151
 msgid "New archives group in page_link field selection"
 msgstr "Uusi arkistoryhmä page_link -kentän valintana"
 
-#: admin/views/settings-info.php:149
+#: admin/views/settings-info.php:155
 msgid "Better Options Pages"
 msgstr "Paremmat asetukset sivut"
 
-#: admin/views/settings-info.php:150
+#: admin/views/settings-info.php:156
 msgid ""
 "New functions for options page allow creation of both parent and child menu "
 "pages"
@@ -1206,10 +1177,75 @@ msgstr ""
 "Uusi toiminnallisuus asetukset-sivulle, joka sallii sekä vanhempi että lapsi "
 "menu-sivujen luomisen"
 
-#: admin/views/settings-info.php:158
+#: admin/views/settings-info.php:165
 #, php-format
 msgid "We think you'll love the changes in %s."
 msgstr "Uskomme, että tulet rakastamaan muutoksia %s:ssa"
+
+#: admin/views/settings-tools-export.php:13
+msgid "Export Field Groups to PHP"
+msgstr "Vie kenttäryhmä PHP:llä"
+
+#: admin/views/settings-tools-export.php:17
+msgid ""
+"The following code can be used to register a local version of the selected "
+"field group(s). A local field group can provide many benefits such as faster "
+"load times, version control & dynamic fields/settings. Simply copy and paste "
+"the following code to your theme's functions.php file or include it within "
+"an external file."
+msgstr ""
+"Tällä koodilla voit rekisteröidä valitut kenttäryhmät paikallisesti. "
+"Paikallinen kenttäryhmä tarjoaa monia etuja, kuten nopeammat latausajat, "
+"versionhallinnan & dynaamiset kentät/asetukset. Kopioi ja liitä koodi "
+"teemasi functions.php tiedostoon tai sisällytä se ulkoisen tiedoston avulla."
+
+#: admin/views/settings-tools.php:5
+msgid "Select Field Groups"
+msgstr "Valitse kenttäryhmät"
+
+#: admin/views/settings-tools.php:35
+msgid "Export Field Groups"
+msgstr "Vie kenttäryhmiä"
+
+#: admin/views/settings-tools.php:38
+msgid ""
+"Select the field groups you would like to export and then select your export "
+"method. Use the download button to export to a .json file which you can then "
+"import to another ACF installation. Use the generate button to export to PHP "
+"code which you can place in your theme."
+msgstr ""
+"Valitse kenttäryhmät, jotka haluat viedä ja valitse sitten vientimetodisi. "
+"Käytä Lataa-painiketta viedäksesi .json-tiedoston, jonka voit sitten tuoda "
+"toisessa ACF asennuksessa. Käytä Generoi-painiketta luodaksesi PHP koodia, "
+"jonka voit sijoittaa teemaasi."
+
+#: admin/views/settings-tools.php:50
+msgid "Download export file"
+msgstr "Lataa vientitiedosto"
+
+#: admin/views/settings-tools.php:51
+msgid "Generate export code"
+msgstr "Generoi vientikoodi"
+
+#: admin/views/settings-tools.php:64
+msgid "Import Field Groups"
+msgstr "Tuo kenttäryhmiä"
+
+#: admin/views/settings-tools.php:67
+msgid ""
+"Select the Advanced Custom Fields JSON file you would like to import. When "
+"you click the import button below, ACF will import the field groups."
+msgstr ""
+"Valitse JSON-tiedosto, jonka haluat tuoda. Kenttäryhmät tuodaan, kun "
+"klikkaat Tuo-painiketta."
+
+#: admin/views/settings-tools.php:77 fields/file.php:46
+msgid "Select File"
+msgstr "Valitse tiedosto"
+
+#: admin/views/settings-tools.php:86
+msgid "Import"
+msgstr "Tuo"
 
 #: admin/views/update-network.php:8 admin/views/update.php:8
 msgid "Advanced Custom Fields Database Upgrade"
@@ -1226,10 +1262,6 @@ msgstr ""
 #: admin/views/update-network.php:19 admin/views/update-network.php:27
 msgid "Site"
 msgstr "Sivu"
-
-#: admin/views/update-network.php:20 admin/views/update-network.php:28
-msgid "Description"
-msgstr "Kuvaus"
 
 #: admin/views/update-network.php:47
 #, php-format
@@ -1261,8 +1293,8 @@ msgid "Upgrade complete"
 msgstr "Päivitys valmis"
 
 #: admin/views/update-network.php:161
-msgid "Upgrading data to "
-msgstr "Päivitetään data versioon %s"
+msgid "Upgrading data to"
+msgstr ""
 
 #: admin/views/update-notice.php:23
 msgid "Database Upgrade Required"
@@ -1298,56 +1330,91 @@ msgstr "Katso mitä uutta"
 msgid "No updates available"
 msgstr "Päivityksiä ei ole saatavilla"
 
-#: api/api-helpers.php:813
+#: api/api-helpers.php:821
 msgid "Thumbnail"
 msgstr "Pienoiskuva"
 
-#: api/api-helpers.php:814
+#: api/api-helpers.php:822
 msgid "Medium"
 msgstr "Keskikokoinen"
 
-#: api/api-helpers.php:815
+#: api/api-helpers.php:823
 msgid "Large"
 msgstr "Iso"
 
-#: api/api-helpers.php:863
+#: api/api-helpers.php:871
 msgid "Full Size"
 msgstr "Täysikokoinen"
 
-#: api/api-helpers.php:1557
+#: api/api-helpers.php:1581
 msgid "(no title)"
 msgstr "(ei otsikkoa)"
 
-#: api/api-template.php:1294 pro/fields/gallery.php:566
+#: api/api-helpers.php:3183
+#, php-format
+msgid "Image width must be at least %dpx."
+msgstr "Kuvan leveys täytyy olla vähintään %dpx."
+
+#: api/api-helpers.php:3188
+#, php-format
+msgid "Image width must not exceed %dpx."
+msgstr "Kuvan leveys ei saa ylittää %dpx."
+
+#: api/api-helpers.php:3204
+#, php-format
+msgid "Image height must be at least %dpx."
+msgstr "Kuvan korkeus täytyy olla vähintään %dpx."
+
+#: api/api-helpers.php:3209
+#, php-format
+msgid "Image height must not exceed %dpx."
+msgstr "Kuvan korkeus ei saa ylittää %dpx."
+
+#: api/api-helpers.php:3227
+#, php-format
+msgid "File size must be at least %s."
+msgstr "Tiedoston koko täytyy olla vähintään %s."
+
+#: api/api-helpers.php:3232
+#, php-format
+msgid "File size must must not exceed %s."
+msgstr "Tiedoston koko ei saa ylittää %s:"
+
+#: api/api-helpers.php:3266
+#, php-format
+msgid "File type must be %s."
+msgstr "Tiedoston koko täytyy olla %s."
+
+#: api/api-template.php:1289 pro/fields/gallery.php:564
 msgid "Update"
 msgstr "Päivitä"
 
-#: api/api-template.php:1295
+#: api/api-template.php:1290
 msgid "Post updated"
 msgstr "Artikkeli päivitetty"
 
-#: core/field.php:130
+#: core/field.php:131
 msgid "Basic"
 msgstr "Perus"
 
-#: core/field.php:131
+#: core/field.php:132
 msgid "Content"
 msgstr "Sisältö"
 
-#: core/field.php:132
+#: core/field.php:133
 msgid "Choice"
 msgstr "Valinta"
 
-#: core/field.php:133
+#: core/field.php:134
 msgid "Relational"
 msgstr "Relationaalinen"
 
-#: core/field.php:134
+#: core/field.php:135
 msgid "jQuery"
 msgstr "jQuery"
 
-#: core/field.php:135 fields/checkbox.php:226 fields/radio.php:231
-#: pro/fields/flexible-content.php:516 pro/fields/repeater.php:392
+#: core/field.php:136 fields/checkbox.php:226 fields/radio.php:231
+#: pro/fields/flexible-content.php:512 pro/fields/repeater.php:392
 msgid "Layout"
 msgstr "Asettelu"
 
@@ -1376,47 +1443,16 @@ msgstr "Yksi kenttä vaatii huomiota"
 msgid "%d fields require attention"
 msgstr "%d kenttää vaativat huomiota"
 
+#: core/input.php:135
+msgid "Restricted"
+msgstr ""
+
 #: core/input.php:533
 #, php-format
 msgid "%s value is required"
 msgstr "%s arvo on pakollinen"
 
-#: core/media.php:84
-#, php-format
-msgid "Image width must be at least %dpx."
-msgstr "Kuvan leveys täytyy olla vähintään %dpx."
-
-#: core/media.php:89
-#, php-format
-msgid "Image width must not exceed %dpx."
-msgstr "Kuvan leveys ei saa ylittää %dpx."
-
-#: core/media.php:104
-#, php-format
-msgid "Image height must be at least %dpx."
-msgstr "Kuvan korkeus täytyy olla vähintään %dpx."
-
-#: core/media.php:109
-#, php-format
-msgid "Image height must not exceed %dpx."
-msgstr "Kuvan korkeus ei saa ylittää %dpx."
-
-#: core/media.php:125
-#, php-format
-msgid "File size must be at least %s."
-msgstr "Tiedoston koko täytyy olla vähintään %s."
-
-#: core/media.php:130
-#, php-format
-msgid "File size must must not exceed %s."
-msgstr "Tiedoston koko ei saa ylittää %s:"
-
-#: core/media.php:154
-#, php-format
-msgid "File type must be %s."
-msgstr "Tiedoston koko täytyy olla %s."
-
-#: fields/checkbox.php:36 fields/taxonomy.php:754
+#: fields/checkbox.php:36 fields/taxonomy.php:752
 msgid "Checkbox"
 msgstr "Valintaruutu"
 
@@ -1500,7 +1536,7 @@ msgid "Show a different month"
 msgstr "Näytä eri kuuakusi"
 
 #: fields/date_picker.php:149
-msgid "Display format"
+msgid "Display Format"
 msgstr "Muokkausnäkymän muoto"
 
 #: fields/date_picker.php:150
@@ -1593,7 +1629,7 @@ msgstr "Ei tiedostoa valittu"
 msgid "Add File"
 msgstr "Lisää tiedosto"
 
-#: fields/file.php:214 fields/image.php:195 fields/taxonomy.php:823
+#: fields/file.php:214 fields/image.php:195 fields/taxonomy.php:821
 msgid "Return Value"
 msgstr "Palauta arvo"
 
@@ -1613,19 +1649,19 @@ msgstr "Tiedoston URL"
 msgid "File ID"
 msgstr "Tiedoston ID"
 
-#: fields/file.php:229 fields/image.php:220 pro/fields/gallery.php:649
+#: fields/file.php:229 fields/image.php:220 pro/fields/gallery.php:647
 msgid "Library"
 msgstr "Kirjasto"
 
-#: fields/file.php:230 fields/image.php:221 pro/fields/gallery.php:650
+#: fields/file.php:230 fields/image.php:221 pro/fields/gallery.php:648
 msgid "Limit the media library choice"
 msgstr "Rajoita valintaa mediakirjastosta"
 
-#: fields/file.php:236 fields/image.php:227 pro/fields/gallery.php:656
+#: fields/file.php:236 fields/image.php:227 pro/fields/gallery.php:654
 msgid "Uploaded to post"
 msgstr "Vain tähän kenttäryhmään ladatut"
 
-#: fields/file.php:243 fields/image.php:234 pro/fields/gallery.php:663
+#: fields/file.php:243 fields/image.php:234 pro/fields/gallery.php:661
 msgid "Minimum"
 msgstr "Minimiarvo(t)"
 
@@ -1634,19 +1670,19 @@ msgid "Restrict which files can be uploaded"
 msgstr "Määritä tiedoston koko"
 
 #: fields/file.php:247 fields/file.php:258 fields/image.php:257
-#: fields/image.php:290 pro/fields/gallery.php:686 pro/fields/gallery.php:719
+#: fields/image.php:290 pro/fields/gallery.php:684 pro/fields/gallery.php:717
 msgid "File size"
 msgstr "Tiedoston koko"
 
-#: fields/file.php:254 fields/image.php:267 pro/fields/gallery.php:696
+#: fields/file.php:254 fields/image.php:267 pro/fields/gallery.php:694
 msgid "Maximum"
 msgstr "Maksimiarvo(t)"
 
-#: fields/file.php:265 fields/image.php:300 pro/fields/gallery.php:729
+#: fields/file.php:265 fields/image.php:300 pro/fields/gallery.php:727
 msgid "Allowed file types"
 msgstr "Sallitut tiedostotyypit"
 
-#: fields/file.php:266 fields/image.php:301 pro/fields/gallery.php:730
+#: fields/file.php:266 fields/image.php:301 pro/fields/gallery.php:728
 msgid "Comma separated list. Leave blank for all types"
 msgstr "Erota pilkulla. Jätä tyhjäksi, jos haluat sallia kaikki tiedostyypit"
 
@@ -1666,36 +1702,36 @@ msgstr "Pahoittelut, mutta tämä selain ei tuo paikannusta"
 msgid "Clear location"
 msgstr "Tyhjennä paikkatieto"
 
-#: fields/google-map.php:142
+#: fields/google-map.php:140
 msgid "Find current location"
 msgstr "Etsi nykyinen sijainti"
 
-#: fields/google-map.php:145
+#: fields/google-map.php:141
 msgid "Search for address..."
 msgstr "Etsi osoite..."
 
-#: fields/google-map.php:177 fields/google-map.php:188
+#: fields/google-map.php:173 fields/google-map.php:184
 msgid "Center"
 msgstr "Sijainti"
 
-#: fields/google-map.php:178 fields/google-map.php:189
+#: fields/google-map.php:174 fields/google-map.php:185
 msgid "Center the initial map"
 msgstr "Kartan oletussijainti"
 
-#: fields/google-map.php:202
+#: fields/google-map.php:198
 msgid "Zoom"
 msgstr "Zoomaus"
 
-#: fields/google-map.php:203
+#: fields/google-map.php:199
 msgid "Set the initial zoom level"
 msgstr "Aseta oletuszoomaus"
 
-#: fields/google-map.php:212 fields/image.php:246 fields/image.php:279
-#: fields/oembed.php:264 pro/fields/gallery.php:675 pro/fields/gallery.php:708
+#: fields/google-map.php:208 fields/image.php:246 fields/image.php:279
+#: fields/oembed.php:262 pro/fields/gallery.php:673 pro/fields/gallery.php:706
 msgid "Height"
 msgstr "Korkeus"
 
-#: fields/google-map.php:213
+#: fields/google-map.php:209
 msgid "Customise the map height"
 msgstr "Muotoile kartan korkeus"
 
@@ -1743,21 +1779,21 @@ msgstr "Kuvan URL"
 msgid "Image ID"
 msgstr "Kuvan ID"
 
-#: fields/image.php:210 pro/fields/gallery.php:639
+#: fields/image.php:210 pro/fields/gallery.php:637
 msgid "Preview Size"
 msgstr "Esikatselukuvan koko"
 
-#: fields/image.php:211 pro/fields/gallery.php:640
+#: fields/image.php:211 pro/fields/gallery.php:638
 msgid "Shown when entering data"
 msgstr "Näytetään muokkausnäkymässä"
 
-#: fields/image.php:235 fields/image.php:268 pro/fields/gallery.php:664
-#: pro/fields/gallery.php:697
+#: fields/image.php:235 fields/image.php:268 pro/fields/gallery.php:662
+#: pro/fields/gallery.php:695
 msgid "Restrict which images can be uploaded"
 msgstr "Määritä millaisia kuvia voidaan ladata"
 
-#: fields/image.php:238 fields/image.php:271 fields/oembed.php:253
-#: pro/fields/gallery.php:667 pro/fields/gallery.php:700
+#: fields/image.php:238 fields/image.php:271 fields/oembed.php:251
+#: pro/fields/gallery.php:665 pro/fields/gallery.php:698
 msgid "Width"
 msgstr "Leveys"
 
@@ -1815,11 +1851,11 @@ msgstr "oEmbed"
 msgid "Enter URL"
 msgstr "Syötä URL"
 
-#: fields/oembed.php:214
+#: fields/oembed.php:212
 msgid "No embed found for the given URL"
 msgstr "Upotettavaa ei löytynyt annetusta URL-osoitteesta"
 
-#: fields/oembed.php:250 fields/oembed.php:261
+#: fields/oembed.php:248 fields/oembed.php:259
 msgid "Embed Size"
 msgstr "Upotuksen koko"
 
@@ -1827,32 +1863,32 @@ msgstr "Upotuksen koko"
 msgid "Archives"
 msgstr "Arkistot"
 
-#: fields/page_link.php:535 fields/post_object.php:404
-#: fields/relationship.php:691
+#: fields/page_link.php:535 fields/post_object.php:401
+#: fields/relationship.php:690
 msgid "Filter by Post Type"
 msgstr "Suodata tyypin mukaan"
 
-#: fields/page_link.php:543 fields/post_object.php:412
-#: fields/relationship.php:699
+#: fields/page_link.php:543 fields/post_object.php:409
+#: fields/relationship.php:698
 msgid "All post types"
 msgstr "Kaikki artikkelityypit"
 
-#: fields/page_link.php:549 fields/post_object.php:418
-#: fields/relationship.php:705
+#: fields/page_link.php:549 fields/post_object.php:415
+#: fields/relationship.php:704
 msgid "Filter by Taxonomy"
 msgstr "Suodata taksonomian mukaan"
 
-#: fields/page_link.php:557 fields/post_object.php:426
-#: fields/relationship.php:713
+#: fields/page_link.php:557 fields/post_object.php:423
+#: fields/relationship.php:712
 msgid "All taxonomies"
 msgstr "Kaikki taksonomiat"
 
-#: fields/page_link.php:563 fields/post_object.php:432 fields/select.php:406
-#: fields/taxonomy.php:767 fields/user.php:452
+#: fields/page_link.php:563 fields/post_object.php:429 fields/select.php:406
+#: fields/taxonomy.php:765 fields/user.php:452
 msgid "Allow Null?"
 msgstr "Salli tyhjä?"
 
-#: fields/page_link.php:577 fields/post_object.php:446 fields/select.php:420
+#: fields/page_link.php:577 fields/post_object.php:443 fields/select.php:420
 #: fields/user.php:466
 msgid "Select multiple values?"
 msgstr "Valitse useita arvoja?"
@@ -1861,16 +1897,16 @@ msgstr "Valitse useita arvoja?"
 msgid "Password"
 msgstr "Salasana"
 
-#: fields/post_object.php:36 fields/post_object.php:465
-#: fields/relationship.php:770
+#: fields/post_object.php:36 fields/post_object.php:462
+#: fields/relationship.php:769
 msgid "Post Object"
 msgstr "Artikkeliolio"
 
-#: fields/post_object.php:460 fields/relationship.php:765
+#: fields/post_object.php:457 fields/relationship.php:764
 msgid "Return Format"
 msgstr "Palautus muoto"
 
-#: fields/post_object.php:466 fields/relationship.php:771
+#: fields/post_object.php:463 fields/relationship.php:770
 msgid "Post ID"
 msgstr "Artikkelin ID"
 
@@ -1914,43 +1950,43 @@ msgstr "Ladataan"
 msgid "No matches found"
 msgstr "Ei yhtään osumaa"
 
-#: fields/relationship.php:574
+#: fields/relationship.php:571
 msgid "Search..."
 msgstr "Etsi..."
 
-#: fields/relationship.php:583
+#: fields/relationship.php:580
 msgid "Select post type"
 msgstr "Valitse artikkelityyppi"
 
-#: fields/relationship.php:596
+#: fields/relationship.php:593
 msgid "Select taxonomy"
 msgstr "Valitse taksonomia"
 
-#: fields/relationship.php:724
+#: fields/relationship.php:723
 msgid "Search"
 msgstr "Etsi"
 
-#: fields/relationship.php:726 fields/taxonomy.php:36 fields/taxonomy.php:737
+#: fields/relationship.php:725 fields/taxonomy.php:36 fields/taxonomy.php:735
 msgid "Taxonomy"
 msgstr "Taksonomia"
 
-#: fields/relationship.php:733
+#: fields/relationship.php:732
 msgid "Elements"
 msgstr "Elementit"
 
-#: fields/relationship.php:734
+#: fields/relationship.php:733
 msgid "Selected elements will be displayed in each result"
 msgstr "Valitut elementit näytetään jokaisessa tuloksessa"
 
-#: fields/relationship.php:745
+#: fields/relationship.php:744
 msgid "Minimum posts"
 msgstr "Vähimmäismäärä artikkeleita"
 
-#: fields/relationship.php:754
+#: fields/relationship.php:753
 msgid "Maximum posts"
 msgstr "Maksimi artikkelit"
 
-#: fields/select.php:36 fields/select.php:174 fields/taxonomy.php:759
+#: fields/select.php:36 fields/select.php:174 fields/taxonomy.php:757
 msgid "Select"
 msgstr "Valinta"
 
@@ -1966,11 +2002,11 @@ msgstr "Haluatko ladata valinnat laiskasti (käyttää AJAXia)?"
 msgid "Tab"
 msgstr "Välilehti"
 
-#: fields/tab.php:95
+#: fields/tab.php:128
 msgid "Warning"
 msgstr "Varoitus"
 
-#: fields/tab.php:100
+#: fields/tab.php:133
 msgid ""
 "The tab field will display incorrectly when added to a Table style repeater "
 "field or flexible content field layout"
@@ -1978,7 +2014,7 @@ msgstr ""
 "Välilehtikentän ulkoasu rikkoutuu, jos lisätään taulukko-tyyli toistin "
 "kenttä tai joustava sisältö kenttä asettelu"
 
-#: fields/tab.php:113
+#: fields/tab.php:146
 msgid ""
 "Use \"Tab Fields\" to better organize your edit screen by grouping fields "
 "together."
@@ -1986,7 +2022,7 @@ msgstr ""
 "Ryhmittele kenttiä käyttämällä ”välilehtikenttiä”. Näin saat selkeämmän "
 "muokkausnäkymän."
 
-#: fields/tab.php:115
+#: fields/tab.php:148
 msgid ""
 "All fields following this \"tab field\" (or until another \"tab field\" is "
 "defined) will be grouped together using this field's label as the tab "
@@ -1996,95 +2032,103 @@ msgstr ""
 "\"välilehtikenttä\" määritellään) ryhmitellään yhteen ja välilehden "
 "otsikoksi tulee tämän kentän nimiö."
 
-#: fields/tab.php:122
+#: fields/tab.php:155
 msgid "Placement"
 msgstr "Sijainti"
+
+#: fields/tab.php:167
+msgid "End-point"
+msgstr ""
+
+#: fields/tab.php:168
+msgid "Use this field as an end-point and start a new group of tabs"
+msgstr ""
 
 #: fields/taxonomy.php:565
 #, php-format
 msgid "Add new %s "
 msgstr "Lisää uusi %s "
 
-#: fields/taxonomy.php:706
+#: fields/taxonomy.php:704
 msgid "None"
 msgstr "Ei mitään"
 
-#: fields/taxonomy.php:738
+#: fields/taxonomy.php:736
 msgid "Select the taxonomy to be displayed"
 msgstr "Valitse taksonomia, joka näytetään"
 
-#: fields/taxonomy.php:747
+#: fields/taxonomy.php:745
 msgid "Appearance"
 msgstr "Ulkoasu"
 
-#: fields/taxonomy.php:748
+#: fields/taxonomy.php:746
 msgid "Select the appearance of this field"
 msgstr "Valitse ulkoasu tälle kenttälle"
 
-#: fields/taxonomy.php:753
+#: fields/taxonomy.php:751
 msgid "Multiple Values"
 msgstr "Mahdollisuus valita useita arvoja"
 
-#: fields/taxonomy.php:755
+#: fields/taxonomy.php:753
 msgid "Multi Select"
 msgstr "Valitse useita"
 
-#: fields/taxonomy.php:757
+#: fields/taxonomy.php:755
 msgid "Single Value"
 msgstr "Mahdollisuus valita vain yksi arvo"
 
-#: fields/taxonomy.php:758
+#: fields/taxonomy.php:756
 msgid "Radio Buttons"
 msgstr "Valintanappi"
 
-#: fields/taxonomy.php:781
+#: fields/taxonomy.php:779
 msgid "Create Terms"
 msgstr "Uusien ehtojen luominen"
 
-#: fields/taxonomy.php:782
+#: fields/taxonomy.php:780
 msgid "Allow new terms to be created whilst editing"
 msgstr "Salli uusien ehtojen luominen samalla kun muokataan"
 
-#: fields/taxonomy.php:795
+#: fields/taxonomy.php:793
 msgid "Save Terms"
 msgstr "Tallenna ehdot"
 
-#: fields/taxonomy.php:796
+#: fields/taxonomy.php:794
 msgid "Connect selected terms to the post"
 msgstr "Yhdistä valitut ehdot artikkeliin"
 
-#: fields/taxonomy.php:809
+#: fields/taxonomy.php:807
 msgid "Load Terms"
 msgstr "Lataa ehdot"
 
-#: fields/taxonomy.php:810
+#: fields/taxonomy.php:808
 msgid "Load value from posts terms"
 msgstr "Lataa arvo artikkelin ehdoista"
 
-#: fields/taxonomy.php:828
+#: fields/taxonomy.php:826
 msgid "Term Object"
 msgstr "Ehto"
 
-#: fields/taxonomy.php:829
+#: fields/taxonomy.php:827
 msgid "Term ID"
 msgstr "Ehdon ID"
 
-#: fields/taxonomy.php:888
+#: fields/taxonomy.php:886
 #, php-format
 msgid "User unable to add new %s"
 msgstr "Käyttäjä ei voi lisätä uutta %s"
 
-#: fields/taxonomy.php:901
+#: fields/taxonomy.php:899
 #, php-format
 msgid "%s already exists"
 msgstr "%s on jo olemassa"
 
-#: fields/taxonomy.php:942
+#: fields/taxonomy.php:940
 #, php-format
 msgid "%s added"
 msgstr "%s lisättiin"
 
-#: fields/taxonomy.php:987
+#: fields/taxonomy.php:985
 msgid "Add"
 msgstr "Lisää"
 
@@ -2193,7 +2237,7 @@ msgstr "Työkalupalkki"
 msgid "Show Media Upload Buttons?"
 msgstr "Näytä Lisää media -painike?"
 
-#: forms/post.php:297 pro/admin/options-page.php:369
+#: forms/post.php:297 pro/admin/options-page.php:373
 msgid "Edit field group"
 msgstr "Muokkaa kenttäryhmää"
 
@@ -2213,15 +2257,15 @@ msgstr "Asetukset-sivu"
 msgid "No options pages exist"
 msgstr "Yhtään Asetukset-sivua ei ole olemassa"
 
-#: pro/admin/options-page.php:294
+#: pro/admin/options-page.php:298
 msgid "Options Updated"
 msgstr "Asetukset päivitetty"
 
-#: pro/admin/options-page.php:300
+#: pro/admin/options-page.php:304
 msgid "No Custom Field Groups found for this options page"
 msgstr "Yhtään lisäkenttäryhmää ei löytynyt tälle asetussivulle"
 
-#: pro/admin/options-page.php:300
+#: pro/admin/options-page.php:304
 msgid "Create a Custom Field Group"
 msgstr "Luo lisäkenttäryhmä"
 
@@ -2303,7 +2347,11 @@ msgstr "Tarkista uudelleen"
 msgid "Upgrade Notice"
 msgstr "Päivitys Ilmoitus"
 
-#: pro/core/updates.php:181
+#: pro/api/api-options-page.php:22 pro/api/api-options-page.php:23
+msgid "Options"
+msgstr "Asetukset"
+
+#: pro/core/updates.php:186
 #, php-format
 msgid ""
 "To enable updates, please enter your license key on the <a href=\"%s"
@@ -2367,63 +2415,63 @@ msgstr "Klikkaa ”%s” -painiketta luodaksesi oman asettelun"
 msgid "Add layout"
 msgstr "Lisää asettelu"
 
-#: pro/fields/flexible-content.php:374
+#: pro/fields/flexible-content.php:372
 msgid "Remove layout"
 msgstr "Poista asettelu"
 
-#: pro/fields/flexible-content.php:518
+#: pro/fields/flexible-content.php:514
 msgid "Reorder Layout"
 msgstr "Järjestä asettelu uudelleen"
 
-#: pro/fields/flexible-content.php:518
+#: pro/fields/flexible-content.php:514
 msgid "Reorder"
 msgstr "Järjestä uudelleen"
 
-#: pro/fields/flexible-content.php:519
+#: pro/fields/flexible-content.php:515
 msgid "Delete Layout"
 msgstr "Poista asettelu"
 
-#: pro/fields/flexible-content.php:520
+#: pro/fields/flexible-content.php:516
 msgid "Duplicate Layout"
 msgstr "Monista asettelu"
 
-#: pro/fields/flexible-content.php:521
+#: pro/fields/flexible-content.php:517
 msgid "Add New Layout"
 msgstr "Lisää uusi asettelu"
 
-#: pro/fields/flexible-content.php:565
+#: pro/fields/flexible-content.php:561
 msgid "Display"
 msgstr "Näytä"
 
-#: pro/fields/flexible-content.php:576 pro/fields/repeater.php:399
+#: pro/fields/flexible-content.php:572 pro/fields/repeater.php:399
 msgid "Table"
 msgstr "Taulukko"
 
-#: pro/fields/flexible-content.php:577 pro/fields/repeater.php:400
+#: pro/fields/flexible-content.php:573 pro/fields/repeater.php:400
 msgid "Block"
 msgstr "Lohko"
 
-#: pro/fields/flexible-content.php:578 pro/fields/repeater.php:401
+#: pro/fields/flexible-content.php:574 pro/fields/repeater.php:401
 msgid "Row"
 msgstr "Rivi"
 
-#: pro/fields/flexible-content.php:593
+#: pro/fields/flexible-content.php:589
 msgid "Min"
 msgstr "Min"
 
-#: pro/fields/flexible-content.php:606
+#: pro/fields/flexible-content.php:602
 msgid "Max"
 msgstr "Maks"
 
-#: pro/fields/flexible-content.php:634 pro/fields/repeater.php:408
+#: pro/fields/flexible-content.php:630 pro/fields/repeater.php:408
 msgid "Button Label"
 msgstr "Painikkeen teksti"
 
-#: pro/fields/flexible-content.php:643
+#: pro/fields/flexible-content.php:639
 msgid "Minimum Layouts"
 msgstr "Asetteluita vähintään"
 
-#: pro/fields/flexible-content.php:652
+#: pro/fields/flexible-content.php:648
 msgid "Maximum Layouts"
 msgstr "Asetteluita enintään"
 
@@ -2447,43 +2495,43 @@ msgstr "Pituus"
 msgid "Remove"
 msgstr "Poista"
 
-#: pro/fields/gallery.php:537
+#: pro/fields/gallery.php:535
 msgid "Add to gallery"
 msgstr "Lisää galleriaan"
 
-#: pro/fields/gallery.php:541
+#: pro/fields/gallery.php:539
 msgid "Bulk actions"
 msgstr "Massatoiminnot"
 
-#: pro/fields/gallery.php:542
+#: pro/fields/gallery.php:540
 msgid "Sort by date uploaded"
 msgstr "Lajittele latauksen päivämäärän mukaan"
 
-#: pro/fields/gallery.php:543
+#: pro/fields/gallery.php:541
 msgid "Sort by date modified"
 msgstr "Lajittele viimeisimmän muokkauksen päivämäärän mukaan"
 
-#: pro/fields/gallery.php:544
+#: pro/fields/gallery.php:542
 msgid "Sort by title"
 msgstr "Lajittele otsikon mukaan"
 
-#: pro/fields/gallery.php:545
+#: pro/fields/gallery.php:543
 msgid "Reverse current order"
 msgstr "Käännän nykyinen järjestys"
 
-#: pro/fields/gallery.php:563
+#: pro/fields/gallery.php:561
 msgid "Close"
 msgstr "Sulje"
 
-#: pro/fields/gallery.php:621
+#: pro/fields/gallery.php:619
 msgid "Minimum Selection"
 msgstr "Pienin määrä kuvia"
 
-#: pro/fields/gallery.php:630
+#: pro/fields/gallery.php:628
 msgid "Maximum Selection"
 msgstr "Suurin määrä kuvia"
 
-#: pro/fields/gallery.php:811
+#: pro/fields/gallery.php:809
 #, php-format
 msgid "%s requires at least %s selection"
 msgid_plural "%s requires at least %s selections"
@@ -2546,6 +2594,19 @@ msgstr "Elliot Condon"
 #. Author URI of the plugin/theme
 msgid "http://www.elliotcondon.com/"
 msgstr "http://www.elliotcondon.com/"
+
+#~ msgid "Show Field Keys"
+#~ msgstr "Näytä kenttäavain"
+
+#~ msgid "Import / Export"
+#~ msgstr "Tuonti / vienti"
+
+#~ msgid "Field groups are created in order from lowest to highest"
+#~ msgstr ""
+#~ "Kenttäryhmät luodaan järjestyksessä alkaen pienimmästä järjestysnumerosta"
+
+#~ msgid "Upgrading data to "
+#~ msgstr "Päivitetään data versioon %s"
 
 #~ msgid "Hide / Show All"
 #~ msgstr "Piilota / Näytä kaikki"

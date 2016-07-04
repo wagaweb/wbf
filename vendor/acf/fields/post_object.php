@@ -75,7 +75,6 @@ class acf_field_post_object extends acf_field {
    		$options = acf_parse_args($options, array(
 			'post_id'		=> 0,
 			's'				=> '',
-			'lang'			=> false,
 			'field_key'		=> '',
 			'paged'			=> 1
 		));
@@ -94,25 +93,9 @@ class acf_field_post_object extends acf_field {
 		// load field
 		$field = acf_get_field( $options['field_key'] );
 		
-		if( !$field ) {
 		
-			return false;
-			
-		}
-		
-		
-		// WPML
-		if( $options['lang'] ) {
-		
-			global $sitepress;
-			
-			if( !empty($sitepress) ) {
-			
-				$sitepress->switch_lang( $options['lang'] );
-				
-			}
-			
-		}
+		// bail early if no field
+		if( !$field ) return false;
 		
 		
 		// update $args
@@ -166,64 +149,70 @@ class acf_field_post_object extends acf_field {
 		$args = apply_filters('acf/fields/post_object/query/key=' . $field['key'], $args, $field, $options['post_id'] );
 		
 		
+		// is search
+		$is_search = !empty( $args['s'] );
+		
+		
 		// get posts grouped by post type
 		$groups = acf_get_grouped_posts( $args );
 		
-		if( !empty($groups) ) {
+		
+		// bail early if no posts
+		if( empty($groups) ) return false;
+		
+		
+		// loop
+		foreach( array_keys($groups) as $group_title ) {
 			
-			foreach( array_keys($groups) as $group_title ) {
+			// vars
+			$posts = acf_extract_var( $groups, $group_title );
+			$titles = array();
+			
+			
+			// data
+			$data = array(
+				'text'		=> $group_title,
+				'children'	=> array()
+			);
+			
+			
+			foreach( array_keys($posts) as $post_id ) {
 				
-				// vars
-				$posts = acf_extract_var( $groups, $group_title );
-				$titles = array();
+				// override data
+				$posts[ $post_id ] = $this->get_post_title( $posts[ $post_id ], $field, $options['post_id'] );
 				
+			};
+			
+			
+			// order by search
+			if( $is_search ) {
 				
-				// data
-				$data = array(
-					'text'		=> $group_title,
-					'children'	=> array()
+				$posts = acf_order_by_search( $posts, $args['s'] );
+				
+			}
+			
+			
+			// append to $data
+			foreach( array_keys($posts) as $post_id ) {
+				
+				$data['children'][] = array(
+					'id'	=> $post_id,
+					'text'	=> $posts[ $post_id ]
 				);
 				
-				
-				foreach( array_keys($posts) as $post_id ) {
-					
-					// override data
-					$posts[ $post_id ] = $this->get_post_title( $posts[ $post_id ], $field, $options['post_id'] );
-					
-				};
-				
-				
-				// order by search
-				if( !empty($args['s']) ) {
-					
-					$posts = acf_order_by_search( $posts, $args['s'] );
-					
-				}
-				
-				
-				// append to $data
-				foreach( array_keys($posts) as $post_id ) {
-					
-					$data['children'][] = array(
-						'id'	=> $post_id,
-						'text'	=> $posts[ $post_id ]
-					);
-					
-				}
-				
-				
-				// append to $r
-				$r[] = $data;
-				
 			}
 			
 			
-			// optgroup or single
-			if( count($args['post_type']) == 1 ) {
-				
-				$r = $r[0]['children'];
-				
-			}
+			// append to $r
+			$r[] = $data;
+			
+		}
+		
+		
+		// optgroup or single
+		if( count($args['post_type']) == 1 ) {
+			
+			$r = $r[0]['children'];
 			
 		}
 		
@@ -250,7 +239,7 @@ class acf_field_post_object extends acf_field {
 	function ajax_query() {
 		
 		// validate
-		if( empty($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'acf_nonce') ) {
+		if( !acf_verify_ajax() ) {
 		
 			die();
 			
@@ -291,28 +280,14 @@ class acf_field_post_object extends acf_field {
 	*  @return	(string)
 	*/
 	
-	function get_post_title( $post, $field, $post_id = 0 ) {
+	function get_post_title( $post, $field, $post_id = 0, $is_search = 0 ) {
 		
 		// get post_id
-		if( !$post_id ) {
-			
-			$form_data = acf_get_setting('form_data');
-			
-			if( !empty($form_data['post_id']) ) {
-				
-				$post_id = $form_data['post_id'];
-				
-			} else {
-				
-				$post_id = get_the_ID();
-				
-			}
-			
-		}
+		if( !$post_id ) $post_id = acf_get_form_data('post_id');
 		
 		
 		// vars
-		$title = acf_get_post_title( $post );
+		$title = acf_get_post_title( $post, $is_search );
 			
 		
 		// filters

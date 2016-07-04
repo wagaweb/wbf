@@ -62,12 +62,17 @@ class acf_local {
 		
 		foreach( $groups as $group ) {
 			
-			if( !in_array($group['key'], $ignore) ) {
+			// is ignore
+			if( in_array($group['key'], $ignore) ) {
 				
-				$field_groups[] = $group;
-				$added = true;
-				
+				continue;
+					
 			}
+			
+			
+			// append
+			$field_groups[] = $group;
+			$added = true;
 			
 		}
 		
@@ -198,25 +203,29 @@ class acf_local {
 	
 	function add_field( $field ) {
 		
-		// validate
-		$field = acf_get_valid_field( $field );
+		// vars
+		// - allow for the very unexpected case where no key or parent exist
+		$key = acf_maybe_get($field, 'key', '');
+		$parent = acf_maybe_get($field, 'parent', '');
 		
 		
 		// add parent reference
-		$this->add_parent_reference( $field['parent'], $field['key'] );
+		$this->add_parent_reference( $parent, $key );
 		
 		
 		// add in menu order
-		$field['menu_order'] = count( $this->parents[ $field['parent'] ] ) - 1;
+		$field['menu_order'] = count( $this->parents[ $parent ] ) - 1;
 		
 		
 		// add field
-		$this->fields[ $field['key'] ] = $field;
+		$this->fields[ $key ] = $field;
 		
 		
 		// clear cache
-		wp_cache_delete( "get_field/key={$field['key']}", 'acf' );
-		wp_cache_delete( "get_fields/parent={$field['parent']}", 'acf' );
+		// - delete cache was origional added to ensure changes to JSON / PHP would appear in WP when using memcache
+		// - the downside is that wp_cache_delet is taxing on the system so has been commented out
+		//wp_cache_delete( "get_field/key={$key}", 'acf' );
+		//wp_cache_delete( "get_fields/parent={$parent}", 'acf' );
 		
 	}
 	
@@ -372,6 +381,29 @@ function acf_disable_local() {
 function acf_enable_local() {
 	
 	acf_local()->enabled = true;
+	
+}
+
+
+/*
+*  acf_reset_local
+*
+*  This function will remove (reset) all field group and fields
+*
+*  @type	function
+*  @date	2/06/2016
+*  @since	5.3.8
+*
+*  @param	$post_id (int)
+*  @return	$post_id (int)
+*/
+
+function acf_reset_local() {
+	
+	// vars
+	acf_local()->groups = array();
+	acf_local()->fields = array();
+	acf_local()->parents = array();
 	
 }
 
