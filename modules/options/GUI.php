@@ -339,6 +339,8 @@ class GUI extends \Options_Framework_Interface {
 	                    $class = '';
 	                    $class = !empty($value['id']) ? $value['id'] : $value['name'];
 	                    $class = preg_replace('/[^a-zA-Z0-9._\-]/', '', strtolower($class));
+						$section_id = isset($value['section_id']) ? $value['section_id'] : "";
+						if($section_id !== "") $class = $class." ".$section_id;
 	                    $output .= '<div id="options-group-' . $counter . '" class="group ' . $class . '">';
 	                    $output .= '<h3>' . esc_html($value['name']) . '</h3>' . "\n";
 	                    break;
