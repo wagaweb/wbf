@@ -12,12 +12,18 @@ Author URI: https://waga.it
 div#optionsframework-wrap {
   margin: 0px auto;
 
+  .optionsframework-header {
+    width: 100%;
+    box-sizing: border-box;
+    padding-right: 20px;
+  }
+
   .optionsframework-header h2 {
     font-size: 28px;
     font-weight: bold;
     margin-left: 15%;
-    margin-top: 15px;
-    margin-bottom: 10px;
+    margin-top: 25px;
+    margin-bottom: 15px;
   }
 
   div.optionsframework-content-wrapper{
@@ -52,6 +58,14 @@ div#optionsframework-wrap {
       background-image: url("../images/icons/default-icon.svg");
     }
 
+    @media screen and (max-width:768px) {
+      .nav-tab {
+        font-size: 0px;
+        background-position: center center;
+        padding: 12px 0px 12px 0px;
+      }
+    }
+
     .nav-tab-active {
       background-color: #fff;
     }
@@ -60,7 +74,9 @@ div#optionsframework-wrap {
 
   #optionsframework-metabox{
     float: right;
+    padding-right: 20px;
     width: 85%;
+    box-sizing: border-box;
   }
 }
 
@@ -68,6 +84,8 @@ div#optionsframework-wrap {
 #optionsframework {
 
   /* General Rules */
+
+  max-width: 100%;
 
   * {
     box-sizing: border-box;
@@ -116,6 +134,15 @@ div#optionsframework-wrap {
     background-position: right center;
     background-repeat: no-repeat;
     border-bottom: 1px solid #ddd;
+  }
+
+  @media screen and (max-width:768px) {
+    .section,
+    .section:nth-child(odd),
+    .section:nth-child(even){
+      width:100% !important;
+      border-right: none;
+    }
   }
 
   .section p {
