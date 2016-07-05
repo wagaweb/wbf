@@ -5,7 +5,7 @@ namespace WBF\components\pluginsframework;
 class TemplatePlugin extends Plugin implements TemplatePlugin_Interface {
 	protected $templates;
 	protected $ctp_templates;
-	protected $wc_templates;
+	protected $wc_templates; //Embedded support for WooCommerce
 	protected $templates_paths;
 
 	public function __construct( $plugin_name, $dir, $version = "1.0.0" ) {
@@ -13,12 +13,15 @@ class TemplatePlugin extends Plugin implements TemplatePlugin_Interface {
 		$this->templates       = array();
 		$this->templates_paths = array();
 		$this->ctp_templates   = array();
-		$this->wc_templates    = array();
 		$this->loader->add_filter( 'page_attributes_dropdown_pages_args', $this, "register_templates" );
 		$this->loader->add_filter( 'wp_insert_post_data', $this, "register_templates" );
 		$this->loader->add_filter( 'template_include', $this, "view_template" );
 		$this->loader->add_filter( 'wbf/get_template_part/base_paths', $this, 'add_template_base_path', 10, 2 );
-		$this->loader->add_filter( 'woocommerce_locate_template',$this,"override_wc_templates", 11, 3);
+		//Embedded support for WooCommerce
+		$this->wc_templates = array();
+		if(function_exists('is_woocommerce')){
+			$this->loader->add_filter( 'woocommerce_locate_template',$this,"override_wc_templates", 11, 3);
+		}
 	}
 
 	/**
@@ -72,11 +75,18 @@ class TemplatePlugin extends Plugin implements TemplatePlugin_Interface {
 		return $this->wc_templates;
 	}
 
-	/*
-	 * 
+	/**
+	 * Makes sure WooCommerce will search templates in plugin
+	 *
+	 * @hooked 'woocommerce_locate_template'
+	 *
+	 * @param $template
+	 * @param $template_name
+	 * @param $template_path
+	 *
+	 * @return mixed
 	 */
 	public function override_wc_templates($template, $template_name, $template_path){
-
 		remove_filter("woocommerce_locate_template",[$this,"override_wc_templates"],11);
 
 		//Check if theme has a template for current post\page
@@ -104,7 +114,7 @@ class TemplatePlugin extends Plugin implements TemplatePlugin_Interface {
 	 * @return array
 	 */
 	public function register_templates( $atts ) {
-		if(!is_admin()) return $atts;
+		if(!is_admin()) return $atts; //Otherwise this method will be called on every post creation.
 
 		// Create the key used for the themes cache
 		$cache_key = 'page_templates-' . md5( get_theme_root() . '/' . get_stylesheet() );
