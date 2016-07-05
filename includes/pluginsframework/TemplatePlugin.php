@@ -71,6 +71,8 @@ class TemplatePlugin extends Plugin implements TemplatePlugin_Interface {
 	 * @return array
 	 */
 	public function register_templates( $atts ) {
+		if(!is_admin()) return $atts; //Otherwise this method will be called on every post creation.
+
 		// Create the key used for the themes cache
 		$cache_key = 'page_templates-' . md5( get_theme_root() . '/' . get_stylesheet() );
 
