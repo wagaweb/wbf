@@ -55,6 +55,8 @@ class TemplatePlugin extends Plugin implements TemplatePlugin_Interface {
 		$this->ctp_templates[] = $template_name;
 		if(!isset($path)){
 			$this->templates_paths[ $template_name ] = $this->get_src_dir()."templates/".$template_name;
+		}else{
+			$this->templates_paths[ $template_name ] = $path;
 		}
 		return $this->ctp_templates;
 	}
@@ -121,7 +123,7 @@ class TemplatePlugin extends Plugin implements TemplatePlugin_Interface {
 
 		// Retrieve the cache list. If it doesn't exist, or it's empty prepare an array
 		$templates = wp_cache_get( $cache_key, 'themes' );
-		if(empty($templates)){
+		if(empty($templates) && function_exists("get_page_templates")){
 			$templates = array_flip(get_page_templates());
 		}
 
