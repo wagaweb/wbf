@@ -55,6 +55,8 @@ class TemplatePlugin extends Plugin implements TemplatePlugin_Interface {
 		$this->ctp_templates[] = $template_name;
 		if(!isset($path)){
 			$this->templates_paths[ $template_name ] = $this->get_src_dir()."templates/".$template_name;
+		}else{
+			$this->templates_paths[ $template_name ] = $path;
 		}
 
 		return $this->ctp_templates;
