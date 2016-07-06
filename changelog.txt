@@ -3,7 +3,7 @@
 Version 0.13.16 - 05/07/2016
 ---------------------------------
 - Plugin Framework:
-    - Fix: Ora la creazione di un nuovo post fuori dall'admin non generare più errore sulla TemplatePlugin
+    - Fix: Ora la creazione di un nuovo post fuori dall'admin non genera più errori sulla TemplatePlugin
 
 Version 0.13.15 - 04/07/2016
 ---------------------------------
