@@ -43,16 +43,7 @@ Author URI: https://waga.it
   border-left: 1px solid #ddd !important;
   border-right: none !important;
   box-sizing: border-box;
-  background-color: #f1f1f1;
-  background-position: 10px center;
-  background-repeat: no-repeat;
-  background-image: url("../../images/icons/behaviour-icon.svg");
-}
-#componentframework-wrapper .nav-tab-wrapper .layout-tab {
-  background-image: url("../../images/icons/layout-icon.svg");
-}
-#componentframework-wrapper .nav-tab-wrapper .backgrounds-tab {
-  background-image: url("../../images/icons/backgrounds-icon.svg");
+  background: #f1f1f1 url("../../images/icons/default-option-tab.svg") no-repeat 10px center;
 }
 #componentframework-wrapper .nav-tab-wrapper .nav-tab-active {
   background-color: #fff;

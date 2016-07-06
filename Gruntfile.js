@@ -6,11 +6,9 @@ module.exports = function (grunt) {
             dev: {
                 options: {},
                 files: {
-                    'assets/dist/css/tinymce.css': 'assets/src/less/tinymce.less',
                     'assets/dist/css/admin.css': 'assets/src/less/admin.less',
                     'assets/dist/css/optionsframework.css': 'assets/src/less/optionsframework.less',
-                    'assets/dist/css/componentsframework.css': 'assets/src/less/componentsframework.less',
-                    'assets/dist/css/pagebuilder.css': 'assets/src/less/pagebuilder.less'
+                    'assets/dist/css/componentsframework.css': 'assets/src/less/componentsframework.less'
                 }
             },
             production: {
