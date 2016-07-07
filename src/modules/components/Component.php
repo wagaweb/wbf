@@ -147,7 +147,8 @@ class Component {
 
 	    $section_name = $this->name."_component";
 	    $additional_params = [
-		    'component' => true
+		    'component' => true,
+		    'component_name' => $this->name
 	    ];
 
 	    $orgzr->add_section($section_name,$this->name." Component",null,$additional_params);
