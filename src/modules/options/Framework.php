@@ -272,6 +272,21 @@ class Framework{
 		return false;
 	}
 
+	/**
+	 * Get the saved options only
+	 */
+	static function get_saved_options(){
+		$optionsframework_settings = Framework::get_options_root_id();
+		// Gets the unique option id
+		if ($optionsframework_settings) {
+			$options_db_key = $optionsframework_settings;
+		} else {
+			$options_db_key = 'optionsframework';
+		}
+		$saved_options = get_option($options_db_key);	
+		return $saved_options;
+	}
+
 	static function get_options_values_filtered(){
 		$options = self::get_options_values();
 		foreach($options as $k => $v){
