@@ -110,10 +110,11 @@
 						</table>
 					</div>
 					<?php foreach($registered_components as $comp_data): if(!\WBF\modules\components\ComponentsManager::is_active($comp_data)) continue; ?>
+					<?php $data = \WBF\modules\components\ComponentsManager::get_component_data($comp_data->file); ?>
 					<div id="component-<?php echo $comp_data->name; ?>" class="group" style="display: none;">
-						<h3><?php _e(sprintf("%s Component Settings",ucfirst($comp_data->name)),"wbf"); ?></h3>
+						<h3><?php _e(sprintf("%s Settings",isset($data['Name']) ? $data['Name'] : ucfirst($comp_data->name)),"wbf"); ?></h3>
 						<?php \WBF\modules\options\GUI::optionsframework_fields($compiled_components_options[$comp_data->name]); ?>
-					<?php //</div> not necessary (is echoed from GUI::optionsframework_fields )... THIS MUST BE CHANGED AS SOON AS POSSIBLE, IT'S JUST SO WRONG! ?>
+					</div>
 					<?php endforeach; ?>
 					<div id="componentframework-submit">
 						<input type="submit" name="submit-components-options" id="submit" class="button button-primary" value="Save Changes">
