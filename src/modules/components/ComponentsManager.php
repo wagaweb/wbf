@@ -656,15 +656,32 @@ class ComponentsManager {
         $default_components = apply_filters("wbf_default_components",array()); //todo @deprecated
         $default_components = apply_filters("wbf/modules/components/defaults",$default_components);
         $registered_components = self::getAllComponents();
-        foreach($registered_components as $c_name => $c_data){
-            if(!isset($c_data->is_child_component)){
-	            $c_data->is_child_component = false;
-            }
-	        self::disable($c_name, $c_data->is_child_component);
-        }
-        foreach($default_components as $c_name){
-            self::ensure_enabled($c_name);
-        }
+	    if(is_array($registered_components) && !empty($registered_components)){
+		    //Disable all components
+		    foreach($registered_components as $c_name => $c_data){
+			    if(!isset($c_data->is_child_component)){
+				    $c_data->is_child_component = false;
+			    }
+			    self::disable($c_name, $c_data->is_child_component);
+		    }
+		    //Remove all components options //todo: this dont work
+		    /*
+		    $orgz = Organizer::getInstance();
+		    $saved_options = Framework::get_saved_options();
+		    $registered_components_names = array_keys($registered_components);
+		    $registered_components_names_for_regex = implode("|",$registered_components_names);
+		    foreach($saved_options as $k => $v){
+			    if(preg_match("/^($registered_components_names_for_regex)/",$k)){
+				    unset($saved_options[$k]);
+			    }
+		    }
+		    Framework::update_theme_options($saved_options);
+		    */
+		    //Re-enable only the needed components
+		    foreach($default_components as $c_name){
+			    self::ensure_enabled($c_name);
+		    }
+	    }
 	    update_option("wbf_components_saved_once", []); //Reset the saved_once state
     }
 
