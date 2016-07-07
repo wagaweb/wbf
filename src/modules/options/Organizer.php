@@ -309,6 +309,21 @@ class Organizer {
 	}
 
 	/**
+	 * Get an option by ID
+	 * 
+	 * @param $id
+	 *
+	 * @return bool|mixed
+	 */
+	public function get_option($id){
+		if($this->has_option($id)){
+			return $this->options[$id];
+		}else{
+			return false;
+		}
+	}
+
+	/**
 	 * Protected constructor to prevent creating a new instance of the
 	 * *Singleton* via the `new` operator from outside of this class.
 	 */
