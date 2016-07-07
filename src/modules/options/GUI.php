@@ -349,14 +349,20 @@ class GUI{
 	            }
 
 	            if (($current_option['type'] != "heading") && ($current_option['type'] != "info")) {
-	                $output .= '</div>';
-	                $output .= '</div></div>' . "\n";
+	                $output .= '</div><!-- end control -->';
+	                $output .= '</div><!-- end option --></div><!-- end section -->' . "\n";
 	            }
 
 	            echo $output;
             }
 	    }else{
 		    echo '<p>'.__("There is no options available","wbf")."</p>";
+	    }
+
+	    // Outputs closing div if there tabs
+	    // o.O If you remove this, you can add the closing div to the component page, BUT the options page won't work... o.O Oh, fuck vendors code.
+	    if (GUI::optionsframework_tabs() != '') {
+		    echo '</div>';
 	    }
     }
 

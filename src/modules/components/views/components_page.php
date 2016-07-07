@@ -114,7 +114,7 @@
 					<div id="component-<?php echo $comp_data->name; ?>" class="group" style="display: none;">
 						<h3><?php _e(sprintf("%s Settings",isset($data['Name']) ? $data['Name'] : ucfirst($comp_data->name)),"wbf"); ?></h3>
 						<?php \WBF\modules\options\GUI::optionsframework_fields($compiled_components_options[$comp_data->name]); ?>
-					</div>
+					<?php //</div> not necessary (is echoed from GUI::optionsframework_fields )... THIS MUST BE CHANGED AS SOON AS POSSIBLE, IT'S JUST SO WRONG! ?>
 					<?php endforeach; ?>
 					<div id="componentframework-submit">
 						<input type="submit" name="submit-components-options" id="submit" class="button button-primary" value="Save Changes">
