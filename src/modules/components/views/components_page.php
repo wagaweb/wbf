@@ -22,9 +22,10 @@
 	<div id="componentframework-content-wrapper">
 		<div class="nav-tab-wrapper">
 			<ul>
-				<li><a class="nav-tab" id="component-main-tab" data-show-comp-settings='component-main' href="#component-main">Available components</a></li>
+				<li><a class="nav-tab" id="component-main-tab" data-show-comp-settings='component-main' href="#component-main"><?php _e("Available components","wbf"); ?></a></li>
 				<?php foreach($registered_components as $comp_data): if(!\WBF\modules\components\ComponentsManager::is_active($comp_data)) continue; ?>
-					<li><a class="nav-tab" id="component-<?php echo $comp_data->name; ?>-link" data-show-comp-settings='component-<?php echo $comp_data->name; ?>' href="#component-<?php echo $comp_data->name; ?>"><?php echo ucfirst($comp_data->name); ?></a></li>
+					<?php $data = \WBF\modules\components\ComponentsManager::get_component_data($comp_data->file); ?>
+					<li><a class="nav-tab" id="component-<?php echo $comp_data->name; ?>-link" data-show-comp-settings='component-<?php echo $comp_data->name; ?>' href="#component-<?php echo $comp_data->name; ?>"><?php if(isset($data['Name'])) echo $data['Name']; else echo ucfirst($comp_data->name); ?></a></li>
 				<?php endforeach; ?>
 			</ul>
 		</div>
@@ -116,7 +117,7 @@
 					<?php endforeach; ?>
 					<div id="componentframework-submit">
 						<input type="submit" name="submit-components-options" id="submit" class="button button-primary" value="Save Changes">
-						<input type="submit" class="reset-button button-secondary" name="reset" value="<?php esc_attr_e( 'Restore default component activation state', 'wbf' ); ?>" onclick="return confirm( '<?php print esc_js( __( 'Click OK to reset. Any theme settings will be lost!', 'wbf' ) ); ?>' );" />
+						<input type="submit" class="reset-button button-secondary" name="reset_component_state" value="<?php esc_attr_e( 'Restore default component activation state', 'wbf' ); ?>" onclick="return confirm( '<?php print esc_js( __( 'Click OK to reset. Any theme settings will be lost!', 'wbf' ) ); ?>' );" />
 					</div>
 				</form>
 			</div>
