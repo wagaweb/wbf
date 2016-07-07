@@ -653,7 +653,8 @@ class ComponentsManager {
 	 * @throws \Exception
 	 */
     static function reset_components_state(){
-        $default_components = apply_filters("wbf_default_components",array());
+        $default_components = apply_filters("wbf_default_components",array()); //todo @deprecated
+        $default_components = apply_filters("wbf/modules/components/defaults",$default_components);
         $registered_components = self::getAllComponents();
         foreach($registered_components as $c_name => $c_data){
             if(!isset($c_data->is_child_component)){
@@ -664,16 +665,18 @@ class ComponentsManager {
         foreach($default_components as $c_name){
             self::ensure_enabled($c_name);
         }
+	    update_option("wbf_components_saved_once", []); //Reset the saved_once state
     }
 
     /**
      * Delete the options which stores the registered components
      */
     static function reset_registered_components(){
-        delete_option("waboot_registered_components");
+	    $theme = wp_get_theme();
         if(is_child_theme()){
-            $template_name = basename(get_stylesheet_directory_uri());
-            delete_option( "{$template_name}_registered_components");
+            delete_option( $theme->get_stylesheet()."_registered_components");
+        }else{
+	        delete_option( $theme->get_template()."_registered_components");
         }
     }
 
@@ -684,22 +687,32 @@ class ComponentsManager {
 
 		$options_updated_flag = false;
 
-		if(isset($_POST['reset'])){
+		/*
+		 * Reset Component Options
+		 */
+		if(isset($_POST['reset_component_state'])){
 			self::reset_components_state();
 			$options_updated_flag = true;
 		}
 
 		$registered_components = self::getAllComponents();
 
+		/*
+		 * Save Component Options
+		 */
 		if(isset($_POST['submit-components-options'])){
 			$is_active_component_option = function($opt_name) use($registered_components){
-				preg_match("/^([a-zA-Z0-9]+)_/",$opt_name,$matches);
-				if(isset($matches[1])){
-					$component_name = $matches[1];
-					if(isset($registered_components[$component_name])){
-						$component_data = $registered_components[$component_name];
-						if(self::is_active($component_data) && array_key_exists($component_name,$registered_components)){
-							return true;
+				$orgz = Organizer::getInstance();
+				//Get the component of the $opt_name
+				$option = $orgz->get_option($opt_name);
+				if($option){
+					if(isset($option['component_name'])){
+						$component_name = $option['component_name'];
+						if(isset($registered_components[$component_name])){
+							$component_data = $registered_components[$component_name];
+							if(self::is_active($component_data) && array_key_exists($component_name,$registered_components)){
+								return true;
+							}
 						}
 					}
 				}
