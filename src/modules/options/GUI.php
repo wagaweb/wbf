@@ -21,23 +21,19 @@ class GUI{
 	/**
 	 * Generates the options fields that are used in the form.
 	 *
+	 * @todo: refactoring needed. Embedded HTML is just wrong.
+	 *
 	 * @param array|null $options
 	 */
     static function optionsframework_fields($options = null) {
-
         global $allowedtags;
-        $optionsframework_settings = Framework::get_options_root_id();
 
-        // Gets the unique option id
-        if ($optionsframework_settings) {
-            $options_db_key = $optionsframework_settings;
-        } else {
-            $options_db_key = 'optionsframework';
-        };
-
-        $saved_options = get_option($options_db_key);
+	    $options_db_key = Framework::get_options_root_id(); //the option name under which the options are saved
+	    
+        $saved_options = Framework::get_saved_options(); //the current saved options
+	    
         if(!isset($options)){
-            $options = &Framework::get_registered_options();
+            $options = &Framework::get_registered_options(); //the current registered options (some of which may not be saved already)
         }
 
         $counter = 0;
@@ -362,11 +358,6 @@ class GUI{
 	    }else{
 		    echo '<p>'.__("There is no options available","wbf")."</p>";
 	    }
-
-        // Outputs closing div if there tabs
-        if (GUI::optionsframework_tabs() != '') {
-            echo '</div>';
-        }
     }
 
     /**
