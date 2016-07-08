@@ -105,7 +105,8 @@ class BehaviorsManager{
 		}
 
 		//Get from filters
-		$predef_behaviors = apply_filters("wbf_add_behaviors",$predef_behaviors);
+		$predef_behaviors = apply_filters("wbf_add_behaviors",$predef_behaviors); //todo: will be deprecated
+		$predef_behaviors = apply_filters("wbf/modules/behaviors/available",$predef_behaviors);
 
 		return $predef_behaviors;
 	}
