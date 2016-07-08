@@ -82,7 +82,8 @@ function register_behaviors_as_theme_options($organizer){
 	if(\WBF::module_is_loaded("behaviors") && class_exists('\WBF\modules\behaviors\BehaviorsManager') && BehaviorsManager::hasBehaviors()){
 		//Behaviors tab heading
 		$bh_options[] = [];
-		$organizer->add_section("behaviors",__( 'Posts & Pages', 'waboot' ));
+		$section_label = apply_filters("wbf/modules/behaviors/options_tab_label",_x( 'Posts & Pages', "Behaviors tab name in theme options page" , 'wbf' ));
+		$organizer->add_section("behaviors",$section_label);
 		$post_types = wbf_get_filtered_post_types(); //Get post types
 		foreach($post_types as $ptSlug => $ptLabel){
 			if( BehaviorsManager::count_behaviors_for_post_type($ptSlug) > 0){
