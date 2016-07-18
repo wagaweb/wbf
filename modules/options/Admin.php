@@ -411,7 +411,7 @@ class Admin extends \Options_Framework_Admin{
 
 			$id = preg_replace( '/[^a-zA-Z0-9._\-]/', '', strtolower( $option['id'] ) );
 			
-			if(!array_key_exists($id,$input) && isset($current_options[$option['id']])){
+			if(!array_key_exists($id,$input) && isset($current_options[$option['id']]) && !in_array($option['type'],['checkbox','multicheck'])){
 				//Here we are parsing an options not included among the saved ones. So we keep the already saved value.
 				$clean[$option['id']] = $current_options[$option['id']];
 			}else{
