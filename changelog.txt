@@ -1,5 +1,10 @@
 == Change log ==
 
+Version 0.13.17 - 18/07/2016
+---------------------------------
+- Theme Options:
+    - Fix: Ora le checkbox vengono salvate correttamente.
+
 Version 0.13.16 - 05/07/2016
 ---------------------------------
 - Plugin Framework:
