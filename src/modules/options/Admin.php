@@ -467,7 +467,7 @@ class Admin{
 
 			$id = Framework::sanitize_option_id($option['id']);
 
-			if(!array_key_exists($id,$input) && isset($current_options[$option['id']])){
+			if(!array_key_exists($id,$input) && isset($current_options[$option['id']]) && !in_array($option['type'],['checkbox','multicheck'])){
 				//Here we are parsing an options not included among the saved ones. So we keep the already saved value.
 				$clean[$option['id']] = $current_options[$option['id']];
 			}else{
