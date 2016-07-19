@@ -8,6 +8,7 @@ use WBF\components\license\License_Manager;
 use WBF\components\mvc\HTMLView;
 use WBF\components\pluginsframework\Plugin;
 use WBF\components\pluginsframework\TemplatePlugin;
+use WBF\components\utils\Utilities;
 use WBF\includes\GoogleFontsRetriever;
 use WBF\includes\Resources;
 
@@ -184,7 +185,7 @@ class PluginCore {
 	 * @param $errcontext
 	 */
 	public function handle_errors($errno,$errstr,$errfile,$errline,$errcontext){
-		global $wbf_notice_manager;
+		$wbf_notice_manager = Utilities::get_wbf_notice_manager();
 		if($wbf_notice_manager && is_admin() && current_user_can("manage_options")){
 			$str = sprintf('[Admin Only] There was an USER_WARNING error generated at %s:%s: <strong>%s</strong>',basename($errfile),$errline,$errstr);
 			$wbf_notice_manager->add_notice($errline,$str,"error","_flash_");
@@ -579,12 +580,9 @@ class PluginCore {
 	 * Wordpress "after_setup_theme" callback
 	 */
 	function after_setup_theme() {
-		global $wbf_notice_manager;
-
-		if(!isset($wbf_notice_manager)){
-			$GLOBALS['wbf_notice_manager'] = new components\notices\Notice_Manager(); // Loads notice manager. The notice manager can be already loaded by plugins constructor prior this point.
-			$this->notice_manager = &$GLOBALS['wbf_notice_manager'];
-		}
+		// Loads notice manager. The notice manager can be already loaded by plugins constructor prior this point.
+		$wbf_notice_manager = Utilities::get_wbf_notice_manager();
+		$this->notice_manager = &$wbf_notice_manager; 
 
 		$this->options = apply_filters("wbf/options",$this->options);
 

@@ -4,6 +4,7 @@ namespace WBF\components\customupdater;
 
 use WBF\components\license\License;
 use WBF\components\notices\Notice_Manager;
+use WBF\components\utils\Utilities;
 
 require_once "vendor/autoload.php";
 
@@ -46,13 +47,8 @@ class Plugin_Update_Checker extends \PluginUpdateChecker{
 		$this->plugin_license = $plugin_license;
 		$this->plugin_slug = $slug;
 		//Load Notice Manager if needed
-		global $wbf_notice_manager;
-		if(!isset($wbf_notice_manager)){
-			$GLOBALS['wbf_notice_manager'] = new Notice_Manager(); // Loads notice manager
-			$this->notice_manager = &$GLOBALS['wbf_notice_manager'];
-		}else{
-			$this->notice_manager = &$wbf_notice_manager;
-		}
+		$wbf_notice_manager = Utilities::get_wbf_notice_manager();
+		$this->notice_manager = &$wbf_notice_manager;
 		parent::__construct($metadataUrl,$pluginFile,$slug,$checkPeriod,$optionName,$muPluginFile);
 	}
 

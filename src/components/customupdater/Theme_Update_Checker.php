@@ -5,6 +5,7 @@ namespace WBF\components\customupdater;
 use WBF\components\license\License;
 use WBF\components\license\License_Manager;
 use WBF\components\notices\Notice_Manager;
+use WBF\components\utils\Utilities;
 
 require_once( dirname(__FILE__).'/vendor/theme-update-checker.php');
 
@@ -38,13 +39,8 @@ class Theme_Update_Checker extends \ThemeUpdateChecker{
 		$this->theme = $theme;
 		$this->license = License_Manager::theme_has_license($theme);
 		//Load Notice Manager if needed
-		global $wbf_notice_manager;
-		if(!isset($wbf_notice_manager)){
-			$GLOBALS['wbf_notice_manager'] = new Notice_Manager(); // Loads notice manager
-			$this->notice_manager = &$GLOBALS['wbf_notice_manager'];
-		}else{
-			$this->notice_manager = &$wbf_notice_manager;
-		}
+		$wbf_notice_manager = Utilities::get_wbf_notice_manager();
+		$this->notice_manager = &$wbf_notice_manager;
 		parent::__construct($theme,$metadataUrl,$enableAutomaticChecking);
 		if(!$this->automaticCheckDone){
 			update_option("wbf_unable_to_update",false);

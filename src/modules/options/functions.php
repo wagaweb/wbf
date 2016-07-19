@@ -10,6 +10,7 @@
  */
 
 namespace WBF\modules\options;
+use WBF\components\utils\Utilities;
 use \WBF\modules\components\ComponentsManager;
 
 
@@ -17,7 +18,7 @@ use \WBF\modules\components\ComponentsManager;
  * Checks if the dependencies of theme options are met
  */
 function of_check_options_deps(){
-    global $wbf_notice_manager;
+    $wbf_notice_manager = Utilities::get_wbf_notice_manager();
     $deps_to_achieve = _of_get_theme_options_deps();
     if(!empty($deps_to_achieve)){
         if(!empty($deps_to_achieve['components'])){
@@ -50,7 +51,7 @@ function of_check_options_deps(){
  * @throws \Exception
  */
 function of_options_save($option, $old_value, $value){
-    global $wbf_notice_manager;
+    $wbf_notice_manager = Utilities::get_wbf_notice_manager();
     $config_id = Framework::get_options_root_id();
     if($option == $config_id){
         $must_recompile_flag = false;

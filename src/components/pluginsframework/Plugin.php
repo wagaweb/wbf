@@ -6,6 +6,7 @@ use WBF\components\license\License_Manager;
 use WBF\components\notices\Notice_Manager;
 use WBF\components\license\License;
 use WBF\components\customupdater\Plugin_Update_Checker;
+use WBF\components\utils\Utilities;
 
 class Plugin {
 	/**
@@ -227,13 +228,8 @@ class Plugin {
 		//require_once plugin_dir_path( dirname( __FILE__ ) ) . 'class-waboot-plugin-i18n.php';
 
 		//Load Notice Manager if needed
-		global $wbf_notice_manager;
-		if(!isset($wbf_notice_manager)){
-			$GLOBALS['wbf_notice_manager'] = new Notice_Manager(); // Loads notice manager
-			$this->notice_manager = &$GLOBALS['wbf_notice_manager'];
-		}else{
-			$this->notice_manager = &$wbf_notice_manager;
-		}
+		$wbf_notice_manager = Utilities::get_wbf_notice_manager();
+		$this->notice_manager = &$wbf_notice_manager;
 
 		$this->loader = new Loader($this);
 	}

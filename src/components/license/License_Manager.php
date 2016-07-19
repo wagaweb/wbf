@@ -6,6 +6,7 @@ use WBF\components\license\License;
 use WBF\components\license\License_Exception;
 use WBF\components\mvc\HTMLView;
 use WBF\components\customupdater\Theme_Update_Checker;
+use WBF\components\utils\Utilities;
 
 class License_Manager{
 
@@ -18,7 +19,7 @@ class License_Manager{
 		if(!preg_match("/wbf_licenses/",get_current_screen()->base)){
 			return;
 		}
-		global $wbf_notice_manager;
+		$wbf_notice_manager = Utilities::get_wbf_notice_manager();
 		if(isset($_POST['update-license'])){
 			try{
 				if(!isset($_POST['slug'])) throw new License_Exception(__("License slug was not set","wbf"));

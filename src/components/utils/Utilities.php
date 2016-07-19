@@ -2,6 +2,8 @@
 
 namespace WBF\components\utils;
 
+use WBF\components\notices\Notice_Manager;
+
 class Utilities{
 
 	const PAGE_TYPE_DEFAULT_HOME = "default_home";
@@ -225,6 +227,26 @@ class Utilities{
 	}
 
 	/**
+	 * Get an instance of Notice Manager.
+	 *
+	 * @param bool|FALSE $provide_new
+	 *
+	 * @return Notice_Manager
+	 */
+	static function get_wbf_notice_manager($provide_new = false){
+		if($provide_new){
+			return new Notice_Manager();
+		}
+		
+		global $wbf_notice_manager;
+		if(!$wbf_notice_manager){
+			$wbf_notice_manager = new Notice_Manager();
+			$GLOBALS['wbf_notice_manager'] = $wbf_notice_manager;
+		}
+		return $wbf_notice_manager;
+	}
+
+	/**
 	 * Show a flash message in the dashboard
 	 *
 	 * @param $m
@@ -245,10 +267,8 @@ class Utilities{
 	 * @param array $args (category[default:base], condition[default:null], cond_args[default:null])
 	 */
 	static function add_admin_notice($id,$message,$level,$args = []){
-		global $wbf_notice_manager;
-
-		if(!isset($wbf_notice_manager)) return;
-
+		$wbf_notice_manager = self::get_wbf_notice_manager();
+		
 		$args = wp_parse_args($args,[
 			"category" => 'base',
 			"condition" => null,
