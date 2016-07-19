@@ -12,6 +12,23 @@ Author URI: https://waga.it
 #componentframework-wrapper {
   margin: 0px auto;
 
+  .wbf-copy {
+    float: left;
+    padding: 10px;
+  }
+
+  #componentframework .group > h3 {
+    background-position: 97.5% center;
+    background-repeat: no-repeat;
+    background-image: url("../images/icons/waboot-icon-64x64-tr.svg");
+  }
+
+  .componentframework-header {
+    width: 100%;
+    box-sizing: border-box;
+    padding-right: 20px;
+  }
+
   .componentframework-header h2 {
     font-size: 28px;
     font-weight: bold;
@@ -49,7 +66,7 @@ Author URI: https://waga.it
       background-color: #f1f1f1;
       background-position: 10px center;
       background-repeat: no-repeat;
-      background-image: url("../images/icons/behaviour-icon.svg");
+      background-image: url("../images/icons/default-icon.svg");
     }
     .layout-tab {
       background-image: url("../images/icons/layout-icon.svg");
@@ -69,8 +86,10 @@ Author URI: https://waga.it
     width: 85%;
 
       #componentframework {
-        max-width: 840px;
+        max-width: 100%;
         background-color: #fff;
+        box-sizing: border-box;
+        margin-right: 20px;
       }
 
   }

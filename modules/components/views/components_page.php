@@ -22,7 +22,7 @@
 	<div id="componentframework-content-wrapper">
 		<div class="nav-tab-wrapper">
 			<ul>
-				<li><a class="nav-tab" id="component-main-tab" data-show-comp-settings='component-main' href="#component-main">Available components</a></li>
+				<li><a class="nav-tab" id="component-main-tab" data-show-comp-settings='component-main' href="#component-main">All components</a></li>
 				<?php foreach($registered_components as $comp_data): if(!\WBF\modules\components\ComponentsManager::is_active($comp_data)) continue; ?>
 					<li><a class="nav-tab" id="component-<?php echo $comp_data->name; ?>-link" data-show-comp-settings='component-<?php echo $comp_data->name; ?>' href="#component-<?php echo $comp_data->name; ?>"><?php echo ucfirst($comp_data->name); ?></a></li>
 				<?php endforeach; ?>
@@ -32,6 +32,7 @@
 			<div id="componentframework" class="postbox">
 				<form method="post" action="admin.php?page=<?php echo \WBF\modules\components\ComponentsManager::$wp_menu_slug; ?>">
 					<div id="component-main" class="group">
+						<h3>All Components</h3>
 						<table class="wp-list-table widefat components">
 							<thead>
 							<tr>
