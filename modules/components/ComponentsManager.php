@@ -65,13 +65,12 @@ class ComponentsManager {
      * @param $components_directory
      * @param bool $child_theme
      * 
-     * @use self::get_child_registered_components
-     * @use self::get_parent_registered_components
+     * @use self::get_registered_components
      *
      * @return mixed|void
      */
     static function _detect_components( $components_directory, $child_theme = false ) {
-        $registered_components = $child_theme ? self::get_child_registered_components() : self::get_parent_registered_components();
+        $registered_components = self::get_registered_components($child_theme);
 
         //Unset deleted components
         foreach ( $registered_components as $name => $data ) {
@@ -103,33 +102,27 @@ class ComponentsManager {
                 }
             }
         }
-        if ( ! $child_theme ) {
-            self::update_parent_registered_components( $registered_components );
-        } //update the WP Option of registered component
-        else {
-            self::update_child_registered_components( $registered_components );
-        } //update the WP Option of registered component
+
+	    self::update_registered_components( $registered_components, $child_theme ); //update the WP Option of registered component
 
         return $registered_components;
     }
 
-    /**
-     * Get the value of "{$template_name}_registered_components" option (default to empty array). $template_name is the current active template.
-     * @return mixed|void
-     */
-    static function get_child_registered_components() {
-	    $theme = wp_get_theme();
-        return get_option( $theme->get_stylesheet()."_registered_components", array());
-    }
-
-    /**
-     * Get the value of "waboot_registered_components" option (default to empty array)
-     * @return mixed|void
-     */
-    static function get_parent_registered_components() {
-	    $theme = wp_get_theme();
-        return get_option( $theme->get_template()."_registered_components", array());
-    }
+	/**
+	 * Get the value of "{$template_name}_registered_components" option (default to empty array)
+	 *
+	 * @param bool|FALSE $get_child_components
+	 *
+	 * @return mixed|void
+	 */
+	static function get_registered_components($get_child_components = false){
+		$theme = wp_get_theme();
+		if($get_child_components){
+			return get_option( $theme->get_stylesheet()."_registered_components", array());
+		}else{
+			return get_option( $theme->get_template()."_registered_components", array());
+		}
+	}
 
     /**
      * Get the component metadata from the beginning of the file. Mimics the get_plugin_data() WP funtion.
@@ -168,24 +161,20 @@ class ComponentsManager {
         );
     }
 
-    /**
-     * Update the "waboot_registered_components" option
-     *
-     * @param $registered_components
-     */
-    static function update_parent_registered_components( $registered_components ) {
-	    $theme = wp_get_theme();
-        update_option( $theme->get_template()."_registered_components", $registered_components );
-    }
-
-    /**
-     * Update the "{$template_name}_registered_components" option, where $template_name is the current active template.
-     * @param $registered_components
-     */
-    static function update_child_registered_components( $registered_components ) {
-	    $theme = wp_get_theme();
-        update_option( $theme->get_stylesheet()."_registered_components", $registered_components );
-    }
+	/**
+	 * Update the "{$template_name}_registered_components" option, where $template_name is the current active template.
+	 *
+	 * @param array $registered_components
+	 * @param bool $update_child_theme
+	 */
+	static function update_registered_components( $registered_components, $update_child_theme){
+		$theme = wp_get_theme();
+		if($update_child_theme){
+			update_option( $theme->get_stylesheet()."_registered_components", $registered_components );
+		}else{
+			update_option( $theme->get_template()."_registered_components", $registered_components );
+		}
+	}
 
     static function add_menu($parent_slug) {
         add_submenu_page( $parent_slug, __( "Waboot Components", "wbf" ), __( "Components", "wbf" ), "activate_plugins", self::$wp_menu_slug, '\WBF\modules\components\ComponentsManager::components_admin_page', "", 66 );
@@ -352,9 +341,9 @@ class ComponentsManager {
 	 * @return mixed|void
 	 */
     static function retrieve_components(){
-        $core_components  = self::get_parent_registered_components();
-        $child_components = is_child_theme() ? self::get_child_registered_components() : array();
+        $core_components  = self::get_registered_components();
         if ( is_child_theme() ) {
+	        $child_components = self::get_registered_components(true);
             foreach ( $core_components as $name => $comp ) {
                 if ( array_key_exists( $name, $child_components ) ) {
                     $child_components[ $name ]['override'] = true;
@@ -586,7 +575,7 @@ class ComponentsManager {
 	 * @throws \Exception
 	 */
 	private static function switch_component_state($component_name, $state, $child_component = false){
-		$registered_components = ! $child_component ? self::get_parent_registered_components() : self::get_child_registered_components();
+		$registered_components = self::get_registered_components($child_component);
 		if(array_key_exists( $component_name, $registered_components)){
 			try{
 				$component_params = $registered_components[ $component_name ];
@@ -603,12 +592,7 @@ class ComponentsManager {
 						$registered_components[ $component_name ]['enabled'] = false;
 					}
 					//update the WP Option of registered component
-					if(!$child_component){
-						self::update_parent_registered_components($registered_components);
-					}
-					else{
-						self::update_child_registered_components($registered_components);
-					}
+					self::update_registered_components($registered_components, $child_component);
 					self::update_global_components_vars();
 				}
 			}catch(\Exception $e){
@@ -631,6 +615,10 @@ class ComponentsManager {
             if ( $registered_component['child_component'] == true ){
                 return true;
             }
+        }elseif($registered_component instanceof Component){
+	        if ( $registered_component->is_child_component){
+		        return true;
+	        }
         }else{
             $components = ComponentsManager::getAllComponents();
             foreach($components as $name => $c){
