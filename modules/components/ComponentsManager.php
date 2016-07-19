@@ -585,7 +585,7 @@ class ComponentsManager {
 	 *
 	 * @throws \Exception
 	 */
-	private function switch_component_state($component_name, $state, $child_component = false){
+	private static function switch_component_state($component_name, $state, $child_component = false){
 		$registered_components = ! $child_component ? self::get_parent_registered_components() : self::get_child_registered_components();
 		if(array_key_exists( $component_name, $registered_components)){
 			try{
