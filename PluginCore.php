@@ -694,7 +694,7 @@ class PluginCore {
 		$menu_slug = $this->wp_menu_slug;
 
 		$menu['58'] = $menu['59']; //move the separator before "Appearance" one position up
-		$wbf_menu = add_menu_page( $page_title, $menu_label, "edit_theme_options", $menu_slug, [$this,"options_page"], "dashicons-text", 59 );
+		$wbf_menu = add_menu_page( $page_title, $menu_label, "edit_theme_options", $menu_slug, [$this,"options_page"], plugins_url( "wbf/admin/images/icons/waboot-icon-20x20.svg" ), 59 );
 		do_action("wbf_admin_submenu",$menu_slug);
 	}
 
