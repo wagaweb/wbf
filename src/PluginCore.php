@@ -746,7 +746,8 @@ class PluginCore {
 		$menu_slug = $this->wp_menu_slug;
 
 		$menu['58'] = $menu['59']; //move the separator before "Appearance" one position up
-		$wbf_menu = add_menu_page( $page_title, $menu_label, "edit_theme_options", $menu_slug, [$this,"options_page"], "dashicons-text", 59 );
+		$icon = apply_filters("wbf/admin_menu/icon","dashicons-text");
+		$wbf_menu = add_menu_page( $page_title, $menu_label, "edit_theme_options", $menu_slug, [$this,"options_page"], $icon, 59 );
 		do_action("wbf_admin_submenu",$menu_slug);
 		$wbf_info_submenu = add_submenu_page($menu_slug,__("WBF Status","wbf"),__("WBF Status","wbf"),"manage_options","wbf_status",[$this,"settings_page"]);
 	}
