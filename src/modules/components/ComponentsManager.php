@@ -800,6 +800,11 @@ class ComponentsManager {
 			$compiled_components_options[$current_element][] = $components_options[$key];
 		}
 
+		uksort($registered_components,function($a,$b){
+			if($a == $b) return 0;
+			return $a < $b ? -1 : 1;
+		});
+
 		(new HTMLView("src/modules/components/views/components_page.php","wbf"))->clean()->display([
 			'registered_components' => $registered_components,
 			'compiled_components_options' => $compiled_components_options,
