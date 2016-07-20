@@ -1,5 +1,12 @@
 == Change log ==
 
+Version 0.13.18 - 20/07/2016
+---------------------------------
+- Fix: Ora il ComponentManager non da più errori circa funzioni non statiche
+- Tweak: Nuova icona per Waboot
+- Tweak: Ridotto il numero di funzioni per il detect dei componenti. Ora i child component vengono rilevati correttamente.
+- Tweak: Migliorato layout options
+
 Version 0.13.17 - 18/07/2016
 ---------------------------------
 - Theme Options:
