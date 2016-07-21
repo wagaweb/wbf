@@ -24,6 +24,9 @@ class Notice_Manager {
 
     function clear_notices($category = null){
         $notices = $this->get_notices();
+	    if(!is_array($notices)){
+		    $notices = []; //Correct data if broken
+	    }
         if(isset($category)){
             foreach($notices as $k => $notice){
                 if($notice['category'] == $category){
