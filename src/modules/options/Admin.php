@@ -12,6 +12,7 @@
 namespace WBF\modules\options;
 
 use WBF\components\mvc\HTMLView;
+use WBF\components\utils\Utilities;
 
 class Admin{
 
@@ -30,6 +31,7 @@ class Admin{
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
 
 			// Settings need to be registered after admin_init
+			add_action( 'toplevel_page_wbf_options', array( $this, 'process_options_save' ) );
 			add_action( 'admin_init', array( $this, 'settings_init' ) );
 
 			// Adds options menu to the admin bar
@@ -49,6 +51,40 @@ class Admin{
         $menu = $this->menu_settings();
         $this->of_app_screen = add_theme_page($menu['page_title'],$menu['menu_title'],$menu['capability'],$menu['menu_slug']);
     }*/
+
+	/**
+	 * Process the options save\reset action.
+	 *
+	 * @hooked 'admin_init'
+	 */
+	function process_options_save(){
+		if(!self::is_options_page()) return;
+		/*
+		 * Restore Defaults.
+		 */
+		if(isset($_POST['reset'])){
+			$options_to_save = $this->get_default_values();
+		}elseif(isset($_POST['update'])){
+			/*
+			 * Save options
+			 */
+			$root_id = Framework::get_options_root_id();
+			if(isset($_POST['root_id'])){
+				$options_to_save = $_POST['root_id'];
+				$options_to_save = $this->validate_options($options_to_save);
+			}
+		}
+		if(isset($options_to_save) && is_array($options_to_save) && !empty($options_to_save)){
+			$r = update_option(Framework::get_options_root_id(),$options_to_save);
+			if($r && isset($_POST['reset'])){
+				Utilities::admin_show_message(__( 'Options saved successfully.', 'wbf' ),"success");
+			}elseif($r){
+				Utilities::admin_show_message(__( 'Default options restored.', 'wbf' ),"success");
+			}else{
+				Utilities::admin_show_message(__( 'There was an error during options saving.', 'wbf' ),"error");
+			}
+		}
+	}
 
 	/**
 	 * Registers the settings
@@ -417,8 +453,8 @@ class Admin{
 	 */
 	static public function is_options_page(){
 		$screen = get_current_screen();
-		$page = isset($_REQUEST['option_page']) ? $_REQUEST['option_page'] : false;
-		return $screen->id == "options" && $page == "optionsframework";
+		$page = isset($_REQUEST['wbf_options']) ? $_REQUEST['wbf_options'] : false;
+		return $screen->id == "toplevel_page_wbf_options" && $page == "wbf_options";
 	}
 
 	/**
@@ -436,19 +472,6 @@ class Admin{
 	 * @return array
 	 */
 	function validate_options( $input ) {
-
-		/*
-		 * Restore Defaults.
-		 *
-		 * In the event that the user clicked the "Restore Defaults"
-		 * button, the options defined in the theme's options.php
-		 * file will be added to the option for the active theme.
-		 */
-
-		if ( isset( $_POST['reset'] ) ) {
-			add_settings_error( 'options-framework', 'restore_defaults', __( 'Default options restored.', 'textdomain' ), 'updated fade' );
-			return $this->get_default_values();
-		}
 
 		/*
 		 * Update Settings

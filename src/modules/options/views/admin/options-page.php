@@ -18,8 +18,8 @@
 		<?php settings_errors( 'options-framework' ); ?>
 		<div id="optionsframework-metabox" class="metabox-holder">
 			<div id="optionsframework" class="postbox">
-				<form action="options.php" method="post">
-					<?php settings_fields( 'optionsframework' ); ?>
+				<form action="" method="post">
+					<?php wp_nonce_field( 'update_'.\WBF\modules\options\Framework::get_options_root_id() ); ?>
 					<?php \WBF\modules\options\GUI::optionsframework_fields(); /* Settings */ ?>
 					<div id="optionsframework-submit">
 						<input type="submit" class="button-primary" name="update" value="<?php esc_attr_e( 'Save Options', "wbf" ); ?>" />
