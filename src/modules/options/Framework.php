@@ -55,7 +55,8 @@ class Framework{
 		// Load current theme
 		$current_theme_name = wp_get_theme()->get_stylesheet();
 		$current_theme_name = preg_replace("/\W/", "_", strtolower($current_theme_name));
-		self::set_options_root_id($current_theme_name);
+		$current_root_id = "wbf_".$current_theme_name."_options";
+		self::set_options_root_id($current_root_id);
 	}
 
 	/**
@@ -232,11 +233,28 @@ class Framework{
 	}
 
 	/**
+	 * Get the option that contains the current active options key.
+	 */
+	static function get_options_framework_settings(){
+		$opt_root = get_option('optionsframework');
+		return $opt_root;
+	}
+
+	/**
+	 * Update the option that contains the current active options key
+	 * 
+	 * @param $settings
+	 */
+	static function set_options_framework_settings($settings){
+		update_option('optionsframework', $settings);
+	}
+
+	/**
 	 * Get the current options root id (the name of the option that contains the current valid options. Default to the current theme name)
 	 * @return string|false
 	 */
 	static function get_options_root_id(){
-		$opt_root = get_option('optionsframework');
+		$opt_root = self::get_options_framework_settings();
 		if(isset($opt_root['id'])){
 			return $opt_root['id'];
 		}
@@ -244,10 +262,10 @@ class Framework{
 	}
 
 	static function set_options_root_id($id){
-		$opt_root = get_option('optionsframework');
+		$opt_root = self::get_options_framework_settings();
 		if(!is_array($opt_root)) $opt_root = [];
 		$opt_root['id'] = $id;
-		update_option('optionsframework', $opt_root);
+		self::set_options_framework_settings($opt_root);
 	}
 
 	/**

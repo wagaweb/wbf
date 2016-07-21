@@ -25,7 +25,7 @@ class MediaUploader{
 	 */
 	static function optionsframework_uploader( $_id, $_value, $_desc = '', $_name = '' ) {
 
-		$optionsframework_settings = get_option( 'optionsframework' );
+		$optionsframework_settings = Framework::get_options_framework_settings();
 
 		// Gets the unique option id
 		$option_name = $optionsframework_settings['id'];

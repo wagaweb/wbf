@@ -58,16 +58,11 @@ class Admin{
 	 * @since 1.7.0
 	 */
 	function settings_init() {
-
-		// Load Options Framework Settings
-		$optionsframework_settings = get_option( 'optionsframework' );
-
 		// Registers the settings fields and callback
-		register_setting( 'optionsframework', $optionsframework_settings['id'],  array ( $this, 'validate_options' ) );
+		register_setting( 'optionsframework', Framework::get_options_root_id(),  [ $this, 'validate_options' ] );
 
 		// Displays notice after options save
 		add_action( 'optionsframework_after_validate', array( $this, 'save_options_notice' ) );
-
 	}
 
 	/**
@@ -250,7 +245,7 @@ class Admin{
 	 * @return string
 	 */
 	public function get_option_id() {
-		$optionsframework_settings = get_option( 'optionsframework' );
+		$optionsframework_settings = Framework::get_options_framework_settings();
 		// Gets the unique option id
 		if ( isset( $optionsframework_settings['id'] ) ) {
 			$option_name = $optionsframework_settings['id'];
@@ -270,7 +265,7 @@ class Admin{
 	 * @throws \Exception
 	 */
 	private function _restore_options_from_file( $file ) {
-		$optionsframework_settings = get_option( 'optionsframework' );
+		$optionsframework_settings = Framework::get_options_framework_settings();
 		$settings                  = array();
 
 		if ( is_array( $file ) ) {

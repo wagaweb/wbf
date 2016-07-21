@@ -36,7 +36,7 @@ class CodeEditor {
 	 * @return string
 	 */
 	static function display($_id, $_value, $_desc = '', $_name = '', $_lang = 'css'){
-		$optionsframework_settings = get_option( 'optionsframework' );
+		$optionsframework_settings = Framework::get_options_framework_settings();
 
 		// Gets the unique option id
 		$option_name = $optionsframework_settings['id'];
