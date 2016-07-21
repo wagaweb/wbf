@@ -735,103 +735,43 @@ class ComponentsManager {
 		 * Save Component Options
 		 */
 		if(isset($_POST['submit-components-options'])){
-			$is_active_component_option = function($opt_name) use($registered_components){
-				$orgz = Organizer::getInstance();
-				//Get the component of the $opt_name
-				$option = $orgz->get_option($opt_name);
-				if($option){
-					if(isset($option['component_name'])){
-						$component_name = $option['component_name'];
-						if(isset($registered_components[$component_name])){
-							$component_data = $registered_components[$component_name];
-							if(self::is_active($component_data) && array_key_exists($component_name,$registered_components)){
-								return true;
-							}
-						}
-					}
-				}
-				return false;
-			};
-
 			$of_config_id = Framework::get_options_root_id();
-			$of_options = Framework::get_options_values();
-			$registered_checkboxes = call_user_func(function(){
-				$cbs = Framework::get_registered_options_of_type(['checkbox','multicheck']);
-				$cbs = array_filter($cbs,function($el){
-					if(isset($el['component']) && $el['component']){
-						return true;
-					}
-					return false;
-				});
-				return $cbs;
-			});
-			$must_update = false;
-
 			if(isset($_POST[$of_config_id])){
+				$of_options = Framework::get_options_values();
+				$component_options = call_user_func(function(){
+					$cbs = Framework::get_registered_options();
+					$cbs = array_filter($cbs,function($el){
+						if(isset($el['component']) && $el['component']){
+							return true;
+						}
+						return false;
+					});
+					return $cbs;
+				});
+
 				$options_to_update = $_POST[$of_config_id];
-				$options_to_update = Admin::validate_options($options_to_update);
+				$options_to_update = Admin::validate_options($options_to_update, $component_options);
 
 				$of_options = wp_parse_args($options_to_update,$of_options);
 
-				//Add to $options_to_update the disabled checkbox:
-				foreach($registered_checkboxes as $opt){
-					$opt_name = strtolower($opt['id']);
-					if(!$is_active_component_option($opt['id'])) continue;
-					switch($opt['type']){
-						case "checkbox":
-							if(!isset($options_to_update[$opt_name])){
-								$options_to_update[$opt_name] = false; //If an option does not exists in $_POST then, it is a checkbox that was set to 0, so change the value...
-								$of_options[$opt_name] = false;
-								$must_update = true;
-							}elseif(!isset($of_options[$opt_name]) || $of_options[$opt_name] != $options_to_update[$opt_name]){
-								$of_options[$opt_name] = $options_to_update[$opt_name]; //Edit the value in $of_options
-								$must_update = true;
-							}
-							break;
-						case "multicheck":
-							if(isset($options_to_update[$opt_name])){
-								if(!isset($of_options[$opt_name]) || $of_options[$opt_name] != $options_to_update[$opt_name]){
-									$of_options[$opt_name] = $options_to_update[$opt_name];
-									$must_update = true;
-								}
-							}else{
-								//Here no checkbox has been selected, set all to false
-								if(isset($of_options[$opt_name])){
-									foreach($of_options[$opt_name] as $loc => $v){
-										if($loc) $must_update = true;
-										$of_options[$opt_name][$loc] = false;
-									}
-								}else{
-									$must_update = true;
-									foreach($opt["options"] as $loc => $v){
-										$of_options[$opt_name][$loc] = false;
-									}
-								}
-							}
-							break;
-					}
-				}
-			}
-
-			//if($must_update){
 				Framework::update_theme_options($of_options);
-			//}
 
-			$theme = wp_get_theme();
+				$theme = wp_get_theme();
 
-			//Save components options to auxiliary array
-			if(isset($options_to_update)){
-				update_option("wbf_".$theme->get_stylesheet()."_components_options",$options_to_update);
+				//Save components options to auxiliary array
+				if(isset($options_to_update)){
+					update_option("wbf_".$theme->get_stylesheet()."_components_options",$options_to_update);
+				}
+
+				//Set the flag that tells that the components was saved at least once
+				$components_already_saved = (array) get_option( "wbf_components_saved_once", array() );
+				if(!in_array($theme->get_stylesheet(),$components_already_saved)){
+					$components_already_saved[] = $theme->get_stylesheet();
+					update_option("wbf_components_saved_once", $components_already_saved);
+				}
+
+				$options_updated_flag = true;
 			}
-
-			//Set the flag that tells that the components was saved at least once
-			$components_already_saved = (array) get_option( "wbf_components_saved_once", array() );
-			if(!in_array($theme->get_stylesheet(),$components_already_saved)){
-				$components_already_saved[] = $theme->get_stylesheet();
-				update_option("wbf_components_saved_once", $components_already_saved);
-			}
-
-			$options_updated_flag = true;
 		}
 
 		$components_options = Organizer::getInstance()->get_group("components");

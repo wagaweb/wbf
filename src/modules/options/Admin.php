@@ -475,7 +475,7 @@ class Admin{
 	 *
 	 * @return array
 	 */
-	static function validate_options( $input ) {
+	static function validate_options( $input, $base = false ) {
 
 		/*
 		 * Update Settings
@@ -487,7 +487,12 @@ class Admin{
 		$current_options = Framework::get_options_values();
 
 		$clean = array();
-		$options = & Framework::get_registered_options();
+
+		if(!$base)
+			$options = & Framework::get_registered_options();
+		else
+			$options = $base;
+
 		foreach($options as $option){
 			
 			if(!isset($option['id'])){
@@ -501,22 +506,6 @@ class Admin{
 			$id = Framework::sanitize_option_id($option['id']);
 
 			if(array_key_exists($id,$input)){
-				switch($option['type']){
-					case "checkbox":
-						if(!isset($input[$id])){
-							// Set checkbox to false if it wasn't sent in the $_POST
-							$input[$id] = false;
-						}
-						break;
-					case "multicheck":
-						if(!isset($input[$id])){
-							// Set each item in the multicheck to false if it wasn't sent in the $_POST
-							foreach($option['options'] as $key => $value ) {
-								$input[$id][$key] = false;
-							}
-						}
-						break;
-				}
 				// For a value to be submitted to database it must pass through a sanitization filter
 				if( has_filter( 'of_sanitize_' . $option['type'] ) ) {
 					if(isset($input[$id])){
@@ -525,6 +514,25 @@ class Admin{
 					}
 				}
 				//NOTE: if no sanitize filter is provided at this point, the option value is lost.
+			}else{
+				if($option['type'] == "heading") continue;
+				//Checkboxes can be not set if unchecked...
+				switch($option['type']){
+					case "checkbox":
+						if(!isset($input[$id])){
+							// Set checkbox to false if it wasn't sent in the $_POST
+							$clean[$id] = false;
+						}
+						break;
+					case "multicheck":
+						if(!isset($input[$id])){
+							// Set each item in the multicheck to false if it wasn't sent in the $_POST
+							foreach($option['options'] as $key => $value ) {
+								$clean[$id][$key] = false;
+							}
+						}
+						break;
+				}
 			}
 		}
 
