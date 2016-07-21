@@ -11,6 +11,7 @@ namespace WBF\modules\components;
 
 use WBF\components\notices\Notice_Manager;
 use WBF\components\mvc\HTMLView;
+use WBF\modules\options\Admin;
 use WBF\modules\options\Framework;
 use WBF\modules\options\Organizer;
 
@@ -289,7 +290,7 @@ class ComponentsManager {
 
 		//When theme options are saved, $value contains some wrong values for components options. We need to use the auxiliary array to restore those values:
 		foreach($component_options as $k => $v){
-			if(isset($value[$k]) && $value[$k] != $v){
+			if(!isset($value[$k]) || (isset($value[$k]) && $value[$k] != $v)){
 				if($v == "on") $v = "1"; //the checkboxes are saved as "1" or FALSE, but here we can have "on" as value. This is a legacy issue with vendor options framework.
 				$value[$k] = $v;
 			}
@@ -754,57 +755,67 @@ class ComponentsManager {
 
 			$of_config_id = Framework::get_options_root_id();
 			$of_options = Framework::get_options_values();
+			$registered_checkboxes = call_user_func(function(){
+				$cbs = Framework::get_registered_options_of_type(['checkbox','multicheck']);
+				$cbs = array_filter($cbs,function($el){
+					if(isset($el['component']) && $el['component']){
+						return true;
+					}
+					return false;
+				});
+				return $cbs;
+			});
 			$must_update = false;
+
 			if(isset($_POST[$of_config_id])){
 				$options_to_update = $_POST[$of_config_id];
-				//Add to $ootions_to_update the disabled checkbox:
-				foreach($of_options as $opt_name => $opt_value){
-					if($is_active_component_option($opt_name)){
-						if(!isset($options_to_update[$opt_name]) && Framework::get_option_type($opt_name) == "checkbox"){
-							$options_to_update[$opt_name] = false; //If an option does not exists in $_POST then, it is a checkbox that was set to 0, so change the value...
-							$of_options[$opt_name] = false;
-						}
-						if(isset($options_to_update[$opt_name]) && Framework::get_option_type($opt_name) == "multicheck"){
-							foreach($options_to_update[$opt_name] as $k => $v){
-								//The current checkbox value does not exists in the theme_options array, so add it...
-								if(!array_key_exists($k,$of_options[$opt_name])){
-									$of_options[$opt_name][$k] = "1";
-									$must_update = true; //in this case, always force update
-								}
+				$options_to_update = Admin::validate_options($options_to_update);
+
+				$of_options = wp_parse_args($options_to_update,$of_options);
+
+				//Add to $options_to_update the disabled checkbox:
+				foreach($registered_checkboxes as $opt){
+					$opt_name = strtolower($opt['id']);
+					if(!$is_active_component_option($opt['id'])) continue;
+					switch($opt['type']){
+						case "checkbox":
+							if(!isset($options_to_update[$opt_name])){
+								$options_to_update[$opt_name] = false; //If an option does not exists in $_POST then, it is a checkbox that was set to 0, so change the value...
+								$of_options[$opt_name] = false;
+								$must_update = true;
+							}elseif(!isset($of_options[$opt_name]) || $of_options[$opt_name] != $options_to_update[$opt_name]){
+								$of_options[$opt_name] = $options_to_update[$opt_name]; //Edit the value in $of_options
+								$must_update = true;
 							}
-							//Now se to "false" all disabled checkbox, and to "1" all enabled checkbox
-							foreach($of_options[$opt_name] as $k => $v){
-								if(!isset($options_to_update[$opt_name][$k])){
-									$options_to_update[$opt_name][$k] = false;
+							break;
+						case "multicheck":
+							if(isset($options_to_update[$opt_name])){
+								if(!isset($of_options[$opt_name]) || $of_options[$opt_name] != $options_to_update[$opt_name]){
+									$of_options[$opt_name] = $options_to_update[$opt_name];
+									$must_update = true;
+								}
+							}else{
+								//Here no checkbox has been selected, set all to false
+								if(isset($of_options[$opt_name])){
+									foreach($of_options[$opt_name] as $loc => $v){
+										if($loc) $must_update = true;
+										$of_options[$opt_name][$loc] = false;
+									}
 								}else{
-									$options_to_update[$opt_name][$k] = "1";
+									$must_update = true;
+									foreach($opt["options"] as $loc => $v){
+										$of_options[$opt_name][$loc] = false;
+									}
 								}
 							}
-						}elseif(isset($of_options[$opt_name]) && Framework::get_option_type($opt_name) == "multicheck"){
-							//Now se to "false" all disabled checkbox, and to "1" all enabled checkbox
-							foreach($of_options[$opt_name] as $k => $v){
-								if(!isset($options_to_update[$opt_name][$k])){
-									$options_to_update[$opt_name][$k] = false;
-								}else{
-									$options_to_update[$opt_name][$k] = "1";
-								}
-							}
-						}
-					}
-				}
-				//Check if we must update something...
-				foreach($options_to_update as $opt_name => $opt_value){
-					if( (isset($of_options[$opt_name]) && $of_options[$opt_name] != $opt_value) || !isset($of_options[$opt_name]) ){
-						$of_options[$opt_name] = $opt_value;
-						$must_update = true;
+							break;
 					}
 				}
 			}
 
-			if($must_update){
+			//if($must_update){
 				Framework::update_theme_options($of_options);
-			}
-
+			//}
 
 			$theme = wp_get_theme();
 

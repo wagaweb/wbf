@@ -69,6 +69,28 @@ class Framework{
 		return self::_optionsframework_options();
 	}
 
+	/**
+	 * Get the options of type $type among the current registered options
+	 *
+	 * @param $type
+	 *
+	 * @return array
+	 */
+	static function get_registered_options_of_type($type){
+		$registered_options = self::get_registered_options();
+		$registered_options_of_type = [];
+		foreach ($registered_options as $opt){
+			if(isset($opt['type'])){
+				if(is_array($type) && in_array($opt['type'],$type)){
+					$registered_options_of_type[] = $opt;
+				}elseif($opt['type'] === $type){
+					$registered_options_of_type[] = $opt;
+				}
+			}
+		}
+		return $registered_options_of_type;
+	}
+
     /**
      * Get current registered theme options.
      * The functions use the filter "options_framework_location" to determine options file existance and location, then try to call the function "optionsframework_options()".
@@ -155,6 +177,11 @@ class Framework{
 	static function update_theme_options($values){
 		$id = self::get_options_root_id();
 		return update_option($id,$values);
+	}
+
+	static function reset_theme_options(){
+		$id = self::get_options_root_id();
+		return delete_option($id);
 	}
 
 	/**
