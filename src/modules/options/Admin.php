@@ -69,9 +69,9 @@ class Admin{
 			 * Save options
 			 */
 			$root_id = Framework::get_options_root_id();
-			if(isset($_POST['root_id'])){
-				$options_to_save = $_POST['root_id'];
-				$options_to_save = $this->validate_options($options_to_save);
+			if(isset($_POST[$root_id])){
+				$options_to_save = $_POST[$root_id];
+				$options_to_save = self::validate_options($options_to_save);
 			}
 		}
 		if(isset($options_to_save) && is_array($options_to_save) && !empty($options_to_save)){
@@ -95,10 +95,10 @@ class Admin{
 	 */
 	function settings_init() {
 		// Registers the settings fields and callback
-		register_setting( 'optionsframework', Framework::get_options_root_id(),  [ $this, 'validate_options' ] );
+		//register_setting( 'optionsframework', Framework::get_options_root_id(),  [ $this, 'validate_options' ] );
 
 		// Displays notice after options save
-		add_action( 'optionsframework_after_validate', array( $this, 'save_options_notice' ) );
+		//add_action( 'wbf/modules/options/after_validate', array( $this, 'save_options_notice' ) );
 	}
 
 	/**
@@ -452,8 +452,12 @@ class Admin{
 	 * @return bool
 	 */
 	static public function is_options_page(){
-		$screen = get_current_screen();
-		$page = isset($_REQUEST['wbf_options']) ? $_REQUEST['wbf_options'] : false;
+		if(function_exists("get_current_screen")){
+			$screen = get_current_screen();
+		}else{
+			$screen = false;
+		}
+		$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : false;
 		return $screen->id == "toplevel_page_wbf_options" && $page == "wbf_options";
 	}
 
@@ -471,7 +475,7 @@ class Admin{
 	 *
 	 * @return array
 	 */
-	function validate_options( $input ) {
+	static function validate_options( $input ) {
 
 		/*
 		 * Update Settings
@@ -528,7 +532,7 @@ class Admin{
 		}
 
 		// Hook to run after validation
-		do_action( 'optionsframework_after_validate', $clean );
+		do_action( 'wbf/modules/options/after_validate', $clean );
 
 		return $clean;
 	}
