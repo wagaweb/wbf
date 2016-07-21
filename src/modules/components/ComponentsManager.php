@@ -284,7 +284,7 @@ class ComponentsManager {
 	 */
 	static function on_theme_options_saving($value,$option,$old_value){
 		$theme = wp_get_theme();
-		$component_options = get_option($theme->get_stylesheet()."_components_options",true);
+		$component_options = get_option("wbf_".$theme->get_stylesheet()."_components_options",true);
 		if(empty($component_options)) return $value;
 
 		//When theme options are saved, $value contains some wrong values for components options. We need to use the auxiliary array to restore those values:
@@ -810,7 +810,7 @@ class ComponentsManager {
 
 			//Save components options to auxiliary array
 			if(isset($options_to_update)){
-				update_option($theme->get_stylesheet()."_components_options",$options_to_update);
+				update_option("wbf_".$theme->get_stylesheet()."_components_options",$options_to_update);
 			}
 
 			//Set the flag that tells that the components was saved at least once
