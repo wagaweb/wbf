@@ -41,7 +41,31 @@ function of_check_options_deps(){
 }
 
 /**
- * Performs actions during Theme Option saving (called during "update_option")
+ * Perform actions before Theme Options is saved and before che $value == $old_value check has been done
+ *
+ * @hooked 'pre_update_option'
+ *
+ * @param $value
+ * @param $option
+ * @param $old_value
+ *
+ * @return string|array
+ */
+function of_options_pre_save($value,$option,$old_value){
+	//Checking if we are saving the correct option
+	$config_id = Framework::get_options_root_id();
+	if($option != $config_id) return $value;
+
+	//Ok let's go!
+	if(!Admin::is_options_page()) return $value;
+	$value = apply_filters("wbf/modules/options/pre_save",$value,$option,$old_value);
+	return $value;
+}
+
+/**
+ * Performs actions before Theme Option has been saved (called during "update_option")
+ *
+ * @hooked 'update_option'
  *
  * @param $option
  * @param $old_value
@@ -51,183 +75,186 @@ function of_check_options_deps(){
  * @throws \Exception
  */
 function of_options_save($option, $old_value, $value){
-    $wbf_notice_manager = Utilities::get_wbf_notice_manager();
+	//Checking if we are saving the correct option
     $config_id = Framework::get_options_root_id();
-    if($option == $config_id){
-        $must_recompile_flag = false;
-        $deps_to_achieve = array();
-        $all_options = Framework::get_registered_options();
+    if($option != $config_id) return;
 
-        /*
-         * Check differences beetween new values and old value
-         */
-        $multidimensional_options = array();
-        foreach($all_options as $k => $opt){
-            if(isset($opt['std']) && is_array($opt['std'])){
-                $multidimensional_options[$opt['id']] = $opt;
-            }
-        }
-        //$diff = @array_diff_assoc($old_value,$value);
-        $diff = @array_diff_assoc($value,$old_value);
-        foreach($multidimensional_options as $id => $opt){
-            if(isset($old_value[$id]) && isset($value[$id])){
-                $tdiff = @array_diff_assoc($old_value[$id],$value[$id]);
-                if(is_array($tdiff) && !empty($tdiff)){
-                    $diff[$id] = $tdiff;
-                }
-            }
-        }
+	//Ok let's go!
+	$wbf_notice_manager = Utilities::get_wbf_notice_manager();
 
-        //Doing actions with modified options
-        foreach($all_options as $k => $opt_data){
-            if(isset($opt_data['id']) && array_key_exists($opt_data['id'],$diff)){ //True if the current option has been modified
-	            /** BEGIN OPERATIONS HERE: **/
-                /*
-                 * Check upload fields
-                 */
-	            if($opt_data['type'] == "upload"){
-		            $upload_to = isset($opt_data['upload_to']) ? $opt_data['upload_to'] : false;
-		            $upload_as = isset($opt_data['upload_as']) ? $opt_data['upload_as'] : false;
-		            $allowed_extensions = isset($opt_data['allowed_extensions']) ? $opt_data['allowed_extensions'] : array("jpg","jpeg","png","gif","ico");
-		            $file_path = url_to_path($value[$opt_data['id']]);
-					if(is_file($file_path)){ //by doing this we take into account only the files uploaded to the site and not external one
-						$oFile = new \SplFileObject($file_path);
-						try{
-							if(!in_array($oFile->getExtension(),$allowed_extensions)) throw new \Exception("Invalid file extension");
-							if($upload_to){
-								//We need to copy the uploaded file and update the value
-								if(is_dir($upload_to)){
-									$upload_to = rtrim($upload_to,"/");
-									$new_path = $upload_as && !empty($upload_as) ? $upload_to."/".$upload_as.".".$oFile->getExtension() : $upload_to."/".$oFile->getBasename();
-									if(!copy($oFile->getRealPath(),$new_path)){
-										throw new \Exception("Cant move file");
-									}
-									$new_opt_value = path_to_url($new_path);
-									$value[$opt_data['id']] = $new_opt_value;
-									Framework::set_option_value($opt_data['id'],$new_opt_value); //set new value
+	$must_recompile_flag = false;
+	$deps_to_achieve = array();
+	$all_options = Framework::get_registered_options();
+
+	/*
+	 * Check differences beetween new values and old value
+	 */
+	$multidimensional_options = array();
+	foreach($all_options as $k => $opt){
+		if(isset($opt['std']) && is_array($opt['std'])){
+			$multidimensional_options[$opt['id']] = $opt;
+		}
+	}
+	//$diff = @array_diff_assoc($old_value,$value);
+	$diff = @array_diff_assoc($value,$old_value);
+	foreach($multidimensional_options as $id => $opt){
+		if(isset($old_value[$id]) && isset($value[$id])){
+			$tdiff = @array_diff_assoc($old_value[$id],$value[$id]);
+			if(is_array($tdiff) && !empty($tdiff)){
+				$diff[$id] = $tdiff;
+			}
+		}
+	}
+
+	//Doing actions with modified options
+	foreach($all_options as $k => $opt_data){
+		if(isset($opt_data['id']) && array_key_exists($opt_data['id'],$diff)){ //True if the current option has been modified
+			/** BEGIN OPERATIONS HERE: **/
+			/*
+			 * Check upload fields
+			 */
+			if($opt_data['type'] == "upload"){
+				$upload_to = isset($opt_data['upload_to']) ? $opt_data['upload_to'] : false;
+				$upload_as = isset($opt_data['upload_as']) ? $opt_data['upload_as'] : false;
+				$allowed_extensions = isset($opt_data['allowed_extensions']) ? $opt_data['allowed_extensions'] : array("jpg","jpeg","png","gif","ico");
+				$file_path = url_to_path($value[$opt_data['id']]);
+				if(is_file($file_path)){ //by doing this we take into account only the files uploaded to the site and not external one
+					$oFile = new \SplFileObject($file_path);
+					try{
+						if(!in_array($oFile->getExtension(),$allowed_extensions)) throw new \Exception("Invalid file extension");
+						if($upload_to){
+							//We need to copy the uploaded file and update the value
+							if(is_dir($upload_to)){
+								$upload_to = rtrim($upload_to,"/");
+								$new_path = $upload_as && !empty($upload_as) ? $upload_to."/".$upload_as.".".$oFile->getExtension() : $upload_to."/".$oFile->getBasename();
+								if(!copy($oFile->getRealPath(),$new_path)){
+									throw new \Exception("Cant move file");
+								}
+								$new_opt_value = path_to_url($new_path);
+								$value[$opt_data['id']] = $new_opt_value;
+								Framework::set_option_value($opt_data['id'],$new_opt_value); //set new value
+							}else{
+								throw new \Exception("Invalid upload location");
+							}
+						}
+					}catch(\Exception $e){
+						//Reset the old value
+						$old_opt_value = $old_value[$opt_data['id']];
+						$value[$opt_data['id']] = $old_opt_value;
+						Framework::set_option_value($opt_data['id'],$old_opt_value);
+					}
+				}
+			}
+			/*
+			 * Check if must recompile
+			 */
+			if(isset($opt_data['recompile_styles']) && $opt_data['recompile_styles']){
+				$must_recompile_flag = true;
+			}
+			/*
+			 * Check if must perform some post actions
+			 */
+			if(isset($opt_data['save_action']) && is_string($opt_data['save_action']) && $opt_data['save_action'] != ""){
+				$action = $opt_data['save_action'];
+				if($action == "recompile_styles"){
+					$must_recompile_flag = true;
+				}else{
+					$on_save_callbacks[] = $action; //Build up a callback stack
+				}
+			}
+			/*
+			 * Check theme options dependencies
+			 *
+			 * Usage: options can specify dependencies at a global or value-specific level.
+			 *
+			 * - Global:
+			 * $opt_data['deps']['_global']['components'] = ['foo']
+			 * The "foo" component has to be active when this option has any value.
+			 *
+			 * - Value-specific:
+			 * $opt_data['deps']['foo']['components'] = ['bar']
+			 * The "bar" component has to be active when the option has the value of "foo"
+			 *
+			 */
+			if(isset($opt_data['deps'])){
+				if(isset($opt_data['deps']['_global'])){
+					if(isset($opt_data['deps']['_global']['components'])){
+						$deps_to_achieve['components'][] = $opt_data['deps']['_global']['components'];
+					}
+					unset($opt_data['deps']['_global']);
+				}
+				if(!empty($opt_data['deps'])){
+					foreach($opt_data['deps'] as $v => $deps){
+						if(!is_array($deps)) continue;
+						if(array_key_exists($opt_data['id'],$value) && $value[$opt_data['id']] == $v){ //true the option has the value specified into deps array
+							//Then set the deps to achieve
+							foreach($deps as $type => $deps_names){
+								if(!is_array($deps_names)) continue;
+								if(array_key_exists($type,$deps_to_achieve)){
+									$deps_to_achieve[$type] = array_merge($deps_to_achieve[$type],$deps_names);
 								}else{
-									throw new \Exception("Invalid upload location");
+									$deps_to_achieve[$type] = $deps_names;
 								}
 							}
-						}catch(\Exception $e){
-							//Reset the old value
-							$old_opt_value = $old_value[$opt_data['id']];
-							$value[$opt_data['id']] = $old_opt_value;
-							Framework::set_option_value($opt_data['id'],$old_opt_value);
 						}
 					}
-	            }
-                /*
-                 * Check if must recompile
-                 */
-                if(isset($opt_data['recompile_styles']) && $opt_data['recompile_styles']){
-                    $must_recompile_flag = true;
-                }
-	            /*
-	             * Check if must perform some post actions
-	             */
-	            if(isset($opt_data['save_action']) && is_string($opt_data['save_action']) && $opt_data['save_action'] != ""){
-		            $action = $opt_data['save_action'];
-		            if($action == "recompile_styles"){
-			            $must_recompile_flag = true;
-		            }else{
-			            $on_save_callbacks[] = $action; //Build up a callback stack
-		            }
-	            }
-                /*
-                 * Check theme options dependencies
-                 *
-                 * Usage: options can specify dependencies at a global or value-specific level.
-                 *
-                 * - Global:
-                 * $opt_data['deps']['_global']['components'] = ['foo']
-                 * The "foo" component has to be active when this option has any value.
-                 *
-                 * - Value-specific:
-                 * $opt_data['deps']['foo']['components'] = ['bar']
-                 * The "bar" component has to be active when the option has the value of "foo"
-                 *
-                 */
-                if(isset($opt_data['deps'])){
-                    if(isset($opt_data['deps']['_global'])){
-                        if(isset($opt_data['deps']['_global']['components'])){
-                            $deps_to_achieve['components'][] = $opt_data['deps']['_global']['components'];
-                        }
-	                    unset($opt_data['deps']['_global']);
-                    }
-	                if(!empty($opt_data['deps'])){
-		                foreach($opt_data['deps'] as $v => $deps){
-			                if(!is_array($deps)) continue;
-			                if(array_key_exists($opt_data['id'],$value) && $value[$opt_data['id']] == $v){ //true the option has the value specified into deps array
-				                //Then set the deps to achieve
-				                foreach($deps as $type => $deps_names){
-					                if(!is_array($deps_names)) continue;
-					                if(array_key_exists($type,$deps_to_achieve)){
-						                $deps_to_achieve[$type] = array_merge($deps_to_achieve[$type],$deps_names);
-					                }else{
-						                $deps_to_achieve[$type] = $deps_names;
-					                }
-				                }
-			                }
-		                }
-	                }
-                }
-            }
-        }
+				}
+			}
+		}
+	}
 
-	    /*
-	     * If the "Reset to defaults" button was pressed
-	     */
-	    if(isset($_POST['reset'])){
-		    $must_recompile_flag = true;
-	    }
+	/*
+	 * If the "Reset to defaults" button was pressed
+	 */
+	if(isset($_POST['reset'])){
+		$must_recompile_flag = true;
+	}
 
-	    /*
-	     * Recompile styles if needed
-	     */
-        if($must_recompile_flag){
-	        of_recompile_styles($value);
-        }
+	/*
+	 * Recompile styles if needed
+	 */
+	if($must_recompile_flag){
+		of_recompile_styles($value);
+	}
 
-	    /*
-	     * Call che callbacks if needed
-	     */
-	    if(isset($on_save_callbacks) && !empty($on_save_callbacks)){
-		    $on_save_callbacks = array_unique($on_save_callbacks);
-		    foreach($on_save_callbacks as $cb){
-			    $cb = trim($cb);
-			    if(function_exists($cb)){
-				    call_user_func($cb,$option,$old_value,$value);
-			    }
-		    }
-	    }
+	/*
+	 * Call che callbacks if needed
+	 */
+	if(isset($on_save_callbacks) && !empty($on_save_callbacks)){
+		$on_save_callbacks = array_unique($on_save_callbacks);
+		foreach($on_save_callbacks as $cb){
+			$cb = trim($cb);
+			if(function_exists($cb)){
+				call_user_func($cb,$option,$old_value,$value);
+			}
+		}
+	}
 
-        if(!empty($deps_to_achieve)){
-            $wbf_notice_manager->clear_notices("theme_opt_component_deps");
-            if(!empty($deps_to_achieve['components'])){
-	            if(\WBF::getInstance()->module_is_loaded("components")){
-		            //Try to enable all the required components
-		            $registered_components = ComponentsManager::getAllComponents();
-		            foreach($deps_to_achieve['components'] as $c_name){
-			            if(!ComponentsManager::is_active($c_name)){
-				            if(ComponentsManager::is_present($c_name)){
-					            ComponentsManager::enable($c_name, ComponentsManager::is_child_component( $c_name ));
-				            }else{
-					            //Register new notice that tells that the component is not present
-					            $message = __("An option requires the component <strong>$c_name</strong>, but it is not present","wbf");
-					            $wbf_notice_manager->add_notice($c_name."_component_not_present",$message,"error","theme_opt_component_deps","FileIsPresent",ComponentsManager::generate_component_mainfile_path($c_name));
-				            }
-			            }
-		            }
-	            }else{
-		            $message = __("An option requires components module, but it is not loaded","wbf");
-		            $wbf_notice_manager->add_notice("components_not_loaded",$message,"error","_flash_");
-	            }
-            }
-        }else{
-            $wbf_notice_manager->clear_notices("theme_opt_component_deps");
-        }
-    }
+	if(!empty($deps_to_achieve)){
+		$wbf_notice_manager->clear_notices("theme_opt_component_deps");
+		if(!empty($deps_to_achieve['components'])){
+			if(\WBF::getInstance()->module_is_loaded("components")){
+				//Try to enable all the required components
+				$registered_components = ComponentsManager::getAllComponents();
+				foreach($deps_to_achieve['components'] as $c_name){
+					if(!ComponentsManager::is_active($c_name)){
+						if(ComponentsManager::is_present($c_name)){
+							ComponentsManager::enable($c_name, ComponentsManager::is_child_component( $c_name ));
+						}else{
+							//Register new notice that tells that the component is not present
+							$message = __("An option requires the component <strong>$c_name</strong>, but it is not present","wbf");
+							$wbf_notice_manager->add_notice($c_name."_component_not_present",$message,"error","theme_opt_component_deps","FileIsPresent",ComponentsManager::generate_component_mainfile_path($c_name));
+						}
+					}
+				}
+			}else{
+				$message = __("An option requires components module, but it is not loaded","wbf");
+				$wbf_notice_manager->add_notice("components_not_loaded",$message,"error","_flash_");
+			}
+		}
+	}else{
+		$wbf_notice_manager->clear_notices("theme_opt_component_deps");
+	}
 }
 
 /**

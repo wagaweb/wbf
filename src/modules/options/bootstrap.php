@@ -28,6 +28,7 @@ if(!defined('WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR')){
 }
 
 add_action( "wbf_init",'\WBF\modules\options\module_init', 11 );
+add_filter( "pre_update_option", '\WBF\modules\options\of_options_pre_save', 9999, 3 );
 add_action( "updated_option", '\WBF\modules\options\of_options_save', 9999, 3 );
 add_action( "wbf/compiler/pre_compile", '\WBF\modules\options\of_create_styles', 9999, 3 );
 add_filter( "wbf/compiler/parser/line/import", '\WBF\modules\options\of_parse_generated_file', 10, 5 );

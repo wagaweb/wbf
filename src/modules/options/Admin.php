@@ -416,6 +416,17 @@ class Admin{
     }
 
 	/**
+	 * Check if we are in the Theme Options page
+	 *
+	 * @return bool
+	 */
+	static public function is_options_page(){
+		$screen = get_current_screen();
+		$page = isset($_REQUEST['option_page']) ? $_REQUEST['option_page'] : false;
+		return $screen->id == "options" && $page == "optionsframework";
+	}
+
+	/**
 	 * Validate Options.
 	 *
 	 * This runs after the submit/reset button has been clicked and

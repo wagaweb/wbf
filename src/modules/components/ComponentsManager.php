@@ -31,6 +31,7 @@ class ComponentsManager {
      */
     static function init(){
 	    add_action("wbf/theme_options/register",'\WBF\modules\components\ComponentsManager::addRegisteredComponentOptions',999); //register component options
+	    add_filter("wbf/modules/options/pre_save",'\WBF\modules\components\ComponentsManager::on_theme_options_saving',10,3);
 	    /** Detect components in main theme **/
         self::_detect_components(get_template_directory()."/components");
         /** Detect components in child theme **/
@@ -269,6 +270,33 @@ class ComponentsManager {
             }
         }
     }
+
+	/**
+	 * Performs actions before theme options are saved.
+	 *
+	 * @hooked 'wbf/modules/options/pre_save'
+	 *
+	 * @param $value
+	 * @param $option
+	 * @param $old_value
+	 *
+	 * @return string|array
+	 */
+	static function on_theme_options_saving($value,$option,$old_value){
+		$theme = wp_get_theme();
+		$component_options = get_option($theme->get_stylesheet()."_components_options",true);
+		if(empty($component_options)) return $value;
+
+		//When theme options are saved, $value contains some wrong values for components options. We need to use the auxiliary array to restore those values:
+		foreach($component_options as $k => $v){
+			if(isset($value[$k]) && $value[$k] != $v){
+				if($v == "on") $v = "1"; //the checkboxes are saved as "1" or FALSE, but here we can have "on" as value. This is a legacy issue with vendor options framework.
+				$value[$k] = $v;
+			}
+		}
+
+		return $value;
+	}
 
     /**
      * Returns and array of components data (aka in array mode, this do not retrive Waboot_Component)
@@ -777,8 +805,15 @@ class ComponentsManager {
 				Framework::update_theme_options($of_options);
 			}
 
-			//Set the flag that tells that the components was saved at least once
+
 			$theme = wp_get_theme();
+
+			//Save components options to auxiliary array
+			if(isset($options_to_update)){
+				update_option($theme->get_stylesheet()."_components_options",$options_to_update);
+			}
+
+			//Set the flag that tells that the components was saved at least once
 			$components_already_saved = (array) get_option( "wbf_components_saved_once", array() );
 			if(!in_array($theme->get_stylesheet(),$components_already_saved)){
 				$components_already_saved[] = $theme->get_stylesheet();
