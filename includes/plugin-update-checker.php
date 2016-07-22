@@ -265,6 +265,9 @@ class Plugin_Update_Checker extends \PluginUpdateChecker{
 	 */
 	protected function remove_from_not_upgradable_plugin($plugin_name){
 		$opt = get_option("wbf_unable_to_update_plugins",array());
+		if(!is_array($opt)){
+			$opt = []; //Correct the data if broken
+		}
 		foreach($opt as $k => $plg){
 			if($plg == $plugin_name){
 				unset($opt[$k]);
