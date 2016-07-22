@@ -157,7 +157,7 @@ class Behavior{
 			$this->value = $this->default; //$node_id == 0 in in archive pages, so return the default for "Pages"
 			return $this->value;
 		} else {
-			$current_behavior_value = get_post_meta($node->ID, $this->metaname, $this->default);
+			$current_behavior_value = get_post_meta($node->ID, $this->metaname, true);
 
 			if ($current_behavior_value == "" && ($this->type != "textarea" || $this->type != "text"))
 				$current_behavior_value = "_default";
