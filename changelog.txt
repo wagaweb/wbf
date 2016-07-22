@@ -3,6 +3,7 @@
 Version 0.13.19 - 22/07/2016
 ---------------------------------
 - Fix: Ora i behavior non tornano più array vuoti.
+- Fix: Fixato il caso in cui alcuni array in Notice_Manager e Plugin_Update_Checker risultavano vuoti.
 
 Version 0.13.18 - 20/07/2016
 ---------------------------------
