@@ -250,7 +250,7 @@ class Utilities{
 		if(!isset($wbf_notice_manager)) return;
 
 		$args = wp_parse_args($args,[
-			"category" => 'base',
+			"category" => '_flash_',
 			"condition" => null,
 			"cond_args" => null
 		]);
