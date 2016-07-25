@@ -41,12 +41,18 @@ class Notice_Manager {
         $this->update_notices($notices);
     }
 
+    /**
+     * Enqueue the notices. WBF Plugin will hook this function to "init" callback, after "wbf_init".
+     */
     function enqueue_notices(){
         add_action( 'admin_notices', array($this,'show_notices'));
     }
 
+    /**
+     * Show the notices
+     */
     function show_notices(){
-        foreach($this->notices as $id => $notice){
+         foreach($this->notices as $id => $notice){
             switch($notice['level']){
                 case 'updated':
                     ?>
