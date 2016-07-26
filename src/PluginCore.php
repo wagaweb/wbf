@@ -686,6 +686,13 @@ class PluginCore {
 				"type" => "js",
 				'enqueue' => false,
 				'in_footer' => true,
+			],
+			"spectrum-js" => [
+			"uri" => $res->prefix_url("/assets/dist/js/includes/spectrum.min.js"),
+			"path" => $res->prefix_path("/assets/dist/js/includes/spectrum.min.js"),
+			"type" => "js",
+			'enqueue' => false,
+			'in_footer' => true,
 			]
 		];
 		if(defined("WBF_ENV") && WBF_ENV == "dev" || SCRIPT_DEBUG){

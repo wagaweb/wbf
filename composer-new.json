@@ -38,7 +38,6 @@
       "src/components/customupdater/vendor/",
       "src/components/bredcrumb/vendor/",
       "src/components/navwalker/vendor/",
-      "vendor/options-framework/",
       "vendor/acf/",
       "src/modules/",
       "src/PluginCore.php"

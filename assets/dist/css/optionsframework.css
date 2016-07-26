@@ -6,8 +6,12 @@ Author URI: https://waga.it
 */
 /* General rules */
 div#optionsframework-wrap {
-  margin: 0px auto;
+  margin: 0 auto;
   /* Vertical Tabbed Navigation */
+}
+div#optionsframework-wrap .wbf-copy {
+  float: left;
+  padding: 10px;
 }
 div#optionsframework-wrap .optionsframework-header {
   width: 100%;
@@ -36,7 +40,7 @@ div#optionsframework-wrap div.nav-tab-wrapper {
   margin: 0;
 }
 div#optionsframework-wrap div.nav-tab-wrapper ul {
-  margin-top: 64px;
+  margin-top: 83px;
 }
 div#optionsframework-wrap div.nav-tab-wrapper .nav-tab {
   font-size: 14px;

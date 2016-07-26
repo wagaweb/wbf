@@ -45,6 +45,8 @@ class Framework{
 		$ce->init();
 		$fs = new FontSelector();
 		$fs->init();
+		$ac = new Advanced_Color();
+		$ac->init();
 		$this->extensions = [$mu,$ce,$fs];
 	}
 

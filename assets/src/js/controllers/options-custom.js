@@ -8,6 +8,13 @@ jQuery(document).ready(function($) {
 	// Loads the color pickers
 	$('.of-color').wpColorPicker();
 
+	//Init spectrum color picker
+	$(".advanced-color").spectrum({
+		showInput: true,
+		showAlpha: true,
+		showPalette: true
+	});
+
 	// Image Options
 	$('.of-radio-img-img').click(function(){
 		$(this).parent().parent().find('.of-radio-img-img').removeClass('of-radio-img-selected');

@@ -22,5 +22,4 @@ jQuery(document).ready(function($) {
     //Init behavior view
     var behavior_view = require("./views/behavior.js");
     behavior_view.init_interface();
-    //
 });

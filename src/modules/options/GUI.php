@@ -228,6 +228,13 @@ class GUI{
 
 	                    break;
 
+					// RGBA Color picker
+		            case "advanced-color":
+
+			            $output .= Advanced_Color::display($current_option, $val, $options_db_key);
+
+			            break;
+
 	                // Uploader
 	                case "upload":
 	                    $output .= MediaUploader::optionsframework_uploader($current_option['id'], $val, null);

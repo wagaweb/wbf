@@ -383,7 +383,6 @@ jQuery(document).ready(function($) {
     //Init behavior view
     var behavior_view = require("./views/behavior.js");
     behavior_view.init_interface();
-    //
 });
 
 },{"./controllers/font-selector.js":1,"./views/acf-fields.js":2,"./views/behavior.js":5,"./views/code-editor.js":6,"./views/component-page.js":7,"./views/font-selector.js":8}]},{},[9]);

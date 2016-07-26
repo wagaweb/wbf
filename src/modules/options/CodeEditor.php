@@ -61,6 +61,7 @@ class CodeEditor {
 			$name = $option_name . '[' . $id . ']';
 		}
 
+
 		$class = "of-input codemirror";
 
 		$output .= "<textarea id='$id' class='$class' name='$name' data-lang='$_lang' rows='8'>$value</textarea>";

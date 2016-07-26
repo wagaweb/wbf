@@ -32,7 +32,8 @@ module.exports = function (grunt) {
             dist: {
                 files: {
                     'assets/dist/js/wbf-admin.min.js': ['assets/dist/js/wbf-admin-bundle.js'],
-                    'assets/dist/js/includes/wbfgmap.min.js': ['assets/src/js/includes/wbfgmap/markerclusterer.js','assets/src/js/includes/wbfgmap/acfmap.js']
+                    'assets/dist/js/includes/wbfgmap.min.js': ['assets/src/js/includes/wbfgmap/markerclusterer.js','assets/src/js/includes/wbfgmap/acfmap.js'],
+                    'assets/dist/js/includes/spectrum-min.js': ['vendor/spectrum/spectrum.js']
                 }
             }
         },
@@ -64,11 +65,11 @@ module.exports = function (grunt) {
                             "vendor/acf/**/*",
                             "!vendor/acf/lang/*",
                             "vendor/codemirror/lib/*",
+                            "vendor/spectrum/spectrum.css",
                             "vendor/imagesloaded/*.js",
                             "vendor/jquery-modal/*.js",
                             "vendor/mgargano/simplehtmldom/src/*.*",
                             "vendor/mobiledetect/mobiledetectlib/Mobile_Detect.php",
-                            "vendor/options-framework/**/*",
                             "vendor/owlcarousel/**/*",
                             "vendor/theme-updates/**/*",
                             "vendor/yahnis-elsts/**/*",
