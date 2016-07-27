@@ -17,6 +17,8 @@ namespace WBF\modules\options;
 
 /* Text */
 
+use WBF\components\utils\Utilities;
+
 add_filter( 'of_sanitize_text', 'sanitize_text_field' );
 
 /* Password */
@@ -78,6 +80,11 @@ add_filter( 'of_sanitize_multicheck', '\WBF\modules\options\of_sanitize_multiche
 /* Color Picker */
 
 add_filter( 'of_sanitize_color', '\WBF\modules\options\of_sanitize_hex' );
+
+
+/* Advanced Color Picker */
+
+add_filter( 'of_sanitize_advanced_color', '\WBF\modules\options\of_sanitize_advanced_color' );
 
 /* Uploader */
 
@@ -311,6 +318,28 @@ function of_sanitize_hex( $hex, $default = '' ) {
     }
     return $default;
 }
+
+
+
+function of_sanitize_advanced_color( $val, $default = '' ) {
+
+
+	if (strstr($val, 'hsva') !== false) {
+		$val = str_replace('hsva(', '', $val);
+		$val = str_replace(')', '', $val);
+		$values = explode(', ', $val);
+
+		$rgb = Utilities::fGetRGB($values[0], $values[1], $values[2]);
+		if (is_null($values[3])) {
+			return $rgb;
+		}
+		$rgba = 'rgba( ' . $rgb . ',' . $values[3] . ')';
+		return $rgba;
+	}
+	return $val;
+}
+
+
 
 /**
  * Get recognized font sizes.

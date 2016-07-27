@@ -229,7 +229,7 @@ class GUI{
 	                    break;
 
 					// RGBA Color picker
-		            case "advanced-color":
+		            case "advanced_color":
 
 			            $output .= Advanced_Color::display($current_option, $val, $options_db_key);
 
