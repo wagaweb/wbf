@@ -123,10 +123,11 @@ class ComponentsManager {
 	static function get_registered_components($get_child_components = false){
 		$theme = wp_get_theme();
 		if($get_child_components){
-			return get_option( $theme->get_stylesheet()."_registered_components", array());
+			$rc = get_option( $theme->get_stylesheet()."_registered_components", array());
 		}else{
-			return get_option( $theme->get_template()."_registered_components", array());
+			$rc = get_option( $theme->get_template()."_registered_components", array());
 		}
+		return $rc;
 	}
 
     /**
