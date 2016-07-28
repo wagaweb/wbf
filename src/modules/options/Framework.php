@@ -169,14 +169,33 @@ class Framework{
     }
 
 	/**
-	 * Update theme options with new values (this will erase current theme options)
+	 * Update theme options with new values
+	 *
 	 * @param $values
 	 *
-	 * @return bool
+	 * @param bool $merge if YES the $values will be merged with already saved options
+	 * @param bool|array $validate_against if ARRAY, this will be passed as $base argument to validate_options()
+	 *
+	 * @return array|bool
 	 */
-	static function update_theme_options($values){
+	static function update_theme_options($values,$merge = false,$validate_against = false){
+		$new_options = Admin::validate_options($values,$validate_against);
+		if(!$values || !is_array($values)){
+			return false;
+		}
+		$options_to_update = $new_options;
+		if($merge){
+			$of_options = Framework::get_options_values(); //Gets the the saved options values
+			$new_options = wp_parse_args($new_options,$of_options); //Merge the arrays
+		}else{
+			$new_options = $values;
+		}
 		$id = self::get_options_root_id();
-		return update_option($id,$values);
+		if(!update_option($id,$new_options)){
+			return false;
+		}else{
+			return $options_to_update;	
+		}
 	}
 
 	static function reset_theme_options(){
@@ -408,7 +427,8 @@ class Framework{
 	 * @return mixed
 	 */
 	static function sanitize_option_id($id){
-		$id = preg_replace( '/[^a-zA-Z0-9._\-]/', '', strtolower( $id ) );
+		//$id = preg_replace( '/[^a-zA-Z0-9._\-]/', '', strtolower( $id ) );
+		$id = preg_replace( '/[^a-zA-Z0-9._\-]/', '', $id );
 		return $id;
 	}
 }

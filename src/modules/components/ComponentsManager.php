@@ -737,7 +737,6 @@ class ComponentsManager {
 		if(isset($_POST['submit-components-options'])){
 			$of_config_id = Framework::get_options_root_id();
 			if(isset($_POST[$of_config_id])){
-				$of_options = Framework::get_options_values();
 				$component_options = call_user_func(function(){
 					$cbs = Framework::get_registered_options();
 					$cbs = array_filter($cbs,function($el){
@@ -747,19 +746,16 @@ class ComponentsManager {
 						return false;
 					});
 					return $cbs;
-				});
+				}); //Gets the components options (not the actual values)
 
 				$options_to_update = $_POST[$of_config_id];
-				$options_to_update = Admin::validate_options($options_to_update, $component_options);
 
-				$of_options = wp_parse_args($options_to_update,$of_options);
-
-				Framework::update_theme_options($of_options);
+				$options_to_update = Framework::update_theme_options($options_to_update,true,$component_options);
 
 				$theme = wp_get_theme();
 
 				//Save components options to auxiliary array
-				if(isset($options_to_update)){
+				if(isset($options_to_update) && $options_to_update){
 					update_option("wbf_".$theme->get_stylesheet()."_components_options",$options_to_update);
 				}
 

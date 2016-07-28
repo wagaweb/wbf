@@ -464,68 +464,47 @@ class Admin{
 	/**
 	 * Validate Options.
 	 *
-	 * This runs after the submit/reset button has been clicked and
-	 * validates the inputs.
-	 * 
-	 * @hooked via register_setting( 'optionsframework', $optionsframework_settings['id'],  array ( $this, 'validate_options' ) );
+	 * This runs after the submit/reset button has been clicked and validates the inputs.
 	 *
-	 * @uses $_POST['reset'] to restore default options
+	 * @param array $options_to_validate
 	 *
-	 * @param $input
+	 * @param bool|array $base
 	 *
 	 * @return array
 	 */
-	static function validate_options( $input, $base = false ) {
-
-		/*
-		 * Update Settings
-		 *
-		 * This used to check for $_POST['update'], but has been updated
-		 * to be compatible with the theme customizer introduced in WordPress 3.4
-		 */
-
-		$current_options = Framework::get_options_values();
-
+	static function validate_options( $options_to_validate, $base = false ) {
 		$clean = array();
 
-		if(!$base)
-			$options = & Framework::get_registered_options();
-		else
-			$options = $base;
+		$options = ! $base ? Framework::get_registered_options() : $base;
 
+		/*
+		 * Cycle through all possible options (not the saved ones)
+		 */
 		foreach($options as $option){
 			
-			if(!isset($option['id'])){
-				continue;
-			}
-
-			if(!isset($option['type'])){
+			if(!isset($option['id']) || !isset($option['type']) || $option['type'] == "heading"){
 				continue;
 			}
 
 			$id = Framework::sanitize_option_id($option['id']);
 
-			if(array_key_exists($id,$input)){
-				// For a value to be submitted to database it must pass through a sanitization filter
+			if(array_key_exists($id,$options_to_validate)){
 				if( has_filter( 'of_sanitize_' . $option['type'] ) ) {
-					if(isset($input[$id])){
-						$sanitized_value = apply_filters( 'of_sanitize_' . $option['type'], $input[$id], $option );
-						$clean[$id] = $sanitized_value;
-					}
+					$sanitized_value = apply_filters( 'of_sanitize_' . $option['type'], $options_to_validate[$id], $option );
+					$clean[$id] = $sanitized_value;
 				}
 				//NOTE: if no sanitize filter is provided at this point, the option value is lost.
 			}else{
-				if($option['type'] == "heading") continue;
-				//Checkboxes can be not set if unchecked...
+				//Checkboxes is not set when unchecked...
 				switch($option['type']){
 					case "checkbox":
-						if(!isset($input[$id])){
+						if(!isset($options_to_validate[$id])){
 							// Set checkbox to false if it wasn't sent in the $_POST
 							$clean[$id] = false;
 						}
 						break;
 					case "multicheck":
-						if(!isset($input[$id])){
+						if(!isset($options_to_validate[$id])){
 							// Set each item in the multicheck to false if it wasn't sent in the $_POST
 							foreach($option['options'] as $key => $value ) {
 								$clean[$id][$key] = false;
