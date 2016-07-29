@@ -670,7 +670,7 @@ class ComponentsManager {
 	 *
 	 * @throws \Exception
 	 */
-    static function reset_components_state(){
+    static function restore_components_state(){
         $default_components = apply_filters("wbf_default_components",array()); //todo @deprecated
         $default_components = apply_filters("wbf/modules/components/defaults",$default_components);
         $registered_components = self::getAllComponents();
@@ -706,13 +706,10 @@ class ComponentsManager {
     /**
      * Delete the options which stores the registered components
      */
-    static function reset_registered_components(){
+    static function reset_components_state(){
 	    $theme = wp_get_theme();
-        if(is_child_theme()){
-            delete_option( $theme->get_stylesheet()."_registered_components");
-        }else{
-	        delete_option( $theme->get_template()."_registered_components");
-        }
+	    delete_option( $theme->get_stylesheet()."_registered_components");
+	    delete_option( $theme->get_template()."_registered_components");
     }
 
 	/**
@@ -723,14 +720,25 @@ class ComponentsManager {
 		$options_updated_flag = false;
 
 		/*
-		 * Reset Component Options
+		 * Restore defaults components
 		 */
-		if(isset($_POST['reset_component_state'])){
+		if(isset($_POST['restore_defaults_components'])){
+			self::restore_components_state();
+			$options_updated_flag = true;
+		}
+
+		/*
+		 * Reset components
+		 */
+		if(isset($_POST['reset_components'])){
 			self::reset_components_state();
 			$options_updated_flag = true;
 		}
 
 		$registered_components = self::getAllComponents();
+		if(isset($_POST['reset_components'])){
+			array_map(function($c){$c->active = false;},$registered_components);
+		}
 
 		/*
 		 * Save Component Options
