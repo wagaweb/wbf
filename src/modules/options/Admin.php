@@ -71,11 +71,11 @@ class Admin{
 			$root_id = Framework::get_options_root_id();
 			if(isset($_POST[$root_id])){
 				$options_to_save = $_POST[$root_id];
-				$options_to_save = self::validate_options($options_to_save);
 			}
 		}
 		if(isset($options_to_save) && is_array($options_to_save) && !empty($options_to_save)){
-			$r = update_option(Framework::get_options_root_id(),$options_to_save);
+			$validation_base = apply_filters("wbf/modules/options/pre_save/validation_base",false); 
+			$r = Framework::update_theme_options($options_to_save,true,$validation_base);
 			if($r && isset($_POST['reset'])){
 				Utilities::admin_show_message(__( 'Options saved successfully.', 'wbf' ),"success");
 			}elseif($r){
