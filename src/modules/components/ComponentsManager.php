@@ -34,10 +34,10 @@ class ComponentsManager {
 	    add_action("wbf/theme_options/register",'\WBF\modules\components\ComponentsManager::addRegisteredComponentOptions',999); //register component options
 	    add_filter("wbf/modules/options/pre_save",'\WBF\modules\components\ComponentsManager::on_theme_options_saving',10,3);
 	    /** Detect components in main theme **/
-        self::_detect_components(get_root_components_directory());
+        self::detect_components(get_root_components_directory());
         /** Detect components in child theme **/
         if(is_child_theme()){
-            self::_detect_components(get_child_components_directory());
+            self::detect_components(get_child_components_directory());
         }
 	    //Update registered_components global
 	    self::update_global_components_vars();
@@ -74,7 +74,7 @@ class ComponentsManager {
      *
      * @return mixed|void
      */
-    static function _detect_components( $components_directory, $child_theme = false ) {
+    static function detect_components( $components_directory, $child_theme = false ) {
 	    $registered_components = self::get_registered_components($child_theme);
 
         //Unset deleted components
@@ -130,7 +130,6 @@ class ComponentsManager {
 		return $rc;
 	}
 
-
 	/**
 	 * Update the "{$template_name}_registered_components" option, where $template_name is the current active template.
 	 *
@@ -143,6 +142,117 @@ class ComponentsManager {
 			update_option( $theme->get_stylesheet()."_registered_components", $registered_components );
 		}else{
 			update_option( $theme->get_template()."_registered_components", $registered_components );
+		}
+	}
+
+	/**
+	 * Updates global $registered_components
+	 *
+	 * @use self::getAllDetectedComponents()
+	 * @use self::instance_component()
+	 *
+	 * @param bool|false $registered_components
+	 *
+	 * @return array
+	 */
+	static function update_global_components_vars($registered_components = false){
+		if(!$registered_components){
+			global $registered_components;
+		}
+		$components = self::getAllDetectedComponents();
+		foreach($components as $c){
+			try{
+				$oComponent = ComponentFactory::create($c);
+				if($oComponent instanceof Component){
+					$registered_components[$c['nicename']] = $oComponent;
+				}
+			}catch(\Exception $e){
+				if(function_exists("WBF")) WBF()->notice_manager->add_notice($c['nicename']."_error",$e->getMessage(),"error","_flash_");
+			}
+		}
+		return $registered_components;
+	}
+
+	/**
+	 * Gets currently registered components
+	 *
+	 * @return array of Component instances
+	 */
+	static function getAllComponents() {
+		global $registered_components;
+		if ( ! empty( $registered_components ) ) {
+			return $registered_components;
+		} else {
+			$components = self::update_global_components_vars();
+			return $components;
+		}
+	}
+
+	/**
+	 * Retrieve current detected components (an array of components data)
+	 *
+	 * @uses self::get_registered_components()
+	 *
+	 * @return array
+	 */
+	static function getAllDetectedComponents(){
+		$core_components  = self::get_registered_components();
+		if ( is_child_theme() ) {
+			$child_components = self::get_registered_components(true);
+			foreach ( $core_components as $name => $comp ) {
+				if ( array_key_exists( $name, $child_components ) ) {
+					$child_components[ $name ]['override'] = true;
+					//unset($child_components[$name]); //todo: per ora, non permettere la sovrascrizione
+				}
+			}
+			$components = array_merge( $core_components, $child_components ); //this will override core_components with child_components with same name
+		} else {
+			/*foreach($core_components as $name => $comp){
+				if(in_array($name,$child_components)){
+					unset($child_components[$name]);
+				}
+			}*/
+			$components = $core_components;
+		}
+
+		return $components;
+	}
+
+	/**
+	 * Returns the currently loaded components
+	 *
+	 * @return array
+	 */
+	static function getLoadedComponents(){
+		global $loaded_components;
+		return $loaded_components;
+	}
+
+	/**
+	 * Return a component from the loaded ones
+	 *
+	 * @param $nicename
+	 *
+	 * @return bool|Component
+	 */
+	static function getLoadedComponent($nicename){
+		$loaded_components = self::getLoadedComponents();
+		if(array_key_exists($nicename,$loaded_components)){
+			return $loaded_components[$nicename];
+		}else{
+			return false;
+		}
+	}
+
+	/**
+	 * Inject a new component into global $loaded_components
+	 *
+	 * @param Component $c
+	 */
+	static function addLoadedComponent( \WBF\modules\components\Component $c ) {
+		global $loaded_components;
+		if ( ! in_array( $c->name, $loaded_components ) ) {
+			$loaded_components[ $c->name] = $c;
 		}
 	}
 
@@ -265,102 +375,6 @@ class ComponentsManager {
 	}
 
     /**
-     * Returns and array of components data (aka in array mode, this do not retrive Waboot_Component)
-     * @return array
-     */
-    static function getAllComponents() {
-        global $registered_components;
-        if ( ! empty( $registered_components ) ) {
-            return $registered_components;
-        } else {
-            $components = self::update_global_components_vars();
-            return $components;
-        }
-    }
-	
-	/**
-	 * Returns the currently loaded components
-	 * 
-	 * @return array
-	 */
-	static function getLoadedComponents(){
-		global $loaded_components;
-		return $loaded_components;
-	}
-
-	/**
-	 * Return a component from the loaded ones
-	 *
-	 * @param $nicename
-	 *
-	 * @return bool|Component
-	 */
-	static function getLoadedComponent($nicename){
-		$loaded_components = self::getLoadedComponents();
-		if(array_key_exists($nicename,$loaded_components)){
-			return $loaded_components[$nicename];
-		}else{
-			return false;
-		}
-	}
-
-	/**
-	 * Updates global $registered_components
-	 *
-	 * @use self::retrieve_components()
-	 * @use self::instance_component()
-	 *
-	 * @param bool|false $registered_components
-	 *
-	 * @return array
-	 */
-    static function update_global_components_vars($registered_components = false){
-		if(!$registered_components){
-			global $registered_components;
-		}
-        $components = self::retrieve_components();
-	    foreach($components as $c){
-		    try{
-			    $oComponent = ComponentFactory::create($c);
-			    if($oComponent instanceof Component){
-				    $registered_components[$c['nicename']] = $oComponent;
-			    }
-		    }catch(\Exception $e){
-			    if(function_exists("WBF")) WBF()->notice_manager->add_notice($c['nicename']."_error",$e->getMessage(),"error","_flash_");
-		    }
-	    }
-	    return $registered_components;
-    }
-
-	/**
-	 * Retrieve current components
-	 *
-	 * @return mixed|void
-	 */
-    static function retrieve_components(){
-	    $core_components  = self::get_registered_components();
-        if ( is_child_theme() ) {
-	        $child_components = self::get_registered_components(true);
-            foreach ( $core_components as $name => $comp ) {
-                if ( array_key_exists( $name, $child_components ) ) {
-                    $child_components[ $name ]['override'] = true;
-                    //unset($child_components[$name]); //todo: per ora, non permettere la sovrascrizione
-                }
-            }
-            $components = array_merge( $core_components, $child_components ); //this will override core_components with child_components with same name
-        } else {
-            /*foreach($core_components as $name => $comp){
-                if(in_array($name,$child_components)){
-                    unset($child_components[$name]);
-                }
-            }*/
-            $components = $core_components;
-        }
-
-        return $components;
-    }
-
-    /**
      * Checks if the component called $name is loaded
      * @param $name
      * @return bool
@@ -453,18 +467,6 @@ class ComponentsManager {
 	    $maybe_enabled = apply_filters("wbf/modules/components/is_enabled_for_current_page",$maybe_enabled,$c);
 	    $maybe_enabled = apply_filters("wbf/modules/components/{$c->name}/is_enabled_for_current_page",$maybe_enabled);
 	    return $maybe_enabled;
-    }
-
-	/**
-	 * Inject a new component into global $loaded_components
-	 *
-	 * @param Component $c
-	 */
-    static function addLoadedComponent( \WBF\modules\components\Component $c ) {
-        global $loaded_components;
-        if ( ! in_array( $c->name, $loaded_components ) ) {
-            $loaded_components[ $c->name] = $c;
-        }
     }
 
     /**
