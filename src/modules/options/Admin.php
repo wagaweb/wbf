@@ -458,7 +458,7 @@ class Admin{
 			$screen = false;
 		}
 		$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : false;
-		return $screen->id == "toplevel_page_wbf_options" && $page == "wbf_options";
+		return isset($screen->id) && $screen->id == "toplevel_page_wbf_options" && $page == "wbf_options";
 	}
 
 	/**
