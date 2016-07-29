@@ -62,9 +62,15 @@ class Admin{
 		/*
 		 * Restore Defaults.
 		 */
-		if(isset($_POST['reset'])){
+		if(isset($_POST['restore_theme_options'])){
+			do_action("wbf/modules/options/pre_restore");
 			$options_to_save = $this->get_default_values();
-		}elseif(isset($_POST['update'])){
+			$options_to_save = apply_filters("wbf/modules/options/after_restore",$options_to_save);
+		}elseif(isset($_POST['reset_theme_options'])){
+			do_action("wbf/modules/options/pre_reset");
+			Framework::reset_theme_options();
+			$options_to_save = apply_filters("wbf/modules/options/after_reset",[]);
+		}elseif(isset($_POST['update_theme_options'])){
 			/*
 			 * Save options
 			 */
@@ -76,12 +82,16 @@ class Admin{
 		if(isset($options_to_save) && is_array($options_to_save) && !empty($options_to_save)){
 			$validation_base = apply_filters("wbf/modules/options/pre_save/validation_base",false); 
 			$r = Framework::update_theme_options($options_to_save,true,$validation_base);
-			if($r && isset($_POST['reset'])){
+			if($r && isset($_POST['update_theme_options'])){
 				Utilities::admin_show_message(__( 'Options saved successfully.', 'wbf' ),"success");
-			}elseif($r){
+			}elseif($r && isset($_POST['restore_theme_options'])){
 				Utilities::admin_show_message(__( 'Default options restored.', 'wbf' ),"success");
 			}else{
 				Utilities::admin_show_message(__( 'There was an error during options saving.', 'wbf' ),"error");
+			}
+		}else{
+			if(isset($_POST['reset_theme_options'])){
+				Utilities::admin_show_message(__( 'Theme options cleared successfully', 'wbf' ),"success");
 			}
 		}
 	}

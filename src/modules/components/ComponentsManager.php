@@ -32,6 +32,8 @@ class ComponentsManager {
     static function init(){
 	    add_action("wbf/theme_options/register",'\WBF\modules\components\ComponentsManager::addRegisteredComponentOptions',999); //register component options
 	    add_filter("wbf/modules/options/pre_save",'\WBF\modules\components\ComponentsManager::on_theme_options_saving',10,3);
+	    //add_filter("wbf/modules/options/after_restore",'\WBF\modules\components\ComponentsManager::on_theme_options_restore',10,1);
+	    add_filter("wbf/modules/options/after_reset",'\WBF\modules\components\ComponentsManager::on_theme_options_reset',10,1);
 	    /** Detect components in main theme **/
         self::detect_components(get_root_components_directory());
         /** Detect components in child theme **/
@@ -330,22 +332,66 @@ class ComponentsManager {
 	 * @param $option
 	 * @param $old_value
 	 *
+	 * @use self::override_theme_options()
+	 *
 	 * @return string|array
 	 */
 	static function on_theme_options_saving($value,$option,$old_value){
+		$value = self::override_theme_options($value);
+		return $value;
+	}
+
+	/**
+	 * Restore components options after a theme options reset.
+	 *
+	 * @param $values
+	 *
+	 * @hooked 'wbf/modules/options/after_reset'
+	 *
+	 * @return array
+	 */
+	static function on_theme_options_reset($values){
 		$theme = wp_get_theme();
 		$component_options = get_option("wbf_".$theme->get_stylesheet()."_components_options",true);
-		if(empty($component_options)) return $value;
+		if(empty($component_options)) return $values;
+
+		$values = $component_options;
+		return $values;
+	}
+
+	/**
+	 * Restore components options after a theme options restore to defaults. This might not be necessary: "on_theme_options_saving" already do that.
+	 *
+	 * @param $values
+	 *
+	 * @hooked 'wbf/modules/options/after_restore'
+	 *
+	 * @use self::override_theme_options()
+	 *
+	 * @return array
+	 */
+	static function on_theme_options_restore($values){
+		$values = self::override_theme_options($values);
+		return $values;
+	}
+
+	/**
+	 * Override $theme_options values with values stored in components auxiliary array
+	 */
+	private static function override_theme_options($theme_options){
+		$theme = wp_get_theme();
+		$component_options = get_option("wbf_".$theme->get_stylesheet()."_components_options",true);
+		if(empty($component_options)) return $theme_options;
 
 		//When theme options are saved, $value contains some wrong values for components options. We need to use the auxiliary array to restore those values:
 		foreach($component_options as $k => $v){
-			if(!isset($value[$k]) || (isset($value[$k]) && $value[$k] != $v)){
+			if(!isset($theme_options[$k]) || (isset($theme_options[$k]) && $theme_options[$k] != $v)){
 				if($v == "on") $v = "1"; //the checkboxes are saved as "1" or FALSE, but here we can have "on" as value. This is a legacy issue with vendor options framework.
-				$value[$k] = $v;
+				$theme_options[$k] = $v;
 			}
 		}
-
-		return $value;
+		
+		return $theme_options;
 	}
 
     /**

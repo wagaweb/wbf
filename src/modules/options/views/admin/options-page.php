@@ -22,9 +22,10 @@
 					<?php wp_nonce_field( 'update_'.\WBF\modules\options\Framework::get_options_root_id() ); ?>
 					<?php \WBF\modules\options\GUI::optionsframework_fields(); /* Settings */ ?>
 					<div id="optionsframework-submit">
-						<input type="submit" class="button-primary" name="update" value="<?php esc_attr_e( 'Save Options', "wbf" ); ?>" />
-						<input type="submit" class="reset-button button-secondary" name="reset" value="<?php esc_attr_e( 'Restore Defaults', 'wbf' ); ?>" onclick="return confirm( '<?php print esc_js( __( 'Click OK to reset. Any theme settings will be lost!', 'wbf' ) ); ?>' );" />
-						<a href="admin.php?page=<?php echo WBF::getInstance()->wp_menu_slug; ?>&amp;clear_cache" class="clearcache-button button-secondary"><?php esc_attr_e( 'Clear Theme Cache', "wbf" ); ?></a>
+						<input type="submit" class="button-primary" name="update_theme_options" value="<?php esc_attr_e( 'Save Options', "wbf" ); ?>" />
+						<input type="submit" class="reset-button button-secondary" name="restore_theme_options" value="<?php esc_attr_e( 'Restore Defaults', 'wbf' ); ?>" onclick="return confirm( '<?php print esc_js( __( 'Click OK to restore defaults', 'wbf' ) ); ?>' );" />
+						<input type="submit" class="reset-button button-secondary" name="reset_theme_options" value="<?php esc_attr_e( 'Reset Options', 'wbf' ); ?>" onclick="return confirm( '<?php print esc_js( __( 'Click OK to reset. Any theme settings will be lost!', 'wbf' ) ); ?>' );" />
+						<a href="admin.php?page=<?php echo WBF::getInstance()->wp_menu_slug; ?>&amp;clear_cache" class="clearcache-button button-secondary"><?php esc_attr_e( 'Clear Theme Styles Cache', "wbf" ); ?></a>
 						<div class="clear"></div>
 					</div>
 				</form>
