@@ -1,4 +1,7 @@
-<?php if($last_error): ?>
+<?php use WBF\modules\components\ComponentFactory;
+use WBF\modules\components\GUI;
+
+if($last_error): ?>
 	<div class="error">
 		<p><?php echo $last_error; ?></p>
 	</div>
@@ -24,14 +27,14 @@
 			<ul>
 				<li><a class="nav-tab" id="component-main-tab" data-show-comp-settings='component-main' href="#component-main"><?php _e("Available components","wbf"); ?></a></li>
 				<?php foreach($registered_components as $comp_data): if(!\WBF\modules\components\ComponentsManager::is_active($comp_data)) continue; ?>
-					<?php $data = \WBF\modules\components\ComponentsManager::get_component_data($comp_data->file); ?>
+					<?php $data = ComponentFactory::get_component_data( $comp_data->file ); ?>
 					<li><a class="nav-tab" id="component-<?php echo $comp_data->name; ?>-link" data-show-comp-settings='component-<?php echo $comp_data->name; ?>' href="#component-<?php echo $comp_data->name; ?>"><?php if(isset($data['Name'])) echo $data['Name']; else echo ucfirst($comp_data->name); ?></a></li>
 				<?php endforeach; ?>
 			</ul>
 		</div>
 		<div id="componentframework-metabox" class="metabox-holder">
 			<div id="componentframework" class="postbox">
-				<form method="post" action="admin.php?page=<?php echo \WBF\modules\components\ComponentsManager::$wp_menu_slug; ?>">
+				<form method="post" action="admin.php?page=<?php echo GUI::$wp_menu_slug; ?>">
 					<div id="component-main" class="group">
 						<table class="wp-list-table widefat components">
 							<thead>
@@ -51,7 +54,7 @@
 							<tbody id="the-list">
 								<?php $i=1; foreach($registered_components as $comp_data): ?>
 								<tr id="<?php echo $comp_data->name; ?>" class="<?php WBF\modules\components\print_component_status( $comp_data ); ?> <?php if($i%2 == 0) echo "even"; else echo "odd"; ?>">
-									<?php $data = \WBF\modules\components\ComponentsManager::get_component_data($comp_data->file); ?>
+									<?php $data = ComponentFactory::get_component_data( $comp_data->file ); ?>
 									<th></th>
 									<th class="component-data column-description desc">
 										<strong><?php echo $data['Name']; ?></strong>
@@ -110,7 +113,7 @@
 						</table>
 					</div>
 					<?php foreach($registered_components as $comp_data): if(!\WBF\modules\components\ComponentsManager::is_active($comp_data)) continue; ?>
-					<?php $data = \WBF\modules\components\ComponentsManager::get_component_data($comp_data->file); ?>
+					<?php $data = ComponentFactory::get_component_data( $comp_data->file ); ?>
 					<div id="component-<?php echo $comp_data->name; ?>" class="group" style="display: none;">
 						<h3><?php _e(sprintf("%s Settings",isset($data['Name']) ? $data['Name'] : ucfirst($comp_data->name)),"wbf"); ?></h3>
 						<?php \WBF\modules\options\GUI::optionsframework_fields($compiled_components_options[$comp_data->name]); ?>
@@ -118,7 +121,8 @@
 					<?php endforeach; ?>
 					<div id="componentframework-submit">
 						<input type="submit" name="submit-components-options" id="submit" class="button button-primary" value="Save Changes">
-						<input type="submit" class="reset-button button-secondary" name="reset_component_state" value="<?php esc_attr_e( 'Restore default component activation state', 'wbf' ); ?>" onclick="return confirm( '<?php print esc_js( __( 'Click OK to reset. Any theme settings will be lost!', 'wbf' ) ); ?>' );" />
+						<input type="submit" class="reset-button button-secondary" name="restore_defaults_components" value="<?php esc_attr_e( 'Restore default component status', 'wbf' ); ?>" onclick="return confirm( '<?php print esc_js( __( 'Click OK to restore defaults. Any theme settings will be lost!', 'wbf' ) ); ?>' );" />
+						<input type="submit" class="reset-button button-secondary" name="reset_components" value="<?php esc_attr_e( 'Reset components status', 'wbf' ); ?>" onclick="return confirm( '<?php print esc_js( __( 'Click OK to reset. Any theme settings will be lost!', 'wbf' ) ); ?>' );" />
 					</div>
 				</form>
 			</div>

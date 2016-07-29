@@ -72,8 +72,7 @@ class GUI{
 	            // Wrap all options
 	            if(Framework::is_valuable_option($current_option)){
 
-	                // Keep all ids lowercase with no spaces
-	                $current_option['id'] = preg_replace('/[^a-zA-Z0-9._\-]/', '', strtolower($current_option['id']));
+	                $current_option['id'] = Framework::sanitize_option_id($current_option['id']);
 
 	                $id = 'section-' . $current_option['id'];
 

@@ -299,7 +299,7 @@ class Utilities{
 	 * @param $type
 	 */
 	static function admin_show_message($m, $type) {
-		self::add_admin_notice("adm_notice_".rand(1,50),$m,$type,$args = ['category'=>'_flash_']);
+		self::add_admin_notice("adm_notice_".rand(1,50),$m,$type,['category'=>'_flash_']);
 	}
 
 	/**

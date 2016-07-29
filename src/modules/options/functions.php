@@ -11,6 +11,7 @@
 
 namespace WBF\modules\options;
 use WBF\components\utils\Utilities;
+use WBF\modules\components\ComponentFactory;
 use \WBF\modules\components\ComponentsManager;
 
 
@@ -243,7 +244,7 @@ function of_options_save($option, $old_value, $value){
 						}else{
 							//Register new notice that tells that the component is not present
 							$message = __("An option requires the component <strong>$c_name</strong>, but it is not present","wbf");
-							$wbf_notice_manager->add_notice($c_name."_component_not_present",$message,"error","theme_opt_component_deps","FileIsPresent",ComponentsManager::generate_component_mainfile_path($c_name));
+							$wbf_notice_manager->add_notice($c_name."_component_not_present",$message,"error","theme_opt_component_deps","FileIsPresent", ComponentFactory::generate_component_mainfile_path( $c_name ) );
 						}
 					}
 				}

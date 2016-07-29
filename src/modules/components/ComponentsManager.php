@@ -11,14 +11,14 @@ namespace WBF\modules\components;
 
 use WBF\components\notices\Notice_Manager;
 use WBF\components\mvc\HTMLView;
+use WBF\modules\options\Admin;
 use WBF\modules\options\Framework;
 use WBF\modules\options\Organizer;
+use WBF\modules\components\GUI;
 
 class ComponentsManager {
 
     static $last_error = "";
-	
-	static $wp_menu_slug = "wbf_components";
 
 	const STATE_ENABLED = "enabled";
 
@@ -32,38 +32,19 @@ class ComponentsManager {
     static function init(){
 	    add_action("wbf/theme_options/register",'\WBF\modules\components\ComponentsManager::addRegisteredComponentOptions',999); //register component options
 	    add_filter("wbf/modules/options/pre_save",'\WBF\modules\components\ComponentsManager::on_theme_options_saving',10,3);
+	    //add_filter("wbf/modules/options/after_restore",'\WBF\modules\components\ComponentsManager::on_theme_options_restore',10,1);
+	    add_filter("wbf/modules/options/after_reset",'\WBF\modules\components\ComponentsManager::on_theme_options_reset',10,1);
 	    /** Detect components in main theme **/
-        self::_detect_components(get_template_directory()."/components");
+        self::detect_components(get_root_components_directory());
         /** Detect components in child theme **/
         if(is_child_theme()){
-            self::_detect_components(get_stylesheet_directory()."/components",true);
+            self::detect_components(get_child_components_directory());
         }
 	    //Update registered_components global
 	    self::update_global_components_vars();
     }
 
-    static function scripts($hook){
-        global $plugin_page;
-        if($plugin_page == ComponentsManager::$wp_menu_slug){
-            // Enqueue custom CSS
-            $stylesheet = \WBF::prefix_url('assets/dist/css/componentsframework.css');
-            if ($stylesheet != ""){
-                wp_enqueue_style('waboot-theme-components-style', $stylesheet, array(), '1.0.0', 'all'); //Custom Theme Options CSS
-            }
-	        if(defined("OPTIONS_FRAMEWORK_URL")){
-		        // Enqueue custom option panel JS
-		        wp_enqueue_script( 'options-custom', \WBF::prefix_url('assets/src/js/controllers/options-custom.js'), array( 'jquery', 'wp-color-picker' ) );
-	        }
-            /*if(WBF_ENV == "dev"){
-                wp_register_script('component-page-script',WBF_URL."/assets/src/js/admin/components-page.js",array('jquery'));
-            }else{
-                wp_register_script('component-page-script',WBF_URL."/admin/js/components-page.min.js",array('jquery'));
-            }
-            wp_enqueue_script('component-page-script');*/
-        }
-    }
-
-    /**
+	/**
      * Detect the components in the their directory and update the registered component WP option. Called by self::init()
      *
      * @param $components_directory
@@ -73,7 +54,7 @@ class ComponentsManager {
      *
      * @return mixed|void
      */
-    static function _detect_components( $components_directory, $child_theme = false ) {
+    static function detect_components( $components_directory, $child_theme = false ) {
 	    $registered_components = self::get_registered_components($child_theme);
 
         //Unset deleted components
@@ -86,7 +67,7 @@ class ComponentsManager {
         $components_files = listFolderFiles( $components_directory );
         foreach ( $components_files as $file ) {
             //$component_data = get_plugin_data($file);
-            $component_data = self::get_component_data( $file );
+            $component_data = ComponentFactory::get_component_data( $file );
             if ( $component_data['Name'] != "" ) {
                 //The component is valid, now checks if is already in registered list
                 $component_name = basename( dirname( $file ) );
@@ -122,48 +103,12 @@ class ComponentsManager {
 	static function get_registered_components($get_child_components = false){
 		$theme = wp_get_theme();
 		if($get_child_components){
-			return get_option( $theme->get_stylesheet()."_registered_components", array());
+			$rc = get_option( $theme->get_stylesheet()."_registered_components", array());
 		}else{
-			return get_option( $theme->get_template()."_registered_components", array());
+			$rc = get_option( $theme->get_template()."_registered_components", array());
 		}
+		return $rc;
 	}
-
-    /**
-     * Get the component metadata from the beginning of the file. Mimics the get_plugin_data() WP funtion.
-     * @param $component_file
-     * @return array
-     */
-    static function get_component_data( $component_file ) {
-        $default_headers = array(
-          'Name'         => 'Component Name',
-          'Version'      => 'Version',
-          'Description'  => 'Description',
-          'Author'       => 'Author',
-          'AuthorURI'    => 'Author URI',
-          'ComponentURI' => 'Component URI',
-        );
-
-        $component_data = get_file_data( $component_file, $default_headers );
-
-        return $component_data;
-    }
-
-    /**
-     * Get the possibile paths for a component named $c_name. The component does not have to exists.
-     * @param $c_name
-     * @return array
-     */
-    static function generate_component_mainfile_path($c_name){
-        $core_dir = get_root_components_directory();
-        $child_dir = get_child_components_directory();
-
-        $c_name = strtolower($c_name);
-
-        return array(
-          'core' => $core_dir.$c_name."/$c_name.php",
-          'child' => $core_dir.$c_name."/$c_name.php"
-        );
-    }
 
 	/**
 	 * Update the "{$template_name}_registered_components" option, where $template_name is the current active template.
@@ -180,11 +125,118 @@ class ComponentsManager {
 		}
 	}
 
-    static function add_menu($parent_slug) {
-        add_submenu_page( $parent_slug, __( "Waboot Components", "wbf" ), __( "Components", "wbf" ), "activate_plugins", self::$wp_menu_slug, '\WBF\modules\components\ComponentsManager::components_admin_page', "", 66 );
-    }
+	/**
+	 * Updates global $registered_components
+	 *
+	 * @use self::getAllDetectedComponents()
+	 * @use self::instance_component()
+	 *
+	 * @param bool|false $registered_components
+	 *
+	 * @return array
+	 */
+	static function update_global_components_vars($registered_components = false){
+		if(!$registered_components){
+			global $registered_components;
+		}
+		$components = self::getAllDetectedComponents();
+		foreach($components as $c){
+			try{
+				$oComponent = ComponentFactory::create($c);
+				if($oComponent instanceof Component){
+					$registered_components[$c['nicename']] = $oComponent;
+				}
+			}catch(\Exception $e){
+				if(function_exists("WBF")) WBF()->notice_manager->add_notice($c['nicename']."_error",$e->getMessage(),"error","_flash_");
+			}
+		}
+		return $registered_components;
+	}
 
-    /**
+	/**
+	 * Gets currently registered components
+	 *
+	 * @return array of Component instances
+	 */
+	static function getAllComponents() {
+		global $registered_components;
+		if ( ! empty( $registered_components ) ) {
+			return $registered_components;
+		} else {
+			$components = self::update_global_components_vars();
+			return $components;
+		}
+	}
+
+	/**
+	 * Retrieve current detected components (an array of components data)
+	 *
+	 * @uses self::get_registered_components()
+	 *
+	 * @return array
+	 */
+	static function getAllDetectedComponents(){
+		$core_components  = self::get_registered_components();
+		if ( is_child_theme() ) {
+			$child_components = self::get_registered_components(true);
+			foreach ( $core_components as $name => $comp ) {
+				if ( array_key_exists( $name, $child_components ) ) {
+					$child_components[ $name ]['override'] = true;
+					//unset($child_components[$name]); //todo: per ora, non permettere la sovrascrizione
+				}
+			}
+			$components = array_merge( $core_components, $child_components ); //this will override core_components with child_components with same name
+		} else {
+			/*foreach($core_components as $name => $comp){
+				if(in_array($name,$child_components)){
+					unset($child_components[$name]);
+				}
+			}*/
+			$components = $core_components;
+		}
+
+		return $components;
+	}
+
+	/**
+	 * Returns the currently loaded components
+	 *
+	 * @return array
+	 */
+	static function getLoadedComponents(){
+		global $loaded_components;
+		return $loaded_components;
+	}
+
+	/**
+	 * Return a component from the loaded ones
+	 *
+	 * @param $nicename
+	 *
+	 * @return bool|Component
+	 */
+	static function getLoadedComponent($nicename){
+		$loaded_components = self::getLoadedComponents();
+		if(array_key_exists($nicename,$loaded_components)){
+			return $loaded_components[$nicename];
+		}else{
+			return false;
+		}
+	}
+
+	/**
+	 * Inject a new component into global $loaded_components
+	 *
+	 * @param Component $c
+	 */
+	static function addLoadedComponent( \WBF\modules\components\Component $c ) {
+		global $loaded_components;
+		if ( ! in_array( $c->name, $loaded_components ) ) {
+			$loaded_components[ $c->name] = $c;
+		}
+	}
+
+	/**
      * Exec detectFilters() method on active components.
      */
     static function setupComponentsFilters(){
@@ -280,119 +332,67 @@ class ComponentsManager {
 	 * @param $option
 	 * @param $old_value
 	 *
+	 * @use self::override_theme_options()
+	 *
 	 * @return string|array
 	 */
 	static function on_theme_options_saving($value,$option,$old_value){
-		$theme = wp_get_theme();
-		$component_options = get_option("wbf_".$theme->get_stylesheet()."_components_options",true);
-		if(empty($component_options)) return $value;
-
-		//When theme options are saved, $value contains some wrong values for components options. We need to use the auxiliary array to restore those values:
-		foreach($component_options as $k => $v){
-			if(isset($value[$k]) && $value[$k] != $v){
-				if($v == "on") $v = "1"; //the checkboxes are saved as "1" or FALSE, but here we can have "on" as value. This is a legacy issue with vendor options framework.
-				$value[$k] = $v;
-			}
-		}
-
+		$value = self::override_theme_options($value);
 		return $value;
 	}
 
-    /**
-     * Returns and array of components data (aka in array mode, this do not retrive Waboot_Component)
-     * @return array
-     */
-    static function getAllComponents() {
-        global $registered_components;
-        if ( ! empty( $registered_components ) ) {
-            return $registered_components;
-        } else {
-            $components = self::update_global_components_vars();
-            return $components;
-        }
-    }
-	
 	/**
-	 * Returns the currently loaded components
-	 * 
-	 * @return array
-	 */
-	static function getLoadedComponents(){
-		global $loaded_components;
-		return $loaded_components;
-	}
-
-	/**
-	 * Return a component from the loaded ones
+	 * Restore components options after a theme options reset.
 	 *
-	 * @param $nicename
+	 * @param $values
 	 *
-	 * @return bool|Component
-	 */
-	static function getLoadedComponent($nicename){
-		$loaded_components = self::getLoadedComponents();
-		if(array_key_exists($nicename,$loaded_components)){
-			return $loaded_components[$nicename];
-		}else{
-			return false;
-		}
-	}
-
-	/**
-	 * Updates global $registered_components
-	 *
-	 * @use self::retrieve_components()
-	 * @use self::instance_component()
-	 *
-	 * @param bool|false $registered_components
+	 * @hooked 'wbf/modules/options/after_reset'
 	 *
 	 * @return array
 	 */
-    static function update_global_components_vars($registered_components = false){
-		if(!$registered_components){
-			global $registered_components;
-		}
-        $components = self::retrieve_components();
-	    foreach($components as $c){
-		    try{
-			    $oComponent = ComponentFactory::create($c);
-			    if($oComponent instanceof Component){
-				    $registered_components[$c['nicename']] = $oComponent;
-			    }
-		    }catch(\Exception $e){
-			    if(function_exists("WBF")) WBF()->notice_manager->add_notice($c['nicename']."_error",$e->getMessage(),"error","_flash_");
-		    }
-	    }
-	    return $registered_components;
-    }
+	static function on_theme_options_reset($values){
+		$theme = wp_get_theme();
+		$component_options = get_option("wbf_".$theme->get_stylesheet()."_components_options",true);
+		if(empty($component_options)) return $values;
+
+		$values = $component_options;
+		return $values;
+	}
 
 	/**
-	 * Retrieve current components
+	 * Restore components options after a theme options restore to defaults. This might not be necessary: "on_theme_options_saving" already do that.
 	 *
-	 * @return mixed|void
+	 * @param $values
+	 *
+	 * @hooked 'wbf/modules/options/after_restore'
+	 *
+	 * @use self::override_theme_options()
+	 *
+	 * @return array
 	 */
-    static function retrieve_components(){
-	    $core_components  = self::get_registered_components();
-        if ( is_child_theme() ) {
-	        $child_components = self::get_registered_components(true);
-            foreach ( $core_components as $name => $comp ) {
-                if ( array_key_exists( $name, $child_components ) ) {
-                    $child_components[ $name ]['override'] = true;
-                    //unset($child_components[$name]); //todo: per ora, non permettere la sovrascrizione
-                }
-            }
-            $components = array_merge( $core_components, $child_components ); //this will override core_components with child_components with same name
-        } else {
-            /*foreach($core_components as $name => $comp){
-                if(in_array($name,$child_components)){
-                    unset($child_components[$name]);
-                }
-            }*/
-            $components = $core_components;
-        }
+	static function on_theme_options_restore($values){
+		$values = self::override_theme_options($values);
+		return $values;
+	}
 
-        return $components;
-    }
+	/**
+	 * Override $theme_options values with values stored in components auxiliary array
+	 */
+	private static function override_theme_options($theme_options){
+		$theme = wp_get_theme();
+		$component_options = get_option("wbf_".$theme->get_stylesheet()."_components_options",true);
+		if(empty($component_options)) return $theme_options;
+
+		//When theme options are saved, $value contains some wrong values for components options. We need to use the auxiliary array to restore those values:
+		foreach($component_options as $k => $v){
+			if(!isset($theme_options[$k]) || (isset($theme_options[$k]) && $theme_options[$k] != $v)){
+				if($v == "on") $v = "1"; //the checkboxes are saved as "1" or FALSE, but here we can have "on" as value. This is a legacy issue with vendor options framework.
+				$theme_options[$k] = $v;
+			}
+		}
+		
+		return $theme_options;
+	}
 
     /**
      * Checks if the component called $name is loaded
@@ -489,24 +489,12 @@ class ComponentsManager {
 	    return $maybe_enabled;
     }
 
-	/**
-	 * Inject a new component into global $loaded_components
-	 *
-	 * @param Component $c
-	 */
-    static function addLoadedComponent( \WBF\modules\components\Component $c ) {
-        global $loaded_components;
-        if ( ! in_array( $c->name, $loaded_components ) ) {
-            $loaded_components[ $c->name] = $c;
-        }
-    }
-
     /**
      * Enable or disable components if necessary
      */
     static function toggle_components(){
         global $plugin_page;
-        if(is_admin() && isset($_GET['page']) && $_GET['page'] == self::$wp_menu_slug){
+        if(is_admin() && isset($_GET['page']) && $_GET['page'] == GUI::$wp_menu_slug ){
             if ( isset( $_GET['enable'] ) ) {
                 $component_name = $_GET['enable'];
                 try {
@@ -668,7 +656,7 @@ class ComponentsManager {
 	 *
 	 * @throws \Exception
 	 */
-    static function reset_components_state(){
+    static function restore_components_state(){
         $default_components = apply_filters("wbf_default_components",array()); //todo @deprecated
         $default_components = apply_filters("wbf/modules/components/defaults",$default_components);
         $registered_components = self::getAllComponents();
@@ -704,147 +692,11 @@ class ComponentsManager {
     /**
      * Delete the options which stores the registered components
      */
-    static function reset_registered_components(){
+    static function reset_components_state(){
 	    $theme = wp_get_theme();
-        if(is_child_theme()){
-            delete_option( $theme->get_stylesheet()."_registered_components");
-        }else{
-	        delete_option( $theme->get_template()."_registered_components");
-        }
+	    delete_option( $theme->get_stylesheet()."_registered_components");
+	    delete_option( $theme->get_template()."_registered_components");
     }
 
-	/**
-	 * Display the component page
-	 */
-	static function components_admin_page() {
 
-		$options_updated_flag = false;
-
-		/*
-		 * Reset Component Options
-		 */
-		if(isset($_POST['reset_component_state'])){
-			self::reset_components_state();
-			$options_updated_flag = true;
-		}
-
-		$registered_components = self::getAllComponents();
-
-		/*
-		 * Save Component Options
-		 */
-		if(isset($_POST['submit-components-options'])){
-			$is_active_component_option = function($opt_name) use($registered_components){
-				$orgz = Organizer::getInstance();
-				//Get the component of the $opt_name
-				$option = $orgz->get_option($opt_name);
-				if($option){
-					if(isset($option['component_name'])){
-						$component_name = $option['component_name'];
-						if(isset($registered_components[$component_name])){
-							$component_data = $registered_components[$component_name];
-							if(self::is_active($component_data) && array_key_exists($component_name,$registered_components)){
-								return true;
-							}
-						}
-					}
-				}
-				return false;
-			};
-
-			$of_config_id = Framework::get_options_root_id();
-			$of_options = Framework::get_options_values();
-			$must_update = false;
-			if(isset($_POST[$of_config_id])){
-				$options_to_update = $_POST[$of_config_id];
-				//Add to $ootions_to_update the disabled checkbox:
-				foreach($of_options as $opt_name => $opt_value){
-					if($is_active_component_option($opt_name)){
-						if(!isset($options_to_update[$opt_name]) && Framework::get_option_type($opt_name) == "checkbox"){
-							$options_to_update[$opt_name] = false; //If an option does not exists in $_POST then, it is a checkbox that was set to 0, so change the value...
-							$of_options[$opt_name] = false;
-						}
-						if(isset($options_to_update[$opt_name]) && Framework::get_option_type($opt_name) == "multicheck"){
-							foreach($options_to_update[$opt_name] as $k => $v){
-								//The current checkbox value does not exists in the theme_options array, so add it...
-								if(!array_key_exists($k,$of_options[$opt_name])){
-									$of_options[$opt_name][$k] = "1";
-									$must_update = true; //in this case, always force update
-								}
-							}
-							//Now se to "false" all disabled checkbox, and to "1" all enabled checkbox
-							foreach($of_options[$opt_name] as $k => $v){
-								if(!isset($options_to_update[$opt_name][$k])){
-									$options_to_update[$opt_name][$k] = false;
-								}else{
-									$options_to_update[$opt_name][$k] = "1";
-								}
-							}
-						}elseif(isset($of_options[$opt_name]) && Framework::get_option_type($opt_name) == "multicheck"){
-							//Now se to "false" all disabled checkbox, and to "1" all enabled checkbox
-							foreach($of_options[$opt_name] as $k => $v){
-								if(!isset($options_to_update[$opt_name][$k])){
-									$options_to_update[$opt_name][$k] = false;
-								}else{
-									$options_to_update[$opt_name][$k] = "1";
-								}
-							}
-						}
-					}
-				}
-				//Check if we must update something...
-				foreach($options_to_update as $opt_name => $opt_value){
-					if( (isset($of_options[$opt_name]) && $of_options[$opt_name] != $opt_value) || !isset($of_options[$opt_name]) ){
-						$of_options[$opt_name] = $opt_value;
-						$must_update = true;
-					}
-				}
-			}
-
-			if($must_update){
-				Framework::update_theme_options($of_options);
-			}
-
-
-			$theme = wp_get_theme();
-
-			//Save components options to auxiliary array
-			if(isset($options_to_update)){
-				update_option("wbf_".$theme->get_stylesheet()."_components_options",$options_to_update);
-			}
-
-			//Set the flag that tells that the components was saved at least once
-			$components_already_saved = (array) get_option( "wbf_components_saved_once", array() );
-			if(!in_array($theme->get_stylesheet(),$components_already_saved)){
-				$components_already_saved[] = $theme->get_stylesheet();
-				update_option("wbf_components_saved_once", $components_already_saved);
-			}
-
-			$options_updated_flag = true;
-		}
-
-		$components_options = Organizer::getInstance()->get_group("components");
-		$compiled_components_options = array();
-		$current_element = "";
-		foreach($components_options as $key => $option){
-			if($option['type'] == "heading"){
-				$current_element = preg_replace("/ Component/","",$option['name']);
-				$compiled_components_options[$current_element] = array();
-				continue;
-			}
-			$compiled_components_options[$current_element][] = $components_options[$key];
-		}
-
-		uksort($registered_components,function($a,$b){
-			if($a == $b) return 0;
-			return $a < $b ? -1 : 1;
-		});
-
-		(new HTMLView("src/modules/components/views/components_page.php","wbf"))->clean()->display([
-			'registered_components' => $registered_components,
-			'compiled_components_options' => $compiled_components_options,
-			'last_error' => (isset($_GET['enable']) || isset($_GET['disable'])) && !empty(self::$last_error)? self::$last_error : false,
-			'options_updated_flag' => $options_updated_flag
-		]);
-	}
 }

@@ -12,6 +12,7 @@
 namespace WBF\modules\options;
 
 use WBF\components\mvc\HTMLView;
+use WBF\components\utils\Utilities;
 
 class Admin{
 
@@ -30,6 +31,7 @@ class Admin{
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
 
 			// Settings need to be registered after admin_init
+			add_action( 'toplevel_page_wbf_options', array( $this, 'process_options_save' ) );
 			add_action( 'admin_init', array( $this, 'settings_init' ) );
 
 			// Adds options menu to the admin bar
@@ -51,6 +53,50 @@ class Admin{
     }*/
 
 	/**
+	 * Process the options save\reset action.
+	 *
+	 * @hooked 'admin_init'
+	 */
+	function process_options_save(){
+		if(!self::is_options_page()) return;
+		/*
+		 * Restore Defaults.
+		 */
+		if(isset($_POST['restore_theme_options'])){
+			do_action("wbf/modules/options/pre_restore");
+			$options_to_save = $this->get_default_values();
+			$options_to_save = apply_filters("wbf/modules/options/after_restore",$options_to_save);
+		}elseif(isset($_POST['reset_theme_options'])){
+			do_action("wbf/modules/options/pre_reset");
+			Framework::reset_theme_options();
+			$options_to_save = apply_filters("wbf/modules/options/after_reset",[]);
+		}elseif(isset($_POST['update_theme_options'])){
+			/*
+			 * Save options
+			 */
+			$root_id = Framework::get_options_root_id();
+			if(isset($_POST[$root_id])){
+				$options_to_save = $_POST[$root_id];
+			}
+		}
+		if(isset($options_to_save) && is_array($options_to_save) && !empty($options_to_save)){
+			$validation_base = apply_filters("wbf/modules/options/pre_save/validation_base",false); 
+			$r = Framework::update_theme_options($options_to_save,true,$validation_base);
+			if($r && isset($_POST['update_theme_options'])){
+				Utilities::admin_show_message(__( 'Options saved successfully.', 'wbf' ),"success");
+			}elseif($r && isset($_POST['restore_theme_options'])){
+				Utilities::admin_show_message(__( 'Default options restored.', 'wbf' ),"success");
+			}else{
+				Utilities::admin_show_message(__( 'There was an error during options saving.', 'wbf' ),"error");
+			}
+		}else{
+			if(isset($_POST['reset_theme_options'])){
+				Utilities::admin_show_message(__( 'Theme options cleared successfully', 'wbf' ),"success");
+			}
+		}
+	}
+
+	/**
 	 * Registers the settings
 	 *
 	 * @legacy
@@ -59,10 +105,10 @@ class Admin{
 	 */
 	function settings_init() {
 		// Registers the settings fields and callback
-		register_setting( 'optionsframework', Framework::get_options_root_id(),  [ $this, 'validate_options' ] );
+		//register_setting( 'optionsframework', Framework::get_options_root_id(),  [ $this, 'validate_options' ] );
 
 		// Displays notice after options save
-		add_action( 'optionsframework_after_validate', array( $this, 'save_options_notice' ) );
+		//add_action( 'wbf/modules/options/after_validate', array( $this, 'save_options_notice' ) );
 	}
 
 	/**
@@ -416,96 +462,71 @@ class Admin{
 	 * @return bool
 	 */
 	static public function is_options_page(){
-		$screen = get_current_screen();
-		$page = isset($_REQUEST['option_page']) ? $_REQUEST['option_page'] : false;
-		return $screen->id == "options" && $page == "optionsframework";
+		if(function_exists("get_current_screen")){
+			$screen = get_current_screen();
+		}else{
+			$screen = false;
+		}
+		$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : false;
+		return isset($screen->id) && $screen->id == "toplevel_page_wbf_options" && $page == "wbf_options";
 	}
 
 	/**
 	 * Validate Options.
 	 *
-	 * This runs after the submit/reset button has been clicked and
-	 * validates the inputs.
-	 * 
-	 * @hooked via register_setting( 'optionsframework', $optionsframework_settings['id'],  array ( $this, 'validate_options' ) );
+	 * This runs after the submit/reset button has been clicked and validates the inputs.
 	 *
-	 * @uses $_POST['reset'] to restore default options
+	 * @param array $options_to_validate
 	 *
-	 * @param $input
+	 * @param bool|array $base
 	 *
 	 * @return array
 	 */
-	function validate_options( $input ) {
-
-		/*
-		 * Restore Defaults.
-		 *
-		 * In the event that the user clicked the "Restore Defaults"
-		 * button, the options defined in the theme's options.php
-		 * file will be added to the option for the active theme.
-		 */
-
-		if ( isset( $_POST['reset'] ) ) {
-			add_settings_error( 'options-framework', 'restore_defaults', __( 'Default options restored.', 'textdomain' ), 'updated fade' );
-			return $this->get_default_values();
-		}
-
-		/*
-		 * Update Settings
-		 *
-		 * This used to check for $_POST['update'], but has been updated
-		 * to be compatible with the theme customizer introduced in WordPress 3.4
-		 */
-
-		$current_options = Framework::get_options_values();
-
+	static function validate_options( $options_to_validate, $base = false ) {
 		$clean = array();
-		$options = & Framework::get_registered_options();
+
+		$options = ! $base ? Framework::get_registered_options() : $base;
+
+		/*
+		 * Cycle through all possible options (not the saved ones)
+		 */
 		foreach($options as $option){
 			
-			if(!isset($option['id'])){
-				continue;
-			}
-
-			if(!isset($option['type'])){
+			if(!isset($option['id']) || !isset($option['type']) || $option['type'] == "heading"){
 				continue;
 			}
 
 			$id = Framework::sanitize_option_id($option['id']);
 
-			if(!array_key_exists($id,$input) && isset($current_options[$option['id']]) && !in_array($option['type'],['checkbox','multicheck'])){
-				//Here we are parsing an options not included among the saved ones. So we keep the already saved value.
-				$clean[$option['id']] = $current_options[$option['id']];
+			if(array_key_exists($id,$options_to_validate)){
+				if( has_filter( 'of_sanitize_' . $option['type'] ) ) {
+					$sanitized_value = apply_filters( 'of_sanitize_' . $option['type'], $options_to_validate[$id], $option );
+					$clean[$id] = $sanitized_value;
+				}
+				//NOTE: if no sanitize filter is provided at this point, the option value is lost.
 			}else{
+				//Checkboxes is not set when unchecked...
 				switch($option['type']){
 					case "checkbox":
-						if(!isset($input[$id])){
+						if(!isset($options_to_validate[$id])){
 							// Set checkbox to false if it wasn't sent in the $_POST
-							$input[$id] = false;
+							$clean[$id] = false;
 						}
 						break;
 					case "multicheck":
-						if(!isset($input[$id])){
+						if(!isset($options_to_validate[$id])){
 							// Set each item in the multicheck to false if it wasn't sent in the $_POST
 							foreach($option['options'] as $key => $value ) {
-								$input[$id][$key] = false;
+								$clean[$id][$key] = false;
 							}
 						}
 						break;
 				}
-				// For a value to be submitted to database it must pass through a sanitization filter
-				if( has_filter( 'of_sanitize_' . $option['type'] ) ) {
-					if(isset($input[$id])){
-						$sanitized_value = apply_filters( 'of_sanitize_' . $option['type'], $input[$id], $option );
-						$clean[$id] = $sanitized_value;
-					}
-				}
-				//NOTE: if no sanitize filter is provided at this point, the option value is lost.
 			}
 		}
 
 		// Hook to run after validation
-		do_action( 'optionsframework_after_validate', $clean );
+		do_action( 'wbf/modules/options/after_validate', $clean );
 
 		return $clean;
 	}
