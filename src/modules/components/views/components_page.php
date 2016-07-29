@@ -1,4 +1,6 @@
-<?php if($last_error): ?>
+<?php use WBF\modules\components\ComponentFactory;
+
+if($last_error): ?>
 	<div class="error">
 		<p><?php echo $last_error; ?></p>
 	</div>
@@ -24,7 +26,7 @@
 			<ul>
 				<li><a class="nav-tab" id="component-main-tab" data-show-comp-settings='component-main' href="#component-main"><?php _e("Available components","wbf"); ?></a></li>
 				<?php foreach($registered_components as $comp_data): if(!\WBF\modules\components\ComponentsManager::is_active($comp_data)) continue; ?>
-					<?php $data = \WBF\modules\components\ComponentsManager::get_component_data($comp_data->file); ?>
+					<?php $data = ComponentFactory::get_component_data( $comp_data->file ); ?>
 					<li><a class="nav-tab" id="component-<?php echo $comp_data->name; ?>-link" data-show-comp-settings='component-<?php echo $comp_data->name; ?>' href="#component-<?php echo $comp_data->name; ?>"><?php if(isset($data['Name'])) echo $data['Name']; else echo ucfirst($comp_data->name); ?></a></li>
 				<?php endforeach; ?>
 			</ul>
@@ -51,7 +53,7 @@
 							<tbody id="the-list">
 								<?php $i=1; foreach($registered_components as $comp_data): ?>
 								<tr id="<?php echo $comp_data->name; ?>" class="<?php WBF\modules\components\print_component_status( $comp_data ); ?> <?php if($i%2 == 0) echo "even"; else echo "odd"; ?>">
-									<?php $data = \WBF\modules\components\ComponentsManager::get_component_data($comp_data->file); ?>
+									<?php $data = ComponentFactory::get_component_data( $comp_data->file ); ?>
 									<th></th>
 									<th class="component-data column-description desc">
 										<strong><?php echo $data['Name']; ?></strong>
@@ -110,7 +112,7 @@
 						</table>
 					</div>
 					<?php foreach($registered_components as $comp_data): if(!\WBF\modules\components\ComponentsManager::is_active($comp_data)) continue; ?>
-					<?php $data = \WBF\modules\components\ComponentsManager::get_component_data($comp_data->file); ?>
+					<?php $data = ComponentFactory::get_component_data( $comp_data->file ); ?>
 					<div id="component-<?php echo $comp_data->name; ?>" class="group" style="display: none;">
 						<h3><?php _e(sprintf("%s Settings",isset($data['Name']) ? $data['Name'] : ucfirst($comp_data->name)),"wbf"); ?></h3>
 						<?php \WBF\modules\options\GUI::optionsframework_fields($compiled_components_options[$comp_data->name]); ?>

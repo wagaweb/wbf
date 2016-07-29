@@ -34,10 +34,10 @@ class ComponentsManager {
 	    add_action("wbf/theme_options/register",'\WBF\modules\components\ComponentsManager::addRegisteredComponentOptions',999); //register component options
 	    add_filter("wbf/modules/options/pre_save",'\WBF\modules\components\ComponentsManager::on_theme_options_saving',10,3);
 	    /** Detect components in main theme **/
-        self::_detect_components(get_template_directory()."/components");
+        self::_detect_components(get_root_components_directory());
         /** Detect components in child theme **/
         if(is_child_theme()){
-            self::_detect_components(get_stylesheet_directory()."/components",true);
+            self::_detect_components(get_child_components_directory());
         }
 	    //Update registered_components global
 	    self::update_global_components_vars();
@@ -87,7 +87,7 @@ class ComponentsManager {
         $components_files = listFolderFiles( $components_directory );
         foreach ( $components_files as $file ) {
             //$component_data = get_plugin_data($file);
-            $component_data = self::get_component_data( $file );
+            $component_data = ComponentFactory::get_component_data( $file );
             if ( $component_data['Name'] != "" ) {
                 //The component is valid, now checks if is already in registered list
                 $component_name = basename( dirname( $file ) );
@@ -130,42 +130,6 @@ class ComponentsManager {
 		return $rc;
 	}
 
-    /**
-     * Get the component metadata from the beginning of the file. Mimics the get_plugin_data() WP funtion.
-     * @param $component_file
-     * @return array
-     */
-    static function get_component_data( $component_file ) {
-        $default_headers = array(
-          'Name'         => 'Component Name',
-          'Version'      => 'Version',
-          'Description'  => 'Description',
-          'Author'       => 'Author',
-          'AuthorURI'    => 'Author URI',
-          'ComponentURI' => 'Component URI',
-        );
-
-        $component_data = get_file_data( $component_file, $default_headers );
-
-        return $component_data;
-    }
-
-    /**
-     * Get the possibile paths for a component named $c_name. The component does not have to exists.
-     * @param $c_name
-     * @return array
-     */
-    static function generate_component_mainfile_path($c_name){
-        $core_dir = get_root_components_directory();
-        $child_dir = get_child_components_directory();
-
-        $c_name = strtolower($c_name);
-
-        return array(
-          'core' => $core_dir.$c_name."/$c_name.php",
-          'child' => $core_dir.$c_name."/$c_name.php"
-        );
-    }
 
 	/**
 	 * Update the "{$template_name}_registered_components" option, where $template_name is the current active template.
