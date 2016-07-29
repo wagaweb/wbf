@@ -129,7 +129,7 @@ module.exports = function (grunt) {
     grunt.registerTask('default', ['watch']);
 
     //Setup task
-    grunt.registerTask('setup', ['component-composer-update', 'bower-install', 'jsmin', 'less:dev']);
+    grunt.registerTask('setup', ['bower-install', 'jsmin', 'less:dev'], 'component-composer-update');
 
     //Concat and beautify js
     grunt.registerTask('js', ['browserify:dist']);

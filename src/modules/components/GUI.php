@@ -21,7 +21,7 @@ class GUI {
 			}
 			if ( defined( "OPTIONS_FRAMEWORK_URL" ) ) {
 				// Enqueue custom option panel JS
-				wp_enqueue_script( 'options-custom', OPTIONS_FRAMEWORK_URL . 'js/options-custom.js', array(
+				wp_enqueue_script( 'options-custom', \WBF::prefix_url('assets/src/js/controllers/options-custom.js'), array(
 					'jquery',
 					'wp-color-picker'
 				) );

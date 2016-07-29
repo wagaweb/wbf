@@ -394,8 +394,13 @@ class Admin{
 	 * @since 1.7.0
 	 */
 	function enqueue_admin_styles() {
-		wp_enqueue_style( 'optionsframework', OPTIONS_FRAMEWORK_DIRECTORY . 'css/optionsframework.css', array());
+		if(!Admin::is_options_page()) return;
 		wp_enqueue_style( 'wp-color-picker' );
+		// Enqueue core CSS
+		$core_stylesheet = \WBF::prefix_url('assets/dist/css/optionsframework.css');
+		if ($core_stylesheet != ""){
+			wp_enqueue_style('wbf-theme-options-style', $core_stylesheet, [], false, 'all'); //Custom Theme Options CSS
+		}
 	}
 
 	/**
@@ -403,37 +408,10 @@ class Admin{
 	 *
 	 * @since 1.7.0
 	 */
-	function enqueue_admin_scripts( $hook ) {
-		if(!of_is_admin_framework_page($hook)){
-			return;
-		}
-
+	function enqueue_admin_scripts() {
+		if(!Admin::is_options_page()) return;
 		// Enqueue custom option panel JS
-		wp_enqueue_script( 'options-custom', \WBF::prefix_url('assets/src/js/controllers/options-custom.js'), array( 'jquery', 'wp-color-picker' ) );
-		// Enqueue core CSS
-		$core_stylesheet = \WBF::prefix_url('assets/dist/css/optionsframework.css');
-		if ($core_stylesheet != ""){
-			wp_enqueue_style('wbf-theme-options-style', $core_stylesheet, array('optionsframework'), false, 'all'); //Custom Theme Options CSS
-		}
-		// Enqueue custom CSS
-		$custom_stylesheet = wbf_locate_template_uri('assets/css/theme-options.css');
-		if ($core_stylesheet != ""){
-			wp_enqueue_style('theme-options-style', $custom_stylesheet, array('optionsframework','wbf-theme-options-style'), false, 'all'); //Custom Theme Options CSS
-		}
-		// Inline scripts from options-interface.php
-		add_action( 'admin_head', array( $this, 'of_admin_head' ) );
-	}
-
-	/**
-	 * Inline scripts from options-interface.php
-	 *
-	 * @hooked 'admin_head'
-	 *
-	 * @legacy
-	 */
-	function of_admin_head() {
-		// Hook to add custom scripts
-		do_action( 'optionsframework_custom_scripts' );
+		wp_enqueue_script( 'options-custom', \WBF::prefix_url('assets/src/js/controllers/options-custom.js'), array( 'jquery', 'wp-color-picker' ) ); //todo: make a DIST version of this
 	}
 
     /**

@@ -503,11 +503,7 @@ function _of_get_theme_options_deps($all_options = null){
  * @return bool
  */
 function of_is_admin_framework_page($hook){
-    $menu = Admin::menu_settings();
-    if ( $hook == 'waboot_page_' . $menu['old_menu_slug'] || $hook == 'toplevel_page_' . $menu['menu_slug']) {
-        return true;
-    }
-    return false;
+	return Admin::is_options_page();
 }
 
 /**
