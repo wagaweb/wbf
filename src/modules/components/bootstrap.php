@@ -69,8 +69,8 @@ add_filter("wbf/modules/options/gui/options_to_render",'\WBF\modules\components\
  * WP HOOKS
  */
 
-add_action( 'wbf_admin_submenu', '\WBF\modules\components\ComponentsManager::add_menu', 11 );
-add_action( 'admin_enqueue_scripts', '\WBF\modules\components\ComponentsManager::scripts' );
+add_action( 'wbf_admin_submenu', '\WBF\modules\components\GUI::add_menu', 11 );
+add_action( 'admin_enqueue_scripts', '\WBF\modules\components\GUI::scripts' );
 
 function components_enqueue(){
     ComponentsManager::enqueueRegisteredComponent('wp_enqueue_scripts');

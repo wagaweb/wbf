@@ -11,6 +11,7 @@ use WBF\components\pluginsframework\TemplatePlugin;
 use WBF\components\utils\Utilities;
 use WBF\includes\GoogleFontsRetriever;
 use WBF\includes\Resources;
+use WBF\modules\components\GUI;
 
 class PluginCore {
 
@@ -228,7 +229,7 @@ class PluginCore {
 		//todo: this is ugly, we could expose a function like register_wbf_admin_page()
 		$valid_pages = [
 			self::getInstance()->wp_menu_slug,
-			modules\components\ComponentsManager::$wp_menu_slug,
+			GUI::$wp_menu_slug,
 			'wbf_licenses'
 		];
 
