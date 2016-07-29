@@ -46,6 +46,8 @@ class Framework{
 		$fs = new FontSelector();
 		$fs->init();
 		$this->extensions = [$mu,$ce,$fs];
+		
+		do_action("wbf/modules/options/after_init");
 	}
 
 	/**

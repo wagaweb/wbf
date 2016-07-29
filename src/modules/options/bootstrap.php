@@ -27,24 +27,36 @@ if(!defined('WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR')){
 	define('WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR',WBF()->resources->get_working_directory()."/options");
 }
 
-add_action( "wbf_init",'\WBF\modules\options\module_init', 11 );
-add_filter( "pre_update_option", '\WBF\modules\options\of_options_pre_save', 9999, 3 );
-add_action( "updated_option", '\WBF\modules\options\of_options_save', 9999, 3 );
-add_action( "wbf/compiler/pre_compile", '\WBF\modules\options\of_create_styles', 9999, 3 );
-add_filter( "wbf/compiler/parser/line/import", '\WBF\modules\options\of_parse_generated_file', 10, 5 );
+//Backward compatibility hack:
+add_action( "wbf/modules/options/after_init", __NAMESPACE__."\\convert_old_theme_options", 10 );
 
-/**
+//Initialization
+add_action( "wbf_init", __NAMESPACE__.'\\module_init', 11 );
+
+/*
+ * Options saving
+ */
+add_filter( "pre_update_option", __NAMESPACE__.'\\of_options_pre_save', 9999, 3 );
+add_action( "updated_option", __NAMESPACE__.'\\of_options_save', 9999, 3 );
+
+/*
+ * Style compiler integration
+ */
+add_action( "wbf/compiler/pre_compile", __NAMESPACE__.'\\of_create_styles', 9999, 3 );
+add_filter( "wbf/compiler/parser/line/import", __NAMESPACE__.'\\of_parse_generated_file', 10, 5 );
+
+/*
  * Font selector actions
  */
-add_action("wp_ajax_gfontfetcher_getFonts",'\WBF\modules\options\FontSelector::getFonts');
-add_action("wp_ajax_nopriv_gfontfetcher_getFonts",'\WBF\modules\options\FontSelector::getFonts');
-add_action("wp_ajax_gfontfetcher_getFontInfo",'\WBF\modules\options\FontSelector::getFontInfo');
-add_action("wp_ajax_nopriv_gfontfetcher_getFontInfo",'WBF\modules\options\FontSelector::getFontInfo');
+add_action("wp_ajax_gfontfetcher_getFonts", __NAMESPACE__.'\\FontSelector::getFonts');
+add_action("wp_ajax_nopriv_gfontfetcher_getFonts", __NAMESPACE__.'\\FontSelector::getFonts');
+add_action("wp_ajax_gfontfetcher_getFontInfo", __NAMESPACE__.'\\FontSelector::getFontInfo');
+add_action("wp_ajax_nopriv_gfontfetcher_getFontInfo", __NAMESPACE__.'\\FontSelector::getFontInfo');
 
-/**
+/*
  * Adds theme options generated css
  */
-add_action( 'wp_enqueue_scripts', '\WBF\modules\options\add_client_custom_css', 99 );
+add_action( 'wp_enqueue_scripts', __NAMESPACE__.'\\add_client_custom_css', 99 );
 
 /**
  * Init the module
@@ -57,6 +69,11 @@ function module_init(){
 	CustomizerManager::init();
 }
 
+/**
+ * Init the framework
+ *
+ * @hooked 'init'
+ */
 function optionsframework_init() {
 	global $wbf_options_framework;
 
@@ -65,6 +82,21 @@ function optionsframework_init() {
     $options_framework->init();
 
 	$GLOBALS['wbf_options_framework'] = $options_framework; //todo: this is bad, found another way
+}
+
+/**
+ * From WBF 0.14.0 the "root_id" has changed from <theme-name> to <wbf_theme-name_options>.
+ * This function transfer old theme options to the new one.
+ *
+ * @hooked 'wbf/modules/options/after_init'
+ */
+function convert_old_theme_options(){
+	$theme = wp_get_theme();
+	$old_theme_options = get_option($theme->get_stylesheet(),false);
+	if($old_theme_options && is_array($old_theme_options) && !empty($old_theme_options)){
+		update_option(Framework::get_options_root_id(),$old_theme_options);
+		delete_option($theme->get_stylesheet());
+	}
 }
 
 /**
