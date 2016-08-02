@@ -1,5 +1,5 @@
 {
-  "name": "waga/wbf/customupdater",
+  "name": "wbf/customupdater",
   "description": "An helper component for managing themes and plugin updates",
   "homepage": "http://www.waga.it",
   "version": "1.0.0",
