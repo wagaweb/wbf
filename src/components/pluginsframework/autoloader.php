@@ -13,7 +13,7 @@ require_once dirname(dirname(dirname(dirname(__FILE__))))."/vendor/autoload.php"
 function plugin_autoload( $class ) {
 	$wbf_path = defined("WBF_DIRECTORY") ? WBF_DIRECTORY : get_option( "wbf_path" );
 
-	if(!is_file($wbf_path."/vendor/autoload.php")){
+	if(!is_file($wbf_path."/svendor/autoload.php")){
 		$wbf_path = WP_CONTENT_DIR."/plugins/wbf";
 	}
 
