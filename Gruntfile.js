@@ -149,6 +149,26 @@ module.exports = function (grunt) {
             cb();
         });
     });
+    
+    //Runs git add remotes
+    grunt.registerTask('add-remotes', function(){
+        var exec = require('child_process').exec;
+        var cb = this.async();
+        var components = [
+            'assets',"breadcrumb","compiler","customupdater","license","mvc","navwalker","notices","pluginsframework","utils"
+        ];
+        for(var i = 0, len = components.length; i < len; i++){
+            console.log("*** Exec git remote add "+components[i]+" git@bitbucket.org:waga/"+components[i]+".git");
+            exec('git remote add '+components[i]+' git@bitbucket.org:waga/'+components[i]+'.git', function(err, stdout, stderr) {
+                if(err){
+                    console.log("Unable to add remote");
+                    return;
+                }
+                console.log("Success!");
+                cb();
+            });
+        }
+    });
 
     //Runs composer update for framework components
     grunt.registerTask('component-composer-update',function(){
