@@ -397,7 +397,7 @@ class Admin{
 		if(!Admin::is_options_page()) return;
 		wp_enqueue_style( 'wp-color-picker' );
 		// Enqueue core CSS
-		$core_stylesheet = \WBF::prefix_url('assets/dist/css/optionsframework.css');
+		$core_stylesheet = \WBF::prefix_url('assets/dist/css/optionsframework.min.css');
 		if ($core_stylesheet != ""){
 			wp_enqueue_style('wbf-theme-options-style', $core_stylesheet, [], false, 'all'); //Custom Theme Options CSS
 		}
@@ -411,7 +411,8 @@ class Admin{
 	function enqueue_admin_scripts() {
 		if(!Admin::is_options_page()) return;
 		// Enqueue custom option panel JS
-		wp_enqueue_script( 'options-custom', \WBF::prefix_url('assets/src/js/controllers/options-custom.js'), array( 'jquery', 'wp-color-picker' ) ); //todo: make a DIST version of this
+		//wp_enqueue_script( 'options-custom', \WBF::prefix_url('assets/src/js/controllers/options-custom.js'), array( 'jquery', 'wp-color-picker' ) ); //todo: make a DIST version of this
+		//DIST version now included into wbf-admin (8/4/2016)
 	}
 
     /**

@@ -19,6 +19,12 @@ jQuery(document).ready(function($) {
         font_selector_controller.loadWebFonts(wbfData.wbfOfFonts.families);
         font_selector_view.init_interface(font_selector_controller);
     }
+    //Init media uploader
+    var media_uploader = require("./controllers/media-uploader");
+    media_uploader.init();
+    //Init options custom
+    var options_custom = require("./controllers/options-custom");
+    options_custom.init();
     //Init behavior view
     var behavior_view = require("./views/behavior.js");
     behavior_view.init_interface();

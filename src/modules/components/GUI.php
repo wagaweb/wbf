@@ -15,16 +15,9 @@ class GUI {
 		global $plugin_page;
 		if ( $plugin_page == GUI::$wp_menu_slug ) {
 			// Enqueue custom CSS
-			$stylesheet = \WBF::prefix_url( 'assets/dist/css/componentsframework.css' );
+			$stylesheet = \WBF::prefix_url( 'assets/dist/css/componentsframework.min.css' );
 			if ( $stylesheet != "" ) {
 				wp_enqueue_style( 'waboot-theme-components-style', $stylesheet, array(), '1.0.0', 'all' ); //Custom Theme Options CSS
-			}
-			if ( defined( "OPTIONS_FRAMEWORK_URL" ) ) {
-				// Enqueue custom option panel JS
-				wp_enqueue_script( 'options-custom', \WBF::prefix_url('assets/src/js/controllers/options-custom.js'), array(
-					'jquery',
-					'wp-color-picker'
-				) );
 			}
 			/*if(WBF_ENV == "dev"){
 				wp_register_script('component-page-script',WBF_URL."/assets/src/js/admin/components-page.js",array('jquery'));

@@ -6,14 +6,11 @@ npm-debug.log
 ############
 ## COMPILED
 ############
+assets/dist/css/*
+assets/dist/js/wbf-admin.js
 assets/dist/js/wbf-admin.min.js
-assets/dist/js/includes/wbfgmap.min.js
-assets/dist/css/tinymce.css
-assets/dist/css/admin.css
-assets/dist/css/optionsframework.css
-assets/dist/css/componentsframework.css
-assets/dist/css/pagebuilder.css
-assets/dist/js/wbf-admin-bundle.js
+assets/dist/js/wbf-admin.min.js.map
+assets/dist/js/spectrum.min.js
 
 ############
 ## VENDORS (composer)
@@ -40,6 +37,8 @@ vendor/jquery-modal
 vendor/codemirror
 vendor/bootstrap
 vendor/spectrum
+assets/src/js/spectrum.js
+assets/src/css/spectrum.css
 
 ############
 ## VENDORS (other)
