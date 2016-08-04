@@ -189,14 +189,14 @@ gulp.task('bower-update',function(){
 });
 
 /**
- * Runs a build
+ * Gets the plugin ready
  */
 gulp.task('setup', function(callback) {
     runSequence('bower-update', 'copy-vendors', ['compile_js', 'compile_css'], callback);
 });
 
 /**
- * Gets the theme ready
+ * Creates a build
  */
 gulp.task('build', function(callback) {
     runSequence('bower-update', 'copy-vendors',['compile_js', 'compile_css'], 'make-package', 'archive', callback);
