@@ -13,7 +13,7 @@
     }
   ],
   "require": {
-    "yahnis-elsts/plugin-update-checker": "1.6.1"
+    "yahnis-elsts/plugin-update-checker": "1.6.1",
     "waga/wbf/utils": "*"
   },
   "autoload": {

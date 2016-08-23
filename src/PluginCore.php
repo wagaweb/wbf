@@ -114,6 +114,7 @@ class PluginCore {
 
 		$this->maybe_run_activation();
 		$this->maybe_add_option();
+		update_option("wbf_version",self::version);
 
 		$this->resources = includes\Resources::getInstance();
 		$this->url = $this->resources->get_url();
