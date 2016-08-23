@@ -28,10 +28,7 @@
       "src/components/customupdater/vendor/",
       "src/components/breadcrumb/vendor/",
       "src/components/navwalker/vendor/",
-      "src/legacy/class-utilities-legacy.php",
-      "src/legacy/class-wabootnavwalker-legacy.php",
-      "src/legacy/waboot-plugin/",
-      "src/legacy/pluginsframework/",
+      "src/legacy/",
       "vendor/acf/",
       "src/modules/",
       "src/PluginCore.php"
