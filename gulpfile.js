@@ -15,6 +15,7 @@ var gulp = require('gulp'),
     zip = require('gulp-zip'),
     bower = require('gulp-bower'),
     copy = require('copy'),
+    gcopy = require('gulp-copy'),
     csso = require('gulp-csso'),
     postcss = require('gulp-postcss'),
     autoprefixer = require('autoprefixer'),
@@ -44,7 +45,9 @@ var paths = {
     //Build:
     build_dir: "./builds",
     build_pattern: [
-        "**/*",
+        "assets/**",
+        "src/**",
+        "*.*",
         "!.*" ,
         "!Gruntfile.js",
         "!gulpfile.js",
@@ -53,7 +56,21 @@ var paths = {
         "!Movefile-sample",
         "!{builds,builds/**}",
         "!{node_modules,node_modules/**}",
-        "!{bower_components,bower_components/**}"
+        "!{bower_components,bower_components/**}",
+        //Vendors
+        "vendor/composer/*.php",
+        "vendor/composer/*.json",
+        "vendor/acf/**/*",
+        "!vendor/acf/lang/*",
+        "vendor/codemirror/lib/*",
+        "vendor/spectrum/spectrum.css",
+        "vendor/imagesloaded/*.js",
+        "vendor/jquery-modal/*.js",
+        "vendor/mgargano/simplehtmldom/src/*.*",
+        "vendor/mobiledetect/mobiledetectlib/Mobile_Detect.php",
+        "vendor/owlcarousel/**/*",
+        "vendor/theme-updates/**/*",
+        "vendor/autoload.php",
     ]
 };
 
@@ -134,7 +151,7 @@ gulp.task('browserify', function(){
  */
 gulp.task('make-package', function(){
     return gulp.src(paths.build_pattern)
-        .pipe(copy(paths.build_dir+"/pkg/"+slug));
+        .pipe(gcopy(paths.build_dir+"/pkg/"+slug));
 });
 
 /**
@@ -143,7 +160,7 @@ gulp.task('make-package', function(){
 gulp.task('archive', function(){
     return gulp.src(paths.build_dir+"/pkg/**")
         .pipe(zip(slug+'-'+pkg.version+'.zip'))
-        .pipe(gulp.dest("./builds"));
+        .pipe(gulp.dest(paths.build_dir));
 });
 
 /**
@@ -245,22 +262,6 @@ gulp.task('setup', function(callback) {
     runSequence('component-composer-update','bower-update', 'copy-vendors', ['compile_js', 'compile_css'], callback);
 });
 
-/**
- * Creates the plugin package
- */
-gulp.task('make-package', function(){
-    return gulp.src(paths.build_pattern)
-        .pipe(copy(paths.build_dir+"/pkg/"+slug));
-});
-
-/**
- * Compress che package directory
- */
-gulp.task('archive', function(){
-    return gulp.src(paths.build_dir+"/pkg/"+slug)
-        .pipe(zip(slug+'-'+pkg.version+'.zip'))
-        .pipe(gulp.dest(paths.build_dir));
-});
 
 /**
  * Creates a build
