@@ -28,7 +28,7 @@
       "src/components/customupdater/vendor/",
       "src/components/breadcrumb/vendor/",
       "src/components/navwalker/vendor/",
-      "src/includes/waboot-plugin/",
+      "src/legacy/",
       "vendor/acf/",
       "src/modules/",
       "src/PluginCore.php"
