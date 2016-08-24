@@ -54,7 +54,7 @@ if( ! class_exists('\WBF\WBF') ) :
 	}*/
 
 	if(!defined("WBF_WORK_DIRECTORY_NAME")){
-		define("WBF_WORK_DIRECTORY_NAME","wbf");
+		define("WBF_WORK_DIRECTORY_NAME","wbf-wd");
 	}
 
 	/*if(!defined("WBF_THEME_DIRECTORY")){
