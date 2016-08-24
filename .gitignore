@@ -6,14 +6,11 @@ npm-debug.log
 ############
 ## COMPILED
 ############
-admin/js/wbf-admin.min.js
-includes/scripts/wbfgmap.min.js
-admin/css/tinymce.css
-admin/css/admin.css
-admin/css/optionsframework.css
-admin/css/componentsframework.css
-admin/css/pagebuilder.css
-assets/src/js/admin/wbf-admin-bundle.js
+assets/dist/css/*
+assets/dist/js/wbf-admin.js
+assets/dist/js/wbf-admin.min.js
+assets/dist/js/wbf-admin.min.js.map
+assets/dist/js/spectrum.min.js
 
 ############
 ## VENDORS (composer)
@@ -21,8 +18,13 @@ assets/src/js/admin/wbf-admin-bundle.js
 vendor/autoload.php
 vendor/mgargano
 vendor/composer
-vendor/yahnis-elsts
 vendor/mobiledetect
+
+############
+## VENDORS (components)
+############
+src/components/**/vendor/**
+!src/components/customupdater/vendor/theme-update-checker.php
 
 ############
 ## VENDORS (bower)
@@ -34,6 +36,9 @@ vendor/imagesloaded
 vendor/jquery-modal
 vendor/codemirror
 vendor/bootstrap
+vendor/spectrum
+assets/src/js/spectrum.js
+assets/src/css/spectrum.css
 
 ############
 ## VENDORS (other)

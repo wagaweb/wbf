@@ -10,7 +10,7 @@
  * Plugin Name:       Waboot Framework
  * Plugin URI:        http://www.waga.it
  * Description:       WordPress Extension Framework
- * Version:           0.13.19
+ * Version:           0.14.0
  * Author:            WAGA
  * Author URI:        http://www.waga.com/
  * License:           GPL-2.0+
@@ -31,7 +31,7 @@ if( ! class_exists('\WBF\WBF') ) :
 	}
 
 	//Utilities
-	require_once('includes/utilities.php');
+	require_once( 'src/includes/utilities-functions.php' );
 
 	//Define directory
 	if(!defined("WBF_DIRECTORY")){
@@ -54,7 +54,7 @@ if( ! class_exists('\WBF\WBF') ) :
 	}*/
 
 	if(!defined("WBF_WORK_DIRECTORY_NAME")){
-		define("WBF_WORK_DIRECTORY_NAME","wbf");
+		define("WBF_WORK_DIRECTORY_NAME","wbf-wd");
 	}
 
 	/*if(!defined("WBF_THEME_DIRECTORY")){
@@ -68,9 +68,6 @@ if( ! class_exists('\WBF\WBF') ) :
 	require_once("wbf-autoloader.php");
 	require_once("backup-functions.php");
 	include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-
-	//Require the framework
-	require_once "PluginCore.php";
 
 	//Backward compatibility
 	class WBF extends \WBF\PluginCore{}

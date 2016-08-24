@@ -5,22 +5,16 @@ Author: Waga
 Author URI: https://waga.it
 */
 
-@import "../../../vendor/bootstrap/less/mixins";
+@import "mixins";
 
 /* General rules */
 
 div#optionsframework-wrap {
-  margin: 0px auto;
+  margin: 0 auto;
 
   .wbf-copy {
     float: left;
     padding: 10px;
-  }
-
-  #optionsframework .group > h3 {
-    background-position: 97.5% center;
-    background-repeat: no-repeat;
-    background-image: url("../images/icons/waboot-icon-64x64-tr.svg");
   }
 
   .optionsframework-header {
@@ -63,10 +57,7 @@ div#optionsframework-wrap {
       border-left: 1px solid #ddd !important;
       border-right: none !important;
       box-sizing: border-box;
-      background-color: #f1f1f1;
-      background-position: 10px center;
-      background-repeat: no-repeat;
-      background-image: url("../images/icons/default-icon.svg");
+      background: #f1f1f1 url("../../images/icons/default-option-tab.svg") no-repeat 10px center;
     }
 
     @media screen and (max-width:768px) {
@@ -344,5 +335,8 @@ div#optionsframework-wrap {
   .wb-onoffswitch-checkbox:checked + .wb-onoffswitch-label .wb-onoffswitch-switch {
     right: 0px;
   }
+
+
+
 
 }

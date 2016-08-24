@@ -1,0 +1,49 @@
+{
+  "name": "waga/wbf",
+  "description": "A comprehensive full-stack Wordpress framework",
+  "keywords": ["wordpress","framework"],
+  "type": "wordpress-plugin",
+  "homepage": "http://www.waga.it",
+  "version": "0.13.13",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Waga Team",
+      "email": "dev@waga.it",
+      "homepage": "http://www.waga.it",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "composer/installers": "^1.0",
+    "mgargano/simplehtmldom": "dev-master",
+    "mobiledetect/mobiledetectlib": "~2.8.20",
+    "waga/wbf/assets": "*",
+    "waga/wbf/breadcrumb": "*",
+    "waga/wbf/compiler": "*",
+    "waga/wbf/customupdater": "*",
+    "waga/wbf/license": "*",
+    "waga/wbf/mvc": "*",
+    "waga/wbf/navwalker": "*",
+    "waga/wbf/notices": "*",
+    "waga/wbf/pluginsframework": "*",
+    "waga/wbf/utils": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "WBF\\components\\": "src/components/"
+    },
+    "classmap": [
+      "src/components/compiler/less/lib/",
+      "src/components/customupdater/vendor/",
+      "src/components/bredcrumb/vendor/",
+      "src/components/navwalker/vendor/",
+      "vendor/acf/",
+      "src/modules/",
+      "src/PluginCore.php"
+    ],
+    "exclude-from-classmap": [
+      "**/tests/"
+    ]
+  }
+}
