@@ -39,6 +39,8 @@ var paths = {
     bundle_js: ['./assets/dist/js/'+filenames.bundle_js],
     //Styles:
     styles: './assets/src/less/**/*.less',
+    //Components:
+    components_dir: "./src/components",
     //Build:
     build_dir: "./builds",
     build_pattern: [
@@ -54,6 +56,10 @@ var paths = {
         "!{bower_components,bower_components/**}"
     ]
 };
+
+var available_components = [
+    'assets',"breadcrumb","compiler","customupdater","license","mvc","navwalker","notices","pluginsframework","utils"
+];
 
 /**
  * Compile less files
@@ -175,6 +181,50 @@ gulp.task('copy-vendors',function() {
 });
 
 /**
+ * Register GIT remotes (for subtree)
+ */
+gulp.task('add-remotes', function(){
+    var exec = require('child_process').exec;
+    var components = available_components;
+    for(var i = 0, len = components.length; i < len; i++){
+        console.log("*** Exec git remote add "+components[i]+" git@bitbucket.org:waga/"+components[i]+".git");
+        exec('git remote add '+components[i]+' git@bitbucket.org:waga/'+components[i]+'.git', function(err, stdout, stderr) {
+            if(err){
+                console.log("Unable to add remote (is it already set maybe?)");
+                return;
+            }
+            console.log("Remote added successfully!");
+        });
+    }
+});
+
+/**
+ * Performs composer update into components directories
+ */
+gulp.task('component-composer-update', function(){
+    var exec = require('child_process').execSync;
+    var glob = require('glob');
+    var path = require('path');
+    var components = available_components;
+
+    //tmp solution:
+    components = ['customupdater']; //for now, let's do the composer update only for customupdater
+
+    for(var i = 0, len = components.length; i < len; i++){
+        var cwd = paths.components_dir+"/"+components[i];
+        cwd = path.resolve(cwd);
+        console.log("*** Exec composer into "+cwd);
+        exec('composer update', {cwd: cwd}, function(err, stdout, stderr) {
+            if(err){
+                console.log("Unable to run composer in");
+                return;
+            }
+            console.log(stdout);
+        });
+    }
+});
+
+/**
  * Bower vendors Install
  */
 gulp.task('bower-install',function(){
@@ -192,14 +242,31 @@ gulp.task('bower-update',function(){
  * Gets the plugin ready
  */
 gulp.task('setup', function(callback) {
-    runSequence('bower-update', 'copy-vendors', ['compile_js', 'compile_css'], callback);
+    runSequence('component-composer-update','bower-update', 'copy-vendors', ['compile_js', 'compile_css'], callback);
+});
+
+/**
+ * Creates the plugin package
+ */
+gulp.task('make-package', function(){
+    return gulp.src(paths.build_pattern)
+        .pipe(copy(paths.build_dir+"/pkg/"+slug));
+});
+
+/**
+ * Compress che package directory
+ */
+gulp.task('archive', function(){
+    return gulp.src(paths.build_dir+"/pkg/"+slug)
+        .pipe(zip(slug+'-'+pkg.version+'.zip'))
+        .pipe(gulp.dest(paths.build_dir));
 });
 
 /**
  * Creates a build
  */
 gulp.task('build', function(callback) {
-    runSequence('bower-update', 'copy-vendors',['compile_js', 'compile_css'], 'make-package', 'archive', callback);
+    runSequence('component-composer-update','bower-update', 'copy-vendors',['compile_js', 'compile_css'], 'make-package', 'archive', callback);
 });
 
 /**
@@ -214,5 +281,5 @@ gulp.task('watch', function() {
  * Default task
  */
 gulp.task('default', function(callback){
-    runSequence('bower-install', ['compile_js', 'compile_css'], 'watch', callback);
+    runSequence('setup', 'watch', callback);
 });
