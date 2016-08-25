@@ -92,7 +92,8 @@ class Behavior{
 						if($matches[1] == "{blog}"){
 							array_push($this->filters['node_id'],"-".get_option( 'page_for_posts' ));
 						}elseif($matches[1] == "{cpt}"){
-							$cpts = wbf_get_filtered_post_types(apply_filters("wbf_behaviors_cpts_blacklist",array()));
+							$cpts = wbf_get_filtered_post_types(apply_filters("wbf_behaviors_cpts_blacklist",array())); //Will be deprecated
+							$cpts = wbf_get_filtered_post_types(apply_filters("wbf/modules/behaviors/post_type_blacklist",array()));
 							foreach($cpts as $k => $v){
 								array_push($this->filters['post_type'],"-".$k);
 							}
@@ -108,7 +109,8 @@ class Behavior{
 						if($filter == "{blog}"){
 							array_push($this->filters['node_id'],get_option( 'page_for_posts' ));
 						}elseif($filter == "{cpt}"){
-							$cpts = wbf_get_filtered_post_types(apply_filters("wbf_behaviors_cpts_blacklist",array()));
+							$cpts = wbf_get_filtered_post_types(apply_filters("wbf_behaviors_cpts_blacklist",array())); //Will be deprecated
+							$cpts = wbf_get_filtered_post_types(apply_filters("wbf/modules/behaviors/post_type_blacklist",array()));
 							foreach($cpts as $k => $v){
 								array_push($this->filters['post_type'],$k);
 							}
