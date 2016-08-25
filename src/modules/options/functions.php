@@ -84,6 +84,7 @@ function of_options_save($option, $old_value, $value){
 	$wbf_notice_manager = Utilities::get_wbf_notice_manager();
 
 	$must_recompile_flag = false;
+	$must_update_styles_flag = false;
 	$deps_to_achieve = array();
 	$all_options = Framework::get_registered_options();
 
@@ -153,13 +154,21 @@ function of_options_save($option, $old_value, $value){
 				$must_recompile_flag = true;
 			}
 			/*
+			 * Check if must update styles (aka: create\update a simple css file
+			 */
+			if(isset($opt_data['update_styles']) && $opt_data['update_styles']){
+				$must_update_styles_flag = true; //Todo: implement this
+			}
+			/*
 			 * Check if must perform some post actions
 			 */
 			if(isset($opt_data['save_action']) && is_string($opt_data['save_action']) && $opt_data['save_action'] != ""){
 				$action = $opt_data['save_action'];
-				//Todo: implement an action that deploy a simple css file with the options value
+				//Todo: implement an action that deploy a simple css file with the options value. Maybe the developer could choose between: "update_styles" -> will create\update a css file, or "recompile_styles"
 				if($action == "recompile_styles"){
 					$must_recompile_flag = true;
+				}elseif($action == "update_styles"){
+					$must_update_styles_flag = true; //Todo: implement this
 				}else{
 					$on_save_callbacks[] = $action; //Build up a callback stack
 				}
@@ -210,6 +219,7 @@ function of_options_save($option, $old_value, $value){
 	 */
 	if(isset($_POST['reset'])){
 		$must_recompile_flag = true;
+		$must_update_styles_flag = true;
 	}
 
 	/*
@@ -217,6 +227,14 @@ function of_options_save($option, $old_value, $value){
 	 */
 	if($must_recompile_flag){
 		of_recompile_styles($value);
+	}
+
+	/*
+	 * Create\update a simple css file if needed
+	 */
+	if($must_update_styles_flag){
+		//Todo: implement this
+		//of_create_styles("css");
 	}
 
 	/*
