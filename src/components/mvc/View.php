@@ -47,10 +47,10 @@ abstract class View{
 
 		$this->template = pathinfo($abs_path);
 		$this->args = [
-			'page_title' => "Page Title",
-			'wrapper_class' => "wrap",
-			'wrapper_el' => "div",
-			'title_wrapper' => "<h1>%s</h1>"
+			'page_title' => "",
+			'wrapper_class' => "",
+			'wrapper_el' => "",
+			'title_wrapper' => "%s"
 		];
 	}
 
@@ -63,6 +63,19 @@ abstract class View{
 		$this->args['wrapper_class'] = "";
 		$this->args['wrapper_el'] = "";
 		$this->args['title_wrapper'] = "%s";
+		return $this;
+	}
+
+	/**
+	 * Populate the predefined args, providing a template ready for being displayed in WP dashboard
+	 *
+	 * @return $this
+	 */
+	public function for_dashboard(){
+		$this->args['page_title'] = "Page Title";
+		$this->args['wrapper_class'] = "wrap";
+		$this->args['wrapper_el'] = "div";
+		$this->args['title_wrapper'] = "<h1>%s</h1>";
 		return $this;
 	}
 
