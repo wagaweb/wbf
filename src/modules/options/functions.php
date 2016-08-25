@@ -157,6 +157,7 @@ function of_options_save($option, $old_value, $value){
 			 */
 			if(isset($opt_data['save_action']) && is_string($opt_data['save_action']) && $opt_data['save_action'] != ""){
 				$action = $opt_data['save_action'];
+				//Todo: implement an action that deploy a simple css file with the options value
 				if($action == "recompile_styles"){
 					$must_recompile_flag = true;
 				}else{
@@ -266,7 +267,8 @@ function of_options_save($option, $old_value, $value){
  * @uses of_create_styles
  */
 function of_recompile_styles($values,$release = false){
-	$result = of_create_styles($values);
+	//Todo: what happens when no compiler is set?
+	$result = of_create_styles("less",$values);
 	if($result){
 		//Then, compile less
 		if(isset($GLOBALS['wbf_styles_compiler']) && $GLOBALS['wbf_styles_compiler']){
@@ -281,14 +283,27 @@ function of_recompile_styles($values,$release = false){
  * Generate a new style file for the theme options
  *
  * @param array|null $values
- * @uses of_generate_less_file
+ * @param string $type
+ *
+ * @use of_generate_less_file
  *
  * @return bool|string
  */
-function of_create_styles($values = null){
+function of_create_styles($type = "css", $values = null){
 	$input_file_path = apply_filters("wbf/theme_options/styles/input_path",of_styles_get_default_input_path());
 	$output_file_path = apply_filters("wbf/theme_options/styles/output_path",of_styles_get_default_output_path());
-	return of_generate_less_file($values,$input_file_path,$output_file_path); //Create a theme-options-generated.less file
+	switch($type){
+		case "css":
+			//Todo: implement the creation of a simple css file
+			break;
+		case "less":
+			return of_generate_less_file($values,$input_file_path,$output_file_path); //Create a theme-options-generated.less file
+			break;
+		case "sass":
+			//Todo: implement the creation of a sass file
+			break;
+	}
+	return false;
 }
 
 /**
