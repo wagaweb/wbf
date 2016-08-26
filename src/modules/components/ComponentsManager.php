@@ -11,6 +11,7 @@ namespace WBF\modules\components;
 
 use WBF\components\notices\Notice_Manager;
 use WBF\components\mvc\HTMLView;
+use WBF\components\utils\Utilities;
 use WBF\modules\options\Admin;
 use WBF\modules\options\Framework;
 use WBF\modules\options\Organizer;
@@ -524,7 +525,7 @@ class ComponentsManager {
 		                        self::enable( $component_name, ComponentsManager::is_child_component( $component_name ) );
 	                        }catch(\Exception $e){
 		                        self::$last_error = $e->getMessage();
-		                        wbf_admin_show_message(self::$last_error,"error");
+		                        Utilities::admin_show_message(self::$last_error,"error");
 	                        }
                         }
                     }else{
@@ -533,7 +534,7 @@ class ComponentsManager {
 	                            self::disable( $component_name, ComponentsManager::is_child_component( $component_name ) );
                             }catch(\Exception $e){
 	                            self::$last_error = $e->getMessage();
-	                            wbf_admin_show_message(self::$last_error,"error");
+	                            Utilities::admin_show_message(self::$last_error,"error");
                             }
                         }
                     }

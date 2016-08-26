@@ -132,7 +132,7 @@ class Styles_Compiler{
 				if(is_admin()){
 					Utilities::admin_show_message(__( 'Theme style files compiled successfully!', 'wbf' ),"updated");
 				}else{
-					echo '<div class="alert alert-success"><p>'.__('Theme styles files compiled successfully.', 'wbf').'</p></div>';
+					echo '<div class="alert alert-success"><p>'.__('Theme styles files compiled successfully!', 'wbf').'</p></div>';
 				}
 				$message_displayed = true;
 			}

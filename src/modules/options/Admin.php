@@ -87,7 +87,7 @@ class Admin{
 			$validation_base = apply_filters("wbf/modules/options/pre_save/validation_base",false); 
 			$r = Framework::update_theme_options($options_to_save,true,$validation_base);
 			if($r && isset($_POST['update_theme_options'])){
-				Utilities::admin_show_message(__( 'Options saved successfully.', 'wbf' ),"updated");
+				Utilities::admin_show_message(__( 'Options saved successfully!', 'wbf' ),"updated");
 			}elseif($r && isset($_POST['restore_theme_options'])){
 				Utilities::admin_show_message(__( 'Default options restored.', 'wbf' ),"updated");
 			}else{
@@ -95,7 +95,7 @@ class Admin{
 			}
 		}else{
 			if(isset($_POST['reset_theme_options'])){
-				Utilities::admin_show_message(__( 'Theme options cleared successfully', 'wbf' ),"success");
+				Utilities::admin_show_message(__( 'Theme options cleared successfully!', 'wbf' ),"success");
 			}
 		}
 	}
@@ -181,13 +181,13 @@ class Admin{
 					case 'backup':
 						try {
 							$file = $this->_backup_options();
-							wbf_admin_show_message( __( "Backup successfully created!", "wbf" ), "updated" );
+							Utilities::admin_show_message( __( "Backup successfully created!", "wbf" ), "updated" );
 						} catch ( \Exception $e ) {
-							wbf_admin_show_message( $e->getMessage(), "error" );
+							Utilities::admin_show_message( $e->getMessage(), "error" );
 						}
 						break;
 					default:
-						wbf_admin_show_message( __( "Invalid option selected", "wbf" ), "error" );
+						Utilities::admin_show_message( __( "Invalid option selected", "wbf" ), "error" );
 						break;
 				}
 			}
@@ -197,23 +197,23 @@ class Admin{
 					if ( $file['error'] == UPLOAD_ERR_OK && is_uploaded_file( $file['tmp_name'] ) ) {
 						try {
 							$this->_restore_options_from_file( $file );
-							wbf_admin_show_message( __( "Backup successfully restored!", "wbf" ), "updated" );
+							Utilities::admin_show_message( __( "Backup successfully restored!", "wbf" ), "updated" );
 						} catch ( \Exception $e ) {
-							wbf_admin_show_message( $e->getMessage(), "error" );
+							Utilities::admin_show_message( $e->getMessage(), "error" );
 						}
 					} else {
-						wbf_admin_show_message( __( "Unable to upload the file.", "wbf" ), "error" );
+						Utilities::admin_show_message( __( "Unable to upload the file.", "wbf" ), "error" );
 					}
 				} elseif ( isset( $_POST['local-backup-file'] ) ) {
 					$file = $_POST['local-backup-file'];
 					try {
 						$this->_restore_options_from_file( $file );
-						wbf_admin_show_message( __( "Backup successfully restored!", "wbf" ), "updated" );
+						Utilities::admin_show_message( __( "Backup successfully restored!", "wbf" ), "updated" );
 					} catch ( \Exception $e ) {
-						wbf_admin_show_message( $e->getMessage(), "error" );
+						Utilities::admin_show_message( $e->getMessage(), "error" );
 					}
 				} else {
-					wbf_admin_show_message( __( "No backup file provided.", "wbf" ), "error" );
+					Utilities::admin_show_message( __( "No backup file provided.", "wbf" ), "error" );
 				}
 			}
 			$backup_files = $this->get_backupFiles();

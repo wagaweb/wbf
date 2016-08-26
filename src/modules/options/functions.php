@@ -295,7 +295,7 @@ function of_update_style_file($values, $recompile_theme_styles = false){
 			if(!$bFileUpdated){
 				Utilities::admin_show_message(sprintf(__("Unable to create or update the theme options style file (%s).","wbf"),of_get_styles_output_file()),"error");
 			}else{
-				Utilities::admin_show_message(__("Theme options style file updated successfully!.","wbf"),"updated");
+				Utilities::admin_show_message(__("Theme options style file updated successfully!","wbf"),"updated");
 			}
 			$recompile_theme_styles = true;
 		}
@@ -307,7 +307,7 @@ function of_update_style_file($values, $recompile_theme_styles = false){
 			if(!$bFileUpdated){
 				Utilities::admin_show_message(sprintf(__("Unable to create or update the theme options style file (%s).","wbf"),of_get_styles_output_file()),"error");
 			}else{
-				Utilities::admin_show_message(__("Theme options style file updated successfully!.","wbf"),"updated");
+				Utilities::admin_show_message(__("Theme options style file updated successfully!","wbf"),"updated");
 			}
 		}else{
 			Utilities::admin_show_message(sprintf(__("Unable to find the theme options style source file (%s).","wbf"),$input_file_path()),"error");
