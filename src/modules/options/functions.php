@@ -327,6 +327,35 @@ function of_recompile_styles($release = false){
 }
 
 /**
+ * Parse {@import 'theme-options-generated.less'} into tmp_ style file.
+ *
+ * @hooked 'wbf/compiler/parser/line/import'
+ *
+ * @param $line
+ * @param $inputFile
+ * @param $filepath
+ *
+ * @return string
+ */
+function of_parse_generated_file($parsed_line,$line,$matches,$filepath,$inputFile){
+	/*
+	 * PARSE theme-options-generated.less
+	 */
+	$filename = of_get_styles_file_name();
+	if(isset($matches[1]) && $matches[1] == $filename){
+		$fileToImport = new \SplFileInfo(of_get_styles_output_file());
+		if($fileToImport->isFile() && $fileToImport->isReadable()){
+			if($inputFile->getPath() == $fileToImport->getPath()){
+				$parsed_line = "@import '{$fileToImport->getBasename()}';\n";
+			}else{
+				$parsed_line = "@import '{$fileToImport->getRealPath()}';\n";
+			}
+		}
+	}
+	return $parsed_line;
+}
+
+/**
  * Get the theme options style file source path
  * @return string
  */
@@ -350,7 +379,6 @@ function of_get_styles_output_file(){
  * @return string
  */
 function of_styles_get_default_input_path(){
-	//$input_file_path = rtrim(get_stylesheet_directory(),"/")."/"."_theme-options-generated.less.cmp";
 	$input_file_path = rtrim(get_stylesheet_directory(),"/")."/"."_theme-options.src";
 	$input_file_path = apply_filters("wbf/modules/options/theme_options_input_file_location/main",$input_file_path);
 	return $input_file_path;
@@ -362,7 +390,6 @@ function of_styles_get_default_input_path(){
  * @return string
  */
 function of_styles_get_parent_default_input_path(){
-	//$input_file_path = rtrim(get_template_directory(),"/")."/"."_theme-options-generated.less.cmp";
 	$input_file_path = rtrim(get_template_directory(),"/")."/"."_theme-options.src";
 	$input_file_path = apply_filters("wbf/modules/options/theme_options_input_file_location/child",$input_file_path);
 	return $input_file_path;
@@ -374,9 +401,29 @@ function of_styles_get_parent_default_input_path(){
  * @return string
  */
 function of_styles_get_default_output_path(){
-	//Assemble the file name:
-	$file_extension = call_user_func(function(){
-		global $wbf_styles_compiler;
+	$file_name = of_get_styles_file_name();
+	//Assemble the path:
+	if(is_multisite()){
+		$blogname = wbf_get_sanitized_blogname();
+		if(!isset($output_file_path) || empty($output_file_path)){
+			$output_file_path = WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR."/mu/{$blogname}-{$file_name}";
+		}
+	}else{
+		if(!isset($output_file_path) || empty($output_file_path)){
+			$output_file_path = WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR."/{$file_name}";
+		}
+	}
+	return $output_file_path;
+}
+
+/**
+ * Get the theme options style file filename (with extension)
+ *
+ * @return string
+ */
+function of_get_styles_file_name(){
+	global $wbf_styles_compiler;
+	$file_extension = call_user_func(function() use ($wbf_styles_compiler){
 		$ext = "css";
 		if(isset($wbf_styles_compiler) && $wbf_styles_compiler instanceof Styles_Compiler){
 			if($wbf_styles_compiler->base_compiler instanceof Less_Compiler){
@@ -386,52 +433,9 @@ function of_styles_get_default_output_path(){
 		}
 		return $ext;
 	});
+	$file_extension = apply_filters("wbf/modules/options/theme_options_output_file_extension",$file_extension);
 	$file_name = apply_filters("wbf/modules/options/theme_options_output_file_name","theme-options".$file_extension,$file_extension);
-	//Assemble the path:
-	if(is_multisite()){
-		$blogname = wbf_get_sanitized_blogname();
-		if(!isset($output_file_path) || empty($output_file_path)){
-			$output_file_path = WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR."/mu/{$blogname}-{$file_name}.{$file_extension}";
-		}
-	}else{
-		if(!isset($output_file_path) || empty($output_file_path)){
-			$output_file_path = WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR."/{$file_name}.{$file_extension}";
-		}
-	}
-	return $output_file_path;
-}
-
-/**
- * Parse {@import 'theme-options-generated.less'} into tmp_ style file.
- *
- * @hooked 'wbf/compiler/parser/line/import'
- *
- * @param $line
- * @param $inputFile
- * @param $filepath
- *
- * @return string
- */
-function of_parse_generated_file($parsed_line,$line,$matches,$filepath,$inputFile){
-	/*
-	 * PARSE theme-options-generated.less
-	 */
-	if(isset($matches[1]) && $matches[1] == "theme-options-generated.less"){
-		if(is_multisite()){
-			$blogname = wbf_get_sanitized_blogname();
-			$fileToImport = new \SplFileInfo(WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR."/mu/".$blogname."-".$matches[1]);
-		}else{
-			$fileToImport = new \SplFileInfo(WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR."/".$matches[1]);
-		}
-		if($fileToImport->isFile() && $fileToImport->isReadable()){
-			if($inputFile->getPath() == $fileToImport->getPath()){
-				$parsed_line = "@import '{$fileToImport->getBasename()}';\n";
-			}else{
-				$parsed_line = "@import '{$fileToImport->getRealPath()}';\n";
-			}
-		}
-	}
-	return $parsed_line;
+	return $file_name.".".$file_extension;
 }
 
 /**

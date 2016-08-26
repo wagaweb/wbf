@@ -46,13 +46,13 @@ class Styles_Compiler{
 
 		$this->maybe_release_lock();
 
-		$this->listen_get_parameters();
+		return $this;
 	}
 
 	/**
 	 * Performs action based on $_GET parameters
 	 */
-	function listen_get_parameters(){
+	function listen_requests(){
 		if (isset($_GET['compile']) && $_GET['compile'] == true) {
 			if (current_user_can('manage_options')) {
 				$this->compile();
@@ -132,7 +132,7 @@ class Styles_Compiler{
 					if(isset($GLOBALS['option_page']) && $GLOBALS['option_page'] == 'optionsframework'){
 						add_settings_error('options-framework', 'save_options', __('Less files compiled successfully.', 'wbf'), 'updated fade');
 					}else{
-						add_action( 'admin_notices', '\WBF\includes\compiler\compiled_admin_notice');
+						add_action( 'admin_notices', '\WBF\components\compiler\compiled_admin_notice');
 					}
 				}else{
 					echo '<div class="alert alert-success"><p>'.__('Theme styles files compiled successfully.', 'wbf').'</p></div>';
@@ -152,7 +152,7 @@ class Styles_Compiler{
 					if(isset($GLOBALS['option_page']) && $GLOBALS['option_page'] == 'optionsframework'){
 						add_settings_error('options-framework', 'save_options', $wpe->get_error_message(), 'error fade');
 					}else{
-						add_action( 'admin_notices', '\WBF\includes\compiler\compile_error_admin_notice');
+						add_action( 'admin_notices', '\WBF\components\compiler\compile_error_admin_notice');
 					}
 				}else{
 					echo '<div class="alert alert-warning"><p>'.$wpe->get_error_message().'</p></div>';

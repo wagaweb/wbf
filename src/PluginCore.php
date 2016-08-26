@@ -3,6 +3,7 @@
 namespace WBF;
 
 use WBF\components\assets\AssetsManager;
+use WBF\components\compiler\Styles_Compiler;
 use WBF\components\customupdater\Plugin_Update_Checker;
 use WBF\components\license\License_Manager;
 use WBF\components\mvc\HTMLView;
@@ -54,6 +55,11 @@ class PluginCore {
 	 * @var includes\Resources
 	 */
 	var $resources;
+
+	/**
+	 * @var Styles_Compiler
+	 */
+	var $Styles_Compiler;
 
 	/**
 	 * @var string
@@ -213,11 +219,13 @@ class PluginCore {
 	 * @param $args
 	 * @param null $base_compiler
 	 */
-	static function set_styles_compiler($args,$base_compiler = null){
+	function set_styles_compiler($args,$base_compiler = null){
 		global $wbf_styles_compiler;
 		if(!isset($wbf_styles_compiler) || !$wbf_styles_compiler){
-			$GLOBALS['wbf_styles_compiler'] = new components\compiler\Styles_Compiler($args,$base_compiler);
+			$wbf_styles_compiler = new components\compiler\Styles_Compiler($args,$base_compiler);
 		}
+		$this->Styles_Compiler = &$wbf_styles_compiler;
+		$wbf_styles_compiler->listen_requests();
 	}
 
 	/**
