@@ -4,6 +4,8 @@ module.exports = {
      * and navigation tabs.
      */
     init: function(){
+        var $ = jQuery;
+
         // Loads the color pickers
         $('.of-color').wpColorPicker();
 

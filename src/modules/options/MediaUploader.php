@@ -110,35 +110,30 @@ class MediaUploader{
 
 	/**
 	 * Initialize the media uploader class
-	 *
-	 * @legacy
-	 *
-	 * @since 1.7.0
 	 */
 	public function init() {
-		add_action('admin_enqueue_scripts', array($this, 'optionsframework_media_scripts'));
+		add_action('admin_enqueue_scripts', array($this, 'enqueue_media_scripts'));
+		add_filter('wbf/js/admin/localization', function($loc_array){
+			$loc_array['of_media_uploader'] = [
+				'upload' => __('Upload', 'wbf'),
+				'remove' => __('Remove', 'wbf')
+			];
+			return $loc_array;
+		});
 	}
 
 	/**
 	 * Enqueue scripts for file uploader
 	 */
-	function optionsframework_media_scripts( $hook ) {
-
+	function enqueue_media_scripts($hook){
 		$menu = Admin::menu_settings();
 
-		if ( 'toplevel_page_' . $menu['menu_slug'] != $hook ) {
+		if('toplevel_page_' . $menu['menu_slug'] != $hook){
 			return;
 		}
 
-		if ( function_exists( 'wp_enqueue_media' ) ) {
+		if(function_exists('wp_enqueue_media')) {
 			wp_enqueue_media();
 		}
-
-		wp_register_script( 'of-media-uploader', WBF()->prefix_url("assets/src/js/controllers/media-uploader.js"), array( 'jquery' ) );
-		wp_enqueue_script( 'of-media-uploader' );
-		wp_localize_script( 'of-media-uploader', 'optionsframework_l10n', array(
-			'upload' => __( 'Upload', 'textdomain' ),
-			'remove' => __( 'Remove', 'textdomain' )
-		) );
 	}
 }
