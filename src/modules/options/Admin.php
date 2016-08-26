@@ -87,9 +87,9 @@ class Admin{
 			$validation_base = apply_filters("wbf/modules/options/pre_save/validation_base",false); 
 			$r = Framework::update_theme_options($options_to_save,true,$validation_base);
 			if($r && isset($_POST['update_theme_options'])){
-				Utilities::admin_show_message(__( 'Options saved successfully.', 'wbf' ),"success");
+				Utilities::admin_show_message(__( 'Options saved successfully.', 'wbf' ),"updated");
 			}elseif($r && isset($_POST['restore_theme_options'])){
-				Utilities::admin_show_message(__( 'Default options restored.', 'wbf' ),"success");
+				Utilities::admin_show_message(__( 'Default options restored.', 'wbf' ),"updated");
 			}else{
 				Utilities::admin_show_message(__( 'There was an error during options saving.', 'wbf' ),"error");
 			}

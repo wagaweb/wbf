@@ -291,21 +291,27 @@ function of_update_style_file($values, $recompile_theme_styles = false){
 	global $wbf_styles_compiler;
 	if(isset($wbf_styles_compiler) && $wbf_styles_compiler instanceof Styles_Compiler){
 		if($wbf_styles_compiler->base_compiler instanceof Less_Compiler){
-			$result = of_generate_style_file($values);
+			$bFileUpdated = of_generate_style_file($values);
+			if(!$bFileUpdated){
+				Utilities::admin_show_message(sprintf(__("Unable to create or update the theme options style file (%s).","wbf"),of_get_styles_output_file()),"error");
+			}else{
+				Utilities::admin_show_message(__("Theme options style file updated successfully!.","wbf"),"updated");
+			}
 			$recompile_theme_styles = true;
-		}else{
-			$result = false;
 		}
 		//Todo: make cases for other compiler
 	}else{
 		$input_file_path = of_get_styles_src_file();
 		if(is_file($input_file_path)){
-			$result = of_generate_style_file($values);
-		}else{
-			$result = false;
+			$bFileUpdated = of_generate_style_file($values);
+			if(!$bFileUpdated){
+				Utilities::admin_show_message(sprintf(__("Unable to create or update the theme options style file (%s).","wbf"),of_get_styles_output_file()),"error");
+			}else{
+				Utilities::admin_show_message(__("Theme options style file updated successfully!.","wbf"),"updated");
+			}
 		}
 	}
-	if($result && $recompile_theme_styles){
+	if($recompile_theme_styles){
 		of_recompile_styles();
 	}
 }
@@ -434,7 +440,7 @@ function of_get_styles_file_name(){
 		return $ext;
 	});
 	$file_extension = apply_filters("wbf/modules/options/theme_options_output_file_extension",$file_extension);
-	$file_name = apply_filters("wbf/modules/options/theme_options_output_file_name","theme-options".$file_extension,$file_extension);
+	$file_name = apply_filters("wbf/modules/options/theme_options_output_file_name","theme-options",$file_extension);
 	return $file_name.".".$file_extension;
 }
 
