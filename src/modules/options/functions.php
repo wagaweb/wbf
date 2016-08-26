@@ -10,6 +10,8 @@
  */
 
 namespace WBF\modules\options;
+use WBF\components\compiler\less\Less_Compiler;
+use WBF\components\compiler\Styles_Compiler;
 use WBF\components\utils\Utilities;
 use WBF\modules\components\ComponentFactory;
 use \WBF\modules\components\ComponentsManager;
@@ -226,15 +228,14 @@ function of_options_save($option, $old_value, $value){
 	 * Recompile styles if needed
 	 */
 	if($must_recompile_flag){
-		of_recompile_styles($value);
+		of_update_style_file($value,true);
 	}
 
 	/*
 	 * Create\update a simple css file if needed
 	 */
 	if($must_update_styles_flag){
-		//Todo: implement this
-		//of_create_styles("css");
+		of_update_style_file($value);
 	}
 
 	/*
@@ -278,88 +279,123 @@ function of_options_save($option, $old_value, $value){
 }
 
 /**
- * Generate a new _theme-options-generated.less and recompile the styles
+ * Update the default style file associated with the options module.
+ * If a compiler is set, then it recompile the theme styles as well.
+ *
+ * @uses of_create_styles
  *
  * @param $values
- * @param bool|false $release release the compiler after? Default to "false". If "false" the compiler release the lock itself if necessary.
- * @uses of_create_styles
+ * @param bool $recompile_theme_styles force the styles recompilation
  */
-function of_recompile_styles($values,$release = false){
+function of_update_style_file($values, $recompile_theme_styles = false){
+	global $wbf_styles_compiler;
+	if(isset($wbf_styles_compiler) && $wbf_styles_compiler instanceof Styles_Compiler){
+		if($wbf_styles_compiler->base_compiler instanceof Less_Compiler){
+			$result = of_generate_style_file($values);
+			$recompile_theme_styles = true;
+		}else{
+			$result = false;
+		}
+		//Todo: make cases for other compiler
+	}else{
+		$input_file_path = of_get_styles_src_file();
+		if(is_file($input_file_path)){
+			$result = of_generate_style_file($values);
+		}else{
+			$result = false;
+		}
+	}
+	if($result && $recompile_theme_styles){
+		of_recompile_styles();
+	}
+}
+
+/**
+ * Recompile the styles
+ *
+ * @param bool|false $release release the compiler after? Default to "false". If "false" the compiler release the lock itself if necessary.
+ */
+function of_recompile_styles($release = false){
+	global $wbf_styles_compiler;
 	//Todo: what happens when no compiler is set?
-	$result = of_create_styles("less",$values);
-	if($result){
-		//Then, compile less
-		if(isset($GLOBALS['wbf_styles_compiler']) && $GLOBALS['wbf_styles_compiler']){
-			global $wbf_styles_compiler;
-			$wbf_styles_compiler->compile();
-			if($release) $wbf_styles_compiler->release_lock();
+	if(isset($wbf_styles_compiler) && $wbf_styles_compiler instanceof Styles_Compiler){
+		$wbf_styles_compiler->compile();
+		if($release){
+			$wbf_styles_compiler->release_lock();
 		}
 	}
 }
 
 /**
- * Generate a new style file for the theme options
- *
- * @param array|null $values
- * @param string $type
- *
- * @use of_generate_less_file
- *
- * @return bool|string
+ * Get the theme options style file source path
+ * @return string
  */
-function of_create_styles($type = "css", $values = null){
+function of_get_styles_src_file(){
 	$input_file_path = apply_filters("wbf/theme_options/styles/input_path",of_styles_get_default_input_path());
-	$output_file_path = apply_filters("wbf/theme_options/styles/output_path",of_styles_get_default_output_path());
-	switch($type){
-		case "css":
-			//Todo: implement the creation of a simple css file
-			break;
-		case "less":
-			return of_generate_less_file($values,$input_file_path,$output_file_path); //Create a theme-options-generated.less file
-			break;
-		case "sass":
-			//Todo: implement the creation of a sass file
-			break;
-	}
-	return false;
+	return $input_file_path;
 }
 
 /**
- * Return the default path for _theme-options-generated.less.cmp
+ * Get the theme options style file output path
+ * @return string
+ */
+function of_get_styles_output_file(){
+	$output_file_path = apply_filters("wbf/theme_options/styles/output_path",of_styles_get_default_output_path());
+	return $output_file_path;
+}
+
+/**
+ * Return the default path for _theme-options.src
  *
  * @return string
  */
 function of_styles_get_default_input_path(){
-	$input_file_path = rtrim(get_stylesheet_directory(),"/")."/"."_theme-options-generated.less.cmp";
+	//$input_file_path = rtrim(get_stylesheet_directory(),"/")."/"."_theme-options-generated.less.cmp";
+	$input_file_path = rtrim(get_stylesheet_directory(),"/")."/"."_theme-options.src";
 	$input_file_path = apply_filters("wbf/modules/options/theme_options_input_file_location/main",$input_file_path);
 	return $input_file_path;
 }
 
 /**
- * Return the default path for _theme-options-generated.less.cmp in parent theme
+ * Return the default path for _theme-options.src in parent theme
  *
  * @return string
  */
 function of_styles_get_parent_default_input_path(){
-	$input_file_path = rtrim(get_template_directory(),"/")."/"."_theme-options-generated.less.cmp";
+	//$input_file_path = rtrim(get_template_directory(),"/")."/"."_theme-options-generated.less.cmp";
+	$input_file_path = rtrim(get_template_directory(),"/")."/"."_theme-options.src";
 	$input_file_path = apply_filters("wbf/modules/options/theme_options_input_file_location/child",$input_file_path);
 	return $input_file_path;
 }
 
 /**
- * Return the default path for theme-options-generated.less
+ * Return the default path for _theme-options.src parsed file
  *
  * @return string
  */
 function of_styles_get_default_output_path(){
+	//Assemble the file name:
+	$file_extension = call_user_func(function(){
+		global $wbf_styles_compiler;
+		$ext = "css";
+		if(isset($wbf_styles_compiler) && $wbf_styles_compiler instanceof Styles_Compiler){
+			if($wbf_styles_compiler->base_compiler instanceof Less_Compiler){
+				$ext = "less";
+			}
+			//Todo: make cases for other compiler
+		}
+		return $ext;
+	});
+	$file_name = apply_filters("wbf/modules/options/theme_options_output_file_name","theme-options".$file_extension,$file_extension);
+	//Assemble the path:
 	if(is_multisite()){
 		$blogname = wbf_get_sanitized_blogname();
 		if(!isset($output_file_path) || empty($output_file_path)){
-			$output_file_path = WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR."/mu/{$blogname}-theme-options-generated.less";
+			$output_file_path = WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR."/mu/{$blogname}-{$file_name}.{$file_extension}";
 		}
 	}else{
 		if(!isset($output_file_path) || empty($output_file_path)){
-			$output_file_path = WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR."/theme-options-generated.less";
+			$output_file_path = WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR."/{$file_name}.{$file_extension}";
 		}
 	}
 	return $output_file_path;
@@ -409,14 +445,14 @@ function of_parse_generated_file($parsed_line,$line,$matches,$filepath,$inputFil
  *
  * @return bool|string
  */
-function of_generate_less_file($value = null,$input_file_path = null,$output_file_path = null,$output_type = "FILE"){
+function of_generate_style_file($value = null,$input_file_path = null,$output_file_path = null,$output_type = "FILE"){
 	if(!isset($value) || empty($value)) $value = Framework::get_options_values();
 
 	if(!isset($input_file_path) || empty($input_file_path)){
-		$input_file_path = of_styles_get_default_input_path();
+		$input_file_path = of_get_styles_src_file();
 	}
 	if(!isset($output_file_path) || empty($output_file_path)){
-		$output_file_path = of_styles_get_default_output_path();
+		$output_file_path = of_get_styles_output_file();
 	}
 
 	if(!is_array($value)) return false;
