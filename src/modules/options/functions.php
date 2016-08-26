@@ -309,6 +309,8 @@ function of_update_style_file($values, $recompile_theme_styles = false){
 			}else{
 				Utilities::admin_show_message(__("Theme options style file updated successfully!.","wbf"),"updated");
 			}
+		}else{
+			Utilities::admin_show_message(sprintf(__("Unable to find the theme options style source file (%s).","wbf"),$input_file_path()),"error");
 		}
 	}
 	if($recompile_theme_styles){
