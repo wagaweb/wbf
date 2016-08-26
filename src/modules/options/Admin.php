@@ -90,6 +90,8 @@ class Admin{
 				Utilities::admin_show_message(__( 'Options saved successfully!', 'wbf' ),"updated");
 			}elseif($r && isset($_POST['restore_theme_options'])){
 				Utilities::admin_show_message(__( 'Default options restored.', 'wbf' ),"updated");
+			}elseif($r && isset($_POST['reset_theme_options'])){
+				Utilities::admin_show_message(__( 'Theme options has been cleared and restored to default values.', 'wbf' ),"updated");
 			}else{
 				Utilities::admin_show_message(__( 'There was an error during options saving.', 'wbf' ),"error");
 			}
