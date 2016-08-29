@@ -381,7 +381,7 @@ class ComponentsManager {
 	 */
 	private static function override_theme_options($theme_options){
 		$theme = wp_get_theme();
-		$component_options = get_option("wbf_".$theme->get_stylesheet()."_components_options",true);
+		$component_options = get_option("wbf_".$theme->get_stylesheet()."_components_options",[]);
 		if(empty($component_options)) return $theme_options;
 
 		//When theme options are saved, $value contains some wrong values for components options. We need to use the auxiliary array to restore those values:
