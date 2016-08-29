@@ -259,7 +259,7 @@ class FontSelector
 		$os_fonts = self::getOSFonts();
 		$g_fonts = $gfontfetcher->get_webfonts();
 		if(!$g_fonts){
-			$g_fonts = new stdClass();
+			$g_fonts = new \stdClass();
 			$g_fonts->items = array();
 		}
 		$fonts = array_merge($os_fonts,$g_fonts->items);
