@@ -1,5 +1,13 @@
 == Change log ==
 
+Version 0.14.1 - 29/07/2016
+---------------------------------
+- Tweak: Nuovo meccanismo per la compilazione dei file LESS
+
+Version 0.14.0 - 08/2016
+---------------------------------
+- Refactoring in PSR4
+
 Version 0.13.19 - 22/07/2016
 ---------------------------------
 - Fix: Ora i behavior non tornano più array vuoti.
