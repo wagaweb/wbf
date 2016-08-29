@@ -63,14 +63,14 @@ class PluginCore {
 	/**
 	 * @var string
 	 */
-	const version = "0.13.13";
+	const version = "0.14.0";
 
 	/**
 	 * Return a new instance of WBF
 	 *
 	 * @param array $args options that will be used in startup
 	 *
-	 * @return WBF
+	 * @return self
 	 */
 	public static function getInstance($args = []){
 		static $instance = null;
