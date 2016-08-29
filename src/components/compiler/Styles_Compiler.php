@@ -146,7 +146,7 @@ class Styles_Compiler{
 			$wpe = new WP_Error( 'compile-failed', $e->getMessage() );
 			if ( current_user_can( 'manage_options' ) ) {
 				if(is_admin()){
-					Utilities::admin_show_message(__( 'Theme style files not compiled!', 'wbf' ),"error");
+					Utilities::admin_show_message( sprintf(__( 'Theme style files not compiled! Error: %s', 'wbf' ),$e->getMessage()),"error");
 				}else{
 					echo '<div class="alert alert-warning"><p>'.$wpe->get_error_message().'</p></div>';
 				}
