@@ -147,6 +147,7 @@ class PluginCore {
 		add_action( "init", [$this,"init"], 11 );
 
 		add_action( 'wp_enqueue_scripts', [$this,"register_libs"] );
+		add_action( "admin_enqueue_scripts", [$this, "enqueue_admin_assets"], 99);
 		add_action( 'admin_enqueue_scripts', [$this,"register_libs"] );
 
 		/*
@@ -570,12 +571,17 @@ class PluginCore {
 	 *
 	 */
 
+	/**
+	 * Apply some hooks to the current theme
+	 *
+	 * @called at 'after_setup_theme', 11
+	 */
 	function do_global_theme_customizations(){
 		// Global Customization
-		wbf_locate_file( '/src/public/theme-customs.php', true );
+		wbf_locate_file( '/src/includes/theme-customs.php', true );
 
 		// Email encoder
-		wbf_locate_file( '/src/public/email-encoder.php', true );
+		wbf_locate_file( '/src/includes/email-encoder.php', true );
 	}
 
 	/**
@@ -604,14 +610,6 @@ class PluginCore {
 
 		// Make framework available for translation.
 		load_textdomain( 'wbf', self::get_path() . 'languages/wbf-'.get_locale().".mo");
-
-		// Load the CSS
-		wbf_locate_file( '/src/public/public-styles.php', true );
-		wbf_locate_file( '/src/admin/adm-styles.php', true );
-
-		// Load scripts
-		//locate_template( '/wbf/public/scripts.php', true );
-		wbf_locate_file( '/src/admin/adm-scripts.php', true );
 
 		if($this->options['do_global_theme_customizations']){
 			$this->do_global_theme_customizations();
@@ -658,6 +656,36 @@ class PluginCore {
 
 		if(function_exists('\WBF\modules\options\of_check_options_deps')) \WBF\modules\options\of_check_options_deps(); //Check if theme options dependencies are met
 		$GLOBALS['wbf_notice_manager']->enqueue_notices(); //Display notices
+	}
+
+	/**
+	 * Enqueues admin relative assets
+	 */
+	function enqueue_admin_assets(){
+		$assets = [
+			"wbf-admin" => [
+				'uri' => defined("SCRIPT_DEBUG") && SCRIPT_DEBUG ? Resources::getInstance()->prefix_url("assets/dist/js/wbf-admin.js") : Resources::getInstance()->prefix_url("assets/dist/js/wbf-admin.min.js"),
+				'path' => defined("SCRIPT_DEBUG") && SCRIPT_DEBUG ? Resources::getInstance()->prefix_path("assets/dist/js/wbf-admin.js") : Resources::getInstance()->prefix_path("assets/dist/js/wbf-admin.min.js"),
+				'deps' => apply_filters("wbf/js/admin/deps",["jquery","backbone","underscore"]),
+				'i10n' => [
+					'name' => 'wbfData',
+					'params' => apply_filters("wbf/js/admin/localization",[
+						'ajaxurl' => admin_url('admin-ajax.php'),
+						'wpurl' => get_bloginfo('wpurl'),
+						'wp_screen' => function_exists("get_current_screen") ? get_current_screen() : null,
+						'isAdmin' => is_admin()
+					])
+				],
+				'type' => 'js',
+			],
+			'wbf-admin-style' => [
+				'uri' => Resources::getInstance()->prefix_url('assets/dist/css/admin.css'),
+				'path' => Resources::getInstance()->prefix_path('assets/dist/css/admin.css'),
+				'type' => 'css'
+			]
+		];
+		$am = new AssetsManager($assets);
+		$am->enqueue();
 	}
 
 	/**
