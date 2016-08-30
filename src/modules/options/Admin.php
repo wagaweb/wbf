@@ -21,6 +21,12 @@ class Admin{
 	public function init() {
 		$all_options = Framework::get_registered_options();
 
+		add_filter( 'wbf/js/admin/deps', function($deps){
+			$deps[] = "wp-color-picker";
+			$deps[] = "spectrum-js";
+			return $deps;
+		});
+
 		// Checks if options are available
 		if ( $all_options ) {
 			// Add the options page and menu item.
@@ -29,10 +35,6 @@ class Admin{
 			// Add the required scripts and styles
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ) );
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
-			add_filter( 'wbf/js/admin/deps', function($deps){
-				$deps[] = "wp-color-picker";
-				return $deps;
-			});
 
 			// Settings need to be registered after admin_init
 			add_action( 'toplevel_page_wbf_options', array( $this, 'process_options_save' ) );
