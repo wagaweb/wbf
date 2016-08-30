@@ -10,7 +10,7 @@
  * Plugin Name:       Waboot Framework
  * Plugin URI:        http://www.waga.it
  * Description:       WordPress Extension Framework
- * Version:           0.14.1
+ * Version:           0.14.2
  * Author:            WAGA
  * Author URI:        http://www.waga.com/
  * License:           GPL-2.0+
