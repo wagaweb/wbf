@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Backward compatibility for wbf_breadcrumb_trail
+ * Backward compatibility for trail
  * @param array $args
  */
 
@@ -12,7 +12,7 @@ if(!function_exists("waboot_breadcrumb_trail")):
 	 * @param array $args
 	 */
 	function waboot_breadcrumb_trail( $args = array() ){
-		\WBF\components\breadcrumb\wbf_breadcrumb_trail($args);
+		\WBF\components\breadcrumb\trail($args);
 	}
 endif;
 
