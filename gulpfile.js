@@ -127,7 +127,7 @@ gulp.task('compile_js', ['browserify'] ,function(){
         .pipe(rename({
             suffix: ".min"
         }))
-        .pipe(gulp.dest('./assets/dist/js'));
+        .pipe(gulp.dest('./assets/dist/js/includes'));
 
     return merge(admin_js,spectrum);
 });

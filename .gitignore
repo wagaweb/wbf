@@ -10,7 +10,7 @@ assets/dist/css/*
 assets/dist/js/wbf-admin.js
 assets/dist/js/wbf-admin.min.js
 assets/dist/js/wbf-admin.min.js.map
-assets/dist/js/spectrum.min.js
+assets/dist/js/includes/spectrum.min.js
 
 ############
 ## VENDORS (composer)
