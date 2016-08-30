@@ -49,12 +49,12 @@ class Advanced_Color {
 
 	public function scripts() {
 		$res = [
-			'spectrum_js' => [
-				'uri' => Resources::getInstance()->prefix_url('assets/dist/js/spectrum.min.js'),
-				'path' => Resources::getInstance()->prefix_path('assets/dist/js/spectrum.min.js'),
+			'spectrum-js' => [
+				'uri' => Resources::getInstance()->prefix_url('assets/dist/js/includes/spectrum.min.js'),
+				'path' => Resources::getInstance()->prefix_path('assets/dist/js/includes/spectrum.min.js'),
 				'type' => 'js'
 			],
-			'spectrum_css' => [
+			'spectrum-css' => [
 				'uri' => Resources::getInstance()->prefix_url('vendor/spectrum/spectrum.css'),
 				'path' => Resources::getInstance()->prefix_path('vendor/spectrum/spectrum.css'),
 				'type' => 'css'
