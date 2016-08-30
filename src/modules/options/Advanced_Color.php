@@ -25,6 +25,11 @@ class Advanced_Color {
 	 */
 	public function init() {
 		add_action( 'admin_enqueue_scripts', array( $this, 'scripts' ) );
+		// Add the required scripts and styles
+		add_filter( 'wbf/js/admin/deps', function($deps){
+			$deps[] = "spectrum-js";
+			return $deps;
+		});
 	}
 
 
