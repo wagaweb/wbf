@@ -1,6 +1,7 @@
 <?php
 
 namespace WBF\components\assets;
+use WBF\components\utils\Utilities;
 
 /**
  * Class AssetsManager
@@ -69,7 +70,10 @@ class AssetsManager {
 				'in_footer' => false, //Used for scripts
 				'enqueue' => true //If FALSE the script\css will only be registered
 			]);
-			if($param['path'] != "" && !file_exists($param['path'])) continue;
+			if($param['path'] != "" && !file_exists($param['path'])){
+				Utilities::admin_show_message("Asset '$name' not found in '".$param['path']."'","error");
+				continue;
+			}
 			if(isset($param['version']) && $param['version']){
 				$version = $param['version'];
 			}else{
