@@ -2,6 +2,7 @@
 
 Version 0.14.2 - 30/07/2016
 ---------------------------------
+- Fix: Fixato caricamento di alcuni stili e css di admin
 - Tweak: Eliminati file ridondanti
 
 Version 0.14.1 - 29/07/2016
