@@ -1,5 +1,9 @@
 == Change log ==
 
+Version 0.14.2 - 30/07/2016
+---------------------------------
+- Tweak: Eliminati file ridondanti
+
 Version 0.14.1 - 29/07/2016
 ---------------------------------
 - Tweak: Nuovo meccanismo per la compilazione dei file LESS
