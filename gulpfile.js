@@ -122,6 +122,14 @@ gulp.task('compile_js', ['browserify'] ,function(){
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('./assets/dist/js'));
 
+    var wbfgmap = gulp.src("assets/src/js/includes/wbfgmap/*.js")
+        .pipe(concat('wbfgmap.js'))
+        .pipe(uglify())
+        .pipe(rename({
+            suffix: ".min"
+        }))
+        .pipe(gulp.dest('./assets/dist/js/includes'));
+
     var spectrum = gulp.src("assets/src/js/spectrum.js")
         .pipe(uglify())
         .pipe(rename({
