@@ -180,6 +180,10 @@ class Resources{
 		return false;
 	}
 
+    function get_working_directory_uri(){
+        return path_to_url($this->get_working_directory());
+    }
+
 	private function __clone(){}
 	private function __wakeup(){}
 }
