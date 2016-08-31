@@ -42,7 +42,7 @@ add_action( "updated_option", __NAMESPACE__.'\\of_options_save', 9999, 3 );
 /*
  * Style compiler integration
  */
-add_action( "wbf/compiler/pre_compile", __NAMESPACE__.'\\of_create_styles', 9999, 3 );
+add_action( "wbf/compiler/pre_compile", __NAMESPACE__.'\\of_generate_style_file', 9999, 3 );
 add_filter( "wbf/compiler/parser/line/import", __NAMESPACE__.'\\of_parse_generated_file', 10, 5 );
 
 /*

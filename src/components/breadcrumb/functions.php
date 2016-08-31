@@ -19,7 +19,7 @@ require_once( dirname(__FILE__).'/vendor/breadcrumb-trail.php');
  *                     - additional_classes: a string (space separated) of classes to add to breadcrumb container (since 0.3.10)
  * @return void
  */
-function wbf_breadcrumb_trail($args = []){
+function trail($args = []){
 	if(function_exists('is_bbpress') && is_bbpress()){
 		$breadcrumb = new \bbPress_Breadcrumb_Trail( $args );
 	}

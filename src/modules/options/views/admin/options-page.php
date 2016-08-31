@@ -1,6 +1,7 @@
 <div id="optionsframework-wrap" class="wrap">
 	<div class="optionsframework-header">
 		<h2><?php echo esc_html( $menu['page_title'] ); ?></h2>
+		<?php WBF()->notice_manager->show_notices(); ?>
 	</div>
 	<div id="optionsframework-content-wrapper">
 		<div class="nav-tab-wrapper">

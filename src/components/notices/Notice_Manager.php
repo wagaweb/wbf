@@ -55,6 +55,7 @@ class Notice_Manager {
          foreach($this->notices as $id => $notice){
             switch($notice['level']){
                 case 'updated':
+                case 'success':
                     ?>
                     <div class="updated">
                         <p><?php echo $notice['message']; ?></p>
@@ -69,6 +70,7 @@ class Notice_Manager {
                     <?php
                     break;
                 case 'nag':
+                case 'warning':
                     ?>
                     <div class="update-nag">
                         <p><?php echo $notice['message']; ?></p>

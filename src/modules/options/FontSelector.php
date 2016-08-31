@@ -176,7 +176,7 @@ class FontSelector
 				$selected_font->category = isset($value['category']) ? $value['category'] : "";
 			}
 		}else{
-			$selected_font = new stdClass();
+			$selected_font = new \stdClass();
 			$selected_font->family = $defaults['family'];
 			$selected_font->variants = $defaults['style'];
 			$selected_font->subsets = $defaults['charset'];
@@ -259,7 +259,7 @@ class FontSelector
 		$os_fonts = self::getOSFonts();
 		$g_fonts = $gfontfetcher->get_webfonts();
 		if(!$g_fonts){
-			$g_fonts = new stdClass();
+			$g_fonts = new \stdClass();
 			$g_fonts->items = array();
 		}
 		$fonts = array_merge($os_fonts,$g_fonts->items);

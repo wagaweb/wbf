@@ -25,6 +25,11 @@ class Advanced_Color {
 	 */
 	public function init() {
 		add_action( 'admin_enqueue_scripts', array( $this, 'scripts' ) );
+		// Add the required scripts and styles
+		add_filter( 'wbf/js/admin/deps', function($deps){
+			$deps[] = "spectrum-js";
+			return $deps;
+		});
 	}
 
 
@@ -49,12 +54,12 @@ class Advanced_Color {
 
 	public function scripts() {
 		$res = [
-			'spectrum_js' => [
-				'uri' => Resources::getInstance()->prefix_url('assets/dist/js/spectrum.min.js'),
-				'path' => Resources::getInstance()->prefix_path('assets/dist/js/spectrum.min.js'),
+			'spectrum-js' => [
+				'uri' => Resources::getInstance()->prefix_url('assets/dist/js/includes/spectrum.min.js'),
+				'path' => Resources::getInstance()->prefix_path('assets/dist/js/includes/spectrum.min.js'),
 				'type' => 'js'
 			],
-			'spectrum_css' => [
+			'spectrum-css' => [
 				'uri' => Resources::getInstance()->prefix_url('vendor/spectrum/spectrum.css'),
 				'path' => Resources::getInstance()->prefix_path('vendor/spectrum/spectrum.css'),
 				'type' => 'css'

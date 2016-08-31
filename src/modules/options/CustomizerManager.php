@@ -209,7 +209,7 @@ class CustomizerManager{
 	 */
 	public static function styles_preview_pre_callback($args){
 		//Create the file with the new values for the preview
-		of_create_styles("less",Framework::get_options_values_filtered());
+		of_generate_style_file(Framework::get_options_values_filtered());
 	}
 
 	/**
@@ -219,6 +219,6 @@ class CustomizerManager{
 	 */
 	public static function styles_preview_post_callback($args,$css){
 		//Restore the file
-		of_create_styles("less");
+		of_generate_style_file();
 	}
 }

@@ -29,7 +29,7 @@ class License_Manager{
 				$type = $_POST['type'];
 				$code = trim($_POST['code']);
 				self::update($slug,$type,$code);
-				$wbf_notice_manager->add_notice("license_updated",_x("License successfully updated","License","wbf"),"updated","_flash_");
+				$wbf_notice_manager->add_notice("license_updated",_x("License updated!","License","wbf"),"updated","_flash_");
 			}catch(License_Exception $e){
 				$wbf_notice_manager->add_notice("license_not_updated",$e->getMessage(),"error","_flash_");
 			}
@@ -40,7 +40,7 @@ class License_Manager{
 				$slug = $_POST['slug'];
 				$type = $_POST['type'];
 				self::delete($slug,$type);
-				$wbf_notice_manager->add_notice("license_deleted",_x("License successfully deleted","License","wbf"),"updated","_flash_");
+				$wbf_notice_manager->add_notice("license_deleted",_x("License deleted!","License","wbf"),"updated","_flash_");
 			}catch(License_Exception $e){
 				$wbf_notice_manager->add_notice("license_not_deleted",$e->getMessage(),"error","_flash_");
 			}

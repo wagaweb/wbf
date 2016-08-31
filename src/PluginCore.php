@@ -3,6 +3,7 @@
 namespace WBF;
 
 use WBF\components\assets\AssetsManager;
+use WBF\components\compiler\Styles_Compiler;
 use WBF\components\customupdater\Plugin_Update_Checker;
 use WBF\components\license\License_Manager;
 use WBF\components\mvc\HTMLView;
@@ -56,6 +57,11 @@ class PluginCore {
 	var $resources;
 
 	/**
+	 * @var Styles_Compiler
+	 */
+	var $Styles_Compiler;
+
+	/**
 	 * @var string
 	 */
 	var $wp_menu_slug = "wbf_options";
@@ -63,7 +69,7 @@ class PluginCore {
 	/**
 	 * @var string
 	 */
-	const version = "0.14.0";
+	const version = "0.14.2";
 
 	/**
 	 * Return a new instance of WBF
@@ -141,6 +147,7 @@ class PluginCore {
 		add_action( "init", [$this,"init"], 11 );
 
 		add_action( 'wp_enqueue_scripts', [$this,"register_libs"] );
+		add_action( "admin_enqueue_scripts", [$this, "enqueue_admin_assets"], 99);
 		add_action( 'admin_enqueue_scripts', [$this,"register_libs"] );
 
 		/*
@@ -213,11 +220,13 @@ class PluginCore {
 	 * @param $args
 	 * @param null $base_compiler
 	 */
-	static function set_styles_compiler($args,$base_compiler = null){
+	function set_styles_compiler($args,$base_compiler = null){
 		global $wbf_styles_compiler;
 		if(!isset($wbf_styles_compiler) || !$wbf_styles_compiler){
-			$GLOBALS['wbf_styles_compiler'] = new components\compiler\Styles_Compiler($args,$base_compiler);
+			$wbf_styles_compiler = new components\compiler\Styles_Compiler($args,$base_compiler);
 		}
+		$this->Styles_Compiler = &$wbf_styles_compiler;
+		$wbf_styles_compiler->listen_requests();
 	}
 
 	/**
@@ -562,12 +571,17 @@ class PluginCore {
 	 *
 	 */
 
+	/**
+	 * Apply some hooks to the current theme
+	 *
+	 * @called at 'after_setup_theme', 11
+	 */
 	function do_global_theme_customizations(){
 		// Global Customization
-		wbf_locate_file( '/src/public/theme-customs.php', true );
+		wbf_locate_file( '/src/includes/theme-customs.php', true );
 
 		// Email encoder
-		wbf_locate_file( '/src/public/email-encoder.php', true );
+		wbf_locate_file( '/src/includes/email-encoder.php', true );
 	}
 
 	/**
@@ -596,14 +610,6 @@ class PluginCore {
 
 		// Make framework available for translation.
 		load_textdomain( 'wbf', self::get_path() . 'languages/wbf-'.get_locale().".mo");
-
-		// Load the CSS
-		wbf_locate_file( '/src/public/public-styles.php', true );
-		wbf_locate_file( '/src/admin/adm-styles.php', true );
-
-		// Load scripts
-		//locate_template( '/wbf/public/scripts.php', true );
-		wbf_locate_file( '/src/admin/adm-scripts.php', true );
 
 		if($this->options['do_global_theme_customizations']){
 			$this->do_global_theme_customizations();
@@ -653,6 +659,36 @@ class PluginCore {
 	}
 
 	/**
+	 * Enqueues admin relative assets
+	 */
+	function enqueue_admin_assets(){
+		$assets = [
+			"wbf-admin" => [
+				'uri' => defined("SCRIPT_DEBUG") && SCRIPT_DEBUG ? Resources::getInstance()->prefix_url("assets/dist/js/wbf-admin.js") : Resources::getInstance()->prefix_url("assets/dist/js/wbf-admin.min.js"),
+				'path' => defined("SCRIPT_DEBUG") && SCRIPT_DEBUG ? Resources::getInstance()->prefix_path("assets/dist/js/wbf-admin.js") : Resources::getInstance()->prefix_path("assets/dist/js/wbf-admin.min.js"),
+				'deps' => apply_filters("wbf/js/admin/deps",["jquery","backbone","underscore"]),
+				'i10n' => [
+					'name' => 'wbfData',
+					'params' => apply_filters("wbf/js/admin/localization",[
+						'ajaxurl' => admin_url('admin-ajax.php'),
+						'wpurl' => get_bloginfo('wpurl'),
+						'wp_screen' => function_exists("get_current_screen") ? get_current_screen() : null,
+						'isAdmin' => is_admin()
+					])
+				],
+				'type' => 'js',
+			],
+			'wbf-admin-style' => [
+				'uri' => Resources::getInstance()->prefix_url('assets/dist/css/admin.css'),
+				'path' => Resources::getInstance()->prefix_path('assets/dist/css/admin.css'),
+				'type' => 'css'
+			]
+		];
+		$am = new AssetsManager($assets);
+		$am->enqueue();
+	}
+
+	/**
 	 * Register libraries used by WBF ecosystem
 	 */
 	function register_libs(){
@@ -689,13 +725,14 @@ class PluginCore {
 				'enqueue' => false,
 				'in_footer' => true,
 			],
+			/* For now, this is included via Advanced_Color.php
 			"spectrum-js" => [
-			"uri" => $res->prefix_url("/assets/dist/js/includes/spectrum.min.js"),
-			"path" => $res->prefix_path("/assets/dist/js/includes/spectrum.min.js"),
-			"type" => "js",
-			'enqueue' => false,
-			'in_footer' => true,
-			]
+				"uri" => $res->prefix_url("/assets/dist/js/includes/spectrum.min.js"),
+				"path" => $res->prefix_path("/assets/dist/js/includes/spectrum.min.js"),
+				"type" => "js",
+				'enqueue' => false,
+				'in_footer' => true,
+			]*/
 		];
 		if(defined("WBF_ENV") && WBF_ENV == "dev" || SCRIPT_DEBUG){
 			$libs["wbfgmapmc"] = [

@@ -2,6 +2,7 @@
 
 namespace WBF\components\compiler;
 use \Exception;
+use WBF\components\utils\Utilities;
 use \WP_Error;
 
 class Styles_Compiler{
@@ -46,13 +47,13 @@ class Styles_Compiler{
 
 		$this->maybe_release_lock();
 
-		$this->listen_get_parameters();
+		return $this;
 	}
 
 	/**
 	 * Performs action based on $_GET parameters
 	 */
-	function listen_get_parameters(){
+	function listen_requests(){
 		if (isset($_GET['compile']) && $_GET['compile'] == true) {
 			if (current_user_can('manage_options')) {
 				$this->compile();
@@ -129,13 +130,9 @@ class Styles_Compiler{
 			static $message_displayed = false;
 			if ( current_user_can( 'manage_options' ) && !$message_displayed) {
 				if(is_admin()){
-					if(isset($GLOBALS['option_page']) && $GLOBALS['option_page'] == 'optionsframework'){
-						add_settings_error('options-framework', 'save_options', __('Less files compiled successfully.', 'wbf'), 'updated fade');
-					}else{
-						add_action( 'admin_notices', '\WBF\includes\compiler\compiled_admin_notice');
-					}
+					Utilities::admin_show_message(__( 'Theme style files compiled successfully!', 'wbf' ),"updated");
 				}else{
-					echo '<div class="alert alert-success"><p>'.__('Theme styles files compiled successfully.', 'wbf').'</p></div>';
+					echo '<div class="alert alert-success"><p>'.__('Theme styles files compiled successfully!', 'wbf').'</p></div>';
 				}
 				$message_displayed = true;
 			}
@@ -149,11 +146,7 @@ class Styles_Compiler{
 			$wpe = new WP_Error( 'compile-failed', $e->getMessage() );
 			if ( current_user_can( 'manage_options' ) ) {
 				if(is_admin()){
-					if(isset($GLOBALS['option_page']) && $GLOBALS['option_page'] == 'optionsframework'){
-						add_settings_error('options-framework', 'save_options', $wpe->get_error_message(), 'error fade');
-					}else{
-						add_action( 'admin_notices', '\WBF\includes\compiler\compile_error_admin_notice');
-					}
+					Utilities::admin_show_message( sprintf(__( 'Theme style files not compiled! Error: %s', 'wbf' ),$e->getMessage()),"error");
 				}else{
 					echo '<div class="alert alert-warning"><p>'.$wpe->get_error_message().'</p></div>';
 				}
@@ -206,6 +199,7 @@ class Styles_Compiler{
 				}
 				if(is_admin()){
 					add_action( 'admin_notices', '\WBF\includes\compiler\cache_cleared_admin_notice');
+					Utilities::admin_show_message(__( 'Theme cache cleared successfully!', 'wbf' ),"updated");
 				}else{
 					echo '<div class="alert alert-success"><p>'.__('Theme cache cleared successfully!', 'wbf').'</p></div>';
 				}
@@ -324,32 +318,4 @@ class CompilerBusyException extends Exception{
 		}
 		parent::__construct($message, $code, $previous);
 	}
-}
-
-/*function wbf_get_compiled_stylesheet_name(){
-	return apply_filters("wbf_compiled_stylesheet_name",wp_get_theme()->stylesheet);
-}*/
-
-function compiled_admin_notice() {
-	?>
-	<div class="updated">
-		<p><?php _e( 'Theme style files compiled successfully!', 'wbf' ); ?></p>
-	</div>
-	<?php
-}
-
-function compile_error_admin_notice() {
-	?>
-	<div class="error">
-		<p><?php _e( 'Theme style files not compiled!', 'wbf' ); ?></p>
-	</div>
-	<?php
-}
-
-function cache_cleared_admin_notice() {
-	?>
-	<div class="updated">
-		<p><?php _e( 'Theme cache cleared successfully!', 'wbf' ); ?></p>
-	</div>
-	<?php
 }
