@@ -45,6 +45,7 @@ var paths = {
     //Build:
     build_dir: "./builds",
     build_pattern: [
+        "cache/wbf_font_cache.php",
         "assets/**",
         "src/**",
         "*.*",
