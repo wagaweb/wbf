@@ -309,7 +309,9 @@ class Behavior{
 				//values
 				$select_options = array();
 				foreach ($this->possible_values as $o) {
-					$select_options[$o['value']] = $o['name'];
+					if(isset($o['value'])){
+						$select_options[$o['value']] = isset($o['name']) ? $o['name'] : "no-name-specified";
+					}
 				}
 				$option['options'] = $select_options;
 				//defaults
