@@ -158,7 +158,8 @@ class Framework{
             // Allow setting/manipulating options via filters
 	        $orgzr->reset_section();
 	        $orgzr->reset_group();
-            $additional_options = apply_filters( 'of_options', [] ); //todo: will be deprecated
+	        $additional_options = [];
+            $additional_options = apply_filters( 'of_options', $additional_options ); //todo: will be deprecated
             $additional_options = apply_filters( 'wbf/modules/options/available', $additional_options );
 	        if(is_array($additional_options) && !empty($additional_options)){
 		        foreach($additional_options as $opt){
