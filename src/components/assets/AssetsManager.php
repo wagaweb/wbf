@@ -71,7 +71,11 @@ class AssetsManager {
 				'enqueue' => true //If FALSE the script\css will only be registered
 			]);
 			if($param['path'] != "" && !file_exists($param['path'])){
-				Utilities::add_admin_notice("style_{$name}_not_found","Asset '$name' not found in '".$param['path']."'","error",['category'=>'_flash_']);
+				if(is_admin()){
+					Utilities::add_admin_notice("style_{$name}_not_found","Asset '$name' not found in '".$param['path']."'","error",['category'=>'_flash_']);
+				}else{
+					trigger_error("Asset '$name' not found in '".$param['path']."'");
+				}
 				continue;
 			}
 			if(isset($param['version']) && $param['version']){
