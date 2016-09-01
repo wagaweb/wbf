@@ -13,10 +13,11 @@ use WBF\modules\options\Organizer;
 /**
  * Get a behaviour.
  *
- * @param $name
+ * @param string $name
+ * @param int $post_id
  * @param string $return (value OR array)
  *
- * @return array|bool|mixed|string
+ * @return mixed|\WP_Error the behavior value or \WP_Error. Returns the default value if behavior is not enable for current node (post,page...)
  */
 function get_behavior($name, $post_id = 0, $return = "value") {
 
@@ -44,22 +45,30 @@ function get_behavior($name, $post_id = 0, $return = "value") {
 		$b = $retrieved_behaviors[$name][$post_id];
 	}else{
 		$b = BehaviorsManager::get($name, $post_id);
-		$retrieved_behaviors[$name][$post_id] = $b;
+		if($post_id !== 0){
+			$retrieved_behaviors[$name][$post_id] = $b;
+		}
 	}
 
-	if($b instanceof Behavior){
-		if(!$b->is_enable_for_node($post_id)) $b->value = null;
-
-		$b = apply_filters("wbf/modules/behaviors/get",$b);
-		$b = apply_filters("wbf/modules/behaviors/get/".$b->name,$b);
+	if(!$b instanceof Behavior){
+		return new \WP_Error("behavior_is_not_an_object", "Unable to retrieve the behavior instance", ['post_id' => $post_id, 'name' => $name]);
 	}
 
-    if(!is_object($b) || !isset($b->value)){
-	    $retrieved_behaviors[$name][$post_id] = null;
-	    return null;
-    }
+	if(!isset($b->value)){
+		if(isset($retrieved_behaviors[$name]) && isset($retrieved_behaviors[$name][$post_id])){
+			unset($retrieved_behaviors[$name][$post_id]);
+		}
+		return new \WP_Error("unable_to_retrieve_behavior", "Unable to retrieve the behavior value", ['post_id' => $post_id, 'name' => $name, 'default' => $b->default]);
+	}
 
-	if($return == "value" && is_object($b) && isset($b->value)){
+	if(!$b->is_enable_for_node($post_id)){
+		$b->value = $b->default;
+	}
+
+	$b = apply_filters("wbf/modules/behaviors/get",$b);
+	$b = apply_filters("wbf/modules/behaviors/get/".$b->name,$b);
+
+	if($return == "value"){
 		$b->value = apply_filters("wbf/modules/behaviors/get/".$b->name."/value",$b->value);
 		return $b->value;
 	}else{

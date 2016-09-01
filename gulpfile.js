@@ -45,6 +45,7 @@ var paths = {
     //Build:
     build_dir: "./builds",
     build_pattern: [
+        "cache/wbf_font_cache.php",
         "assets/**",
         "src/**",
         "*.*",
@@ -63,6 +64,11 @@ var paths = {
         "vendor/acf/**/*",
         "!vendor/acf/lang/*",
         "vendor/codemirror/lib/*",
+        "vendor/codemirror/addon/hint/css-hint.js",
+        "vendor/codemirror/addon/hint/show-hint.js",
+        "vendor/codemirror/addon/hint/show-hint.css",
+        "vendor/codemirror/theme/ambiance.css",
+        "vendor/codemirror/mode/css/css.js",
         "vendor/spectrum/spectrum.css",
         "vendor/imagesloaded/*.js",
         "vendor/jquery-modal/*.js",
@@ -121,6 +127,14 @@ gulp.task('compile_js', ['browserify'] ,function(){
         }))
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('./assets/dist/js'));
+
+    var wbfgmap = gulp.src("assets/src/js/includes/wbfgmap/*.js")
+        .pipe(concat('wbfgmap.js'))
+        .pipe(uglify())
+        .pipe(rename({
+            suffix: ".min"
+        }))
+        .pipe(gulp.dest('./assets/dist/js/includes'));
 
     var spectrum = gulp.src("assets/src/js/spectrum.js")
         .pipe(uglify())
