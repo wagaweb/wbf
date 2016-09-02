@@ -22,6 +22,8 @@ class TemplatePlugin extends Plugin implements TemplatePlugin_Interface {
 		if(function_exists('is_woocommerce')){
 			$this->loader->add_filter( 'woocommerce_locate_template',$this,"override_wc_templates", 11, 3);
 		}
+		//Embedded support for template wrappers
+		$this->loader->add_action( 'init', $this, "maybe_attach_wrapper", 20 );
 	}
 
 	/**
@@ -103,7 +105,6 @@ class TemplatePlugin extends Plugin implements TemplatePlugin_Interface {
 
 		return $template;
 	}
-	
 
 	/**
 	 * Adds plugin templates to the pages cache in order to trick WordPress
@@ -272,5 +273,79 @@ class TemplatePlugin extends Plugin implements TemplatePlugin_Interface {
 			'std_templates' => $this->templates
 		];
 		return $tpl;
+	}
+
+	/**
+	 * Checks if can attach the wrapper
+	 *
+	 * @hooked 'init', 20
+	 */
+	public function maybe_attach_wrapper(){
+		$slug = $this->get_plugin_name();
+		if(!has_action( $slug.'/before_main_content')){
+			add_action( $slug.'/before_main_content', [$this, 'render_wrapper_start'] );
+		}
+		if(!has_action( $slug.'/after_main_content')){
+			add_action( $slug.'/after_main_content', [$this, 'render_wrapper_end'] );
+		}
+	}
+
+	/**
+	 * Render the wrapper start for templates
+	 */
+	public function render_wrapper_start(){
+		switch( wp_get_theme()->get_template() ) {
+			case 'twentyeleven' :
+				echo '<div id="primary"><div id="content" role="main" class="twentyeleven">';
+				break;
+			case 'twentytwelve' :
+				echo '<div id="primary" class="site-content"><div id="content" role="main" class="twentytwelve">';
+				break;
+			case 'twentythirteen' :
+				echo '<div id="primary" class="site-content"><div id="content" role="main" class="entry-content twentythirteen">';
+				break;
+			case 'twentyfourteen' :
+				echo '<div id="primary" class="content-area"><div id="content" role="main" class="site-content twentyfourteen"><div class="tfwc">';
+				break;
+			case 'twentyfifteen' :
+				echo '<div id="primary" role="main" class="content-area twentyfifteen"><div id="main" class="site-main t15wc">';
+				break;
+			case 'twentysixteen' :
+				echo '<div id="primary" class="content-area twentysixteen"><main id="main" class="site-main" role="main">';
+				break;
+			default :
+				echo '<div id="container"><div id="content" role="main">';
+				break;
+		}
+	}
+
+	/**
+	 * Render the wrapper end for templates
+	 */
+	public function render_wrapper_end(){
+		switch( wp_get_theme()->get_template() ) {
+			case 'twentyeleven' :
+				echo '</div></div>';
+				break;
+			case 'twentytwelve' :
+				echo '</div></div>';
+				break;
+			case 'twentythirteen' :
+				echo '</div></div>';
+				break;
+			case 'twentyfourteen' :
+				echo '</div></div></div>';
+				get_sidebar( 'content' );
+				break;
+			case 'twentyfifteen' :
+				echo '</div></div>';
+				break;
+			case 'twentysixteen' :
+				echo '</div></main>';
+				break;
+			default :
+				echo '</div></div>';
+				break;
+		}
 	}
 }
