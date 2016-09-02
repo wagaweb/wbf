@@ -25,6 +25,7 @@ class ComponentFactory {
 		if(!isset($component_params['file']) || empty($component_params) || !is_array($component_params)){
 			throw new \Exception("Invalid component params provided. Unable to instance a new component.");
 		}
+		if(!file_exists($component_params['file'])) return false;
 		require_once( $component_params['file'] );
 		$class_name = self::get_component_class_name($component_params['nicename']);
 		if(!class_exists($class_name)){
