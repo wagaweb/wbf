@@ -24,6 +24,16 @@ class TemplatePlugin extends Plugin implements TemplatePlugin_Interface {
 		}
 		//Embedded support for template wrappers
 		$this->loader->add_action( 'init', $this, "maybe_attach_wrapper", 20 );
+		//Just to be sure...
+		$this->loader->add_action( 'init', $this, "flush_rewrites", 99 );
+	}
+
+	/**
+	 * Sometime the templates in plugins does not being used. Flush rewrites do the job.
+	 * @hooked 'init', 99
+	 */
+	public function flush_rewrites(){
+		\flush_rewrite_rules();
 	}
 
 	/**
