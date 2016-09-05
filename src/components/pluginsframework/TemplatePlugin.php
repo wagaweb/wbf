@@ -2,6 +2,8 @@
 
 namespace WBF\components\pluginsframework;
 
+use WBF\components\utils\Utilities;
+
 class TemplatePlugin extends Plugin implements TemplatePlugin_Interface {
 	protected $templates;
 	protected $ctp_templates;
@@ -213,7 +215,13 @@ class TemplatePlugin extends Plugin implements TemplatePlugin_Interface {
 
 			//Check if theme has a template for current post\page
 			foreach ( $possible_templates as $tpl_filename ) {
-				$file = locate_template($tpl_filename);
+				$file = Utilities::locate_template([
+					'names' => $tpl_filename
+				],false,false,[
+					\get_template_directory()."/".$this->get_plugin_name(),
+					\get_stylesheet_directory()."/".$this->get_plugin_name(),
+					\get_stylesheet_directory()."/templates/".$this->get_plugin_name()
+				]);
 				if(!empty($file)){
 					return $file;
 				}
