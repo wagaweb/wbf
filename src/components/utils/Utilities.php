@@ -141,19 +141,21 @@ class Utilities{
 	 * Retrieve the template file from various set of sources.
 	 * It is used mainly by TemplatePlugin to add sources for template parts. @see: TemplatePlugin->add_template_base_path()
 	 *
-	 * @param array $templates an associative array that must contain at least "names" key. It can have the "sources" key, with a list of paths to explore.
+	 * @param array $templates an associative array that must contain at least "names" key. It can have the "sources" key, with a list of path to files.
 	 * @param bool|false $load if TRUE it calls load_template()
 	 * @param bool|true $require_once it $load is TRUE, it assigned as the second argument to load_template()
 	 *
 	 * @return string
 	 */
-	static function locate_template($templates, $load = false, $require_once = true ) {
+	static function locate_template($templates, $load = false, $require_once = true, $additional_search_paths = [] ) {
 		$located = '';
 		$template_names = $templates['names'];
 		$template_sources = isset($templates['sources']) ? $templates['sources'] : array();
-		$registered_base_paths = apply_filters("wbf/get_template_part/base_paths",array());
+		if(empty($additional_search_paths) || !is_array($additional_search_paths)){
+			$additional_search_paths = apply_filters("wbf/get_template_part/base_paths",array());
+		}
 
-		//Search into template dir
+		//Search for templates
 		foreach( (array) $template_names as $template_name){
 			if(!$template_name){
 				continue;
@@ -179,9 +181,9 @@ class Utilities{
 				break;
 			}
 
-			if(!empty($registered_base_paths)){
+			if(!empty($additional_search_paths)){
 				//Search into registered base dirs
-				foreach($registered_base_paths as $path){
+				foreach($additional_search_paths as $path){
 					$path = rtrim($path,"/") . '/'.ltrim($template_name,"/");
 					if(file_exists( $path )){
 						$located = $path;
@@ -194,7 +196,7 @@ class Utilities{
 			}
 		}
 
-		//Search into plugins dir
+		//Search into sources (complete file paths)
 		if(empty($located)) {
 			foreach($template_sources as $template_name){
 				if ( !$template_name )
@@ -1174,10 +1176,6 @@ class Utilities{
 			'path' => '',
 			'create_button' => false
 		]);
-
-		if(empty($params['path']) || !file_exists($params['path'])){
-			throw new \Exception("Unable to find tinymce plugin file in: ".$params['path']);
-		}
 
 		// init process for registering our button
 		add_action('init', function() use($id, $params){
