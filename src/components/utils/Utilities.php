@@ -2,6 +2,7 @@
 
 namespace WBF\components\utils;
 
+use Mockery\CountValidator\Exception;
 use WBF\components\notices\Notice_Manager;
 
 class Utilities{
@@ -1156,13 +1157,32 @@ class Utilities{
 		echo "</pre>";
 	}
 
-	static function add_tinymce_button($id,$params){
-		
+	/**
+	 * Adds a new TinyMCE plugin
+	 *
+	 * @param string $id plugin identifier (can be any [a-z_]+ string.
+	 * @param array $params [
+	 *  'path' => path/to/plugin/js
+	 *  'create_button' => false|true
+	 * ]
+	 *
+	 * @throws \Exception
+	 */
+	static function add_tinymce_plugin($id,$params){
+
+		$params = wp_parse_args($params,[
+			'path' => '',
+			'create_button' => false
+		]);
+
+		if(empty($params['path']) || !file_exists($params['path'])){
+			throw new \Exception("Unable to find tinymce plugin file in: ".$params['path']);
+		}
+
 		// init process for registering our button
 		add_action('init', function() use($id, $params){
 			//Abort early if the user will never see TinyMCE
-			if ( ! current_user_can('edit_posts') && ! current_user_can('edit_pages') && get_user_option('rich_editing') == 'true')
-				return;
+			if ( ! current_user_can('edit_posts') && ! current_user_can('edit_pages') && get_user_option('rich_editing') == 'true') return;
 
 			//Add a callback to regiser our tinymce plugin
 			add_filter("mce_external_plugins", function($plugin_array) use($id, $params) {
@@ -1170,12 +1190,14 @@ class Utilities{
 				return $plugin_array;
 			});
 
-			// Add a callback to add our button to the TinyMCE toolbar
-			add_filter('mce_buttons', function($buttons) use($id, $params) {
-				//Add the button ID to the $button array
-				$buttons[] = $id;
-				return $buttons;
-			});
+			if($params['create_button']){
+				// Add a callback to add our button to the TinyMCE toolbar
+				add_filter('mce_buttons', function($buttons) use($id, $params) {
+					//Add the button ID to the $button array
+					$buttons[] = $id;
+					return $buttons;
+				});
+			}
 		});
 	}
 }
