@@ -10,6 +10,7 @@
 namespace WBF\modules\components;
 
 
+use WBF\components\utils\Utilities;
 use WBF\modules\options\Framework;
 use WBF\modules\options\Organizer;
 
@@ -68,15 +69,11 @@ class Component {
         $this->active = $component['enabled'];
         $this->file = $component['file'];
         $this->is_child_component = $component['child_component'];
-        if($this->is_child_component){
-            $this->directory_uri = rtrim(get_child_components_directory_uri(),"/")."/".$this->name;
-            $this->directory = rtrim(get_child_components_directory(),"/")."/".$this->name;
-	        $this->relative_path = get_child_dirname()."/".$this->name;
-        }else{
-            $this->directory_uri = rtrim(get_root_components_directory_uri(),"/")."/".$this->name;
-            $this->directory = rtrim(get_root_components_directory(),"/")."/".$this->name;
-	        $this->relative_path = get_root_dirname()."/".$this->name;
-        }
+	    //Getting directories
+	    $pathinfo = pathinfo($component['file']);
+	    $this->directory_uri = Utilities::path_to_url($pathinfo['dirname']);
+	    $this->directory = $pathinfo['dirname'];
+	    //Is override?
 	    if(isset($component['override'])){
 		    $this->override = $component['override'];
 	    }
