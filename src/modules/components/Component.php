@@ -46,6 +46,10 @@ class Component {
 	/**
 	 * @var string
 	 */
+	var $directory_name;
+	/**
+	 * @var string
+	 */
 	var $relative_path;
 	/**
 	 * @var array if the filter is on "*" the component will be always loaded
@@ -72,6 +76,7 @@ class Component {
 	    $pathinfo = pathinfo($component['file']);
 	    $this->directory_uri = Utilities::path_to_url($pathinfo['dirname']);
 	    $this->directory = $pathinfo['dirname'];
+	    $this->directory_name = basename($pathinfo['dirname']);
         if($this->is_child_component){
 	        $this->relative_path = get_child_dirname()."/".basename($pathinfo['dirname']);
         }else{
