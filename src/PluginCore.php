@@ -462,6 +462,19 @@ class PluginCore {
 		return apply_filters("wbf/is_plugin",$is_plugin);
 	}
 
+	/**
+	 * Gets the currently loaded plugins
+	 *
+	 * @return array
+	 */
+	function get_registered_plugins(){
+		global $wbf_loaded_plugins;
+		if(isset($wbf_loaded_plugins)){
+			return $wbf_loaded_plugins;
+		}
+		return [];
+	}
+
 	/*
 	 *
 	 *
