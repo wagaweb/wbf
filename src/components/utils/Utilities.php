@@ -168,14 +168,24 @@ class Utilities{
 				get_template_directory() . '/templates/parts/'
 			];
 
-			$search_locations = array_merge($search_locations,$additional_search_paths);
+			$search_locations = array_merge($additional_search_paths,$search_locations);
 
 			$search_locations = array_unique($search_locations);
 
 			foreach($search_locations as $loc){
-				$loc = rtrim($loc,"/") . '/'.ltrim($template_name,"/");
-				if(file_exists($loc)){
-					$located = $loc;
+				$found = false;
+				$locs = [
+					rtrim($loc,"/") . '/'.ltrim($template_name,"/"),
+					rtrim($loc,"/") . '/'.ltrim(basename($template_name),"/")
+				];
+				foreach ($locs as $path){
+					if(file_exists($path)){
+						$located = $path;
+						$found = true;
+						break;
+					}
+				}
+				if($found){
 					break;
 				}
 			}

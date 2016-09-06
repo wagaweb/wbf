@@ -273,13 +273,15 @@ class TemplatePlugin extends Plugin implements TemplatePlugin_Interface {
 			}
 		}
 
-		//Check if plugin has a template for current post\page
-		foreach ( $possible_templates as $tpl_filename ) {
-			if ( is_array($this->ctp_templates) && in_array( $tpl_filename, $this->ctp_templates ) ) {
-				$located = $this->templates_paths[ $tpl_filename ];
-				//todo: do some checks?
-				$file = $located;
-				break;
+		if(!$file){
+			//Check if plugin has a template for current post\page
+			foreach ( $possible_templates as $tpl_filename ) {
+				if ( is_array($this->ctp_templates) && in_array( $tpl_filename, $this->ctp_templates ) ) {
+					$located = $this->templates_paths[ $tpl_filename ];
+					//todo: do some checks?
+					$file = $located;
+					break;
+				}
 			}
 		}
 
@@ -309,7 +311,7 @@ class TemplatePlugin extends Plugin implements TemplatePlugin_Interface {
 			$this->get_dir()."templates",
 		);
 
-		$new_paths = array_merge($new_paths,$this->get_directories_of_templates_in_theme());
+		$new_paths = array_merge($this->get_directories_of_templates_in_theme(),$new_paths);
 		$new_paths = apply_filters("wbf/plugin_framework/template_plugin/template_parts_src",$new_paths,$this);
 		$new_paths = apply_filters("wbf/plugins/{$this->plugin_name}/template_parts_src",$new_paths,$this);
 
@@ -331,8 +333,10 @@ class TemplatePlugin extends Plugin implements TemplatePlugin_Interface {
 		$directories = [
 			\get_stylesheet_directory()."/".$this->get_plugin_name(),
 			\get_stylesheet_directory()."/templates/".$this->get_plugin_name(),
+			\get_stylesheet_directory()."/templates/".$this->get_plugin_name()."/parts",
 			\get_template_directory()."/".$this->get_plugin_name(),
-			\get_template_directory()."/templates/".$this->get_plugin_name()
+			\get_template_directory()."/templates/".$this->get_plugin_name(),
+			\get_template_directory()."/templates/".$this->get_plugin_name()."/parts"
 		];
 
 		$directories = array_unique($directories);
