@@ -13,6 +13,7 @@ Version 0.14.3 -
 - Tweak: Alcuni miglioramenti al codice di Behavior.php
 - Tweak: Ora get_behavior può tornare un WP_Error in caso di errore.
 - Tweak: Ora TemplatePlugin cerca automaticamente di settare i wrapper corretti per le template dei plugin
+- Tweak: Aggiornata la gestione dei backup delle theme options (ora vengono salvati nella cartella wbf-wd e la pagina viene gestita tramite View)
 - Feature: Aggiunto una versione migliorata del sanitize_file_name()
 - Feature: Aggiunta funzione Utilities::add_tinymce_plugin()
 - Feature: Ora le template dei plugin vengono cercate anche in una cartella con il nome del plugin all'interno del tema
