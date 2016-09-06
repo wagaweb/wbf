@@ -44,10 +44,6 @@ class Component {
 	 */
     var $directory;
 	/**
-	 * @var string
-	 */
-	var $relative_path;
-	/**
 	 * @var array if the filter is on "*" the component will be always loaded
 	 */
     var $filters = [
