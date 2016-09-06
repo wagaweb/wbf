@@ -19,30 +19,34 @@ abstract class View{
 	/**
 	 * Initialize a new view. If the $plugin argument is not provided, the template file will be searched into stylesheet and template directories.
 	 *
-	 * @param string $relative_file_path a path to the view file starting from the theme or plugin directory
-	 * @param string|\WBF\components\pluginsframework\Plugin  $plugin a plugin directory name or an instance of \WBF\includes\pluginsframework\Plugin
+	 * @param string $file_path a path to the view file. Must be absolute unless $is_relative_path is TRUE.
+	 * @param string|\WBF\components\pluginsframework\Plugin $plugin a plugin directory name or an instance of \WBF\includes\pluginsframework\Plugin
+	 * @param bool|FALSE $is_relative_path if true, the $file_path is intended to relative to theme or plugin directory
 	 *
 	 * @throws \Exception
 	 */
-	public function __construct($relative_file_path,$plugin = null){
-		if(!is_string($relative_file_path) || empty($relative_file_path)){
+	public function __construct($file_path,$plugin = null,$is_relative_path = true){
+		if( !is_string($file_path) || empty($file_path)){
 			throw new \Exception("Cannot create View, invalid file path");
 		}
 		if(isset($plugin) && !$plugin instanceof Plugin && !is_string($plugin)){
 			throw new \Exception("Invalid plugin parameter for View rendering");
 		}
 
-		$search_paths = self::get_search_paths($relative_file_path,$plugin);
-
-		//Searching for template
-		foreach($search_paths as $path){
-			if(file_exists($path)){
-				$abs_path = $path;
+		if($is_relative_path){
+			$search_paths = self::get_search_paths($file_path,$plugin);
+			//Searching for template
+			foreach($search_paths as $path){
+				if(file_exists($path)){
+					$abs_path = $path;
+				}
 			}
+		}else{
+			$abs_path = $file_path;
 		}
 
 		if(!isset($abs_path) || !file_exists($abs_path)){
-			throw new \Exception("File {$relative_file_path} does not exists in any of these locations: ".implode(",\n",$search_paths));
+			throw new \Exception( "File {$file_path} does not exists in any of these locations: " . implode(",\n",$search_paths));
 		}
 
 		$this->template = pathinfo($abs_path);
