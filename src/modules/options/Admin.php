@@ -123,14 +123,14 @@ class Admin{
 	 */
 	function add_options_page() {
 		$menu = $this->menu_settings();
-		$this->options_screen = add_submenu_page( \WBF::getInstance()->wp_menu_slug, $menu['page_title'], $menu['menu_title'], $menu['capability'], $menu['menu_slug'], array($this, 'options_page') );
+		$this->options_screen = add_submenu_page( \WBF::getInstance()->wp_menu_slug, $menu['page_title'], $menu['menu_title'], $menu['capability'], $menu['menu_slug'], array($this, 'display_options_page') );
 	}
 
 	/**
 	 * Add "Manage Theme Options" subpage to WBF Menu
 	 */
 	public function add_man_page($parent_slug) {
-		add_submenu_page( $parent_slug , __( "Theme Options Manager", "wbf" ), __( "Import/Export", "wbf" ), "edit_theme_options", $this->wp_menu_slug, array( $this, 'do_man_page') );
+		add_submenu_page( $parent_slug , __( "Theme Options Manager", "wbf" ), __( "Import/Export", "wbf" ), "edit_theme_options", $this->wp_menu_slug, array( $this, 'display_manage_options_page') );
 	}
 
 	function add_copy_in_admin_page(){
@@ -172,87 +172,60 @@ class Admin{
 	/**
 	 * Builds out the theme options manager page.
 	 */
-	public function do_man_page() {
+	public function display_manage_options_page() {
 		if ( ! current_user_can( 'edit_theme_options' ) ) {
 			wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 		}
-		?>
-		<div class="wrap">
-			<?php
-			if ( isset( $_POST['submit-backup'] ) ) {
-				switch ( $_POST['option'] ) {
-					case 'backup':
-						try {
-							$file = $this->_backup_options();
-							Utilities::admin_show_message( __( "Backup successfully created!", "wbf" ), "updated" );
-						} catch ( \Exception $e ) {
-							Utilities::admin_show_message( $e->getMessage(), "error" );
-						}
-						break;
-					default:
-						Utilities::admin_show_message( __( "Invalid option selected", "wbf" ), "error" );
-						break;
-				}
-			}
-			if ( isset( $_POST['submit-restore'] ) ) {
-				if ( isset( $_FILES['remote-backup-file'] ) && $_FILES['remote-backup-file']['tmp_name'] != "" ) {
-					$file = $_FILES['remote-backup-file'];
-					if ( $file['error'] == UPLOAD_ERR_OK && is_uploaded_file( $file['tmp_name'] ) ) {
-						try {
-							$this->_restore_options_from_file( $file );
-							Utilities::admin_show_message( __( "Backup successfully restored!", "wbf" ), "updated" );
-						} catch ( \Exception $e ) {
-							Utilities::admin_show_message( $e->getMessage(), "error" );
-						}
-					} else {
-						Utilities::admin_show_message( __( "Unable to upload the file.", "wbf" ), "error" );
-					}
-				} elseif ( isset( $_POST['local-backup-file'] ) ) {
-					$file = $_POST['local-backup-file'];
+
+		if ( isset( $_POST['submit-backup'] ) ) {
+			switch ( $_POST['option'] ) {
+				case 'backup':
 					try {
-						$this->_restore_options_from_file( $file );
+						$file = $this->backup_options_to_file();
+						Utilities::admin_show_message( __( "Backup successfully created!", "wbf" ), "updated" );
+					} catch ( \Exception $e ) {
+						Utilities::admin_show_message( $e->getMessage(), "error" );
+					}
+					break;
+				default:
+					Utilities::admin_show_message( __( "Invalid option selected", "wbf" ), "error" );
+					break;
+			}
+		}
+
+		if ( isset( $_POST['submit-restore'] ) ) {
+			if ( isset( $_FILES['remote-backup-file'] ) && $_FILES['remote-backup-file']['tmp_name'] != "" ) {
+				$file = $_FILES['remote-backup-file'];
+				if ( $file['error'] == UPLOAD_ERR_OK && is_uploaded_file( $file['tmp_name'] ) ) {
+					try {
+						$this->restore_options_from_file( $file );
 						Utilities::admin_show_message( __( "Backup successfully restored!", "wbf" ), "updated" );
 					} catch ( \Exception $e ) {
 						Utilities::admin_show_message( $e->getMessage(), "error" );
 					}
 				} else {
-					Utilities::admin_show_message( __( "No backup file provided.", "wbf" ), "error" );
+					Utilities::admin_show_message( __( "Unable to upload the file.", "wbf" ), "error" );
 				}
+			} elseif ( isset( $_POST['local-backup-file'] ) ) {
+				$file = $_POST['local-backup-file'];
+				try {
+					$this->restore_options_from_file( $file );
+					Utilities::admin_show_message( __( "Backup successfully restored!", "wbf" ), "updated" );
+				} catch ( \Exception $e ) {
+					Utilities::admin_show_message( $e->getMessage(), "error" );
+				}
+			} else {
+				Utilities::admin_show_message( __( "No backup file provided.", "wbf" ), "error" );
 			}
-			$backup_files = $this->get_backupFiles();
-			?>
-			<h2><?php _e( "Theme Options Manager", "wbf" ); ?></h2>
+		}
 
-			<h3><?php _e( "Export or Backup Theme Options", "wbf" ); ?></h3>
+		$backup_files = $this->get_backupFiles();
 
-			<form action="admin.php?page=<?php echo $this->wp_menu_slug; ?>" method="POST" id="export-themeoptions">
-				<p><label><input type="radio" name="option" value="backup"> <?php _e( "Backup current Theme Options on the disk", "wbf" ); ?></label></p>
-				<p class="submit"><input type="submit" name="submit-backup" id="submit" class="button button-primary" value="<?php _e( "Backup" ) ?>"></p>
-			</form>
-
-			<h3><?php _e( "Import or Restore Theme Options", "wbf" ); ?></h3>
-
-			<form action="admin.php?page=<?php echo $this->wp_menu_slug; ?>" method="POST" enctype="multipart/form-data"
-			      id="export-themeoptions">
-				<p><?php _e( "Select a file to restore, or upload one:" ); ?></p>
-				<?php if ( ! empty( $backup_files ) ) : ?>
-					<?php foreach ( $backup_files as $file ): ?>
-						<p><label><input type="radio" name="local-backup-file" value="<?php echo $file['path'] ?>"><?php echo $file['name'] ?></label>&nbsp;<a href='<?php echo $file['url']; ?>' target="_blank" title="<?php _e( "Download: " . $file['name'] ); ?>">[<?php _e( "download" ) ?>]</a></p>
-					<?php endforeach; ?>
-				<?php else: ?>
-					<p><?php _e( "No backup files available at the moment.", "wbf" ); ?></p>
-				<?php endif; ?>
-				<p>
-					<label>
-						<input type="file" name="remote-backup-file" id="backup-file"/>
-					</label>
-				</p>
-
-				<p class="submit"><input type="submit" name="submit-restore" id="submit" class="button button-primary" value="<?php _e( "Import" ) ?>"></p>
-			</form>
-			<?php \WBF::print_copyright(); ?>
-		</div>
-	<?php
+		$v = new HTMLView("src/modules/options/views/admin/manage-options-page.php","wbf");
+		$v->for_dashboard()->display([
+			'backup_files' => $backup_files,
+			'wp_menu_slug' => $this->wp_menu_slug
+		]);
 	}
 
 	/**
@@ -260,10 +233,10 @@ class Admin{
 	 * @throws \Exception
 	 * @return bool|string
 	 */
-	private function _backup_options( $download = false ) {
+	private function backup_options_to_file( $download = false ) {
 		$current_settings = $this->get_current_active_theme_options();
-		$backup_path      = WP_CONTENT_DIR . "/theme-options-backups";
-		$backup_url       = WP_CONTENT_URL . "/theme-options-backups";
+		$backup_path      = WBF()->resources->get_working_directory() . "/theme-options-backups";
+		$backup_url       = WBF()->resources->get_working_directory_uri() . "/theme-options-backups";
 		if ( ! is_dir( $backup_path ) ) {
 			mkdir( $backup_path );
 		}
@@ -317,28 +290,28 @@ class Admin{
 	 * @return bool
 	 * @throws \Exception
 	 */
-	private function _restore_options_from_file( $file ) {
-		$optionsframework_settings = Framework::get_options_framework_settings();
+	private function restore_options_from_file( $file ) {
+		$optionsframework_settings = Framework::get_options_root_id();
 		$settings                  = array();
 
 		if ( is_array( $file ) ) {
 			//we have an uploaded file
 			if ( isset( $file['tmp_name'] ) && is_uploaded_file( $file['tmp_name'] ) ) {
-				$settings = $this->_get_backup_file_content( $file['tmp_name'] );
+				$settings = $this->get_backup_file_content( $file['tmp_name'] );
 			} else {
 				throw new \Exception( __( "Invalid backup file provided", "wbf" ) );
 			}
 		} else {
 			//we have a file on disk
 			if ( is_file( $file ) ) {
-				$settings = $this->_get_backup_file_content( $file );
+				$settings = $this->get_backup_file_content( $file );
 			} else {
 				throw new \Exception( __( "Invalid backup file provided", "wbf" ) );
 			}
 		}
 		//Restore the settings
 		if ( $settings && ! empty( $settings ) ) {
-			if ( ! update_option( $optionsframework_settings['id'], $settings ) ) {
+			if ( ! update_option( $optionsframework_settings, $settings ) ) {
 				throw new \Exception( __( "The backup file and the current settings are identical", "wbf" ) );
 			}
 		} else {
@@ -355,7 +328,7 @@ class Admin{
 	 *
 	 * @return array|bool
 	 */
-	private function _get_backup_file_content( $filepath ) {
+	private function get_backup_file_content( $filepath ) {
 		if ( ! is_file( $filepath ) ) {
 			return false;
 		}
@@ -375,7 +348,7 @@ class Admin{
 	 * @return array
 	 */
 	public function get_backupFiles() {
-		$backup_path = WP_CONTENT_DIR . "/theme-options-backups";
+		$backup_path = WBF()->resources->get_working_directory() . "/theme-options-backups";
 		$files       = glob( $backup_path . "/*.options" );
 		$output      = array();
 
@@ -384,7 +357,7 @@ class Admin{
 				$info     = pathinfo( $f );
 				$output[] = array(
 					'path' => $f,
-					'url'  => WP_CONTENT_URL . "/theme-options-backups/" . $info['basename'],
+					'url'  => WBF()->resources->get_working_directory_uri() . "/theme-options-backups/" . $info['basename'],
 					'name' => $info['basename']
 				);
 			}
@@ -434,7 +407,7 @@ class Admin{
      *
      * @since 1.7.0
      */
-    function options_page() {
+    function display_options_page() {
 		$v = new HTMLView("src/modules/options/views/admin/options-page.php","wbf");
 		$v->clean()->display([
 			'menu' => $this->menu_settings(),
