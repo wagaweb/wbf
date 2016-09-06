@@ -253,6 +253,8 @@ class TemplatePlugin extends Plugin implements TemplatePlugin_Interface {
 	 * Adds new template parts sources directories.
 	 * 
 	 * @hooked 'wbf/get_template_part/base_paths' (this filter is used by Utilities::locate_template which is used by Utilities::get_template_part)
+	 *
+	 * Utilities::get_template_part is used in plugin templates in place of get_template_part()
 	 * 
 	 * @param $paths
 	 *
