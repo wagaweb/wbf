@@ -44,6 +44,10 @@ class Component {
 	 */
     var $directory;
 	/**
+	 * @var string
+	 */
+	var $relative_path;
+	/**
 	 * @var array if the filter is on "*" the component will be always loaded
 	 */
     var $filters = [
@@ -65,11 +69,14 @@ class Component {
         $this->active = $component['enabled'];
         $this->file = $component['file'];
         $this->is_child_component = $component['child_component'];
-	    //Getting directories
 	    $pathinfo = pathinfo($component['file']);
 	    $this->directory_uri = Utilities::path_to_url($pathinfo['dirname']);
 	    $this->directory = $pathinfo['dirname'];
-	    //Is override?
+        if($this->is_child_component){
+	        $this->relative_path = get_child_dirname()."/".basename($pathinfo['dirname']);
+        }else{
+	        $this->relative_path = get_root_dirname()."/".basename($pathinfo['dirname']);
+        }
 	    if(isset($component['override'])){
 		    $this->override = $component['override'];
 	    }
