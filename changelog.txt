@@ -1,5 +1,22 @@
 == Change log ==
 
+Version 0.14.3 -
+---------------------------------
+- Fix: Ora wbfgmap viene caricato correttamente
+- Fix: Ora le vecchie theme options vengono importate correttamente
+- Fix: Ripristinata la cartella font cache
+- Fix: Ora la notice per gli asset mancanti non viene ripetuta più volte per lo stesso asset
+- Fix: Ora il ComponentsFactory non restituisce più un errore nel caso di componente mancante
+- Tweak: Ora viene visualizzata una PHP Notice nel frontend se manca un asset collegato tramite l'AssetsManager
+- Tweak: Eliminati file ridondanti
+- Tweak: Aggiunta funzione Resources::get_working_directory_uri()
+- Tweak: Alcuni miglioramenti al codice di Behavior.php
+- Tweak: Ora get_behavior può tornare un WP_Error in caso di errore.
+- Tweak: Ora TemplatePlugin cerca automaticamente di settare i wrapper corretti per le template dei plugin
+- Feature: Aggiunto una versione migliorata del sanitize_file_name()
+- Feature: Aggiunta funzione Utilities::add_tinymce_plugin()
+- Feature: Ora le template dei plugin vengono cercate anche in una cartella con il nome del plugin all'interno del tema
+
 Version 0.14.2 - 30/07/2016
 ---------------------------------
 - Fix: Fixato caricamento di alcuni stili e css di admin
