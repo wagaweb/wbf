@@ -18,7 +18,7 @@ class TemplatePlugin extends Plugin implements TemplatePlugin_Interface {
 		$this->loader->add_filter( 'page_attributes_dropdown_pages_args', $this, "register_templates" );
 		$this->loader->add_filter( 'wp_insert_post_data', $this, "register_templates" );
 		$this->loader->add_filter( 'template_include', $this, "view_template" );
-		$this->loader->add_filter( 'wbf/get_template_part/base_paths', $this, 'add_template_base_path', 10, 2 );
+		$this->loader->add_filter( 'wbf/locate_template/search_paths', $this, 'add_template_base_path', 10, 2 );
 		//Embedded support for WooCommerce
 		$this->wc_templates = array();
 		if(function_exists('is_woocommerce')){
@@ -176,85 +176,123 @@ class TemplatePlugin extends Plugin implements TemplatePlugin_Interface {
 
 		$required_tpl = get_post_meta( $post->ID, '_wp_page_template', true ); //Get the template set via wp editor
 
-		//If it is empty it means we have to check the wp template hierarchy...
-		if ( $required_tpl == "" ) {
-
-			if(is_archive()){
-				$q_obj = get_queried_object();
-				if(is_category()){
-					$possible_templates = array(
-						"category-{$q_obj->slug}",
-						"category-{$q_obj->term_id}.php"
-					);
-				}elseif(is_tag()){
-					$possible_templates = array(
-						"tag-{$q_obj->slug}",
-						"tag-{$q_obj->term_id}.php"
-					);
-				}elseif(is_tax()){
-					$possible_templates = array(
-						"taxonomy-{$q_obj->taxonomy}-{$q_obj->slug}.php",
-						"taxonomy-{$q_obj->taxonomy}.php"
-					);
-				}else{
-					$post_type = get_post_type( $post->ID );
-					$possible_templates = array(
-						"archive-{$post_type}.php"
-					);
-				}
-			}else{
-				$post_type = get_post_type( $post->ID );
-				$possible_templates = array(
-					"attachment.php",
-					"single-" . $post_type . ".php",
-					"single-post.php",
-					$post_type . ".php",
-					"single-" . $post->ID . ".php"
-				);
-			}
-
-			//Check if theme has a template for current post\page
-			foreach ( $possible_templates as $tpl_filename ) {
-				$file = Utilities::locate_template([
-					'names' => $tpl_filename
-				],false,false,[
-					\get_template_directory()."/".$this->get_plugin_name(),
-					\get_stylesheet_directory()."/".$this->get_plugin_name(),
-					\get_stylesheet_directory()."/templates/".$this->get_plugin_name()
-				]);
-				if(!empty($file)){
-					return $file;
-				}
-			}
-
-			//Check if plugin has a template for current post\page
-			foreach ( $possible_templates as $tpl_filename ) {
-				if ( is_array($this->ctp_templates) && in_array( $tpl_filename, $this->ctp_templates ) ) {
-					$file = $this->templates_paths[ $tpl_filename ];
-					return $file;
-				}
-			}
+		if($required_tpl == "" || !$required_tpl || !is_string($required_tpl)){
+			$file = $this->locate_template_file_in_hierarchy();
+		}else{
+			$file = $this->locate_template_file($required_tpl);
 		}
 
-		if ( ! isset( $this->templates[ $required_tpl ] ) ) {
+		if(!$file){
 			return $template;
 		}
 
-		$file = $this->templates_paths[ $required_tpl ];
-
-		if ( file_exists( $file ) ) {
-			return $file;
-		}
-
-		return $template;
+		return $file;
 	}
 
 	/**
-	 * Adds new template parts sources directories.
-	 * 
-	 * @hooked 'wbf/get_template_part/base_paths' (this filter is used by Utilities::locate_template which is used by Utilities::get_template_part)
+	 * Locate a file registered with $this->add_template()
 	 *
-	 * Utilities::get_template_part is used in plugin templates in place of get_template_part()
+	 * @param $required_tpl
+	 *
+	 * @return bool|string
+	 */
+	private function locate_template_file($required_tpl){
+		$file = false;
+		if(isset($this->templates[$required_tpl])){ //We need at least the base template...
+			//But search in theme first...
+			foreach ($this->get_directories_of_templates_in_theme() as $directory){
+				if(file_exists($directory."/".$required_tpl)){
+					$file = $directory."/".$required_tpl;
+					break;
+				}
+			}
+			//Then get the base template...
+			if(!$file){
+				$located = $this->templates_paths[$required_tpl];
+				if(file_exists($located)){
+					$file = $located;
+				}
+			}
+		}
+		return $file;
+	}
+
+	/**
+	 * Locate a WordPress template hierarchy file (that can also be registered with $this->register_cpt_template())
+	 *
+	 * @return bool|string
+	 */
+	private function locate_template_file_in_hierarchy(){
+		global $post;
+		$file = false;
+
+		if(is_archive()){
+			$q_obj = get_queried_object();
+			if(is_category()){
+				$possible_templates = array(
+					"category-{$q_obj->slug}",
+					"category-{$q_obj->term_id}.php"
+				);
+			}elseif(is_tag()){
+				$possible_templates = array(
+					"tag-{$q_obj->slug}",
+					"tag-{$q_obj->term_id}.php"
+				);
+			}elseif(is_tax()){
+				$possible_templates = array(
+					"taxonomy-{$q_obj->taxonomy}-{$q_obj->slug}.php",
+					"taxonomy-{$q_obj->taxonomy}.php"
+				);
+			}else{
+				$post_type = get_post_type( $post->ID );
+				$possible_templates = array(
+					"archive-{$post_type}.php"
+				);
+			}
+		}else{
+			$post_type = get_post_type( $post->ID );
+			$possible_templates = array(
+				"attachment.php",
+				"single-" . $post_type . ".php",
+				"single-post.php",
+				$post_type . ".php",
+				"single-" . $post->ID . ".php"
+			);
+		}
+
+		//Check if theme has a template for current post\page
+		foreach ( $possible_templates as $tpl_filename ) {
+			/*
+			 * Locate the template into theme directories.
+			 * Adds specific directories where the template file will be looked for
+			 */
+			$located = Utilities::locate_template(['names' => $tpl_filename],false,false,$this->get_directories_of_templates_in_theme());
+			if(!empty($located)){
+				$file = $located;
+				break;
+			}
+		}
+
+		//Check if plugin has a template for current post\page
+		foreach ( $possible_templates as $tpl_filename ) {
+			if ( is_array($this->ctp_templates) && in_array( $tpl_filename, $this->ctp_templates ) ) {
+				$located = $this->templates_paths[ $tpl_filename ];
+				//todo: do some checks?
+				$file = $located;
+				break;
+			}
+		}
+
+		return $file;
+	}
+
+	/**
+	 * Adds template sources directories for Utilities::locate_template() function.
+	 * 
+	 * @hooked 'wbf/locate_template/search_paths'
+	 *
+	 * Utilities::locate_template() is used here by locate_template_file_in_hierarchy() (but with different template sources location) and by Utilities::get_template_part().
+	 * Utilities::get_template_part() is frequently used in plugins as wbf_get_template_part() to obtain template partials.
 	 * 
 	 * @param $paths
 	 *
@@ -271,6 +309,10 @@ class TemplatePlugin extends Plugin implements TemplatePlugin_Interface {
 			$this->get_dir()."templates",
 		);
 
+		$new_paths = array_merge($new_paths,$this->get_directories_of_templates_in_theme());
+		$new_paths = apply_filters("wbf/plugin_framework/template_plugin/template_parts_src",$new_paths,$this);
+		$new_paths = apply_filters("wbf/plugins/{$this->plugin_name}/template_parts_src",$new_paths,$this);
+
 		$new_paths = array_unique($new_paths);
 
 		foreach($new_paths as $np){
@@ -283,6 +325,22 @@ class TemplatePlugin extends Plugin implements TemplatePlugin_Interface {
 	}
 
 	/**
+	 * Gets the paths where template file can be looked for in themes
+	 */
+	private function get_directories_of_templates_in_theme(){
+		$directories = [
+			\get_stylesheet_directory()."/".$this->get_plugin_name(),
+			\get_stylesheet_directory()."/templates/".$this->get_plugin_name(),
+			\get_template_directory()."/".$this->get_plugin_name(),
+			\get_template_directory()."/templates/".$this->get_plugin_name()
+		];
+
+		$directories = array_unique($directories);
+
+		return $directories;
+	}
+
+	/**
 	 * Getter of registered templates
 	 *
 	 * @return array
@@ -290,7 +348,8 @@ class TemplatePlugin extends Plugin implements TemplatePlugin_Interface {
 	public function get_registered_templates(){
 		$tpl = [
 			'cpt_templates' => $this->ctp_templates,
-			'std_templates' => $this->templates
+			'std_templates' => $this->templates,
+			'wc_templates' => isset($this->wc_templates) ? $this->wc_templates : []
 		];
 		return $tpl;
 	}

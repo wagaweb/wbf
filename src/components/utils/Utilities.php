@@ -150,9 +150,9 @@ class Utilities{
 	static function locate_template($templates, $load = false, $require_once = true, $additional_search_paths = [] ) {
 		$located = '';
 		$template_names = $templates['names'];
-		$template_sources = isset($templates['sources']) ? $templates['sources'] : array();
+		$template_sources = isset($templates['sources']) ? $templates['sources'] : [];
 		if(empty($additional_search_paths) || !is_array($additional_search_paths)){
-			$additional_search_paths = apply_filters("wbf/get_template_part/base_paths",array());
+			$additional_search_paths = apply_filters("wbf/locate_template/search_paths", []);
 		}
 
 		//Search for templates
@@ -162,41 +162,30 @@ class Utilities{
 			}
 
 			$search_locations = [
-				get_stylesheet_directory() . '/' . $template_name,
-				get_stylesheet_directory()."/templates/parts/".$template_name,
-				get_template_directory() . '/' . $template_name,
-				get_template_directory() . '/templates/parts/' . $template_name
+				get_stylesheet_directory() . '/',
+				get_stylesheet_directory()."/templates/parts/",
+				get_template_directory() . '/',
+				get_template_directory() . '/templates/parts/'
 			];
+
+			$search_locations = array_merge($search_locations,$additional_search_paths);
 
 			$search_locations = array_unique($search_locations);
 
 			foreach($search_locations as $loc){
+				$loc = rtrim($loc,"/") . '/'.ltrim($template_name,"/");
 				if(file_exists($loc)){
 					$located = $loc;
 					break;
 				}
 			}
 
-			if($located != ""){
+			if(!empty($located)){
 				break;
-			}
-
-			if(!empty($additional_search_paths)){
-				//Search into registered base dirs
-				foreach($additional_search_paths as $path){
-					$path = rtrim($path,"/") . '/'.ltrim($template_name,"/");
-					if(file_exists( $path )){
-						$located = $path;
-						break;
-					}
-				}
-				if($located){
-					break;
-				}
 			}
 		}
 
-		//Search into sources (complete file paths)
+		//Search for templates into sources (complete file paths)
 		if(empty($located)) {
 			foreach($template_sources as $template_name){
 				if ( !$template_name )
@@ -208,7 +197,7 @@ class Utilities{
 			}
 		}
 
-		if ( $load && '' != $located ){
+		if ( $load && $located != '' ){
 			load_template( $located, $require_once );
 		}
 
