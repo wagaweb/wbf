@@ -762,8 +762,8 @@ class PluginCore {
 			];
 		}else{
 			$libs["wbfgmap"] = [
-				"uri" => $res->prefix_url("/assets/js/includes/wbfgmap.min.js"),
-				"path" => $res->prefix_path("/assets/js/includes/wbfgmap.min.js"),
+				"uri" => $res->prefix_url("/assets/dist/js/includes/wbfgmap.min.js"),
+				"path" => $res->prefix_path("/assets/dist/js/includes/wbfgmap.min.js"),
 				"deps" => ["jquery","gmapapi"],
 				"type" => "js",
 				'enqueue' => false,
