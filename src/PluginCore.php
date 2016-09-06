@@ -468,11 +468,7 @@ class PluginCore {
 	 * @return array
 	 */
 	function get_registered_plugins(){
-		global $wbf_loaded_plugins;
-		if(isset($wbf_loaded_plugins)){
-			return $wbf_loaded_plugins;
-		}
-		return [];
+		return Plugin::get_loaded_plugins();
 	}
 
 	/*
