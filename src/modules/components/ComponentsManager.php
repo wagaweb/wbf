@@ -65,29 +65,33 @@ class ComponentsManager {
             }
         }
 
-        $components_files = listFolderFiles( $components_directory );
-        foreach ( $components_files as $file ) {
-            //$component_data = get_plugin_data($file);
-            $component_data = ComponentFactory::get_component_data( $file );
-            if ( $component_data['Name'] != "" ) {
-                //The component is valid, now checks if is already in registered list
-                $component_name = basename( dirname( $file ) );
-                if ( $component_name == "components" ) { //this means that the component file is in root directory
-                    $pinfo          = pathinfo( $file );
-                    $component_name = $pinfo['filename'];
-                }
-                if ( ! array_key_exists( $component_name, $registered_components ) ) {
-                    $registered_components[ $component_name ] = array(
-                      'nicename'        => $component_name,
-	                  'class_name'      => isset($component_data['Class Name']) && $component_data['Class Name'] != "" ? $component_data['Class Name'] : ComponentFactory::get_component_class_name($component_name),
-                      'file'            => $file,
-                      'child_component' => $child_theme,
-                      'enabled'         => false
-                    );
+	    $components_directories = apply_filters("wbf/modules/components/directories",[$components_directory],$child_theme);
 
-                }
-            }
-        }
+	    foreach ($components_directories as $directory){
+		    $components_files = listFolderFiles( $directory );
+		    foreach ( $components_files as $file ) {
+			    //$component_data = get_plugin_data($file);
+			    $component_data = ComponentFactory::get_component_data( $file );
+			    if ( $component_data['Name'] != "" ) {
+				    //The component is valid, now checks if is already in registered list
+				    $component_name = basename( dirname( $file ) );
+				    if ( $component_name == "components" ) { //this means that the component file is in root directory
+					    $pinfo          = pathinfo( $file );
+					    $component_name = $pinfo['filename'];
+				    }
+				    if ( ! array_key_exists( $component_name, $registered_components ) ) {
+					    $registered_components[ $component_name ] = array(
+						    'nicename'        => $component_name,
+						    'class_name'      => isset($component_data['Class Name']) && $component_data['Class Name'] != "" ? $component_data['Class Name'] : ComponentFactory::get_component_class_name($component_name),
+						    'file'            => $file,
+						    'child_component' => $child_theme,
+						    'enabled'         => false
+					    );
+
+				    }
+			    }
+		    }
+	    }
 
 	    self::update_registered_components( $registered_components, $child_theme ); //update the WP Option of registered component
 

@@ -39,7 +39,10 @@ function get_child_components_directory_uri(){
  * @return string
  */
 function get_root_components_directory(){
-    return get_template_directory()."/".get_root_dirname()."/";
+	$location = apply_filters("wbf/modules/components/root_directory_location",get_template_directory());
+	$name = get_root_dirname();
+	$directory = $location."/".$name."/";
+    return $directory;
 }
 
 /**
@@ -50,7 +53,10 @@ function get_root_components_directory(){
  * @return string
  */
 function get_child_components_directory(){
-    return get_stylesheet_directory()."/".get_child_dirname()."/";
+	$location = apply_filters("wbf/modules/components/child_directory_location",get_template_directory());
+	$name = get_child_dirname();
+	$directory = $location."/".$name."/";
+	return $directory;
 }
 
 /**
