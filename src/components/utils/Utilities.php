@@ -264,6 +264,42 @@ class Utilities{
 	}
 
 	/**
+	 * Return TRUE when the default home page in displayed
+	 *
+	 * @return bool
+	 */
+	static function is_default_home(){
+		return self::get_current_page_type() == self::PAGE_TYPE_DEFAULT_HOME;
+	}
+
+	/**
+	 * Return TRUE when the static home page in displayed
+	 *
+	 * @return bool
+	 */
+	static function is_static_home(){
+		return self::get_current_page_type() == self::PAGE_TYPE_STATIC_HOME;
+	}
+
+	/**
+	 * Return TRUE when the user defined blog page in displayed
+	 *
+	 * @return bool
+	 */
+	static function is_blog_page(){
+		return self::get_current_page_type() == self::PAGE_TYPE_BLOG_PAGE;
+	}
+
+	/**
+	 * Return TRUE when a common page page in displayed
+	 *
+	 * @return bool
+	 */
+	static function is_common_page(){
+		return self::get_current_page_type() == self::PAGE_TYPE_COMMON;
+	}
+
+	/**
 	 * Recursively create directories
 	 *
 	 * @param $path
