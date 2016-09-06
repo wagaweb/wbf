@@ -1,6 +1,6 @@
 == Change log ==
 
-Version 0.14.3 -
+Version 0.14.3 - 06/09/2016
 ---------------------------------
 - Fix: Ora wbfgmap viene caricato correttamente
 - Fix: Ora le vecchie theme options vengono importate correttamente
