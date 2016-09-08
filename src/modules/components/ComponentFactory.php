@@ -74,6 +74,7 @@ class ComponentFactory {
 		$component_data = get_file_data( $component_file, $default_headers );
 
 		if(isset($component_data['Tags']) && !empty($component_data['Tags'])){
+			$component_data['Tags'] = str_replace(" ","",$component_data['Tags']);
 			$component_data['Tags'] = explode(",",$component_data['Tags']);
 		}
 
