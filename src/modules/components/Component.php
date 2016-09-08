@@ -52,6 +52,14 @@ class Component {
 	 */
 	var $relative_path;
 	/**
+	 * @var string
+	 */
+	var $category;
+	/**
+	 * @var array
+	 */
+	var $tags = [];
+	/**
 	 * @var array if the filter is on "*" the component will be always loaded
 	 */
     var $filters = [
@@ -66,14 +74,14 @@ class Component {
 	/**
 	 * Component constructor.
 	 *
-	 * @param array $component (an array with at least "nicename","enabled","file", and "child_component")
+	 * @param array $component_data (an array with at least "nicename","enabled","file", and "child_component")
 	 */
-    public function __construct($component){
-        $this->name = $component['nicename'];
-        $this->active = $component['enabled'];
-        $this->file = $component['file'];
-        $this->is_child_component = $component['child_component'];
-	    $pathinfo = pathinfo($component['file']);
+    public function __construct($component_data){
+        $this->name = $component_data['nicename'];
+        $this->active = $component_data['enabled'];
+        $this->file = $component_data['file'];
+        $this->is_child_component = $component_data['child_component'];
+	    $pathinfo = pathinfo($component_data['file']);
 	    $this->directory_uri = Utilities::path_to_url($pathinfo['dirname']);
 	    $this->directory = $pathinfo['dirname'];
 	    $this->directory_name = basename($pathinfo['dirname']);
@@ -82,8 +90,16 @@ class Component {
         }else{
 	        $this->relative_path = get_root_dirname()."/".basename($pathinfo['dirname']);
         }
-	    if(isset($component['override'])){
-		    $this->override = $component['override'];
+	    if(isset($component_data['override'])){
+		    $this->override = $component_data['override'];
+	    }
+	    if(isset($component_data['metadata'])){
+	    	if(isset($component_data['metadata']['Category']) && !empty($component_data['metadata']['Category'])){
+	    		$this->category = $component_data['metadata']['Category'];
+		    }
+		    if(isset($component_data['metadata']['Tags']) && is_array($component_data['metadata']['Tags']) && !empty($component_data['metadata']['Tags'])){
+			    $this->category = $component_data['metadata']['Category'];
+		    }
 	    }
     }
 

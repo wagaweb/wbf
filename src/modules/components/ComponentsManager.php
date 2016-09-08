@@ -79,15 +79,17 @@ class ComponentsManager {
 					    $pinfo          = pathinfo( $file );
 					    $component_name = $pinfo['filename'];
 				    }
-				    if ( ! array_key_exists( $component_name, $registered_components ) ) {
-					    $registered_components[ $component_name ] = array(
-						    'nicename'        => $component_name,
-						    'class_name'      => isset($component_data['Class Name']) && $component_data['Class Name'] != "" ? $component_data['Class Name'] : ComponentFactory::get_component_class_name($component_name),
-						    'file'            => $file,
-						    'child_component' => $child_theme,
-						    'enabled'         => false
-					    );
-
+				    //Buildup component data:
+				    $component_data = [
+					    'nicename'        => $component_name,
+					    'class_name'      => isset($component_data['Class Name']) && $component_data['Class Name'] != "" ? $component_data['Class Name'] : ComponentFactory::get_component_class_name($component_name),
+					    'file'            => $file,
+					    'metadata'        => $component_data,
+					    'child_component' => $child_theme,
+					    'enabled'         => false
+				    ];
+				    if ( ! array_key_exists( $component_name, $registered_components ) || $registered_components[ $component_name ] != $component_data ) {
+					    $registered_components[ $component_name ] = $component_data;
 				    }
 			    }
 		    }
