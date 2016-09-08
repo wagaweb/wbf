@@ -84,7 +84,10 @@ class ComponentsManager {
 					    'nicename'        => $component_name,
 					    'class_name'      => isset($component_data['Class Name']) && $component_data['Class Name'] != "" ? $component_data['Class Name'] : ComponentFactory::get_component_class_name($component_name),
 					    'file'            => $file,
-					    'metadata'        => $component_data,
+					    'metadata'        => [
+					    	'tags' => isset($component_data['Tags']) && is_array($component_data['Tags']) ? $component_data['Tags'] : [],
+					    	'category' => isset($component_data['Category']) ? $component_data['Category'] : "",
+					    ],
 					    'child_component' => $child_theme,
 					    'enabled'         => false
 				    ];

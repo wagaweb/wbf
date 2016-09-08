@@ -94,10 +94,10 @@ class Component {
 		    $this->override = $component_data['override'];
 	    }
 	    if(isset($component_data['metadata'])){
-	    	if(isset($component_data['metadata']['Category']) && !empty($component_data['metadata']['Category'])){
+	    	if(isset($component_data['metadata']['category']) && !empty($component_data['metadata']['category'])){
 	    		$this->category = $component_data['metadata']['Category'];
 		    }
-		    if(isset($component_data['metadata']['Tags']) && is_array($component_data['metadata']['Tags']) && !empty($component_data['metadata']['Tags'])){
+		    if(isset($component_data['metadata']['tags']) && is_array($component_data['metadata']['tags']) && !empty($component_data['metadata']['tags'])){
 			    $this->category = $component_data['metadata']['Category'];
 		    }
 	    }
