@@ -37,28 +37,9 @@ class GUI {
 	 */
 	public static function components_admin_page() {
 
-		$options_updated_flag = false;
-
-		/*
-		 * Restore defaults components
-		 */
-		if ( isset( $_POST['restore_defaults_components'] ) ) {
-			ComponentsManager::restore_components_state();
-			$options_updated_flag = true;
-		}
-
-		/*
-		 * Reset components
-		 */
-		if ( isset( $_POST['reset_components'] ) ) {
-			ComponentsManager::reset_components_state();
-			$options_updated_flag = true;
-		}
-
 		$registered_components = ComponentsManager::getAllComponents();
-		if ( isset( $_POST['reset_components'] ) ) {
-			array_map( function ( $c ) { $c->active = false; }, $registered_components );
-		}
+
+		$options_updated_flag = false;
 
 		/*
 		 * Save Component Options

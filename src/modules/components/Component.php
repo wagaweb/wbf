@@ -95,10 +95,10 @@ class Component {
 	    }
 	    if(isset($component_data['metadata'])){
 	    	if(isset($component_data['metadata']['category']) && !empty($component_data['metadata']['category'])){
-	    		$this->category = $component_data['metadata']['Category'];
+	    		$this->category = $component_data['metadata']['category'];
 		    }
 		    if(isset($component_data['metadata']['tags']) && is_array($component_data['metadata']['tags']) && !empty($component_data['metadata']['tags'])){
-			    $this->category = $component_data['metadata']['Category'];
+			    $this->category = $component_data['metadata']['tags'];
 		    }
 	    }
     }

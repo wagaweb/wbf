@@ -39,7 +39,7 @@ class ComponentsManager {
         self::detect_components(get_root_components_directory());
         /** Detect components in child theme **/
         if(is_child_theme()){
-            self::detect_components(get_child_components_directory());
+            self::detect_components(get_child_components_directory(),true);
         }
 	    //Update registered_components global
 	    self::update_global_components_vars();
@@ -80,7 +80,7 @@ class ComponentsManager {
 					    $component_name = $pinfo['filename'];
 				    }
 				    //Buildup component data:
-				    $component_data = [
+				    $component_params = [
 					    'nicename'        => $component_name,
 					    'class_name'      => isset($component_data['Class Name']) && $component_data['Class Name'] != "" ? $component_data['Class Name'] : ComponentFactory::get_component_class_name($component_name),
 					    'file'            => $file,
@@ -89,10 +89,10 @@ class ComponentsManager {
 					    	'category' => isset($component_data['Category']) ? $component_data['Category'] : "",
 					    ],
 					    'child_component' => $child_theme,
-					    'enabled'         => false
+					    'enabled'         => array_key_exists( $component_name, $registered_components ) ? $registered_components[ $component_name ][ 'enabled' ] : false
 				    ];
 				    if ( ! array_key_exists( $component_name, $registered_components ) || $registered_components[ $component_name ] != $component_data ) {
-					    $registered_components[ $component_name ] = $component_data;
+					    $registered_components[ $component_name ] = $component_params;
 				    }
 			    }
 		    }
@@ -504,51 +504,72 @@ class ComponentsManager {
      */
     static function toggle_components(){
         global $plugin_page;
-        if(is_admin() && isset($_GET['page']) && $_GET['page'] == GUI::$wp_menu_slug ){
-            if ( isset( $_GET['enable'] ) ) {
-                $component_name = $_GET['enable'];
-                try {
-                    self::enable( $component_name, ComponentsManager::is_child_component( $component_name ) );
-                } catch ( \Exception $e ) {
-                    self::$last_error = $e->getMessage();
+	    if(!is_admin()) return;
+	    if(!isset($_GET['page']) || $_GET['page'] != GUI::$wp_menu_slug) return;
+
+        if ( isset( $_GET['enable'] ) ) {
+            $component_name = $_GET['enable'];
+            try {
+                self::enable( $component_name, ComponentsManager::is_child_component( $component_name ) );
+            } catch ( \Exception $e ) {
+                self::$last_error = $e->getMessage();
+            }
+        } elseif ( isset( $_GET['disable'] ) ) {
+            $component_name = $_GET['disable'];
+            try {
+                self::disable( $component_name, ComponentsManager::is_child_component( $component_name ) );
+            } catch ( \Exception $e ) {
+                self::$last_error = $e->getMessage();
+            }
+        } elseif( isset( $_POST['submit-components-options']) ){
+            $registered_components = self::getAllComponents();
+            $registered_components_status = isset($_POST['components_status']) ? $_POST['components_status'] : array();
+            foreach($registered_components as $component_name => $component_data){
+                if(!array_key_exists($component_name,$registered_components_status)){
+                    $registered_components_status[$component_name] = "off";
                 }
-            } elseif ( isset( $_GET['disable'] ) ) {
-                $component_name = $_GET['disable'];
-                try {
-                    self::disable( $component_name, ComponentsManager::is_child_component( $component_name ) );
-                } catch ( \Exception $e ) {
-                    self::$last_error = $e->getMessage();
-                }
-            } elseif( isset( $_POST['submit-components-options']) ){
-                $registered_components = self::getAllComponents();
-                $registered_components_status = isset($_POST['components_status']) ? $_POST['components_status'] : array();
-                foreach($registered_components as $component_name => $component_data){
-                    if(!array_key_exists($component_name,$registered_components_status)){
-                        $registered_components_status[$component_name] = "off";
-                    }
-                }
-                foreach($registered_components_status as $component_name => $component_status){
-                    if($component_status == "on" ){
-                        if(!self::is_active($registered_components[$component_name])){
-	                        try{
-		                        self::enable( $component_name, ComponentsManager::is_child_component( $component_name ) );
-	                        }catch(\Exception $e){
-		                        self::$last_error = $e->getMessage();
-		                        Utilities::admin_show_message(self::$last_error,"error");
-	                        }
+            }
+            foreach($registered_components_status as $component_name => $component_status){
+                if($component_status == "on" ){
+                    if(!self::is_active($registered_components[$component_name])){
+                        try{
+	                        self::enable( $component_name, ComponentsManager::is_child_component( $component_name ) );
+                        }catch(\Exception $e){
+	                        self::$last_error = $e->getMessage();
+	                        Utilities::admin_show_message(self::$last_error,"error");
                         }
-                    }else{
-                        if(self::is_active($registered_components[$component_name])){
-                            try{
-	                            self::disable( $component_name, ComponentsManager::is_child_component( $component_name ) );
-                            }catch(\Exception $e){
-	                            self::$last_error = $e->getMessage();
-	                            Utilities::admin_show_message(self::$last_error,"error");
-                            }
+                    }
+                }else{
+                    if(self::is_active($registered_components[$component_name])){
+                        try{
+                            self::disable( $component_name, ComponentsManager::is_child_component( $component_name ) );
+                        }catch(\Exception $e){
+                            self::$last_error = $e->getMessage();
+                            Utilities::admin_show_message(self::$last_error,"error");
                         }
                     }
                 }
             }
+        }
+
+        /*
+		 * Restore defaults components
+		 */
+        if ( isset( $_POST['restore_defaults_components'] ) ) {
+	        self::restore_components_state();
+	        Utilities::admin_show_message(__("Component status restored to defaults","wbf"),"success");
+        }
+
+        /*
+		 * Reset components
+		 */
+        if ( isset( $_POST['reset_components'] ) ) {
+	        self::reset_components_state();
+	        $registered_components = self::getAllComponents();
+	        array_map( function ( $c ) {
+		        $c->active = false;
+	        }, $registered_components );
+	        Utilities::admin_show_message(__("Component status reset","wbf"),"success");
         }
     }
 

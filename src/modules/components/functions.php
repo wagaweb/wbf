@@ -53,7 +53,7 @@ function get_root_components_directory(){
  * @return string
  */
 function get_child_components_directory(){
-	$location = apply_filters("wbf/modules/components/child_directory_location",get_template_directory());
+	$location = apply_filters("wbf/modules/components/child_directory_location",get_stylesheet_directory());
 	$name = get_child_dirname();
 	$directory = $location."/".$name."/";
 	return $directory;
