@@ -105,8 +105,14 @@ class Plugin {
 	 * @var Notice_Manager
 	 */
 	public $notice_manager;
-
+	/**
+	 * @var bool
+	 */
 	protected $debug_mode = false;
+	/**
+	 * @var bool
+	 */
+	protected $script_debug_mode = false;
 
 	public function __construct( $plugin_name, $dir, $version = "1.0.0" ) {
 		$this->plugin_name = $plugin_name;
@@ -147,8 +153,12 @@ class Plugin {
 		}
 
 		//Check if debug mode must be activated
-		if( (defined("WP_DEBUG") && WP_DEBUG) || (defined("WABOOT_ENV") && WABOOT_ENV == "dev") || (defined("WBF_ENV") && WBF_ENV == "dev") ){
+		if( (defined("WP_DEBUG") && WP_DEBUG) || (defined("WBF_ENV") && WBF_ENV == "dev") ){
 			$this->debug_mode = true;
+		}
+
+		if( defined("SCRIPT_DEBUG") && SCRIPT_DEBUG ){
+			$this->script_debug_mode = true;
 		}
 
 		$GLOBALS['wbf_loaded_plugins'][$this->get_plugin_name()] = &$this;
@@ -323,6 +333,10 @@ class Plugin {
 
 	public function is_debug(){
 		return $this->debug_mode;
+	}
+
+	public function is_script_debug(){
+		return $this->script_debug_mode;
 	}
 
 	/**
