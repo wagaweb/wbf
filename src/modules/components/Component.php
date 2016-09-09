@@ -98,7 +98,7 @@ class Component {
 	    		$this->category = $component_data['metadata']['category'];
 		    }
 		    if(isset($component_data['metadata']['tags']) && is_array($component_data['metadata']['tags']) && !empty($component_data['metadata']['tags'])){
-			    $this->category = $component_data['metadata']['tags'];
+			    $this->tags = $component_data['metadata']['tags'];
 		    }
 	    }
     }

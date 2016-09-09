@@ -94,18 +94,39 @@ class GUI {
 			$compiled_components_options[ $current_element ][] = $components_options[ $key ];
 		}
 
-		uksort( $registered_components, function ( $a, $b ) {
-			if ( $a == $b ) {
+		//Let's categorize the components
+		$categorized_registered_components = [];
+		foreach ($registered_components as $c){
+			if(isset($c->category)){
+				$categorized_registered_components[$c->category][$c->name] = $c;
+			}else{
+				$categorized_registered_components["_uncategorized"][$c->name] = $c;
+			}
+		}
+		//...And sort them among categories
+		foreach ($categorized_registered_components as $category => $components){
+			uksort($categorized_registered_components[$category],function($a, $b){
+				if($a == $b){
+					return 0;
+				}
+				return $a < $b ? - 1 : 1;
+			});
+		}
+
+		//Sort the un-categorized components array
+		uksort($registered_components, function($a, $b){
+			if($a == $b){
 				return 0;
 			}
-
 			return $a < $b ? - 1 : 1;
-		} );
+		});
 
-		( new HTMLView( "src/modules/components/views/components_page.php", "wbf" ) )->clean()->display( [
-			'registered_components'       => $registered_components,
-			'compiled_components_options' => $compiled_components_options,
-			'last_error'                  => ( isset( $_GET['enable'] ) || isset( $_GET['disable'] ) ) && ! empty( ComponentsManager::$last_error ) ? ComponentsManager::$last_error : false,
-			'options_updated_flag'        => $options_updated_flag
-		] );
+		$v = new HTMLView( "src/modules/components/views/components_page.php", "wbf");
+		$v->clean()->display([
+			'registered_components'             => $registered_components,
+			'categorized_registered_components' => $categorized_registered_components,
+			'compiled_components_options'       => $compiled_components_options,
+			'last_error'                        => ( isset( $_GET['enable'] ) || isset( $_GET['disable'] ) ) && ! empty( ComponentsManager::$last_error ) ? ComponentsManager::$last_error : false,
+			'options_updated_flag'              => $options_updated_flag
+		]);
 	}}
