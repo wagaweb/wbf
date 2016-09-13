@@ -1042,7 +1042,8 @@ class PluginCore {
 
 		$v->display([
 			'page_title' => __("WBF Status"),
-			'sections' => $data
+			'sections' => $data,
+			'force_plugin_update_link' => admin_url()."/update-core.php?force_wbf_plugin_update_check=1"
 		]);
 	}
 }

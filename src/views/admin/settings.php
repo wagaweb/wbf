@@ -41,6 +41,12 @@
 					</tr>
 				<?php endif; ?>
 			<?php endforeach; ?>
+			<tr>
+				<td class="row-title"><?php _ex("Actions","WBF Status Page","wbf") ?></td>
+				<td class="desc">
+					<a href="<?php echo $force_plugin_update_link ?>" title="<?php _ex("Force plugins update check","WBF Status Page","wbf") ?>"><?php _ex("Force plugins update check","WBF Status Page","wbf") ?></a>
+				</td>
+			</tr>
 		</tbody>
 	</table>
 <?php endforeach; ?>
