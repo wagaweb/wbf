@@ -1199,7 +1199,7 @@ class Utilities{
 	 *
 	 * @param string $id plugin identifier (can be any [a-z_]+ string.
 	 * @param array $params [
-	 *  'path' => path/to/plugin/js
+	 *  'plugin_path' => path/to/plugin/js
 	 *  'create_button' => false|true
 	 * ]
 	 *
@@ -1208,7 +1208,7 @@ class Utilities{
 	static function add_tinymce_plugin($id,$params){
 
 		$params = wp_parse_args($params,[
-			'path' => '',
+			'plugin_path' => '',
 			'create_button' => false
 		]);
 
