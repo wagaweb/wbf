@@ -69,7 +69,7 @@ class PluginCore {
 	/**
 	 * @var string
 	 */
-	const version = "0.14.4";
+	const version = "0.14.5";
 
 	/**
 	 * Return a new instance of WBF
@@ -682,7 +682,8 @@ class PluginCore {
 						'ajaxurl' => admin_url('admin-ajax.php'),
 						'wpurl' => get_bloginfo('wpurl'),
 						'wp_screen' => function_exists("get_current_screen") ? get_current_screen() : null,
-						'isAdmin' => is_admin()
+						'isAdmin' => is_admin(),
+						'is_wbf_admin_page' => self::is_wbf_admin_page()
 					])
 				],
 				'type' => 'js',
