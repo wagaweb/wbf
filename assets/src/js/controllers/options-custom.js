@@ -5,33 +5,44 @@ module.exports = {
      */
     init: function(){
         var $ = jQuery;
+        var of_elements = {
+            'color': $('.of-color'),
+            'advanced_color': $(".advanced-color"),
+            'radio_img_img': $('.of-radio-img-img'),
+            'radio_img_label': $('.of-radio-img-label'),
+            'radio_img_radio': $('.of-radio-img-radio')
+        };
+        var $tabs_wrapper = $('#optionsframework-wrap').find('.nav-tab-wrapper');
 
         // Loads the color pickers
-        $('.of-color').wpColorPicker();
+        of_elements.color.wpColorPicker();
 
         //Init spectrum color picker
-        $(".advanced-color").spectrum({
+        of_elements.advanced_color.spectrum({
             showInput: true,
             showAlpha: true,
             showPalette: true
         });
 
         // Image Options
-        $('.of-radio-img-img').click(function(){
+        of_elements.radio_img_img.click(function(){
             $(this).parent().parent().find('.of-radio-img-img').removeClass('of-radio-img-selected');
             $(this).addClass('of-radio-img-selected');
         });
 
-        $('.of-radio-img-label').hide();
-        $('.of-radio-img-img').show();
-        $('.of-radio-img-radio').hide();
+        of_elements.radio_img_label.hide();
+        of_elements.radio_img_img.show();
+        of_elements.radio_img_radio.hide();
 
         // Loads tabbed sections if they exist
-        if ( $('.nav-tab-wrapper').length > 0 ) {
+        if ( $tabs_wrapper.length > 0 ) {
             options_framework_tabs();
         }
 
         function options_framework_tabs() {
+            var $wrapper = $('#optionsframework-wrap');
+            var $tabs_links = $wrapper.find('.nav-tab-wrapper a');
+            var $tabs_first_link = $wrapper.find('.nav-tab-wrapper a:first');
 
             // Hides all the .group sections to start
             $('.group').hide();
@@ -40,6 +51,9 @@ module.exports = {
             var active_tab = '';
             if ( typeof(localStorage) != 'undefined' ) {
                 active_tab = localStorage.getItem("wbf_theme_options_active_tab"); //Check for active tab
+                if(active_tab.match(/http/)){ //Hardcoded fix for some incompatibilities
+                    active_tab = '';
+                }
             }
 
             // If active tab is saved and exists, load it's .group
@@ -48,16 +62,16 @@ module.exports = {
                 $(active_tab + '-tab').addClass('nav-tab-active');
             } else {
                 $('.group:first').fadeIn();
-                $('.nav-tab-wrapper a:first').addClass('nav-tab-active');
+                $tabs_first_link.addClass('nav-tab-active');
             }
 
             // Bind tabs clicks
-            $('.nav-tab-wrapper a').click(function(evt) {
+            $tabs_links.click(function(evt) {
 
                 evt.preventDefault();
 
                 // Remove active class from all tabs
-                $('.nav-tab-wrapper a').removeClass('nav-tab-active');
+                $tabs_links.removeClass('nav-tab-active');
 
                 $(this).addClass('nav-tab-active').blur();
 

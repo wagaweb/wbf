@@ -1,5 +1,9 @@
 == Change log ==
 
+Version 0.14.5 - 13/09/2016
+---------------------------------
+- Fix: Accorgimenti di compatibilità script theme options con altre plugin
+
 Version 0.14.4 - 08/09/2016
 ---------------------------------
 - Fix: Nuovi tentativi di sistemare il problema del reset dei componenti
