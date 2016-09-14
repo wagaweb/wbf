@@ -51,7 +51,7 @@ module.exports = {
             var active_tab = '';
             if ( typeof(localStorage) != 'undefined' ) {
                 active_tab = localStorage.getItem("wbf_theme_options_active_tab"); //Check for active tab
-                if(active_tab.match(/http/)){ //Hardcoded fix for some incompatibilities
+                if(active_tab != null && active_tab.match(/http/)){ //Hardcoded fix for some incompatibilities
                     active_tab = '';
                 }
             }
