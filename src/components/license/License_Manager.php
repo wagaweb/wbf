@@ -84,7 +84,7 @@ class License_Manager{
 
 	static function get($license_slug,$type){
 		$licenses = self::get_all();
-		if(array_key_exists($license_slug,$licenses[$type])){
+		if(array_key_exists($type,$licenses) && array_key_exists($license_slug,$licenses[$type])){
 			return $licenses[$type][$license_slug];
 		}else{
 			return false;
