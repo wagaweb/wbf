@@ -14,6 +14,7 @@ class GUI {
 	public static function scripts( $hook ) {
 		global $plugin_page;
 		if ( $plugin_page == GUI::$wp_menu_slug ) {
+			wp_enqueue_media();
 			// Enqueue custom CSS
 			$stylesheet = \WBF::prefix_url( 'assets/dist/css/componentsframework.min.css' );
 			if ( $stylesheet != "" ) {

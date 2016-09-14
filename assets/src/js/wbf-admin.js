@@ -13,7 +13,7 @@ jQuery(document).ready(function($) {
         component_page_view.init_interface();
     }
 
-    if(wbfData.wp_screen.base.match(/wbf_options/)){
+    if(wbfData.wp_screen.base.match(/wbf_options/) || wbfData.wp_screen.base.match(/wbf_components/)){
         //Init code editor view
         var code_editor_view = require("./views/code-editor.js");
         code_editor_view.init_interface();
