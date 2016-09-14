@@ -193,7 +193,7 @@ class License_Manager{
 		/**
 		 * Set update server
 		 */
-		if(class_exists('\WBF\includes\Theme_Update_Checker')){
+		if(class_exists('\WBF\components\customupdater\Theme_Update_Checker')){
 			$GLOBALS['WBFThemeUpdateChecker'] = new Theme_Update_Checker(
 				$license->slug,
 				$license->metadata_call
