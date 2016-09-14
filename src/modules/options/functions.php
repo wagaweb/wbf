@@ -120,7 +120,7 @@ function of_options_save($option, $old_value, $value){
 			if($opt_data['type'] == "upload"){
 				$upload_to = isset($opt_data['upload_to']) ? $opt_data['upload_to'] : false;
 				$upload_as = isset($opt_data['upload_as']) ? $opt_data['upload_as'] : false;
-				$allowed_extensions = isset($opt_data['allowed_extensions']) ? $opt_data['allowed_extensions'] : array("jpg","jpeg","png","gif","ico");
+				$allowed_extensions = isset($opt_data['allowed_extensions']) ? $opt_data['allowed_extensions'] : array("jpg","jpeg","png","gif","ico","svg");
 				$file_path = url_to_path($value[$opt_data['id']]);
 				if(is_file($file_path)){ //by doing this we take into account only the files uploaded to the site and not external one
 					$oFile = new \SplFileObject($file_path);

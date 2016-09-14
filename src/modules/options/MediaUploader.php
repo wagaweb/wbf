@@ -83,7 +83,7 @@ class MediaUploader{
 			$remove = '<a class="remove-image">Remove</a>';
 
 			$allowed_formats_preg = call_user_func(function() use ($option_object){
-				$allowed_extensions = isset($option_object['allowed_extensions']) && is_array($option_object['allowed_extensions']) && !empty($option_object['allowed_extensions']) ? $option_object['allowed_extensions'] : array('jpg','jpeg','png','gif','ico');
+				$allowed_extensions = isset($option_object['allowed_extensions']) && is_array($option_object['allowed_extensions']) && !empty($option_object['allowed_extensions']) ? $option_object['allowed_extensions'] : array('jpg','jpeg','png','gif','ico','svg');
 				return implode("|",$allowed_extensions);
 			});
 
@@ -112,6 +112,10 @@ class MediaUploader{
 	 * Initialize the media uploader class
 	 */
 	public function init() {
+		add_filter('upload_mimes', function($mimes){
+			$mimes['svg'] = 'image/svg+xml';
+			return $mimes;
+		});
 		add_action('admin_enqueue_scripts', array($this, 'enqueue_media_scripts'));
 		add_filter('wbf/js/admin/localization', function($loc_array){
 			$loc_array['of_media_uploader'] = [
