@@ -13,12 +13,14 @@ namespace WBF\modules\options;
 
 use WBF\components\assets\AssetsManager;
 use WBF\includes\Resources;
+use WBF\modules\options\fields\BaseField;
+use WBF\modules\options\fields\Field;
 
 /**
  * Class Advanced_Color
  * @package WBF\modules\options
  */
-class Advanced_Color {
+class Advanced_Color extends BaseField implements Field{
 
 	/**
 	 * Init editor actions. Called by Framework->init()
@@ -34,20 +36,19 @@ class Advanced_Color {
 
 
 	/**
-	 * @param $current_option
-	 * @param $val
-	 * @param $options_db_key
 	 *
 	 * @return string
 	 */
-	static function display( $current_option, $val, $options_db_key ) {
+	public function get_html() {
+		$options_db_key = Framework::get_options_root_id();
+
 		$default_color = '';
-		if (isset($current_option['std'])) {
-			if ($val != $current_option['std']) {
-				$default_color = ' data-default-color="' . $current_option['std'] . '" ';
+		if (isset($this->related_option['std'])) {
+			if ($this->value != $this->related_option['std']) {
+				$default_color = ' data-default-color="' . $this->related_option['std'] . '" ';
 			}
 		}
-		$output = '<input name="' . esc_attr($options_db_key . '[' . $current_option['id'] . ']') . '" id="' . esc_attr($current_option['id']) . '" class="advanced-color"  type="text" value="' . esc_attr($val) . '"' . $default_color . ' />';
+		$output = '<input name="' . esc_attr($options_db_key . '[' . $this->related_option['id'] . ']') . '" id="' . esc_attr($this->related_option['id']) . '" class="advanced-color"  type="text" value="' . esc_attr($this->value) . '"' . $default_color . ' />';
 
 		return $output;
 	}

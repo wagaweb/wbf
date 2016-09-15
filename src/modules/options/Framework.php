@@ -12,6 +12,7 @@
 namespace WBF\modules\options;
 
 use WBF\components\utils\Utilities;
+use WBF\modules\options\fields\BaseField;
 
 class Framework{
 
@@ -39,6 +40,34 @@ class Framework{
 		$this->admin->init();
 
 		//Loads up extensions todo: refactor a bit
+		$fields = [
+			'text' => "WBF\\modules\\options\\fields\\Text",
+			'password' => "WBF\\modules\\options\\fields\\Password",
+			'csseditor' => "WBF\\modules\\options\\fields\\CodeEditor",
+			'typography' => "WBF\\modules\\options\\fields\\FontSelector",
+			'gfont' => "WBF\\modules\\options\\fields\\FondSelector",
+			'textarea' => "WBF\\modules\\options\\fields\\TextArea",
+			'select' => "WBF\\modules\\options\\fields\\Select",
+			'radio' => "WBF\\modules\\options\\fields\\Radio",
+			'images' => "WBF\\modules\\options\\fields\\Images",
+			'checkbox' => "WBF\\modules\\options\\fields\\Checkbox",
+			'multicheck' => "WBF\\modules\\options\\fields\\MultiCheck",
+			'color' => "WBF\\modules\\options\\fields\\Color",
+			'advanced_color' => "WBF\\modules\\options\\fields\\Advanced_Color",
+			'upload' => "WBF\\modules\\options\\fields\\Upload",
+			'background' => "WBF\\modules\\options\\fields\\Background",
+			'editor' => "WBF\\modules\\options\\fields\\Editor",
+			'info' => "WBF\\modules\\options\\fields\\Info",
+			'heading' => "WBF\\modules\\options\\fields\\Heading",
+		];
+		foreach ($fields as $name => $class){
+			if(class_exists($class)){
+				$f = new $class();
+				if($f instanceof BaseField && method_exists($f,"init")){
+					$f->init();
+				}
+			}
+		}
 		$mu = new MediaUploader();
 		$mu->init();
 		$ce = new CodeEditor();
