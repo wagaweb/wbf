@@ -168,7 +168,7 @@ class Utilities{
 				get_template_directory() . '/templates/parts/'
 			];
 
-			$search_locations = array_merge($additional_search_paths,$search_locations);
+			$search_locations = array_merge($search_locations,$additional_search_paths);
 
 			$search_locations = array_unique($search_locations);
 
