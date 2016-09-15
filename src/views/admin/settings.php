@@ -45,13 +45,17 @@
 	</table>
 <?php endforeach; ?>
 <h2><?php _e("Debug and administration console","wbf") ?></h2>
-<table class="widefat striped">
+<table class="widefat striped wbf-admin-console">
 	<tbody>
 		<tr>
 			<td class="row-title"><?php _ex("Actions","WBF Status Page","wbf") ?></td>
 			<td class="desc">
-				<a href="<?php echo $force_plugin_update_link ?>" title="<?php _ex("Force plugins update check","WBF Status Page","wbf") ?>"><?php _ex("Force plugins update check","WBF Status Page","wbf") ?></a>
+				<ul>
+					<li><a href="<?php echo $force_plugin_update_link ?>" title="<?php _ex("Force plugins update check","WBF Status Page","wbf") ?>"><?php _ex("Force plugins update check","WBF Status Page","wbf") ?></a></li>
+					<?php do_action("wbf/admins/status_page/administration_console_table/actions_list"); ?>
+				</ul>
 			</td>
 		</tr>
+		<?php do_action("wbf/admins/status_page/administration_console_table/rows"); ?>
 	</tbody>
 </table>
