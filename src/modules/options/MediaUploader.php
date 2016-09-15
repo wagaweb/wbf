@@ -76,6 +76,8 @@ class MediaUploader{
 		if ( $_desc != '' ) {
 			$output .= '<span class="of-metabox-desc">' . $_desc . '</span>' . "\n";
 		}
+		// insert thumbnail
+
 
 		$output .= '<div class="screenshot" id="' . $id . '-image">' . "\n";
 
@@ -89,6 +91,11 @@ class MediaUploader{
 
 			$image = preg_match( '/(^.*\.'.$allowed_formats_preg.'*)/i', $value ); // $image = preg_match( '/(^.*\.jpg|jpeg|png|gif|ico*)/i', $value );
 			if ( $image ) {
+				// find the attachment thumbnail if any
+				$attachment_id = \WBF\components\utils\Utilities::get_attachment_id_by_url( $value );
+				$attachment_thumbnail = wp_get_attachment_image_src($attachment_id);
+
+				if (!empty($attachment_thumbnail)) { $value = $attachment_thumbnail[0]; }
 				$output .= '<img src="' . $value . '" alt="" />' . $remove;
 			} else {
 				$parts = explode( "/", $value );
