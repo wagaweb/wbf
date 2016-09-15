@@ -976,7 +976,10 @@ class PluginCore {
 	 * Placeholder callback
 	 */
 	public function options_page(){
-		return;
+		$v = new HTMLView("src/views/admin/default-page.php","wbf");
+		$v->for_dashboard()->display([
+			'page_title' => __("Welcome to WBF!")
+		]);
 	}
 
 	/**
