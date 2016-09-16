@@ -1234,7 +1234,7 @@ class Utilities{
 		});
 	}
 
-	/*
+	/**
 	 * Return an ID of an attachment by searching the database with the file URL.
 	 *
 	 * First checks to see if the $url is pointing to a file that exists in
@@ -1267,4 +1267,25 @@ class Utilities{
 		// Returns null if no attachment is found
 		return $attachment[0];
 	}
+
+	/**
+	 * This is a decent way of grabbing the dimensions of SVG files.
+	 * Depends on http://php.net/manual/en/function.simplexml-load-file.php
+	 * I believe this to be a reasonable dependency and should be common enough to
+	 * not cause problems.
+	 *
+	 * @see https://github.com/grok/wordpress-plugin-scalable-vector-graphics/blob/master/scalable-vector-graphics.php
+	 *
+	 * @param $svg
+	 *
+	 * @return object
+	 */
+	static function get_svg_dimensions( $svg ) {
+		$svg = simplexml_load_file( $svg );
+		$attributes = $svg->attributes();
+		$width = (string) $attributes->width;
+		$height = (string) $attributes->height;
+		return (object) array( 'width' => $width, 'height' => $height );
+	}
+
 }
