@@ -402,7 +402,7 @@ class PluginCore {
 	/**
 	 * Retrieve and includes WBF Modules
 	 *
-	 * @hooked 'after_setup_theme'
+	 * @called at 'after_setup_theme', 11
 	 *
 	 * @return mixed
 	 */
