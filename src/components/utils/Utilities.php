@@ -1258,14 +1258,18 @@ class Utilities{
 		$file_host = str_ireplace( 'www.', '', parse_url( $url, PHP_URL_HOST ) );
 		// Return nothing if there aren't any $url parts or if the current host and $url host do not match
 		if ( ! isset( $parsed_url[1] ) || empty( $parsed_url[1] ) || ( $this_host != $file_host ) ) {
-			return;
+			return null;
 		}
 		// Now we're going to quickly search the DB for any attachment GUID with a partial path match
 		// Example: /uploads/2013/05/test-image.jpg
 		global $wpdb;
 		$attachment = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM {$wpdb->prefix}posts WHERE guid RLIKE %s;", $parsed_url[1] ) );
 		// Returns null if no attachment is found
-		return $attachment[0];
+		if ( ! empty( $attachment[0] ) ) {
+			return $attachment[0];
+		} else {
+			return false;
+		}
 	}
 
 	/**
