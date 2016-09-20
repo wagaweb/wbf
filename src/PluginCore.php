@@ -13,6 +13,7 @@ use WBF\components\utils\Utilities;
 use WBF\includes\GoogleFontsRetriever;
 use WBF\includes\Resources;
 use WBF\modules\components\GUI;
+use WBF\modules\options\Framework;
 
 class PluginCore {
 
@@ -976,6 +977,9 @@ class PluginCore {
 	 * Placeholder callback
 	 */
 	public function options_page(){
+		if(has_action("wbf/theme_options/register") || has_filter("wbf/modules/options/available") || has_action("wbf/modules/behaviors/available")){
+			return; //if we have theme options, do not display the default page.
+		}
 		$v = new HTMLView("src/views/admin/default-page.php","wbf");
 		$v->for_dashboard()->display([
 			'page_title' => __("Welcome to WBF!")
