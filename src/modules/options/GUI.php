@@ -45,7 +45,6 @@ class GUI{
 
 	    if(is_array($options) && !empty($options)){
             foreach ($options as $current_option) {
-
 	            $val = '';
 	            $select_value = '';
 	            $output = '';
@@ -111,69 +110,16 @@ class GUI{
 	            	$field = $registered_fields[$current_option['type']];
 		            if($field instanceof BaseField){
 			            $field->setup($val,$current_option);
-			            $output .= $field->get_html();
+			            if($current_option['type'] == "heading"){
+				            $counter++;
+				            if ($counter >= 2) {
+					            $output .= '</div>' . "\n";
+				            }
+				            $output .= $field->get_html($counter);
+			            }else{
+				            $output .= $field->get_html();
+			            }
 		            }
-	            }
-
-	            switch ($current_option['type']) {
-
-	                // Editor
-	                case 'editor':
-	                    $output .= '<div class="explain">' . $current_option_description . '</div>' . "\n";
-	                    echo $output;
-	                    $textarea_name = esc_attr($options_db_key . '[' . $current_option['id'] . ']');
-	                    $default_editor_settings = array(
-	                        'textarea_name' => $textarea_name,
-	                        'media_buttons' => false,
-	                        'tinymce' => array('plugins' => 'wordpress')
-	                    );
-	                    $editor_settings = array();
-	                    if (isset($current_option['settings'])) {
-	                        $editor_settings = $current_option['settings'];
-	                    }
-	                    $editor_settings = array_merge($default_editor_settings, $editor_settings);
-	                    wp_editor($val, $current_option['id'], $editor_settings);
-	                    $output = '';
-	                    break;
-
-	                // Info
-	                case "info":
-	                    $id = '';
-	                    $class = 'section';
-	                    if (isset($current_option['id'])) {
-	                        $id = 'id="' . esc_attr($current_option['id']) . '" ';
-	                    }
-	                    if (isset($current_option['type'])) {
-	                        $class .= ' section-' . $current_option['type'];
-	                    }
-	                    if (isset($current_option['class'])) {
-	                        $class .= ' ' . $current_option['class'];
-	                    }
-
-	                    $output .= '<div ' . $id . 'class="' . esc_attr($class) . '">' . "\n";
-	                    if (isset($current_option['name'])) {
-	                        $output .= '<h4 class="heading">' . esc_html($current_option['name']) . '</h4>' . "\n";
-	                    }
-	                    if ($current_option['desc']) {
-	                        $output .= apply_filters('of_sanitize_info', $current_option['desc']) . "\n";
-	                    }
-	                    $output .= '</div>' . "\n";
-	                    break;
-
-	                // Heading for Navigation
-	                case "heading":
-	                    $counter++;
-	                    if ($counter >= 2) {
-	                        $output .= '</div>' . "\n";
-	                    }
-	                    $class = '';
-	                    $class = !empty($current_option['id']) ? $current_option['id'] : $current_option['name'];
-	                    $class = preg_replace('/[^a-zA-Z0-9._\-]/', '', strtolower($class));
-						$section_id = isset($value['section_id']) ? $value['section_id'] : "";
-						if($section_id !== "") $class = $class." ".$section_id;
-	                    $output .= '<div id="options-group-' . $counter . '" class="group ' . $class . '">';
-	                    $output .= '<h3>' . esc_html($current_option['name']) . '</h3>' . "\n";
-	                    break;
 	            }
 
 	            if (($current_option['type'] != "heading") && ($current_option['type'] != "info")) {
