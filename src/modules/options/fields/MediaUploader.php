@@ -11,57 +11,53 @@
 
 namespace WBF\modules\options;
 
-class MediaUploader{
+use WBF\modules\options\fields\BaseField;
+use WBF\modules\options\fields\Field;
+
+class MediaUploader extends BaseField implements Field {
 
 	/**
-	 * Media Uploader Using the WordPress Media Library.
-	 *
-	 * Parameters:
-	 *
-	 * string $_id - A token to identify this field (the name).
-	 * string $_value - The value of the field, if present.
-	 * string $_desc - An optional description of the field.
-	 *
+	 * Initialize the media uploader class
 	 */
-	static function optionsframework_uploader( $_id, $_value, $_desc = '', $_name = '' ) {
+	public function init() {
+		add_filter('upload_mimes', function($mimes){
+			$mimes['svg'] = 'image/svg+xml';
+			return $mimes;
+		});
+		add_action('admin_enqueue_scripts', array($this, 'enqueue_media_scripts'));
+		add_filter('wbf/js/admin/localization', function($loc_array){
+			$loc_array['of_media_uploader'] = [
+				'upload' => __('Upload', 'wbf'),
+				'remove' => __('Remove', 'wbf')
+			];
+			return $loc_array;
+		});
+	}
 
-		$optionsframework_settings = Framework::get_options_framework_settings();
-
-		// Gets the unique option id
-		$option_name = $optionsframework_settings['id'];
-
+	public function get_html($custom_name = false) {
 		$output = '';
-		$id = '';
-		$class = '';
-		$int = '';
-		$value = '';
-		$name = '';
 
-		$id = strip_tags( strtolower( $_id ) );
+		$id = strip_tags( strtolower( $this->related_option['id'] ) );
 
 		// Get the option... options :)
 		$option_object = Framework::get_option_object($id);
 
-		// If a value is passed and we don't have a stored value, use the value that's passed through.
-		if ( $_value != '' && $value == '' ) {
-			$value = $_value;
+		$value = $this->value;
+
+		if(!$custom_name){
+			$name = $custom_name;
+		}else{
+			$name = $this->get_field_name();
 		}
 
-		if ($_name != '') {
-			$name = $_name;
-		}
-		else {
-			$name = $option_name.'['.$id.']';
-		}
-
-		if ( $value ) {
+		if ( $value && !empty($value) ) {
 			$class = ' has-file';
 		}
 
 		if(isset($option_object['readonly']) && $option_object['readonly'])
-			$output .= '<input id="' . $id . '" class="upload' . $class . '" type="text" name="'.$name.'" value="' . $value . '" placeholder="' . __('No file chosen', 'textdomain') .'" readonly />' . "\n";
+			$output .= '<input id="' . $id . '" class="upload" type="text" name="'.$name.'" value="' . $value . '" placeholder="' . __('No file chosen', 'textdomain') .'" readonly />' . "\n";
 		else
-			$output .= '<input id="' . $id . '" class="upload' . $class . '" type="text" name="'.$name.'" value="' . $value . '" placeholder="' . __('No file chosen', 'textdomain') .'" />' . "\n";
+			$output .= '<input id="' . $id . '" class="upload" type="text" name="'.$name.'" value="' . $value . '" placeholder="' . __('No file chosen', 'textdomain') .'" />' . "\n";
 
 		if ( function_exists( 'wp_enqueue_media' ) ) {
 			if ( ( $value == '' ) ) {
@@ -73,8 +69,8 @@ class MediaUploader{
 			$output .= '<p><i>' . __( 'Upgrade your version of WordPress for full media support.', 'textdomain' ) . '</i></p>';
 		}
 
-		if ( $_desc != '' ) {
-			$output .= '<span class="of-metabox-desc">' . $_desc . '</span>' . "\n";
+		if ( $this->get_description() != '' ) {
+			$output .= '<span class="of-metabox-desc">' . $this->get_description() . '</span>' . "\n";
 		}
 		// insert thumbnail
 
@@ -113,24 +109,6 @@ class MediaUploader{
 		}
 		$output .= '</div>' . "\n";
 		return $output;
-	}
-
-	/**
-	 * Initialize the media uploader class
-	 */
-	public function init() {
-		add_filter('upload_mimes', function($mimes){
-			$mimes['svg'] = 'image/svg+xml';
-			return $mimes;
-		});
-		add_action('admin_enqueue_scripts', array($this, 'enqueue_media_scripts'));
-		add_filter('wbf/js/admin/localization', function($loc_array){
-			$loc_array['of_media_uploader'] = [
-				'upload' => __('Upload', 'wbf'),
-				'remove' => __('Remove', 'wbf')
-			];
-			return $loc_array;
-		});
 	}
 
 	/**

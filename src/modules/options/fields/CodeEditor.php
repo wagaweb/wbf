@@ -29,52 +29,13 @@ class CodeEditor extends BaseField  implements Field  {
 	/**
 	 * Display the editor
 	 *
-	 * @param $_id
-	 * @param $_value
-	 * @param string $_desc
-	 * @param string $_name
 	 * @param string $_lang
 	 *
 	 * @return string
 	 */
-	static function get_html($option, $value, $theme_options_root_id, $_lang = 'css'){
-		$optionsframework_settings = Framework::get_options_framework_settings();
-
-		// Gets the unique option id
-		$option_name = $optionsframework_settings['id'];
-
-		$output = '';
-		$id     = '';
-		$class  = '';
-		$int    = '';
-		$value  = '';
-		$name   = '';
-
-		$id = strip_tags( strtolower( $_id ) );
-
-		// If a value is passed and we don't have a stored value, use the value that's passed through.
-		if ( $_value != '' && $value == '' ) {
-			$value = $_value;
-		}
-
-		if ( $_name != '' ) {
-			$name = $_name;
-		} else {
-			$name = $option_name . '[' . $id . ']';
-		}
-
-
+	public function get_html($_lang = 'css'){
 		$class = "of-input codemirror";
-
-		$output .= "<textarea id='{$option['id']}' class='$class' name='$name' data-lang='$_lang' rows='8'>$value</textarea>";
-
-		/*$output .= "<script>
-		var editor = CodeMirror.fromTextArea(document.getElementById('{$id}'), {
-		  mode: 'css',
-		  lineNumbers: true
-		});
-		</script>";*/
-
+		$output = "<textarea id='{$this->get_field_name()}' class='$class' name='$name' data-lang='$_lang' rows='8'>{$this->value}</textarea>";
 		return $output;
 	}
 

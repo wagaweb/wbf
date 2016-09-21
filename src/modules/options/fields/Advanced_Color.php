@@ -40,15 +40,13 @@ class Advanced_Color extends BaseField implements Field{
 	 * @return string
 	 */
 	public function get_html() {
-		$options_db_key = Framework::get_options_root_id();
-
 		$default_color = '';
 		if (isset($this->related_option['std'])) {
 			if ($this->value != $this->related_option['std']) {
 				$default_color = ' data-default-color="' . $this->related_option['std'] . '" ';
 			}
 		}
-		$output = '<input name="' . esc_attr($options_db_key . '[' . $this->related_option['id'] . ']') . '" id="' . esc_attr($this->related_option['id']) . '" class="advanced-color"  type="text" value="' . esc_attr($this->value) . '"' . $default_color . ' />';
+		$output = '<input name="' . $this->get_field_name() . '" id="' . $this->get_field_id() . '" class="advanced-color"  type="text" value="' . esc_attr($this->value) . '"' . $default_color . ' />';
 
 		return $output;
 	}

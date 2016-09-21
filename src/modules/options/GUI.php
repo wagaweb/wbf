@@ -12,6 +12,8 @@
 namespace WBF\modules\options;
 
 use WBF\components\mvc\HTMLView;
+use WBF\modules\options\fields\BaseField;
+use WBF\modules\options\fields\Field;
 
 class GUI{
 	static function getOrganizer(){
@@ -107,192 +109,13 @@ class GUI{
 	            $registered_fields = $wbf_options_framework->fields;
 	            if(isset($registered_fields[$current_option['type']])){
 	            	$field = $registered_fields[$current_option['type']];
-		            $field->build($val,$current_option);
-	            	$output .= $field->get_html();
+		            if($field instanceof BaseField){
+			            $field->setup($val,$current_option);
+			            $output .= $field->get_html();
+		            }
 	            }
 
 	            switch ($current_option['type']) {
-
-	                // Waboot CSS Editor [WABOOT MOD]
-	                case "csseditor":
-	                    $output .= CodeEditor::display($current_option['id'], $val, null);
-	                    break;
-
-	                // Typography [WABOOT MOD]
-		            // Waboot GFont Selector [WABOOT MOD]
-	                case 'typography':
-	                case "gfont":
-						$output .= FontSelector::output($current_option['id'], $val, $current_option['std']);
-						break;
-
-	                // Textarea
-	                case 'textarea':
-	                    $rows = '8';
-
-	                    if (isset($current_option['settings']['rows'])) {
-	                        $custom_rows = $current_option['settings']['rows'];
-	                        if (is_numeric($custom_rows)) {
-	                            $rows = $custom_rows;
-	                        }
-	                    }
-
-	                    $val = stripslashes($val);
-	                    $output .= '<textarea id="' . esc_attr($current_option['id']) . '" class="of-input" name="' . esc_attr($options_db_key . '[' . $current_option['id'] . ']') . '" rows="' . $rows . '">' . esc_textarea($val) . '</textarea>';
-	                    break;
-
-	                // Select Box
-	                case 'select':
-	                    $output .= '<select class="of-input" name="' . esc_attr($options_db_key . '[' . $current_option['id'] . ']') . '" id="' . esc_attr($current_option['id']) . '">';
-
-	                    foreach ($current_option['options'] as $key => $option) {
-	                        $output .= '<option' . selected($val, $key, false) . ' value="' . esc_attr($key) . '">' . esc_html($option) . '</option>';
-	                    }
-	                    $output .= '</select>';
-	                    break;
-
-
-	                // Radio Box
-	                case "radio":
-	                    $name = $options_db_key . '[' . $current_option['id'] . ']';
-	                    foreach ($current_option['options'] as $key => $option) {
-	                        $id = $options_db_key . '-' . $current_option['id'] . '-' . $key;
-	                        $output .= '<div class="radio-wrapper"><input class="of-input of-radio" type="radio" name="' . esc_attr($name) . '" id="' . esc_attr($id) . '" value="' . esc_attr($key) . '" ' . checked($val, $key, false) . ' /><label for="' . esc_attr($id) . '">' . esc_html($option) . '</label></div>';
-	                    }
-	                    break;
-
-	                // Image Selectors
-	                case "images":
-	                    $name = $options_db_key . '[' . $current_option['id'] . ']';
-	                    foreach ($current_option['options'] as $key => $option) {
-	                        $selected = '';
-	                        if ($val != '' && ($val == $key)) {
-	                            $selected = ' of-radio-img-selected';
-	                        }
-
-	                        if(is_array($option)){
-	                            $option_value = $option['value'];
-	                        }else{
-	                            $option_value = $option;
-	                        }
-
-	                        $output .= '<input type="radio" id="' . esc_attr($current_option['id'] . '_' . $key) . '" class="of-radio-img-radio" value="' . esc_attr($key) . '" name="' . esc_attr($name) . '" ' . checked($val, $key, false) . ' />';
-	                        $output .= '<div class="of-radio-img-label">' . esc_html($key) . '</div>';
-	                        $output .= '<div class="option-wrap">';
-	                        if(is_array($option) && isset($option['label'])){
-	                            $output .= '<span>'. esc_attr($option['label']) . '</span>';
-	                        }
-	                        $output .= '<img src="' . esc_url($option_value) . '" alt="' . $option_value . '" class="of-radio-img-img' . $selected . '" onclick="document.getElementById(\'' . esc_attr($current_option['id'] . '_' . $key) . '\').checked=true;" /></div>';
-	                    }
-	                    break;
-
-	                // Checkbox
-	                case "checkbox":
-	                    $output .= '<div class="wb-onoffswitch">';
-	                    $output .= '<div class="check_wrapper"><input id="' . esc_attr($current_option['id']) . '" class="checkbox of-input wb-onoffswitch-checkbox" type="checkbox" name="' . esc_attr($options_db_key . '[' . $current_option['id'] . ']') . '" ' . checked($val, 1, false) . ' />';
-	                    $output .= '<label class="wb-onoffswitch-label" for="' . esc_attr($current_option['id']) . '"><span class="wb-onoffswitch-inner"></span><span class="wb-onoffswitch-switch"></span></label></div>';
-	                    $output .= '</div>';
-	                    $output .= '<span class="explain">' . $current_option_description . '</span>';
-	                    break;
-
-	                // Multicheck
-	                case "multicheck":
-	                    foreach ($current_option['options'] as $key => $option) {
-	                        $checked = '';
-	                        $label = $option;
-	                        $option = preg_replace('/[^a-zA-Z0-9._\-]/', '', strtolower($key));
-
-	                        $id = $options_db_key . '-' . $current_option['id'] . '-' . $option;
-	                        $name = $options_db_key . '[' . $current_option['id'] . '][' . $option . ']';
-
-	                        if (isset($val[$option])) {
-	                            $checked = checked($val[$option], 1, false);
-	                        }
-
-	                        $output .= '<div class="check-wrapper"><input id="' . esc_attr($id) . '" class="checkbox of-input" type="checkbox" name="' . esc_attr($name) . '" ' . $checked . ' /><label for="' . esc_attr($id) . '">' . esc_html($label) . '</label></div>';
-	                    }
-	                    break;
-
-	                // Color picker
-	                case "color":
-	                    $default_color = '';
-	                    if (isset($current_option['std'])) {
-	                        if ($val != $current_option['std']) {
-	                            $default_color = ' data-default-color="' . $current_option['std'] . '" ';
-	                        }
-	                    }
-	                    $output .= '<input name="' . esc_attr($options_db_key . '[' . $current_option['id'] . ']') . '" id="' . esc_attr($current_option['id']) . '" class="of-color"  type="text" value="' . esc_attr($val) . '"' . $default_color . ' />';
-
-	                    break;
-
-					// RGBA Color picker
-		            case "advanced_color":
-
-			            $output .= Advanced_Color::display($current_option, $val, $options_db_key);
-
-			            break;
-
-	                // Uploader
-	                case "upload":
-	                    $output .= MediaUploader::optionsframework_uploader($current_option['id'], $val, null);
-
-	                    break;
-
-	                // Background
-	                case 'background':
-
-	                    $background = $val;
-
-	                    // Background Color
-	                    $default_color = '';
-	                    if (isset($current_option['std']['color'])) {
-	                        if ($val != $current_option['std']['color']) {
-	                            $default_color = ' data-default-color="' . $current_option['std']['color'] . '" ';
-	                        }
-	                    }
-	                    $output .= '<input name="' . esc_attr($options_db_key . '[' . $current_option['id'] . '][color]') . '" id="' . esc_attr($current_option['id'] . '_color') . '" class="of-color of-background-color"  type="text" value="' . esc_attr($background['color']) . '"' . $default_color . ' />';
-
-	                    // Background Image
-	                    if (!isset($background['image'])) {
-	                        $background['image'] = '';
-	                    }
-
-	                    $output .= MediaUploader::optionsframework_uploader($current_option['id'], $background['image'], null, esc_attr($options_db_key . '[' . $current_option['id'] . '][image]'));
-
-	                    $class = 'of-background-properties';
-	                    if ('' == $background['image']) {
-	                        $class .= ' hide';
-	                    }
-	                    $output .= '<div class="' . esc_attr($class) . '">';
-
-	                    // Background Repeat
-	                    $output .= '<select class="of-background of-background-repeat" name="' . esc_attr($options_db_key . '[' . $current_option['id'] . '][repeat]') . '" id="' . esc_attr($current_option['id'] . '_repeat') . '">';
-	                    $repeats = of_recognized_background_repeat();
-
-	                    foreach ($repeats as $key => $repeat) {
-	                        $output .= '<option value="' . esc_attr($key) . '" ' . selected($background['repeat'], $key, false) . '>' . esc_html($repeat) . '</option>';
-	                    }
-	                    $output .= '</select>';
-
-	                    // Background Position
-	                    $output .= '<select class="of-background of-background-position" name="' . esc_attr($options_db_key . '[' . $current_option['id'] . '][position]') . '" id="' . esc_attr($current_option['id'] . '_position') . '">';
-	                    $positions = of_recognized_background_position();
-
-	                    foreach ($positions as $key => $position) {
-	                        $output .= '<option value="' . esc_attr($key) . '" ' . selected($background['position'], $key, false) . '>' . esc_html($position) . '</option>';
-	                    }
-	                    $output .= '</select>';
-
-	                    // Background Attachment
-	                    $output .= '<select class="of-background of-background-attachment" name="' . esc_attr($options_db_key . '[' . $current_option['id'] . '][attachment]') . '" id="' . esc_attr($current_option['id'] . '_attachment') . '">';
-	                    $attachments = of_recognized_background_attachment();
-
-	                    foreach ($attachments as $key => $attachment) {
-	                        $output .= '<option value="' . esc_attr($key) . '" ' . selected($background['attachment'], $key, false) . '>' . esc_html($attachment) . '</option>';
-	                    }
-	                    $output .= '</select>';
-	                    $output .= '</div>';
-
-	                    break;
 
 	                // Editor
 	                case 'editor':
