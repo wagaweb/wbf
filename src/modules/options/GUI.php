@@ -30,8 +30,6 @@ class GUI{
     static function optionsframework_fields($options = null) {
         global $allowedtags, $wbf_options_framework;
 
-	    $options_db_key = Framework::get_options_root_id(); //the option name under which the options are saved
-	    
         $saved_options = Framework::get_saved_options(); //the current saved options
 	    
         if(!isset($options)){
@@ -39,14 +37,12 @@ class GUI{
         }
 
         $counter = 0;
-        $menu = '';
 
 		$options = apply_filters("wbf/modules/options/gui/options_to_render",$options);
 
 	    if(is_array($options) && !empty($options)){
             foreach ($options as $current_option) {
 	            $val = '';
-	            $select_value = '';
 	            $output = '';
 
 	            // Set default value to $val
@@ -118,7 +114,7 @@ class GUI{
 		            }
 	            }
 
-	            if (($current_option['type'] != "heading") && ($current_option['type'] != "info")) {
+	            if(!Framework::is_valuable_option($current_option)) {
 	                $output .= '</div><!-- end control -->';
 	                $output .= '</div><!-- end option --></div><!-- end section -->' . "\n";
 	            }
