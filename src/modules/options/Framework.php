@@ -45,21 +45,22 @@ class Framework{
 			'password' => "WBF\\modules\\options\\fields\\Password",
 			'csseditor' => "WBF\\modules\\options\\fields\\CodeEditor",
 			'typography' => "WBF\\modules\\options\\fields\\FontSelector",
-			'gfont' => "WBF\\modules\\options\\fields\\FondSelector",
-			'textarea' => "WBF\\modules\\options\\fields\\TextArea",
+			'gfont' => "WBF\\modules\\options\\fields\\FontSelector",
+			'textarea' => "WBF\\modules\\options\\fields\\Textarea",
 			'select' => "WBF\\modules\\options\\fields\\Select",
 			'radio' => "WBF\\modules\\options\\fields\\Radio",
 			'images' => "WBF\\modules\\options\\fields\\Images",
 			'checkbox' => "WBF\\modules\\options\\fields\\Checkbox",
-			'multicheck' => "WBF\\modules\\options\\fields\\MultiCheck",
+			'multicheck' => "WBF\\modules\\options\\fields\\Multicheck",
 			'color' => "WBF\\modules\\options\\fields\\Color",
 			'advanced_color' => "WBF\\modules\\options\\fields\\Advanced_Color",
-			'upload' => "WBF\\modules\\options\\fields\\Upload",
+			'upload' => "WBF\\modules\\options\\fields\\MediaUploader",
 			'background' => "WBF\\modules\\options\\fields\\Background",
 			'editor' => "WBF\\modules\\options\\fields\\Editor",
 			'info' => "WBF\\modules\\options\\fields\\Info",
 			'heading' => "WBF\\modules\\options\\fields\\Heading",
 		];
+		$fields = apply_filters("wbf/modules/options/fields/available",$fields);
 		foreach ($fields as $name => $class){
 			if(class_exists($class)){
 				$f = new $class();

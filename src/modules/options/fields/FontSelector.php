@@ -9,11 +9,12 @@
  * Based on Devin Price' Options_Framework
  */
 
-namespace WBF\modules\options;
+namespace WBF\modules\options\fields;
 
 use WBF\includes\GoogleFontsRetriever;
 use WBF\modules\options\fields\BaseField;
 use WBF\modules\options\fields\Field;
+use WBF\modules\options\Framework;
 
 class FontSelector extends BaseField implements Field
 {
@@ -23,7 +24,7 @@ class FontSelector extends BaseField implements Field
 	}
 
 	function scripts( $hook ) {
-		if ( ! of_is_admin_framework_page( $hook ) ) {
+		if ( ! \WBF\modules\options\of_is_admin_framework_page( $hook ) ) {
 			return;
 		}
 

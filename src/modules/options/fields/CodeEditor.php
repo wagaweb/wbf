@@ -9,12 +9,13 @@
  * Based on Devin Price' Options_Framework
  */
 
-namespace WBF\modules\options;
+namespace WBF\modules\options\fields;
 
 use WBF\components\assets\AssetsManager;
 use WBF\includes\Resources;
 use WBF\modules\options\fields\BaseField;
 use WBF\modules\options\fields\Field;
+use WBF\modules\options\Framework;
 
 class CodeEditor extends BaseField  implements Field  {
 
@@ -33,9 +34,11 @@ class CodeEditor extends BaseField  implements Field  {
 	 *
 	 * @return string
 	 */
-	public function get_html($_lang = 'css'){
+	public function get_html(){
+		$_lang = 'css';
+
 		$class = "of-input codemirror";
-		$output = "<textarea id='{$this->get_field_name()}' class='$class' name='$name' data-lang='$_lang' rows='8'>{$this->value}</textarea>";
+		$output = "<textarea id='{$this->get_field_name()}' class='$class' name='{$this->get_field_name()}' data-lang='$_lang' rows='8'>{$this->value}</textarea>";
 		return $output;
 	}
 
@@ -63,7 +66,7 @@ class CodeEditor extends BaseField  implements Field  {
 	 * @throws \Exception
 	 */
 	function scripts( $hook ) {
-		if(!of_is_admin_framework_page($hook)){
+		if(!\WBF\modules\options\of_is_admin_framework_page($hook)){
 			return;
 		}
 

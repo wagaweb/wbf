@@ -9,10 +9,12 @@
  * Based on Devin Price' Options_Framework
  */
 
-namespace WBF\modules\options;
+namespace WBF\modules\options\fields;
 
+use WBF\modules\options\Admin;
 use WBF\modules\options\fields\BaseField;
 use WBF\modules\options\fields\Field;
+use WBF\modules\options\Framework;
 
 class MediaUploader extends BaseField implements Field {
 

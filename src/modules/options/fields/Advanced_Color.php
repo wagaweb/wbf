@@ -9,7 +9,7 @@
  * Based on Devin Price' Options_Framework
  */
 
-namespace WBF\modules\options;
+namespace WBF\modules\options\fields;
 
 use WBF\components\assets\AssetsManager;
 use WBF\includes\Resources;
