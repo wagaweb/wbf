@@ -34,4 +34,12 @@ class Images extends BaseField implements Field{
 
 		return $output;
 	}
+
+	public function sanitize( $input, $option ) {
+		$output = '';
+		if ( array_key_exists( $input, $option['options'] ) ) {
+			$output = $input;
+		}
+		return $output;
+	}
 }

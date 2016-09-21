@@ -65,8 +65,13 @@ class Framework{
 			if(class_exists($class)){
 				$f = new $class();
 				$this->fields[$name] = $f;
-				if($f instanceof BaseField && method_exists($f,"init")){
-					$f->init();
+				if($f instanceof BaseField){
+					if(method_exists($f,"init")){
+						$f->init();
+					}
+					if(method_exists($f,"sanitize")){
+						add_filter( "of_sanitize_{$name}", [$f,"sanitize"] );
+					}
 				}
 			}
 		}

@@ -12,7 +12,7 @@ class Text extends BaseField implements Field{
 		return $output;
 	}
 
-	public function sanitize() {
-		// TODO: Implement sanitize() method.
+	public function sanitize($input, $option) {
+		return \sanitize_text_field($input);
 	}
 }

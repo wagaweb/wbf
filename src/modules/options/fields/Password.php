@@ -14,7 +14,7 @@ class Password extends BaseField implements Field{
 		return '<input id="' . esc_attr($option['id']) . '" class="of-input" name="' . esc_attr($theme_options_root_id . '[' . $option['id'] . ']') . '" type="password" value="' . esc_attr($value) . '" />';
 	}
 
-	public function sanitize() {
-		// TODO: Implement sanitize() method.
+	public function sanitize($input, $option) {
+		return \sanitize_text_field($input);
 	}
 }
