@@ -114,7 +114,7 @@ class GUI{
 		            }
 	            }
 
-	            if(!Framework::is_valuable_option($current_option)) {
+	            if(Framework::is_valuable_option($current_option)) {
 	                $output .= '</div><!-- end control -->';
 	                $output .= '</div><!-- end option --></div><!-- end section -->' . "\n";
 	            }
