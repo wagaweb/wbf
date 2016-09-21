@@ -36,7 +36,10 @@ class MediaUploader extends BaseField implements Field {
 		});
 	}
 
-	public function get_html($custom_name = false) {
+	public function get_html() {
+		$args = func_get_args();
+		$custom_name = isset($args[0]) ? $args[0] : false;
+
 		$output = '';
 
 		$id = strip_tags( strtolower( $this->related_option['id'] ) );
@@ -46,7 +49,7 @@ class MediaUploader extends BaseField implements Field {
 
 		$value = $this->value;
 
-		if(!$custom_name){
+		if($custom_name){
 			$name = $custom_name;
 		}else{
 			$name = $this->get_field_name();
