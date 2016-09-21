@@ -8,6 +8,9 @@ class Images extends BaseField implements Field{
 		$current_option = $this->related_option;
 		$val = $this->value;
 		$name = $this->get_field_name();
+
+		if(!isset($this->related_option['options']) || !is_array($this->related_option['options'])) return $output;
+
 		foreach ($current_option['options'] as $key => $option) {
 			$selected = '';
 			if ($val != '' && ($val == $key)) {
@@ -28,5 +31,7 @@ class Images extends BaseField implements Field{
 			}
 			$output .= '<img src="' . esc_url($option_value) . '" alt="' . $option_value . '" class="of-radio-img-img' . $selected . '" onclick="document.getElementById(\'' . esc_attr($current_option['id'] . '_' . $key) . '\').checked=true;" /></div>';
 		}
+
+		return $output;
 	}
 }

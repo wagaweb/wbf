@@ -8,10 +8,8 @@ class Text extends BaseField implements Field{
 	 * return string
 	 */
 	public function get_html(){
-		$option = $this->related_option;
-		$value = $this->value;
-		$theme_options_root_id = $this->options_db_key;
-		return '<input id="' . esc_attr($option['id']) . '" class="of-input" name="' . esc_attr($theme_options_root_id . '[' . $option['id'] . ']') . '" type="text" value="' . esc_attr($value) . '" />';
+		$output = '<input id="' . $this->get_field_id() . '" class="of-input" name="' . $this->get_field_name() . '" type="text" value="' . esc_attr($this->value) . '" />';
+		return $output;
 	}
 
 	public function sanitize() {

@@ -66,7 +66,7 @@ class GUI{
 	            // If there is a description save it for labels
 	            $current_option_description = '';
 	            if(isset($current_option['desc'])) {
-	                $current_option_description = $current_option['desc'];
+		            $current_option_description = $current_option['desc'];
 		            $current_option_description = wp_kses($current_option_description, $allowedtags);
 	            }
 
@@ -99,10 +99,6 @@ class GUI{
 	                } else {
 	                    $output .= '<div class="option">' . "\n" . '<div>' . "\n";
 	                }
-	            }
-
-	            if (has_filter('optionsframework_' . $current_option['type'])) {
-	                $output .= apply_filters('optionsframework_' . $current_option['type'], $options_db_key, $current_option, $val);
 	            }
 
 	            $registered_fields = $wbf_options_framework->fields;

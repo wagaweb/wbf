@@ -6,6 +6,7 @@ class Color extends BaseField implements Field{
 	public function get_html() {
 		$default_color = '';
 		$val = $this->value;
+		$current_option = $this->related_option;
 
 
 		$output = "";

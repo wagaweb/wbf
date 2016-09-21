@@ -9,7 +9,7 @@ class Info extends BaseField implements Field{
 		$class = 'section';
 		$output = '';
 		if (isset($current_option['id'])) {
-			$id = 'id="' . esc_attr($current_option['id']) . '" ';
+			$id = 'id="' . $this->get_field_id() . '" ';
 		}
 		if (isset($current_option['type'])) {
 			$class .= ' section-' . $current_option['type'];
@@ -23,7 +23,7 @@ class Info extends BaseField implements Field{
 			$output .= '<h4 class="heading">' . esc_html($current_option['name']) . '</h4>' . "\n";
 		}
 		if ($current_option['desc']) {
-			$output .= $current_option['desc'] . "\n";
+			$output .= $this->get_description() . "\n";
 		}
 		$output .= '</div>' . "\n";
 
