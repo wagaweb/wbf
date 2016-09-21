@@ -24,7 +24,7 @@ class Framework{
 	/**
 	 * @var array
 	 */
-	var $extensions;
+	var $fields;
 
 	/**
 	 * Initialize the framework.
@@ -39,7 +39,7 @@ class Framework{
 		$this->admin = new Admin();
 		$this->admin->init();
 
-		//Loads up extensions todo: refactor a bit
+		//Loads up fields
 		$fields = [
 			'text' => "WBF\\modules\\options\\fields\\Text",
 			'password' => "WBF\\modules\\options\\fields\\Password",
@@ -63,20 +63,12 @@ class Framework{
 		foreach ($fields as $name => $class){
 			if(class_exists($class)){
 				$f = new $class();
+				$this->fields[$name] = $f;
 				if($f instanceof BaseField && method_exists($f,"init")){
 					$f->init();
 				}
 			}
 		}
-		$mu = new MediaUploader();
-		$mu->init();
-		$ce = new CodeEditor();
-		$ce->init();
-		$fs = new FontSelector();
-		$fs->init();
-		$ac = new Advanced_Color();
-		$ac->init();
-		$this->extensions = [$mu,$ce,$fs];
 		
 		do_action("wbf/modules/options/after_init");
 	}

@@ -14,4 +14,7 @@ class BaseField {
 	}
 
 	public function init(){}
+
+	protected function get_field_name(){
+	}
 }

@@ -13,8 +13,10 @@ namespace WBF\modules\options;
 
 use WBF\components\assets\AssetsManager;
 use WBF\includes\Resources;
+use WBF\modules\options\fields\BaseField;
+use WBF\modules\options\fields\Field;
 
-class CodeEditor {
+class CodeEditor extends BaseField  implements Field  {
 
 	/**
 	 * Init editor actions. Called by Framework->init()
@@ -35,7 +37,7 @@ class CodeEditor {
 	 *
 	 * @return string
 	 */
-	static function display($_id, $_value, $_desc = '', $_name = '', $_lang = 'css'){
+	static function get_html($option, $value, $theme_options_root_id, $_lang = 'css'){
 		$optionsframework_settings = Framework::get_options_framework_settings();
 
 		// Gets the unique option id
@@ -64,7 +66,7 @@ class CodeEditor {
 
 		$class = "of-input codemirror";
 
-		$output .= "<textarea id='$id' class='$class' name='$name' data-lang='$_lang' rows='8'>$value</textarea>";
+		$output .= "<textarea id='{$option['id']}' class='$class' name='$name' data-lang='$_lang' rows='8'>$value</textarea>";
 
 		/*$output .= "<script>
 		var editor = CodeMirror.fromTextArea(document.getElementById('{$id}'), {

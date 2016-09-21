@@ -26,7 +26,7 @@ class GUI{
 	 * @param array|null $options
 	 */
     static function optionsframework_fields($options = null) {
-        global $allowedtags;
+        global $allowedtags, $wbf_options_framework;
 
 	    $options_db_key = Framework::get_options_root_id(); //the option name under which the options are saved
 	    
@@ -104,17 +104,14 @@ class GUI{
 	                $output .= apply_filters('optionsframework_' . $current_option['type'], $options_db_key, $current_option, $val);
 	            }
 
+	            $registered_fields = $wbf_options_framework->fields;
+	            if(isset($registered_fields[$current_option['type']])){
+	            	$field = $registered_fields[$current_option['type']];
+		            $field->build($val,$current_option);
+	            	$output .= $field->get_html();
+	            }
+
 	            switch ($current_option['type']) {
-
-	                // Basic text input
-	                case 'text':
-	                    $output .= '<input id="' . esc_attr($current_option['id']) . '" class="of-input" name="' . esc_attr($options_db_key . '[' . $current_option['id'] . ']') . '" type="text" value="' . esc_attr($val) . '" />';
-	                    break;
-
-	                // Password input
-	                case 'password':
-	                    $output .= '<input id="' . esc_attr($current_option['id']) . '" class="of-input" name="' . esc_attr($options_db_key . '[' . $current_option['id'] . ']') . '" type="password" value="' . esc_attr($val) . '" />';
-	                    break;
 
 	                // Waboot CSS Editor [WABOOT MOD]
 	                case "csseditor":
