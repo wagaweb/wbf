@@ -93,6 +93,9 @@ class Background extends BaseField implements Field{
 			}
 			/* Regex match. */
 			if ( 0 === preg_match( '/^[0-9a-fA-F]{6}$/', $hex ) ) {
+				if(isset($option['std']['color'])){
+					return $option['std']['color'];
+				}
 				return "";
 			}
 			else {
