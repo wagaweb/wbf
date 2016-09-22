@@ -19,7 +19,6 @@ use WBF\components\utils\Utilities;
 
 require_once "CustomizerManager.php";
 require_once "functions.php";
-require_once "sanitization.php";
 
 define('OPTIONS_FRAMEWORK_URL', \WBF::prefix_url('src/modules/options/'));
 define('OPTIONS_FRAMEWORK_DIRECTORY', \WBF::prefix_url('src/modules/options/'));
