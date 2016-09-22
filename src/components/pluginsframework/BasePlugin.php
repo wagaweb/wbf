@@ -134,10 +134,17 @@ class BasePlugin {
 		}elseif(!isset($this->public_class_name) && is_file($this->get_src_dir()."frontend/Frontend.php")){
 			$class_name = $class_name_parts[0].'\frontend\Frontend';
 			$this->public_class_name = $class_name;
+		}elseif(!isset($this->public_class_name) && is_file($this->get_src_dir()."Frontend.php")){ //@since 0.14.8
+			$class_name = $class_name_parts[0].'\Frontend';
+			$this->public_class_name = $class_name;
 		}
+
 		if(!isset($this->admin_class_name) && (is_file($this->get_src_dir()."admin/class-admin.php") || is_file($this->get_src_dir()."admin/Admin.php"))){
 			$class_name = $class_name_parts[0].'\admin\Admin';
 			$this->admin_class_name = $class_name;
+		}elseif(!isset($this->public_class_name) && is_file($this->get_src_dir()."Admin.php")){ //@since 0.14.8
+			$class_name = $class_name_parts[0].'\Admin';
+			$this->public_class_name = $class_name;
 		}
 
 		//Get the version
