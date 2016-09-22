@@ -23,7 +23,7 @@ class Text extends BaseField implements Field{
 		);
 
 		$custom_allowedtags = array_merge( $custom_allowedtags, $allowedposttags );
-		$output             = wp_kses( $input, $custom_allowedtags );
+		$output = wp_kses( $input, $custom_allowedtags );
 
 		return $output;
 	}
