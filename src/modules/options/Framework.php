@@ -70,7 +70,7 @@ class Framework{
 						$f->init();
 					}
 					if(method_exists($f,"sanitize")){
-						add_filter( "of_sanitize_{$name}", [$f,"sanitize"] );
+						add_filter( "of_sanitize_{$name}", [$f,"sanitize"], 10, 2 );
 					}
 				}
 			}

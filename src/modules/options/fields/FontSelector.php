@@ -420,4 +420,35 @@ class FontSelector extends BaseField implements Field
 	private static function fontElements_OptName($theme_name,$opt_id){
 		return $theme_name.'['.$opt_id.'][elements]';
 	}
+
+	public function sanitize( $input, $option ) {
+		global $wbf_options_framework;
+
+		$output = wp_parse_args( $input, array(
+			'family'  => '',
+			'style'  => [],
+			'charset' => [],
+			'color' => ''
+		) );
+
+		$output['color'] = call_user_func(function($hex){
+			$hex = trim( $hex );
+			/* Strip recognized prefixes. */
+			if ( 0 === strpos( $hex, '#' ) ) {
+				$hex = substr( $hex, 1 );
+			}
+			elseif ( 0 === strpos( $hex, '%23' ) ) {
+				$hex = substr( $hex, 3 );
+			}
+			/* Regex match. */
+			if ( 0 === preg_match( '/^[0-9a-fA-F]{6}$/', $hex ) ) {
+				return "";
+			}
+			else {
+				return $hex;
+			}
+		},$input['color']);
+
+		return $output;
+	}
 }

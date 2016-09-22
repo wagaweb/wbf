@@ -168,4 +168,10 @@ class CodeEditor extends BaseField  implements Field  {
 		}
 		return false;
 	}
+
+	public function sanitize( $input, $option ) {
+		global $allowedposttags;
+		$output = wp_kses( $input, $allowedposttags);
+		return $output;
+	}
 }

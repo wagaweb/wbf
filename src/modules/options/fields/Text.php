@@ -13,6 +13,18 @@ class Text extends BaseField implements Field{
 	}
 
 	public function sanitize($input, $option) {
-		return \sanitize_text_field($input);
+		global $allowedposttags;
+
+		$custom_allowedtags["a"] = array(
+			"href"   => array(),
+			"target" => array(),
+			"id"     => array(),
+			"class"  => array()
+		);
+
+		$custom_allowedtags = array_merge( $custom_allowedtags, $allowedposttags );
+		$output             = wp_kses( $input, $custom_allowedtags );
+
+		return $output;
 	}
 }

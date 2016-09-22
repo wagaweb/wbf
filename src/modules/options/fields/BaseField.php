@@ -39,4 +39,12 @@ class BaseField {
 		}
 		return $current_option_description;
 	}
+
+	protected function sanitize_enum_field($input, $option){
+		$output = '';
+		if ( array_key_exists( $input, $option['options'] ) ) {
+			$output = $input;
+		}
+		return $output;
+	}
 }

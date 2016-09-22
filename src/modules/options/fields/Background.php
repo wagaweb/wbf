@@ -69,4 +69,92 @@ class Background extends BaseField implements Field{
 
 		return $output;
 	}
+
+	public function sanitize( $input, $option ) {
+		global $wbf_options_framework;
+
+		$output = wp_parse_args( $input, array(
+			'color' => '',
+			'image'  => '',
+			'repeat'  => 'no-repeat',
+			'position' => 'top center',
+			'attachment' => 'scroll'
+		) );
+
+		//Validate color
+		$output['color'] = call_user_func(function($hex){
+			$hex = trim( $hex );
+			/* Strip recognized prefixes. */
+			if ( 0 === strpos( $hex, '#' ) ) {
+				$hex = substr( $hex, 1 );
+			}
+			elseif ( 0 === strpos( $hex, '%23' ) ) {
+				$hex = substr( $hex, 3 );
+			}
+			/* Regex match. */
+			if ( 0 === preg_match( '/^[0-9a-fA-F]{6}$/', $hex ) ) {
+				return "";
+			}
+			else {
+				return $hex;
+			}
+		},$input['color']);
+
+		//Validate image
+		$output['image'] = call_user_func(function($input){
+			$output = '';
+			$filetype = wp_check_filetype($input);
+			if ( $filetype["ext"] ) {
+				$output = $input;
+			}
+			return $output;
+		},$input['image']);
+
+		//Validate repeat
+		$output['repeat'] = call_user_func(function($input){
+			$recognized = array(
+				'no-repeat' => __( 'No Repeat', 'wbf' ),
+				'repeat-x'  => __( 'Repeat Horizontally', 'wbf' ),
+				'repeat-y'  => __( 'Repeat Vertically', 'wbf' ),
+				'repeat'    => __( 'Repeat All', 'wbf' ),
+			);
+			if ( array_key_exists( $input, $recognized ) ) {
+				return $input;
+			}
+			return 'no-repeat';
+		},$input['repeat']);
+
+		//Validate position
+		$output['position'] = call_user_func(function($input){
+			$recognized = [
+				'top left'      => __( 'Top Left', 'textdomain' ),
+				'top center'    => __( 'Top Center', 'textdomain' ),
+				'top right'     => __( 'Top Right', 'textdomain' ),
+				'center left'   => __( 'Middle Left', 'textdomain' ),
+				'center center' => __( 'Middle Center', 'textdomain' ),
+				'center right'  => __( 'Middle Right', 'textdomain' ),
+				'bottom left'   => __( 'Bottom Left', 'textdomain' ),
+				'bottom center' => __( 'Bottom Center', 'textdomain' ),
+				'bottom right'  => __( 'Bottom Right', 'textdomain')
+			];
+			if ( array_key_exists( $input, $recognized ) ) {
+				return $input;
+			}
+			return 'top center';
+		},$input['position']);
+
+		//Validate attachment
+		$output['attachment'] = call_user_func(function($input){
+			$recognized = [
+				'scroll' => __( 'Scroll Normally', 'textdomain' ),
+				'fixed'  => __( 'Fixed in Place', 'textdomain')
+			];
+			if ( array_key_exists( $input, $recognized ) ) {
+				return $input;
+			}
+			return 'scroll';
+		},$input['attachment']);
+
+		return $output;
+	}
 }

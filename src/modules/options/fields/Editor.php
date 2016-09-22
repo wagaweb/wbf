@@ -27,4 +27,15 @@ class Editor extends BaseField implements Field{
 		$output = '';
 		return $output;
 	}
+
+	public function sanitize( $input, $option ) {
+		if ( current_user_can( 'unfiltered_html' ) ) {
+			$output = $input;
+		}
+		else {
+			global $allowedtags;
+			$output = wpautop(wp_kses( $input, $allowedtags));
+		}
+		return $output;
+	}
 }

@@ -25,4 +25,19 @@ class Multicheck extends BaseField implements Field{
 
 		return $output;
 	}
+
+	public function sanitize( $input, $option ) {
+		$output = '';
+		if ( is_array( $input ) ) {
+			foreach( $option['options'] as $key => $value ) {
+				$output[$key] = false;
+			}
+			foreach( $input as $key => $value ) {
+				if ( array_key_exists( $key, $option['options'] ) && $value ) {
+					$output[$key] = "1";
+				}
+			}
+		}
+		return $output;
+	}
 }

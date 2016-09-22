@@ -18,10 +18,6 @@ class Select extends BaseField implements Field{
 	}
 
 	public function sanitize( $input, $option ) {
-		$output = '';
-		if ( array_key_exists( $input, $option['options'] ) ) {
-			$output = $input;
-		}
-		return $output;
+		return $this->sanitize_enum_field($input,$option);
 	}
 }

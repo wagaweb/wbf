@@ -130,4 +130,13 @@ class MediaUploader extends BaseField implements Field {
 			wp_enqueue_media();
 		}
 	}
+
+	public function sanitize( $input, $option ) {
+		$output = '';
+		$filetype = wp_check_filetype($input);
+		if ( $filetype["ext"] ) {
+			$output = $input;
+		}
+		return $output;
+	}
 }

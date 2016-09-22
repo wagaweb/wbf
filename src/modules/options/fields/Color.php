@@ -19,4 +19,31 @@ class Color extends BaseField implements Field{
 
 		return $output;
 	}
+
+	public function sanitize( $input, $option ) {
+		$validate_hex = function($hex){
+			$hex = trim( $hex );
+			/* Strip recognized prefixes. */
+			if ( 0 === strpos( $hex, '#' ) ) {
+				$hex = substr( $hex, 1 );
+			}
+			elseif ( 0 === strpos( $hex, '%23' ) ) {
+				$hex = substr( $hex, 3 );
+			}
+			/* Regex match. */
+			if ( 0 === preg_match( '/^[0-9a-fA-F]{6}$/', $hex ) ) {
+				return false;
+			}
+			else {
+				return true;
+			}
+		};
+
+		if ( $validate_hex( $input ) ) {
+			return $input;
+		}
+
+		if(isset($option['std'])) return $option['std'];
+		return "";
+	}
 }

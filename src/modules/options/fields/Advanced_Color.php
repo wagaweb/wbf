@@ -12,6 +12,7 @@
 namespace WBF\modules\options\fields;
 
 use WBF\components\assets\AssetsManager;
+use WBF\components\utils\Utilities;
 use WBF\includes\Resources;
 use WBF\modules\options\fields\BaseField;
 use WBF\modules\options\fields\Field;
@@ -67,5 +68,21 @@ class Advanced_Color extends BaseField implements Field{
 
 		$am = new AssetsManager($res);
 		$am->enqueue();
+	}
+
+	public function sanitize( $input, $option ) {
+		if (strstr($input, 'hsva') !== false) {
+			$val = str_replace('hsva(', '', $input);
+			$val = str_replace(')', '', $val);
+			$values = explode(', ', $val);
+
+			$rgb = Utilities::fGetRGB($values[0], $values[1], $values[2]);
+			if (is_null($values[3])) {
+				return $rgb;
+			}
+			$rgba = 'rgba( ' . $rgb . ',' . $values[3] . ')';
+			return $rgba;
+		}
+		return $input;
 	}
 }

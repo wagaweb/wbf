@@ -21,4 +21,8 @@ class Heading extends BaseField implements Field{
 
 		return $output;
 	}
+
+	public function sanitize( $input, $option ) {
+		return $input;
+	}
 }
