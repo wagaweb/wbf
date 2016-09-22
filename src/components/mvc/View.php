@@ -2,7 +2,7 @@
 
 namespace WBF\components\mvc;
 
-use WBF\components\pluginsframework\Plugin;
+use WBF\components\pluginsframework\BasePlugin;
 use WBF\components\utils\Utilities;
 
 abstract class View{
@@ -29,7 +29,7 @@ abstract class View{
 		if( !is_string($file_path) || empty($file_path)){
 			throw new \Exception("Cannot create View, invalid file path");
 		}
-		if(isset($plugin) && !$plugin instanceof Plugin && !is_string($plugin)){
+		if(isset($plugin) && !$plugin instanceof BasePlugin && !is_string($plugin)){
 			throw new \Exception("Invalid plugin parameter for View rendering");
 		}
 
@@ -104,7 +104,7 @@ abstract class View{
 	 */
 	static function get_search_paths($relative_file_path,$plugin = null){
 		if(isset($plugin)){
-			if($plugin instanceof Plugin){
+			if($plugin instanceof BasePlugin){
 				$plugin_abspath = Utilities::maybe_strip_trailing_slash($plugin->get_src_dir())."/".$relative_file_path;
 				$plugin_dirname = $plugin->get_relative_dir();
 			}elseif(is_string($plugin)){
