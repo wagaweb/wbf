@@ -142,7 +142,7 @@ class BasePlugin {
 		if(!isset($this->admin_class_name) && (is_file($this->get_src_dir()."admin/class-admin.php") || is_file($this->get_src_dir()."admin/Admin.php"))){
 			$class_name = $class_name_parts[0].'\admin\Admin';
 			$this->admin_class_name = $class_name;
-		}elseif(!isset($this->public_class_name) && is_file($this->get_src_dir()."Admin.php")){ //@since 0.14.8
+		}elseif(!isset($this->admin_class_name) && is_file($this->get_src_dir()."Admin.php")){ //@since 0.14.8
 			$class_name = $class_name_parts[0].'\Admin';
 			$this->public_class_name = $class_name;
 		}
