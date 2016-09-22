@@ -114,6 +114,13 @@ class BasePlugin {
 	 */
 	protected $script_debug_mode = false;
 
+	/**
+	 * BasePlugin constructor.
+	 *
+	 * @param string $plugin_name
+	 * @param string $dir
+	 * @param string $version
+	 */
 	public function __construct( $plugin_name, $dir, $version = "1.0.0" ) {
 		$this->plugin_name = $plugin_name;
 		$this->plugin_dir  = $dir;
