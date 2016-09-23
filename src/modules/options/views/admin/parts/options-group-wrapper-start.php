@@ -1,0 +1,1 @@
+<div id="options-group-<?php echo $count; ?>" class="group <?php echo $class; ?>">

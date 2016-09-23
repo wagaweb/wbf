@@ -411,7 +411,7 @@ class Admin{
 		$v = new HTMLView("src/modules/options/views/admin/options-page.php","wbf");
 		$v->clean()->display([
 			'menu' => $this->menu_settings(),
-			'tabs' => GUI::optionsframework_tabs()
+			'tabs' => GUI::optionsframework_tabs(),
 		]);
     }
 

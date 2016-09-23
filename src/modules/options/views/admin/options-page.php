@@ -4,6 +4,7 @@
 		<?php WBF()->notice_manager->show_notices(); ?>
 	</div>
 	<div id="optionsframework-content-wrapper">
+		<!-- Navigation -->
 		<div class="nav-tab-wrapper">
 			<ul>
 				<?php $counter = 0; foreach ($tabs as $value) : ?>
@@ -16,6 +17,7 @@
 				<?php endforeach; ?>
 			</ul>
 		</div>
+		<!-- /Navigation -->
 		<?php settings_errors( 'options-framework' ); ?>
 		<div id="optionsframework-metabox" class="metabox-holder">
 			<div id="optionsframework" class="postbox">

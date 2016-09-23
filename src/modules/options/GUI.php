@@ -23,8 +23,6 @@ class GUI{
 	/**
 	 * Generates the options fields that are used in the form.
 	 *
-	 * @todo: refactoring needed. Embedded HTML is just wrong.
-	 *
 	 * @param array|null $options
 	 */
     static function optionsframework_fields($options = null) {
@@ -37,10 +35,16 @@ class GUI{
         }
 
         $counter = 0;
+	    $in_group = false;
+	    $wrapper_start = new HTMLView( "src/modules/options/views/admin/parts/option-wrapper-start.php", "wbf");
+	    $wrapper_end = new HTMLView( "src/modules/options/views/admin/parts/option-wrapper-end.php", "wbf");
+	    $group_wrapper_start = new HTMLView( "src/modules/options/views/admin/parts/options-group-wrapper-start.php", "wbf");
+	    $group_wrapper_end = new HTMLView( "src/modules/options/views/admin/parts/options-group-wrapper-end.php", "wbf");
 
 		$options = apply_filters("wbf/modules/options/gui/options_to_render",$options);
 
 	    if(is_array($options) && !empty($options)){
+
             foreach ($options as $current_option) {
 	            $val = '';
 	            $output = '';
@@ -59,64 +63,66 @@ class GUI{
                     }
                 }
 
-	            // If there is a description save it for labels
-	            $current_option_description = '';
-	            if(isset($current_option['desc'])) {
-		            $current_option_description = $current_option['desc'];
-		            $current_option_description = wp_kses($current_option_description, $allowedtags);
-	            }
-
-	            // Wrap all options
+	            // Print wrapper start
 	            if(Framework::option_can_have_value($current_option)){
 
-	                $current_option['id'] = Framework::sanitize_option_id($current_option['id']);
+		            // If there is a description save it for labels
+		            $current_option_description = '';
+		            if(isset($current_option['desc'])) {
+			            $current_option_description = $current_option['desc'];
+			            $current_option_description = wp_kses($current_option_description, $allowedtags);
+		            }
 
-	                $id = 'section-' . $current_option['id'];
-
-	                $class = 'section';
-	                if (isset($current_option['type'])) {
-	                    $class .= ' section-' . $current_option['type'];
-	                }
-	                if (isset($current_option['class'])) {
-	                    $class .= ' ' . $current_option['class'];
-	                }
-
-	                $output .= '<div id="' . esc_attr($id) . '" class="' . esc_attr($class) . '">' . "\n";
-	                if (isset($current_option['name'])) {
-	                    $output .= '<h4 class="heading">' . esc_html($current_option['name']) . '</h4>' . "\n";
-	                }
-	                if (($current_option['type'] != "heading") && ($current_option['type'] != "info")) {
-	                    if (($current_option['type'] != "checkbox") && ($current_option['type'] != "editor")) {
-	                        $output .= '<div class="explain">' . $current_option_description . '</div>' . "\n";
-	                    }
-	                }
-	                if ($current_option['type'] != 'editor') {
-	                    $output .= '<div class="option">' . "\n" . '<div class="controls">' . "\n";
-	                } else {
-	                    $output .= '<div class="option">' . "\n" . '<div>' . "\n";
-	                }
+		            $output .= $wrapper_start->get([
+		            	'id' => esc_attr(Framework::sanitize_option_id($current_option['id'])),
+			            'type' => isset($current_option['type']) ? $current_option['type'] : "notype",
+			            'additional_classes' => isset($current_option['class']) ? esc_attr(" ".$current_option['class']) : "",
+			            'name' => isset($current_option['name']) ? $current_option['name'] : false,
+			            'description' => $current_option_description != '' ? $current_option_description : false,
+			            'inner_classes' => $current_option['type'] != 'editor' ? "controls" : false
+		            ]);
 	            }
 
+	            // Print options
 	            $registered_fields = $wbf_options_framework->fields;
+
 	            if(isset($registered_fields[$current_option['type']])){
+
 	            	$field = $registered_fields[$current_option['type']];
+
 		            if($field instanceof BaseField){
+
 			            $field->setup($val,$current_option);
+
 			            if($current_option['type'] == "heading"){
-				            $counter++;
-				            if ($counter >= 2) {
-					            $output .= '</div>' . "\n";
+
+			            	if($in_group){
+					            $output .= $group_wrapper_end->get();
+					            $in_group = false;
 				            }
-				            $output .= $field->get_html($counter);
-			            }else{
-				            $output .= $field->get_html();
+
+				            $counter++;
+
+				            $class = !empty($current_option['id']) ? $current_option['id'] : $current_option['name'];
+				            $class = preg_replace('/[^a-zA-Z0-9._\-]/', '', strtolower($class));
+				            $section_id = isset($current_option['section_id']) ? $current_option['section_id'] : "";
+				            if($section_id !== "") $class = $class." ".$section_id;
+
+				            $in_group = true;
+
+				            $output .= $group_wrapper_start->get([
+				            	'count' => $counter,
+					            'class' => $class
+				            ]);
 			            }
+
+			            $output .= $field->get_html();
 		            }
 	            }
 
+	            // Print wrapper end
 	            if(Framework::option_can_have_value($current_option)) {
-	                $output .= '</div><!-- end control -->';
-	                $output .= '</div><!-- end option --></div><!-- end section -->' . "\n";
+		            $output .= $wrapper_end->get();
 	            }
 
 	            echo $output;
@@ -128,7 +134,7 @@ class GUI{
 	    // Outputs closing div if there tabs
 	    // o.O If you remove this, you can add the closing div to the component page, BUT the options page won't work... o.O Oh, fuck vendors code.
 	    if (GUI::optionsframework_tabs() != '') {
-		    echo '</div>';
+		    echo '</div><!-- strange closing div -->';
 	    }
     }
 
