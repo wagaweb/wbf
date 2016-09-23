@@ -23,7 +23,8 @@ class Info extends BaseField implements Field{
 			$output .= '<h4 class="heading">' . esc_html($current_option['name']) . '</h4>' . "\n";
 		}
 		if ($current_option['desc']) {
-			$output .= $this->get_description() . "\n";
+
+			$output .= "<p>" . $this->get_description() . "</p>\n";
 		}
 		$output .= '</div>' . "\n";
 
