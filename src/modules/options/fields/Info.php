@@ -3,6 +3,8 @@ namespace WBF\modules\options\fields;
 
 class Info extends BaseField implements Field{
 
+	var $can_have_value = false;
+
 	public function get_html() {
 		$current_option = $this->related_option;
 		$id = '';

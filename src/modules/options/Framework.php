@@ -451,7 +451,12 @@ class Framework{
 	 * @return bool
 	 */
 	static function is_valuable_option($option){
-		return $option['type'] != "heading" && $option['type'] != "info";
+		global $wbf_options_framework;
+		$fields = $wbf_options_framework->fields;
+		if(isset($fields[$option['type']]) && $fields[$option['type']] instanceof BaseField){
+			return $fields[$option['type']]->can_have_value();
+		}
+		return true;
 	}
 
 	/**

@@ -3,6 +3,8 @@ namespace WBF\modules\options\fields;
 
 class Heading extends BaseField implements Field{
 
+	var $can_have_value = false;
+
 	public function get_html() {
 		$args = func_get_args();
 		$counter = $args[0];
