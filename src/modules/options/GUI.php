@@ -67,7 +67,7 @@ class GUI{
 	            }
 
 	            // Wrap all options
-	            if(Framework::is_valuable_option($current_option)){
+	            if(Framework::option_can_have_value($current_option)){
 
 	                $current_option['id'] = Framework::sanitize_option_id($current_option['id']);
 
@@ -114,7 +114,7 @@ class GUI{
 		            }
 	            }
 
-	            if(Framework::is_valuable_option($current_option)) {
+	            if(Framework::option_can_have_value($current_option)) {
 	                $output .= '</div><!-- end control -->';
 	                $output .= '</div><!-- end option --></div><!-- end section -->' . "\n";
 	            }
