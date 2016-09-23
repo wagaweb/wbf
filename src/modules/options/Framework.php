@@ -311,7 +311,10 @@ class Framework{
 	}
 
 	/**
-	 * Get the option that contains the current active options key.
+	 * Get the value of the wordpress option that tells the system under which wordpress option the current theme options are stored.
+	 *
+	 * Eg: optionsframework = "wbf_<theme-name>_theme_options"
+	 *     wbf_<theme-name>_theme_options = current active theme options values
 	 */
 	static function get_options_framework_settings(){
 		$opt_root = get_option('optionsframework');
