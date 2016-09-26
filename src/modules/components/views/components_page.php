@@ -18,12 +18,12 @@ if($last_error): ?>
 	</p>
 </div>
 <?php return; endif; ?>
-<div id="componentframework-wrapper" class="wrap">
+<div id="componentframework-wrapper" class="wrap" data-components-gui>
 	<div class="componentframework-header">
 		<h2><?php _e("Components", "wbf"); ?></h2>
 	</div>
 	<div id="componentframework-content-wrapper">
-		<div class="nav-tab-wrapper">
+		<div class="nav-tab-wrapper" data-nav>
 			<ul>
 				<li><a class="nav-tab" id="component-main-tab" data-show-comp-settings='component-main' href="#component-main"><?php _e("Available components","wbf"); ?></a></li>
 				<?php foreach($registered_components as $comp_data): if(!\WBF\modules\components\ComponentsManager::is_active($comp_data)) continue; ?>
@@ -129,10 +129,10 @@ if($last_error): ?>
 					<!-- Active components tabs -->
 					<?php foreach($registered_components as $comp_data): if(!\WBF\modules\components\ComponentsManager::is_active($comp_data)) continue; ?>
 						<?php $data = ComponentFactory::get_component_data( $comp_data->file ); ?>
-						<div id="component-<?php echo $comp_data->name; ?>" class="group" style="display: none;">
+						<div id="component-<?php echo $comp_data->name; ?>" class="group" style="display: none;" data-fieldgroup>
 							<h3><?php _e(sprintf("%s Settings",isset($data['Name']) ? $data['Name'] : ucfirst($comp_data->name)),"wbf"); ?></h3>
-							<?php \WBF\modules\options\GUI::optionsframework_fields($compiled_components_options[$comp_data->name]); ?>
-						<?php //</div> not necessary (is echoed from GUI::optionsframework_fields )... THIS MUST BE CHANGED AS SOON AS POSSIBLE, IT'S JUST SO WRONG! ?>
+							<?php \WBF\modules\options\GUI::print_fields($compiled_components_options[$comp_data->name]); ?>
+						</div>
 					<?php endforeach; ?>
 					<!-- /Active components tabs -->
 					<div id="componentframework-submit">

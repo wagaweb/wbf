@@ -1,11 +1,11 @@
-<div id="optionsframework-wrap" class="wrap">
+<div id="optionsframework-wrap" class="wrap" data-options-gui>
 	<div class="optionsframework-header">
 		<h2><?php echo esc_html( $menu['page_title'] ); ?></h2>
 		<?php WBF()->notice_manager->show_notices(); ?>
 	</div>
 	<div id="optionsframework-content-wrapper">
 		<!-- Navigation -->
-		<div class="nav-tab-wrapper">
+		<div class="nav-tab-wrapper" data-nav>
 			<ul>
 				<?php $counter = 0; foreach ($tabs as $value) : ?>
 					<?php
