@@ -169,3 +169,30 @@ In future releases the behaviors types will be aligned with Theme Options types.
         "default" => 1,
         "valid" => ["post","page"]
     ];
+    
+### The 'valid' property
+
+This property can be used to specify where the metabox relative to the behavior have to display itself or its value must be interpreted. It is an array of filter. Available filters:
+
+- "post": visible \ interpreted for posts
+
+- "page": visible \ interpreted for pages
+
+- "{cpt}": visible \ interpreted for all custom post types
+
+- "{blog}": visible \ interpreted for blog page
+
+- "{ctag:< tag name >}": visibility specified by a conditional tag
+
+The tag must be a function name which must return a boolean. If TRUE, the metabox is shown or its value is interpreted.
+
+The id of the current node is passed as param to the speciefied function.
+
+Eg:
+
+    "valid" => ["post","page","{ctag:is_shop}"]
+
+- < post_id >: visible only for post of specified id
+
+- < post_type >: visible for specified post type
+
