@@ -13,7 +13,6 @@ namespace WBF\modules\options;
 
 use WBF\components\mvc\HTMLView;
 use WBF\modules\options\fields\BaseField;
-use WBF\modules\options\fields\Field;
 
 class GUI{
 	static function getOrganizer(){
@@ -25,8 +24,8 @@ class GUI{
 	 *
 	 * @param array|null $options
 	 */
-    static function optionsframework_fields($options = null) {
-        global $allowedtags, $wbf_options_framework;
+    static function print_fields($options = null) {
+        global $wbf_options_framework;
 
         $saved_options = Framework::get_saved_options(); //the current saved options
 	    
@@ -142,7 +141,7 @@ class GUI{
     /**
      * Generates the tabs that are used in the options menu
      */
-    static function optionsframework_tabs() {
+    static function get_tabs() {
         $options = & Framework::get_registered_options();
         $tabs = [];
         if(is_array($options) && !empty($options)){

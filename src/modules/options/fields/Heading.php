@@ -1,6 +1,13 @@
 <?php
 namespace WBF\modules\options\fields;
 
+/**
+ * Class Heading
+ *
+ * This field is used to delimits groups and tabs. Organizer::add_section adds an Heading.
+ *
+ * @package WBF\modules\options\fields
+ */
 class Heading extends BaseField implements Field{
 
 	var $can_have_value = false;
