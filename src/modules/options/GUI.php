@@ -128,6 +128,7 @@ class GUI{
 	            echo $output;
             }
 
+		    // Close group if still open
             if($in_group){
 	            echo $group_wrapper_end->get();
 	            $in_group = false;
