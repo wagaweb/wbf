@@ -63,78 +63,78 @@ class GUI{
                     }
                 }
 
-	            // Print wrapper start
-	            if(Framework::option_can_have_value($current_option)){
-
-		            // If there is a description save it for labels
-		            $current_option_description = '';
-		            if(isset($current_option['desc'])) {
-			            $current_option_description = $current_option['desc'];
-			            $current_option_description = wp_kses($current_option_description, $allowedtags);
-		            }
-
-		            $output .= $wrapper_start->get([
-		            	'id' => esc_attr(Framework::sanitize_option_id($current_option['id'])),
-			            'type' => isset($current_option['type']) ? $current_option['type'] : "notype",
-			            'additional_classes' => isset($current_option['class']) ? esc_attr(" ".$current_option['class']) : "",
-			            'name' => isset($current_option['name']) ? $current_option['name'] : false,
-			            'description' => $current_option_description != '' ? $current_option_description : false,
-			            'inner_classes' => $current_option['type'] != 'editor' ? "controls" : false
-		            ]);
-	            }
-
-	            // Print options
 	            $registered_fields = $wbf_options_framework->fields;
 
 	            if(isset($registered_fields[$current_option['type']])){
 
 	            	$field = $registered_fields[$current_option['type']];
 
-		            if($field instanceof BaseField){
+		            if(!$field instanceof BaseField) continue; //Do not print invalid fields
 
-			            $field->setup($val,$current_option);
+		            $field->setup($val,$current_option);
 
-			            if($current_option['type'] == "heading"){
+		            // Print wrapper start
+		            if(Framework::option_can_have_value($current_option)){
 
-			            	if($in_group){
-					            $output .= $group_wrapper_end->get();
-					            $in_group = false;
-				            }
-
-				            $counter++;
-
-				            $class = !empty($current_option['id']) ? $current_option['id'] : $current_option['name'];
-				            $class = preg_replace('/[^a-zA-Z0-9._\-]/', '', strtolower($class));
-				            $section_id = isset($current_option['section_id']) ? $current_option['section_id'] : "";
-				            if($section_id !== "") $class = $class." ".$section_id;
-
-				            $in_group = true;
-
-				            $output .= $group_wrapper_start->get([
-				            	'count' => $counter,
-					            'class' => $class
-				            ]);
+			            // If there is a description save it for labels
+			            $current_option_description = false;
+			            if(method_exists($field,"get_description")) {
+				            $current_option_description = $field->get_description();
 			            }
 
-			            $output .= $field->get_html();
+			            $output .= $wrapper_start->get([
+				            'id' => esc_attr(Framework::sanitize_option_id($current_option['id'])),
+				            'type' => isset($current_option['type']) ? $current_option['type'] : "notype",
+				            'additional_classes' => isset($current_option['class']) ? esc_attr(" ".$current_option['class']) : "",
+				            'name' => isset($current_option['name']) ? $current_option['name'] : false,
+				            'description' => $current_option_description ? $current_option_description : false,
+				            'inner_classes' => $current_option['type'] != 'editor' ? "controls" : false
+			            ]);
 		            }
-	            }
 
-	            // Print wrapper end
-	            if(Framework::option_can_have_value($current_option)) {
-		            $output .= $wrapper_end->get();
+		            // Print open/closing groups
+		            if($current_option['type'] == "heading"){
+
+		                if($in_group){
+				            $output .= $group_wrapper_end->get();
+				            $in_group = false;
+			            }
+
+			            $counter++;
+
+			            $class = !empty($current_option['id']) ? $current_option['id'] : $current_option['name'];
+			            $class = preg_replace('/[^a-zA-Z0-9._\-]/', '', strtolower($class));
+			            $section_id = isset($current_option['section_id']) ? $current_option['section_id'] : "";
+			            if($section_id !== "") $class = $class." ".$section_id;
+
+			            $in_group = true;
+
+			            $output .= $group_wrapper_start->get([
+			                'count' => $counter,
+				            'class' => $class
+			            ]);
+		            }
+
+		            // Print actual field
+		            $output .= $field->get_html();
+
+		            // Print wrapper end
+		            if(Framework::option_can_have_value($current_option)) {
+			            $output .= $wrapper_end->get();
+		            }
+
 	            }
 
 	            echo $output;
             }
+
+            if($in_group){
+	            echo $group_wrapper_end->get();
+	            $in_group = false;
+            }
+
 	    }else{
 		    echo '<p>'.__("There is no options available","wbf")."</p>";
-	    }
-
-	    // Outputs closing div if there tabs
-	    // o.O If you remove this, you can add the closing div to the component page, BUT the options page won't work... o.O Oh, fuck vendors code.
-	    if (GUI::optionsframework_tabs() != '') {
-		    echo '</div><!-- strange closing div -->';
 	    }
     }
 

@@ -49,7 +49,7 @@ class BaseField {
 	 *
 	 * @return string
 	 */
-	protected function get_field_id(){
+	public function get_field_id(){
 		return esc_attr($this->related_option['id']);
 	}
 
@@ -58,7 +58,7 @@ class BaseField {
 	 *
 	 * @return string
 	 */
-	protected function get_field_name(){
+	public function get_field_name(){
 		$id = $this->options_db_key;
 		$name = $id."[".$this->related_option['id']."]";
 		$name = esc_attr($name);
@@ -70,7 +70,7 @@ class BaseField {
 	 *
 	 * @return string
 	 */
-	protected function get_description(){
+	public function get_description(){
 		global $allowedtags;
 		$current_option_description = '';
 		if(isset($this->related_option['desc'])) {
