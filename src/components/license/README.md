@@ -23,7 +23,9 @@ If you are using WBF as plugin the admin interface will be automatically created
 You can look at the WBF implementation in License_Manager class:
 
 `perform_page_actions()` => saves input data
+
 `admin_license_menu_item()` => adds the menu item
+
 `license_page()` => display the admin page.
 
 ## Manage theme updates
