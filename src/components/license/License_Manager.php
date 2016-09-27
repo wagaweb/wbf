@@ -187,18 +187,11 @@ class License_Manager{
 	/**
 	 * Register a License class for a theme
 	 * @param License $license
+	 *
+	 * @return License
 	 */
 	static function register_theme_license(License $license){
-		$license = self::register($license,"theme");
-		/**
-		 * Set update server
-		 */
-		if(class_exists('\WBF\components\customupdater\Theme_Update_Checker')){
-			$GLOBALS['WBFThemeUpdateChecker'] = new Theme_Update_Checker(
-				$license->slug,
-				$license->metadata_call
-			);
-		}
+		return self::register($license,"theme");
 	}
 
 	/**
