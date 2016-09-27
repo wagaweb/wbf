@@ -16,7 +16,27 @@ $l = new YourLicense();
 
 And that's it! WBF will detect your new license and allows user to enter their license code through the dashboard.
 
-## Manage theme and plugin updates
+## Creating dashboard interface
 
-Once your license is registered, WBF automatically binds it to the theme \ plugin custom update mechanism (provided by customupdater component). So updates will be blocked for invalid license owner.
+If you are using WBF as plugin the admin interface will be automatically created for you. If this is not the case you have to do it yourself.
+
+You can look at the WBF implementation in License_Manager class:
+
+`perform_page_actions()` => saves input data
+`admin_license_menu_item()` => adds the menu item
+`license_page()` => display the admin page.
+
+## Manage theme updates
+
+Once your license is registered, WBF automatically binds it to the theme custom update mechanism (provided by customupdater component). So updates will be blocked for invalid license owner.
+
+This behavior will be changed in the future to allow more flexibility.
+
+## Manage plugins updates
+
+For now you have WBF does not automatically binds plugins licenses to update mechanism.
+
+TBD
+
+
 
