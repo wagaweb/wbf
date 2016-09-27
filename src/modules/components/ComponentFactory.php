@@ -39,7 +39,19 @@ class ComponentFactory {
 	}
 
 	/**
-	 * Returns the component class name
+	 * Returns the component class name.
+	 *
+	 * Applies some transformations.
+	 *
+	 * - ucfirst of $component_name
+	 * - ucfirst of any char after an underscore
+	 *
+	 * So:
+	 *
+	 * with component name: test -> Test
+	 * with component name: test_me -> Test_Me
+	 * with component name: testMe -> TestMe
+	 * with component name: TestMe -> TestMe
 	 *
 	 * @param $component_name
 	 *
