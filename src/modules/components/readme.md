@@ -88,4 +88,35 @@ Components can be used for many things by advanced developers, and could be some
 
 The latter practices can be easy at early stages but they could easily lead to a nightmare code base later on. Even some premiun plugins and themes are completely un-moddable.
 
-Components can be used as a standard procedure to encaplulate distinct functionality, improving code quality and code usability.
+Components can be used as a standard procedure to encaplulate distinct functionality, improving code quality and code usability among WordPress community.
+
+## Advanced topics
+
+### register_options() method.
+
+Within this method the Organizer (/src/modules/options/Organizer.php) can be used to adds theme options. The parent method register the components relative options (like "enable on all pages", "load locations" and so on). 
+
+It is possible to adds more components related options by setting a specific section name before adding the options:
+
+    <?php
+    $orgzr = Organizer::getInstance();
+    
+    $orgzr->set_group("components");
+    
+    $section_name = $this->name."_component";
+    $additional_params = [
+        'component' => true,
+        'component_name' => $this->name
+    ];
+    
+    $orgzr->add(array(
+        //...
+        'component' => true
+    ),null,null,$additional_params);
+    
+    //...
+    		
+### Adding and changing components directories.
+    		
+Functionality currently under testing.
+ 
