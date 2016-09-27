@@ -3,6 +3,8 @@
 namespace WBF;
 
 use WBF\components\assets\AssetsManager;
+use WBF\components\compiler\Base_Compiler;
+use WBF\components\compiler\less\Less_Compiler;
 use WBF\components\compiler\Styles_Compiler;
 use WBF\components\customupdater\Plugin_Update_Checker;
 use WBF\components\license\License_Manager;
@@ -219,12 +221,16 @@ class PluginCore {
 	 * Initialize the style compiler as global variable
 	 *
 	 * @param $args
-	 * @param null $base_compiler
+	 * @param null|Base_Compiler $base_compiler
 	 */
 	function set_styles_compiler($args,$base_compiler = null){
 		global $wbf_styles_compiler;
+
 		if(!isset($wbf_styles_compiler) || !$wbf_styles_compiler){
-			$wbf_styles_compiler = new components\compiler\Styles_Compiler($args,$base_compiler);
+			if(!isset($base_compiler)){
+				$base_compiler = new Less_Compiler($args);
+			}
+			$wbf_styles_compiler = new components\compiler\Styles_Compiler($base_compiler);
 		}
 		$this->Styles_Compiler = &$wbf_styles_compiler;
 		$wbf_styles_compiler->listen_requests();
