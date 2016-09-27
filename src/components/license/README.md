@@ -34,7 +34,7 @@ This behavior will be changed in the future to allow more flexibility.
 
 ## Manage plugins updates
 
-For now you have WBF does not automatically binds plugins licenses to update mechanism.
+For now WBF alone does not automatically binds plugins licenses to update mechanism. On the other hand Plugins Framework does it within the `set_update_server()` method.
 
 TBD
 
