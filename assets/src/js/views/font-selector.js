@@ -1,66 +1,43 @@
-module.exports = {
-    init_interface: function(my_controller){
-        "use strict";
-        var $ = jQuery;
+module.exports = Backbone.View.extend({
+    template: _.template(jQuery('#font-select-tpl').html()),
+    initialize: function(options){
 
-        var controller = my_controller;
+        //set variables
+        this.model.set("selected_font",options.selectedFont);
+        this.model.set("optionName", options.optionName);
+        this.model.set("counter", options.counter);
+        this.model.set("selected_charset", options.selectedCharset);
+        this.model.set("selected_weight", options.selectedWeight);
 
-        $(".font-family-selector").on("change",function(){
-            var $familySeletor = $(this);
-            var $styleSelector = $(this).siblings(".font-style-selector");
-            var styleOptName = $styleSelector.find('input:first').attr("name");
-            var $charsetSelector = $(this).siblings(".font-charset-selector");
-            var charsetOptName = $charsetSelector.find('input:first').attr("name");
-            var $categoryInput = $(this).siblings(".font-category-selector");
-            var $fontPreview = $(this).siblings(".font-preview");
-            var request = $.ajax({
-                url: ajaxurl,
-                type: "POST",
-                data: {
-                    action: "gfontfetcher_getFontInfo",
-                    family: $(this).val()
-                },
-                dataType: "json",
-                beforeSend: function(){
-                    $familySeletor.attr("disabled","disabled");
-                    $styleSelector.addClass("disabled");
-                    $charsetSelector.addClass("disabled");
-                }
-            });
-            request.done(function(data, textStatus, jqXHR){
-                console.log(data);
-                //Load GFonts and set the preview
-                if(data.kind == "webfonts#webfont"){
-                    controller.loadWebFonts([$familySeletor.val()]);
-                }
-                $fontPreview.find("p").css("font-family","'"+data.family+"',"+data.category);
-                //Assign new styles to the html select
-                $styleSelector.html((function(){
-                    var output = "";
-                    $.each(data.variants,function(){
-                        output += "<input name='"+styleOptName+"' type='checkbox' value='"+this+"' />"+this;
-                    });
-                    return output;
-                })());
-                //Assign new charset to the html select
-                $charsetSelector.html((function(){
-                    var output = "";
-                    $.each(data.subsets,function(){
-                        output += "<input name='"+charsetOptName+"' type='checkbox' value='"+this+"' />"+this;
-                    });
-                    return output;
-                })());
-                //Assign new category to the html input
-                $categoryInput.val(data.category);
-            });
-            request.fail(function(jqXHR, textStatus, errorThrown){
-                console.log(errorThrown);
-            });
-            request.always(function(result, textStatus, returned){
-                $familySeletor.removeAttr("disabled");
-                $styleSelector.removeClass("disabled");
-                $charsetSelector.removeClass("disabled");
-            });
+        // listener
+        this.listenTo(this.model,"fontChanged",this.render);
+
+        // render
+        this.render();
+    },
+    render: function(){
+        var self = this;
+
+        // template
+        this.$el.html(this.template({
+            counter: this.model.get('counter'),
+            fonts: this.model.get('fonts'),
+            optionName: this.model.get('optionName'),
+            selected_font: this.model.get("selected_font"),
+            selected_charset: this.model.get("selected_charset"),
+            selected_weight: this.model.get("selected_weight")
+        }));
+
+        // listen to change in select
+        this.$el.find("[data-fontlist]").on("change",function(){
+            var new_font = jQuery(this).val();
+            self.model.changeFont(new_font);
         });
+
+        //listen to remove font button
+        this.$el.find('.remove-font-button').on('click', function(e){
+            e.preventDefault();
+            jQuery(this).closest('.font-select-wrapper').remove();
+        })
     }
-};
+});

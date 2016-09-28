@@ -46,6 +46,7 @@ class Framework{
 			'csseditor' => "WBF\\modules\\options\\fields\\CodeEditor",
 			'typography' => "WBF\\modules\\options\\fields\\FontSelector",
 			'gfont' => "WBF\\modules\\options\\fields\\FontSelector",
+			'fonts_selector' => "WBF\\modules\\options\\fields\\MultipleFontSelector",
 			'textarea' => "WBF\\modules\\options\\fields\\Textarea",
 			'select' => "WBF\\modules\\options\\fields\\Select",
 			'radio' => "WBF\\modules\\options\\fields\\Radio",
