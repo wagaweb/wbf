@@ -296,6 +296,11 @@ class Component {
         return $this->directory_uri."/".$filepath;
     }
 
+	/**
+	 * Backups the current component options. Called during deactivation.
+	 *
+	 * @return bool
+	 */
 	private function backup_theme_options(){
 		$options = $this->get_theme_options_values();
 		if(is_array($options) && !empty($options)){
@@ -308,6 +313,13 @@ class Component {
 		}
 	}
 
+	/**
+	 * Restore current component options. Called during activation.
+	 *
+	 * @use WBF\modules\options\Framework::update_theme_options
+	 *
+	 * @return array|bool
+	 */
 	private function restore_theme_options(){
 		$component_options_backup = get_option("wbf_component_options_backup",[]);
 		if(isset($component_options_backup[$this->name])){
@@ -317,7 +329,12 @@ class Component {
 			return false;
 		}
 	}
-	
+
+	/**
+	 * Is this component active?
+	 *
+	 * @return bool|mixed
+	 */
 	public function is_active(){
 		return $this->active;
 	}

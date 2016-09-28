@@ -20,30 +20,19 @@ class Styles_Compiler{
 	/**
 	 * Styles_Compiler constructor.
 	 *
-	 * @param $args
-	 * @param null $base_compiler
+	 * @param Base_Compiler $base_compiler
+	 * @param array $options
 	 *
 	 * @throws Exception
 	 */
-	function __construct($args,$base_compiler = null){
-		if(!is_array($args)){
+	function __construct(Base_Compiler $base_compiler, $options = []){
+		if(!is_array($options)){
 			throw new \Exception("Invalid arguments passed to Styles_Compiler");
 		}
 
-		$this->compiling_options = $args;
+		$this->compiling_options = $options;
 
-		//todo: guess the base compiler out of input file name
-		if(!isset($base_compiler)){
-			$base_compiler = [
-				'require_path' => "less/Less_Compiler.php",
-				'class_name' => '\WBF\components\compiler\less\Less_Compiler'
-			];
-		}
-
-		//todo: add the ability to specify the path of tmp_file
-
-		require_once $base_compiler['require_path'];
-		$this->base_compiler = new $base_compiler['class_name']($args);
+		$this->base_compiler = $base_compiler;
 
 		$this->maybe_release_lock();
 
