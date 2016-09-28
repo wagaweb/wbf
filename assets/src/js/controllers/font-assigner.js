@@ -83,7 +83,7 @@ module.exports = Backbone.Model.extend({
             var family = jQuery(sel[i]).val(),
                 newWeights = [];
 
-            if (family = newFont) {
+            if (family == newFont) {
                 // theese are the checkboxes
                 var weights = jQuery(sel[i]).closest('.font-select-wrapper').find('.font-weight-checkbox');
             }
