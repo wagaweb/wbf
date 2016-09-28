@@ -22,15 +22,17 @@ module.exports = Backbone.View.extend({
         this.listenTo(this.model,"fontWeightsUpdated", this.render);
 
         // render
-        this.render();
+        this.render(true);
     },
-    render: function(){
-
+    render: function(rebind_actions){
         var self = this,
             $ = jQuery,
             wrapper = $(this.$el).closest('#section-fonts'),
             container = this.model.get("container");
 
+        if(typeof rebind_actions == "undefined"){
+            rebind_actions = false;
+        }
 
         this.$el.find('['+container+']').html(this.template({
             cssSelector: this.model.get('cssSelector'),
@@ -41,6 +43,14 @@ module.exports = Backbone.View.extend({
             selectedWeight: this.model.get('selectedWeight')
         }));
 
+        if(rebind_actions){
+            this.bind_actions(wrapper);
+        }
+    },
+    bind_actions: function(wrapper){
+        var $ = jQuery,
+            self = this,
+            container = this.model.get("container");
         wrapper.on("change", function(e){
             if($(e.target).hasClass('all-fonts-select')){
                 // call the updater with reference to the wrapper
