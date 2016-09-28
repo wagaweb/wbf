@@ -12,7 +12,10 @@ module.exports = {
             'radio_img_label': $('.of-radio-img-label'),
             'radio_img_radio': $('.of-radio-img-radio')
         };
-        var $tabs_wrapper = $('#optionsframework-wrap').find('.nav-tab-wrapper');
+        var $theme_options_wrapper = $('[data-options-gui]');
+        var $theme_options_tabs_wrapper = $theme_options_wrapper.find('[data-nav]');
+        var $components_wrapper = $('[data-components-gui]');
+        var $components_tabs_wrapper = $components_wrapper.find('[data-nav]');
 
         // Loads the color pickers
         of_elements.color.wpColorPicker();
@@ -35,22 +38,26 @@ module.exports = {
         of_elements.radio_img_radio.hide();
 
         // Loads tabbed sections if they exist
-        if ( $tabs_wrapper.length > 0 ) {
-            options_framework_tabs();
+
+        if ( $theme_options_tabs_wrapper.length > 0 ) {
+            init_tabs($theme_options_wrapper,"wbf_theme_options_active_tab");
         }
 
-        function options_framework_tabs() {
-            var $wrapper = $('#optionsframework-wrap');
-            var $tabs_links = $wrapper.find('.nav-tab-wrapper a');
-            var $tabs_first_link = $wrapper.find('.nav-tab-wrapper a:first');
+        if( $components_tabs_wrapper.length > 0){
+            init_tabs($components_wrapper,"wbf_components_active_tab");
+        }
+
+        function init_tabs($wrapper,localStorage_var_name) {
+            var $tabs_links = $wrapper.find('[data-nav] a');
+            var $tabs_first_link = $wrapper.find('[data-nav] a:first');
 
             // Hides all the .group sections to start
-            $('.group').hide();
+            $('[data-fieldgroup]').hide();
 
             // Find if a selected tab is saved in localStorage
             var active_tab = '';
             if ( typeof(localStorage) != 'undefined' ) {
-                active_tab = localStorage.getItem("wbf_theme_options_active_tab"); //Check for active tab
+                active_tab = localStorage.getItem(localStorage_var_name); //Check for active tab
                 if(active_tab != null && active_tab.match(/http/)){ //Hardcoded fix for some incompatibilities
                     active_tab = '';
                 }
@@ -61,7 +68,7 @@ module.exports = {
                 $(active_tab).fadeIn();
                 $(active_tab + '-tab').addClass('nav-tab-active');
             } else {
-                $('.group:first').fadeIn();
+                $('[data-fieldgroup]:first').fadeIn();
                 $tabs_first_link.addClass('nav-tab-active');
             }
 
@@ -78,10 +85,10 @@ module.exports = {
                 var group = $(this).attr('href');
 
                 if (typeof(localStorage) != 'undefined' ) {
-                    localStorage.setItem("wbf_theme_options_active_tab", $(this).attr('href') ); //Store the active tab on click (this will be saved with # included)
+                    localStorage.setItem(localStorage_var_name, $(this).attr('href') ); //Store the active tab on click (this will be saved with # included)
                 }
 
-                $('.group').hide();
+                $('[data-fieldgroup]').hide();
                 $(group).fadeIn();
 
                 // Editor height sometimes needs adjustment when unhidden

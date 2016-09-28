@@ -12,6 +12,7 @@
 namespace WBF\modules\options;
 
 use WBF\components\utils\Utilities;
+use WBF\modules\options\fields\BaseField;
 
 class Framework{
 
@@ -23,7 +24,7 @@ class Framework{
 	/**
 	 * @var array
 	 */
-	var $extensions;
+	var $fields;
 
 	/**
 	 * Initialize the framework.
@@ -38,16 +39,43 @@ class Framework{
 		$this->admin = new Admin();
 		$this->admin->init();
 
-		//Loads up extensions todo: refactor a bit
-		$mu = new MediaUploader();
-		$mu->init();
-		$ce = new CodeEditor();
-		$ce->init();
-		$fs = new FontSelector();
-		$fs->init();
-		$ac = new Advanced_Color();
-		$ac->init();
-		$this->extensions = [$mu,$ce,$fs];
+		//Loads up fields
+		$fields = [
+			'text' => "WBF\\modules\\options\\fields\\Text",
+			'password' => "WBF\\modules\\options\\fields\\Password",
+			'csseditor' => "WBF\\modules\\options\\fields\\CodeEditor",
+			'typography' => "WBF\\modules\\options\\fields\\FontSelector",
+			'gfont' => "WBF\\modules\\options\\fields\\FontSelector",
+			'fonts_selector' => "WBF\\modules\\options\\fields\\MultipleFontSelector",
+			'textarea' => "WBF\\modules\\options\\fields\\Textarea",
+			'select' => "WBF\\modules\\options\\fields\\Select",
+			'radio' => "WBF\\modules\\options\\fields\\Radio",
+			'images' => "WBF\\modules\\options\\fields\\Images",
+			'checkbox' => "WBF\\modules\\options\\fields\\Checkbox",
+			'multicheck' => "WBF\\modules\\options\\fields\\Multicheck",
+			'color' => "WBF\\modules\\options\\fields\\Color",
+			'advanced_color' => "WBF\\modules\\options\\fields\\Advanced_Color",
+			'upload' => "WBF\\modules\\options\\fields\\MediaUploader",
+			'background' => "WBF\\modules\\options\\fields\\Background",
+			'editor' => "WBF\\modules\\options\\fields\\Editor",
+			'info' => "WBF\\modules\\options\\fields\\Info",
+			'heading' => "WBF\\modules\\options\\fields\\Heading",
+		];
+		$fields = apply_filters("wbf/modules/options/fields/available",$fields);
+		foreach ($fields as $name => $class){
+			if(class_exists($class)){
+				$f = new $class();
+				$this->fields[$name] = $f;
+				if($f instanceof BaseField){
+					if(method_exists($f,"init")){
+						$f->init();
+					}
+					if(method_exists($f,"sanitize")){
+						add_filter( "of_sanitize_{$name}", [$f,"sanitize"], 10, 2 );
+					}
+				}
+			}
+		}
 		
 		do_action("wbf/modules/options/after_init");
 	}
@@ -284,7 +312,10 @@ class Framework{
 	}
 
 	/**
-	 * Get the option that contains the current active options key.
+	 * Get the value of the wordpress option that tells the system under which wordpress option the current theme options are stored.
+	 *
+	 * Eg: optionsframework = "wbf_<theme-name>_theme_options"
+	 *     wbf_<theme-name>_theme_options = current active theme options values
 	 */
 	static function get_options_framework_settings(){
 		$opt_root = get_option('optionsframework');
@@ -420,8 +451,13 @@ class Framework{
 	 *
 	 * @return bool
 	 */
-	static function is_valuable_option($option){
-		return $option['type'] != "heading" && $option['type'] != "info";
+	static function option_can_have_value($option){
+		global $wbf_options_framework;
+		$fields = $wbf_options_framework->fields;
+		if(isset($fields[$option['type']]) && $fields[$option['type']] instanceof BaseField){
+			return $fields[$option['type']]->can_have_value();
+		}
+		return true; //todo: default to false?
 	}
 
 	/**

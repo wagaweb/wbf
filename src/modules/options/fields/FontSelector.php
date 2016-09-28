@@ -9,11 +9,14 @@
  * Based on Devin Price' Options_Framework
  */
 
-namespace WBF\modules\options;
+namespace WBF\modules\options\fields;
 
 use WBF\includes\GoogleFontsRetriever;
+use WBF\modules\options\fields\BaseField;
+use WBF\modules\options\fields\Field;
+use WBF\modules\options\Framework;
 
-class FontSelector
+class FontSelector extends BaseField implements Field
 {
 	public function init(){
 		add_action('admin_enqueue_scripts',array($this, 'scripts'));
@@ -21,7 +24,7 @@ class FontSelector
 	}
 
 	function scripts( $hook ) {
-		if ( ! of_is_admin_framework_page( $hook ) ) {
+		if ( ! \WBF\modules\options\of_is_admin_framework_page( $hook ) ) {
 			return;
 		}
 
@@ -136,37 +139,29 @@ class FontSelector
 
 	/**
 	 * Print out font options fields in Theme Options
-	 * @param string $_id - A token to identify this field (the name).
-	 * @param string $_value - The value of the field, if present.
-	 * @param string $_defaults - The defaults value of the field..
-	 * @param string $_desc - An optional description of the field.
-	 * @param string $_name
 	 *
 	 * @return string
 	 */
-	static function output($_id, $_value, $_defaults, $_desc = '', $_name = ''){
+	public function get_html(){
 		global $wbf_gfont_fetcher;
 
-		// Gets the unique option id
-		$option_name = Framework::get_options_root_id();
+		$id = $this->related_option['id'];
 
-		$output = ''; $id = strip_tags(strtolower($_id)); $class = "of-input gfont"; $int = ''; $value = '';
-		$name = $_name != '' ? $_name : $option_name . '[' . $id . ']';
+		$value = $this->value;
+		if(!empty($value)){
+			if($value['style'] == "") $value['style'] = array();
+			if($value['charset'] == "") $value['charset'] = array();
+			if(!is_array($value['style'])) $value['style'] = array($value['style']);
+			if(!is_array($value['charset'])) $value['charset'] = array($value['charset']);
+		}
+
+		$defaults = $this->related_option['std'];
+		if(!is_array($defaults['style'])) $defaults['style'] = array($defaults['style']);
+		if(!is_array($defaults['charset'])) $defaults['charset'] = array($defaults['charset']);
+
+		$output = '';
 
 		$fonts = self::getFonts();
-
-		$defaults = $_defaults;
-        if(!is_array($defaults['style'])) $defaults['style'] = array($defaults['style']);
-        if(!is_array($defaults['charset'])) $defaults['charset'] = array($defaults['charset']);
-
-		// If a value is passed and we don't have a stored value, use the value that's passed through.
-		if ( $_value != '' && $value == '' ) {
-			$value = $_value;
-            if($value['style'] == "") $value['style'] = array();
-            if($value['charset'] == "") $value['charset'] = array();
-            if(!is_array($value['style'])) $value['style'] = array($value['style']);
-            if(!is_array($value['charset'])) $value['charset'] = array($value['charset']);
-		}
 
 		if(!empty($value)){
 			$selected_font = self::isOSFont($value['family']) ? self::getOSFontProps($value['family']) : $wbf_gfont_fetcher->get_properties_of($value['family']);
@@ -188,7 +183,7 @@ class FontSelector
 		/**
 		 * FAMILY
 		 */
-		$output .= "<select class='font-family-selector' name='".self::fontFamily_OptName($option_name,$id)."'>";
+		$output .= "<select class='font-family-selector' name='".self::fontFamily_OptName($this->options_db_key,$id)."'>";
 		foreach($fonts as $font){
 			if($selected_font->family == $font->family){
 				$output .= "<option value='$font->family' selected>$font->family</option>";
@@ -203,7 +198,7 @@ class FontSelector
 		 */
 		$current_color = $selected_font->color;
 		$default_color = ' data-default-color="' . $defaults['color'] . '" ';
-		$output .= '<input name="' . self::fontColor_OptName($option_name,$id) . '" id="' . $id . '" class="of-color font-color-selector"  type="text" value="' . esc_attr($current_color) . '"' . $default_color . ' />';
+		$output .= '<input name="' . self::fontColor_OptName($this->options_db_key,$id) . '" id="' . $id . '" class="of-color font-color-selector"  type="text" value="' . esc_attr($current_color) . '"' . $default_color . ' />';
 
 		/**
 		 * VARIANTS
@@ -211,12 +206,12 @@ class FontSelector
         $output .= "<div class='font-style-selector'>";
 		foreach($selected_font->variants as $variant){
 			if(!empty($value) && in_array($variant,$value['style'])){
-                $output .= "<div class='check-wrapper'><input type=\"checkbox\" name=\"".self::fontStyles_OptName($option_name,$id)."[]\" value=\"$variant\" class=\"check $selected_font->family_slug\" checked>$variant</div>";
+                $output .= "<div class='check-wrapper'><input type=\"checkbox\" name=\"".self::fontStyles_OptName($this->options_db_key,$id)."[]\" value=\"$variant\" class=\"check $selected_font->family_slug\" checked>$variant</div>";
 			}elseif(empty($value) && in_array($variant,$defaults['style'])){
-                $output .= "<div class='check-wrapper'><input type=\"checkbox\" name=\"".self::fontStyles_OptName($option_name,$id)."[]\" value=\"$variant\" class=\"check $selected_font->family_slug\" checked>$variant</div>";
+                $output .= "<div class='check-wrapper'><input type=\"checkbox\" name=\"".self::fontStyles_OptName($this->options_db_key,$id)."[]\" value=\"$variant\" class=\"check $selected_font->family_slug\" checked>$variant</div>";
             }
             else{
-                $output .= "<div class='check-wrapper'><input type=\"checkbox\" name=\"".self::fontStyles_OptName($option_name,$id)."[]\" value=\"$variant\" class=\"check $selected_font->family_slug\">$variant</div>";
+                $output .= "<div class='check-wrapper'><input type=\"checkbox\" name=\"".self::fontStyles_OptName($this->options_db_key,$id)."[]\" value=\"$variant\" class=\"check $selected_font->family_slug\">$variant</div>";
 			}
 		}
         $output .= "</div>";
@@ -227,12 +222,12 @@ class FontSelector
         $output .= "<div class='font-charset-selector'>";
 		foreach($selected_font->subsets as $subset){
 			if(!empty($value) && in_array($subset,$value['charset'])){
-                $output .= "<div class='check-wrapper'><input type=\"checkbox\" name=\"".self::fontCharset_OptName($option_name,$id)."[]\" value=\"$subset\" class=\"check\" checked>$subset</div>";
+                $output .= "<div class='check-wrapper'><input type=\"checkbox\" name=\"".self::fontCharset_OptName($this->options_db_key,$id)."[]\" value=\"$subset\" class=\"check\" checked>$subset</div>";
 			}elseif(empty($value) && in_array($subset,$defaults['charset'])){
-                $output .= "<div class='check-wrapper'><input type=\"checkbox\" name=\"".self::fontCharset_OptName($option_name,$id)."[]\" value=\"$subset\" class=\"check\" checked>$subset</div>";
+                $output .= "<div class='check-wrapper'><input type=\"checkbox\" name=\"".self::fontCharset_OptName($this->options_db_key,$id)."[]\" value=\"$subset\" class=\"check\" checked>$subset</div>";
             }
             else{
-                $output .= "<div class='check-wrapper'><input type=\"checkbox\" name=\"".self::fontCharset_OptName($option_name,$id)."[]\" value=\"$subset\" class=\"check\">$subset</div>";
+                $output .= "<div class='check-wrapper'><input type=\"checkbox\" name=\"".self::fontCharset_OptName($this->options_db_key,$id)."[]\" value=\"$subset\" class=\"check\">$subset</div>";
 			}
 		}
         $output .= "</div>";
@@ -240,7 +235,7 @@ class FontSelector
         /*
          * Category
          */
-        $output .= "<input class='font-category-selector' type='hidden' name='".self::fontCategory_OptName($option_name,$id)."' value='".$selected_font->category."' />";
+        $output .= "<input class='font-category-selector' type='hidden' name='".self::fontCategory_OptName($this->options_db_key,$id)."' value='".$selected_font->category."' />";
 
         /*
          * PREVIEW
@@ -424,5 +419,37 @@ class FontSelector
 
 	private static function fontElements_OptName($theme_name,$opt_id){
 		return $theme_name.'['.$opt_id.'][elements]';
+	}
+
+	public function sanitize( $input, $option ) {
+		global $wbf_options_framework;
+
+		$output = wp_parse_args( $input, array(
+			'family'  => '',
+			'style'  => [],
+			'charset' => [],
+			'color' => ''
+		) );
+
+		$output['color'] = call_user_func(function($hex) use($option){
+			$hex = trim( $hex );
+			/* Strip recognized prefixes. */
+			if ( 0 === strpos( $hex, '#' ) ) {
+				$hex = substr( $hex, 1 );
+			}
+			elseif ( 0 === strpos( $hex, '%23' ) ) {
+				$hex = substr( $hex, 3 );
+			}
+			/* Regex match. */
+			if ( 0 === preg_match( '/^[0-9a-fA-F]{6}$/', $hex ) ) {
+				$r = isset($option['std']['color']) ? $option['std']['color'] : "";
+				return $r;
+			}
+			else {
+				return $hex;
+			}
+		},$input['color']);
+
+		return $output;
 	}
 }

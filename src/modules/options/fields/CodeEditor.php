@@ -9,12 +9,15 @@
  * Based on Devin Price' Options_Framework
  */
 
-namespace WBF\modules\options;
+namespace WBF\modules\options\fields;
 
 use WBF\components\assets\AssetsManager;
 use WBF\includes\Resources;
+use WBF\modules\options\fields\BaseField;
+use WBF\modules\options\fields\Field;
+use WBF\modules\options\Framework;
 
-class CodeEditor {
+class CodeEditor extends BaseField  implements Field  {
 
 	/**
 	 * Init editor actions. Called by Framework->init()
@@ -27,52 +30,15 @@ class CodeEditor {
 	/**
 	 * Display the editor
 	 *
-	 * @param $_id
-	 * @param $_value
-	 * @param string $_desc
-	 * @param string $_name
 	 * @param string $_lang
 	 *
 	 * @return string
 	 */
-	static function display($_id, $_value, $_desc = '', $_name = '', $_lang = 'css'){
-		$optionsframework_settings = Framework::get_options_framework_settings();
-
-		// Gets the unique option id
-		$option_name = $optionsframework_settings['id'];
-
-		$output = '';
-		$id     = '';
-		$class  = '';
-		$int    = '';
-		$value  = '';
-		$name   = '';
-
-		$id = strip_tags( strtolower( $_id ) );
-
-		// If a value is passed and we don't have a stored value, use the value that's passed through.
-		if ( $_value != '' && $value == '' ) {
-			$value = $_value;
-		}
-
-		if ( $_name != '' ) {
-			$name = $_name;
-		} else {
-			$name = $option_name . '[' . $id . ']';
-		}
-
+	public function get_html(){
+		$_lang = 'css';
 
 		$class = "of-input codemirror";
-
-		$output .= "<textarea id='$id' class='$class' name='$name' data-lang='$_lang' rows='8'>$value</textarea>";
-
-		/*$output .= "<script>
-		var editor = CodeMirror.fromTextArea(document.getElementById('{$id}'), {
-		  mode: 'css',
-		  lineNumbers: true
-		});
-		</script>";*/
-
+		$output = "<textarea id='{$this->get_field_name()}' class='$class' name='{$this->get_field_name()}' data-lang='$_lang' rows='8'>{$this->value}</textarea>";
 		return $output;
 	}
 
@@ -100,7 +66,7 @@ class CodeEditor {
 	 * @throws \Exception
 	 */
 	function scripts( $hook ) {
-		if(!of_is_admin_framework_page($hook)){
+		if(!\WBF\modules\options\of_is_admin_framework_page($hook)){
 			return;
 		}
 
@@ -201,5 +167,11 @@ class CodeEditor {
 			return $filepath;
 		}
 		return false;
+	}
+
+	public function sanitize( $input, $option ) {
+		global $allowedposttags;
+		$output = wp_kses( $input, $allowedposttags);
+		return $output;
 	}
 }

@@ -9,16 +9,19 @@
  * Based on Devin Price' Options_Framework
  */
 
-namespace WBF\modules\options;
+namespace WBF\modules\options\fields;
 
 use WBF\components\assets\AssetsManager;
+use WBF\components\utils\Utilities;
 use WBF\includes\Resources;
+use WBF\modules\options\fields\BaseField;
+use WBF\modules\options\fields\Field;
 
 /**
  * Class Advanced_Color
  * @package WBF\modules\options
  */
-class Advanced_Color {
+class Advanced_Color extends BaseField implements Field{
 
 	/**
 	 * Init editor actions. Called by Framework->init()
@@ -34,20 +37,17 @@ class Advanced_Color {
 
 
 	/**
-	 * @param $current_option
-	 * @param $val
-	 * @param $options_db_key
 	 *
 	 * @return string
 	 */
-	static function display( $current_option, $val, $options_db_key ) {
+	public function get_html() {
 		$default_color = '';
-		if (isset($current_option['std'])) {
-			if ($val != $current_option['std']) {
-				$default_color = ' data-default-color="' . $current_option['std'] . '" ';
+		if (isset($this->related_option['std'])) {
+			if ($this->value != $this->related_option['std']) {
+				$default_color = ' data-default-color="' . $this->related_option['std'] . '" ';
 			}
 		}
-		$output = '<input name="' . esc_attr($options_db_key . '[' . $current_option['id'] . ']') . '" id="' . esc_attr($current_option['id']) . '" class="advanced-color"  type="text" value="' . esc_attr($val) . '"' . $default_color . ' />';
+		$output = '<input name="' . $this->get_field_name() . '" id="' . $this->get_field_id() . '" class="advanced-color"  type="text" value="' . esc_attr($this->value) . '"' . $default_color . ' />';
 
 		return $output;
 	}
@@ -68,5 +68,21 @@ class Advanced_Color {
 
 		$am = new AssetsManager($res);
 		$am->enqueue();
+	}
+
+	public function sanitize( $input, $option ) {
+		if (strstr($input, 'hsva') !== false) {
+			$val = str_replace('hsva(', '', $input);
+			$val = str_replace(')', '', $val);
+			$values = explode(', ', $val);
+
+			$rgb = Utilities::fGetRGB($values[0], $values[1], $values[2]);
+			if (is_null($values[3])) {
+				return $rgb;
+			}
+			$rgba = 'rgba( ' . $rgb . ',' . $values[3] . ')';
+			return $rgba;
+		}
+		return $input;
 	}
 }
