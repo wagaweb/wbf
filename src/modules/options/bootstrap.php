@@ -16,6 +16,7 @@
 namespace WBF\modules\options;
 
 use WBF\components\utils\Utilities;
+use WBF\modules\options\fields\CodeEditor;
 
 require_once "CustomizerManager.php";
 require_once "functions.php";
