@@ -53,32 +53,34 @@ class Behavior{
 			$this->possible_values = "";
 		}
 
-		if(isset($args['default'])){
-			$base_default = $args['default'];
-			if(isset($args['get_for_posttype']) && $args['get_for_posttype'] != false){
-				$post_type = $args['get_for_posttype'];
-				if(isset($this->posttypes_values[$post_type])){
-					$option_default = \WBF\modules\options\of_get_option($this->posttypes_values[$post_type]['optionname'],$base_default);
+		if(current_action() !== "wbf/theme_options/register"){ //if executed during this filter, it leads to infinite loop
+			if(isset($args['default'])){
+				$base_default = $args['default'];
+				if(isset($args['get_for_posttype']) && $args['get_for_posttype'] != false){
+					$post_type = $args['get_for_posttype'];
+					if(isset($this->posttypes_values[$post_type])){
+						$option_default = \WBF\modules\options\of_get_option($this->posttypes_values[$post_type]['optionname'],$base_default);
+					}else{
+						$option_default = \WBF\modules\options\of_get_option($this->optionname,$base_default);
+					}
 				}else{
 					$option_default = \WBF\modules\options\of_get_option($this->optionname,$base_default);
 				}
-			}else{
-				$option_default = \WBF\modules\options\of_get_option($this->optionname,$base_default);
-			}
-			if(is_array($option_default)){
-				if($this->type == "checkbox"){
-					foreach($option_default as $name => $v){
-						$this->default[] = $name;
+				if(is_array($option_default)){
+					if($this->type == "checkbox"){
+						foreach($option_default as $name => $v){
+							$this->default[] = $name;
+						}
 					}
+				}else{
+					$this->default = $option_default;
 				}
 			}else{
-				$this->default = $option_default;
-			}
-		}else{
-			if(isset($args['get_for_posttype'])){
-				$this->default = \WBF\modules\options\of_get_option($this->posttypes_values[$args['get_for_posttype']]['optionname'],"");
-			}else{
-				$this->default = \WBF\modules\options\of_get_option($this->optionname,"");
+				if(isset($args['get_for_posttype'])){
+					$this->default = \WBF\modules\options\of_get_option($this->posttypes_values[$args['get_for_posttype']]['optionname'],"");
+				}else{
+					$this->default = \WBF\modules\options\of_get_option($this->optionname,"");
+				}
 			}
 		}
 
