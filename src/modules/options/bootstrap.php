@@ -64,7 +64,15 @@ add_action( 'wp_enqueue_scripts', __NAMESPACE__.'\\add_client_custom_css', 99 );
  * @hooked 'wbf_init'
  */
 function module_init(){
-    add_action( 'init', '\WBF\modules\options\optionsframework_init', 20 );
+    //add_action( 'init', '\WBF\modules\options\optionsframework_init', 20 );
+	global $wbf_options_framework;
+
+	// Instantiate the main plugin class.
+	$options_framework = new Framework;
+	$options_framework->init();
+
+	$GLOBALS['wbf_options_framework'] = $options_framework; //todo: this is bad, found another way
+
 	//Bind to Theme Customizer
 	CustomizerManager::init();
 }
@@ -75,13 +83,7 @@ function module_init(){
  * @hooked 'init'
  */
 function optionsframework_init() {
-	global $wbf_options_framework;
-
-    // Instantiate the main plugin class.
-    $options_framework = new Framework;
-    $options_framework->init();
-
-	$GLOBALS['wbf_options_framework'] = $options_framework; //todo: this is bad, found another way
+	//Moved to module_init()
 }
 
 /**
@@ -136,7 +138,9 @@ function of_get_option( $name, $default = false ) {
     if(empty($options)) $options = get_option( $config );
 
     if ( isset( $options[$name] ) ) {
+	    $option_type = Framework::get_option_type($name);
 	    $value = $options[$name];
+	    $value = apply_filters("wbf/theme_options/{$option_type}/get_value",$value);
     }else{
 	    $value = $default;
     }
