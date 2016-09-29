@@ -1,25 +1,41 @@
 module.exports = {
     init: function(){
-        var optionsframework_upload,
-            optionsframework_selector,
+        var upload_window,
             $ = jQuery;
 
-        function optionsframework_add_file(event, selector) {
+        $('.remove-image, .remove-file').on('click', function() {
+            remove_file( $(this).parents('.section') );
+        });
 
-            var upload = $(".uploaded-file"), frame;
-            var $el = $(this);
-            optionsframework_selector = selector;
+        $('.upload-button').click( function( event ) {
+            add_file(event, $(this).parents('.section'));
+        });
+
+        /**
+         * Open a WP Media Modal
+         * @param event the event fired by click
+         * @param $field_container the option field container
+         */
+        function add_file(event, $field_container) {
+
+            var upload = $(".uploaded-file"),
+                frame,
+                $el = $(this);
 
             event.preventDefault();
 
             // If the media frame already exists, reopen it.
-            if ( optionsframework_upload ) {
-                optionsframework_upload.open();
+            if ( upload_window ) {
+                upload_window.open();
             } else {
                 // Create the media frame.
-                optionsframework_upload = wp.media.frames.optionsframework_upload =  wp.media({
+                upload_window = new wp.media.view.MediaFrame.Select({
                     // Set the title of the modal.
                     title: $el.data('choose'),
+
+                    library: {
+                        type: 'image'
+                    },
 
                     // Customize the submit button.
                     button: {
@@ -32,49 +48,44 @@ module.exports = {
                 });
 
                 // When an image is selected, run a callback.
-                optionsframework_upload.on( 'select', function() {
-                    // Grab the selected attachment.
-                    var attachment = optionsframework_upload.state().get('selection').first();
-                    optionsframework_upload.close();
-                    optionsframework_selector.find('.upload').val(attachment.attributes.url);
+                upload_window.on( 'select', function() {
+                    var attachment = upload_window.state().get('selection').first(); // Grab the selected attachment.
+                    upload_window.close();
+
+                    $field_container.find('.upload').val(attachment.attributes.url);
                     if ( attachment.attributes.type == 'image' ) {
-                        optionsframework_selector.find('.screenshot').empty().hide().append('<img src="' + attachment.attributes.url + '"><a class="remove-image">Remove</a>').slideDown('fast');
+                        $field_container.find('.screenshot').empty().hide().append('<img src="' + attachment.attributes.url + '"><a class="remove-image">Remove</a>').slideDown('fast');
                     }
-                    optionsframework_selector.find('.upload-button').unbind().addClass('remove-file').removeClass('upload-button').val(wbfData.of_media_uploader.remove);
-                    optionsframework_selector.find('.of-background-properties').slideDown();
-                    optionsframework_selector.find('.remove-image, .remove-file').on('click', function() {
-                        optionsframework_remove_file( $(this).parents('.section') );
+                    $field_container.find('.upload-button').unbind().addClass('remove-file').removeClass('upload-button').val(wbfData.of_media_uploader.remove);
+                    $field_container.find('.of-background-properties').slideDown();
+                    $field_container.find('.remove-image, .remove-file').on('click', function() {
+                        remove_file( $(this).parents('.section') );
                     });
                 });
 
+                // Finally, open the modal.
+                upload_window.open();
             }
-
-            // Finally, open the modal.
-            optionsframework_upload.open();
         }
 
-        function optionsframework_remove_file(selector) {
-            selector.find('.remove-image').hide();
-            selector.find('.upload').val('');
-            selector.find('.of-background-properties').hide();
-            selector.find('.screenshot').slideUp();
-            selector.find('.remove-file').unbind().addClass('upload-button').removeClass('remove-file').val(wbfData.of_media_uploader.upload);
+        /**
+         * Remove a file
+         * @param $field_container the option field container
+         */
+        function remove_file($field_container) {
+            $field_container.find('.remove-image').hide();
+            $field_container.find('.upload').val('');
+            $field_container.find('.of-background-properties').hide();
+            $field_container.find('.screenshot').slideUp();
+            $field_container.find('.remove-file').unbind().addClass('upload-button').removeClass('remove-file').val(wbfData.of_media_uploader.upload);
             // We don't display the upload button if .upload-notice is present
             // This means the user doesn't have the WordPress 3.5 Media Library Support
             if ( $('.section-upload .upload-notice').length > 0 ) {
                 $('.upload-button').remove();
             }
-            selector.find('.upload-button').on('click', function(event) {
-                optionsframework_add_file(event, $(this).parents('.section'));
+            $field_container.find('.upload-button').on('click', function(event) {
+                add_file(event, $(this).parents('.section'));
             });
         }
-
-        $('.remove-image, .remove-file').on('click', function() {
-            optionsframework_remove_file( $(this).parents('.section') );
-        });
-
-        $('.upload-button').click( function( event ) {
-            optionsframework_add_file(event, $(this).parents('.section'));
-        });    
     }
 };
