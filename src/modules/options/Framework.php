@@ -73,6 +73,9 @@ class Framework{
 					if(method_exists($f,"sanitize")){
 						add_filter( "of_sanitize_{$name}", [$f,"sanitize"], 10, 2 );
 					}
+					if(method_exists($f,"get_value")){
+						add_filter( "wbf/theme_options/{$name}/get_value", [$f,"get_value"], 10 );
+					}
 				}
 			}
 		}
@@ -442,6 +445,14 @@ class Framework{
 			}
 		}
 		return $results;
+	}
+
+	static function get_registered_fields(){
+		global $wbf_options_framework;
+		if(isset($wbf_options_framework)){
+			return $wbf_options_framework->fields;
+		}
+		return [];
 	}
 
 	/**
