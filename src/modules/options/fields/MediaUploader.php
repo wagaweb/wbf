@@ -139,4 +139,8 @@ class MediaUploader extends BaseField implements Field {
 		}
 		return $output;
 	}
+
+	public function get_value($input){
+		return $input;
+	}
 }
