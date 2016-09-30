@@ -1,7 +1,7 @@
 <?php
 namespace WBF\modules\options\fields;
 
-use WBF\modules\options\MediaUploader;
+use WBF\modules\options\fields\MediaUploader;
 
 class Background extends BaseField implements Field{
 
