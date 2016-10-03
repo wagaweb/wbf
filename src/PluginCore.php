@@ -859,7 +859,7 @@ class PluginCore {
 	 *
 	 * @hooked 'admin_bar_menu' - 1000
 	 *
-	 * @param $wp_admin_bar
+	 * @param \WP_Admin_Bar $wp_admin_bar
 	 * @since 0.2.0
 	 */
 	function add_env_notice($wp_admin_bar){
@@ -877,15 +877,17 @@ class PluginCore {
 	}
 
 	/**
-	 * Add a "Compile Less" button to the toolbar
+	 * Add a "Compile CSS" button to the toolbar
 	 *
 	 * @hooked 'admin_bar_menu' - 990
 	 *
-	 * @param $wp_admin_bar
+	 * @param \WP_Admin_Bar $wp_admin_bar
 	 * @since 0.1.1
 	 */
 	function add_admin_compile_button($wp_admin_bar){
-		global $post;
+		global $post,$wbf_styles_compiler;
+
+		if(!isset($wbf_styles_compiler) || !$wbf_styles_compiler instanceof Base_Compiler) return;
 
 		if ( current_user_can( 'manage_options' ) ) {
 			$args = array(
