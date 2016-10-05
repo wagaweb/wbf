@@ -645,7 +645,7 @@ class PluginCore {
 			//Set update server
 			if(self::is_plugin()){
 				$this->update_instance = new Plugin_Update_Checker(
-					"http://update.waboot.org/?action=get_metadata&slug=wbf&type=plugin", //$metadataUrl
+					"http://update.waboot.org/resource/info/plugin/wbf", //$metadataUrl
 					self::get_path()."wbf.php", //$pluginFile
 					"wbf", //$slug
 					null, //$plugin_license
