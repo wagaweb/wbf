@@ -162,11 +162,6 @@ class PluginCore {
 		add_action( 'admin_bar_menu', [$this,"add_env_notice"], 1000 );
 		add_action( 'admin_bar_menu', [$this,"add_admin_compile_button"], 990 );
 
-		//Init License Manager: //todo: move to plugin framweork?
-		if(class_exists('\WBF\admin\License_Manager')){
-			License_Manager::init();
-		}
-
 		//Additional settings:
 		add_filter( 'site_transient_update_plugins', [$this,"unset_unwanted_updates"], 999 );
 
