@@ -130,7 +130,7 @@ class Notice_Manager {
     }
 
     private function conditions_met($notice){
-        $className = "\WBF\admin\conditions\\".$notice['condition'];
+        $className = $notice['condition'];
         if(isset($notice['condition_args'])){
             $cond = new $className($notice['condition_args']);
         }else{
