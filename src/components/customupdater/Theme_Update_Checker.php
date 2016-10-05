@@ -86,6 +86,7 @@ class Theme_Update_Checker extends \ThemeUpdateChecker{
 	 */
 	public function update_available_notice(){
 		$message = sprintf(__( 'A new version of %s is available! <a href="%s" title="Enter a valid license">Enter a valid license</a> to get latest updates.', 'wbf' ),$this->theme,"admin.php?page=wbf_licenses");
+		$message = apply_filters("wbf/custom_theme_updater/admin_message", $message);
 		$this->notice_manager->add_notice($this->theme."-update",$message,"nag","base",__NAMESPACE__."\\Can_Update","theme_".$this->theme);
 	}
 
