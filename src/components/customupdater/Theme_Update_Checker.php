@@ -41,49 +41,41 @@ class Theme_Update_Checker extends \ThemeUpdateChecker{
 		//Load Notice Manager if needed
 		$wbf_notice_manager = Utilities::get_wbf_notice_manager();
 		$this->notice_manager = &$wbf_notice_manager;
+		//Then let's get back to parent:
 		parent::__construct($theme,$metadataUrl,$enableAutomaticChecking);
-		if(!$this->automaticCheckDone){
-			update_option("wbf_unable_to_update",false);
-		}
 	}
 
 	/**
-	 * Install the hooks required to run periodic update checks and inject update info
-	 * into WP data structures.
+	 * Insert the latest update (if any) into the update list maintained by WP.
 	 *
-	 * @return void
+	 * @param \stdClass $updates Update list.
+	 *
+	 * @hooked 'site_transient_update_themes'
+	 *
+	 * @return array Modified update list.
 	 */
-	public function installHooks() {
-		if($this->license && (!$this->license instanceof License || !$this->license->is_valid())){
-			$state = $this->requestUpdate();
-			if(!is_null($state) && !$this->automaticCheckDone){
-				update_option("wbf_unable_to_update",true);
-				$this->update_available_notice();
-				//Insert our fake update info into the update list maintained by WP.
-				add_filter('site_transient_update_themes', array($this,'injectFakeUpdate'));
-			}
-			$this->update_state_option($state);
-			$this->automaticCheckDone = true;
-		}else{
-			parent::installHooks();
-		}
-	}
-
-	/**
-	 * Inject a fake update, so for themes without a valid license, the plugin update sequence will fail
-	 *
-	 * @param $updates
-	 *
-	 * @return mixed
-	 */
-	public function injectFakeUpdate($updates){
+	public function injectUpdate($updates){
 		$state = get_option($this->optionName);
 
 		//Is there an update to insert?
 		if ( !empty($state) && isset($state->update) && !empty($state->update) ){
-			$response = $state->update->toWpFormat();
-			$response['package'] = "";
-			$updates->response[$this->theme] = $response;
+			if($state->update instanceof \stdClass){
+				$state = $state->update; //todo: this is an ugly hotfix!
+			}
+			if($this->license && (!$this->license instanceof License || !$this->license->is_valid())){
+				//This will make update fails:
+				$response = $state->update->toWpFormat();
+				$response['package'] = "";
+				$updates->response[$this->theme] = $response;
+				//Update flag and notices
+				$this->set_can_update_flag(false);
+				$this->update_available_notice();
+				//Update the state option
+				$this->update_state_option($state);
+			}else{
+				$this->set_can_update_flag(true);
+				$updates->response[$this->theme] = $state->update->toWpFormat();
+			}
 		}
 
 		return $updates;
@@ -93,11 +85,25 @@ class Theme_Update_Checker extends \ThemeUpdateChecker{
 	 * Show the update notice
 	 */
 	public function update_available_notice(){
-		$unable_to_update = get_option("wbf_unable_to_update",false);
-		if($unable_to_update && \WBF::is_wbf_admin_page()){
-			$message = sprintf(__( 'A new version of %s is available! <a href="%s" title="Enter a valid license">Enter a valid license</a> to get latest updates.', 'wbf' ),$this->theme,"admin.php?page=wbf_licenses");
-			$this->notice_manager->add_notice($this->theme."-update",$message,"nag","_flash_");
+		$message = sprintf(__( 'A new version of %s is available! <a href="%s" title="Enter a valid license">Enter a valid license</a> to get latest updates.', 'wbf' ),$this->theme,"admin.php?page=wbf_licenses");
+		$this->notice_manager->add_notice($this->theme."-update",$message,"nag","base",__NAMESPACE__."\\Can_Update","theme_".$this->theme);
+	}
+
+	/**
+	 * Set the update flag for Notice
+	 *
+	 * @param $can_update
+	 */
+	public function set_can_update_flag($can_update){
+		$opt = get_option("wbf_invalid_licenses",[]);
+		if(!$can_update){
+			$opt["theme_".$this->theme] = true;
+		}else{
+			if(array_key_exists("theme_".$this->theme,$opt)){
+				unset($opt["theme_".$this->theme]);
+			}
 		}
+		update_option("wbf_invalid_licenses",$opt);
 	}
 
 	/**

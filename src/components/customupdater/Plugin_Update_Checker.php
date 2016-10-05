@@ -222,7 +222,7 @@ class Plugin_Update_Checker extends \PluginUpdateChecker{
 			//Let plugins filter the update info before it's passed on to WordPress.
 			$update = apply_filters('puc_pre_inject_update-' . $this->slug, $update);
 			if ( !is_object($updates) ) {
-				$updates = new \StdClass();
+				$updates = new \stdClass();
 				$updates->response = array();
 			}
 
