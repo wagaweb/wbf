@@ -1,8 +1,10 @@
 == Change log ==
 
-Version 0.14.8 - 05/10/2016
+Version 0.14.8 - 06/10/2016
 ---------------------------------
 - Tweak: Ora i campi fields dei type delle theme options sono gestiti singolarmente
+- Tweak: Ora la classe Plugin del plugin framework si chiama BasePlugin (per evitare conflitti di nomi nel caso la classe Plugin di un plugin dovesse estendere la classe Plugin del framework)
+- Tweak: Ora il plugin framework supporta una nuova struttura semplificata di plugin, con "Plugin", "Admin" e "Frontend" allo stesso livello (sotto src).
 - Tweak: Refactoring del check della licenza
 
 Version 0.14.7 - 20/09/2016
