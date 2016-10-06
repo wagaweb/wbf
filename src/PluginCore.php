@@ -72,7 +72,7 @@ class PluginCore {
 	/**
 	 * @var string
 	 */
-	const version = "0.14.5";
+	const version = "0.14.8";
 
 	/**
 	 * Return a new instance of WBF
@@ -161,11 +161,6 @@ class PluginCore {
 		add_action( 'admin_menu', [$this,"admin_menu"], 11 );
 		add_action( 'admin_bar_menu', [$this,"add_env_notice"], 1000 );
 		add_action( 'admin_bar_menu', [$this,"add_admin_compile_button"], 990 );
-
-		//Init License Manager: //todo: move to plugin framweork?
-		if(class_exists('\WBF\admin\License_Manager')){
-			License_Manager::init();
-		}
 
 		//Additional settings:
 		add_filter( 'site_transient_update_plugins', [$this,"unset_unwanted_updates"], 999 );
@@ -650,7 +645,7 @@ class PluginCore {
 			//Set update server
 			if(self::is_plugin()){
 				$this->update_instance = new Plugin_Update_Checker(
-					"http://update.waboot.org/?action=get_metadata&slug=wbf&type=plugin", //$metadataUrl
+					"http://update.waboot.org/resource/info/plugin/wbf", //$metadataUrl
 					self::get_path()."wbf.php", //$pluginFile
 					"wbf", //$slug
 					null, //$plugin_license
@@ -859,7 +854,7 @@ class PluginCore {
 	 *
 	 * @hooked 'admin_bar_menu' - 1000
 	 *
-	 * @param $wp_admin_bar
+	 * @param \WP_Admin_Bar $wp_admin_bar
 	 * @since 0.2.0
 	 */
 	function add_env_notice($wp_admin_bar){
@@ -877,15 +872,17 @@ class PluginCore {
 	}
 
 	/**
-	 * Add a "Compile Less" button to the toolbar
+	 * Add a "Compile CSS" button to the toolbar
 	 *
 	 * @hooked 'admin_bar_menu' - 990
 	 *
-	 * @param $wp_admin_bar
+	 * @param \WP_Admin_Bar $wp_admin_bar
 	 * @since 0.1.1
 	 */
 	function add_admin_compile_button($wp_admin_bar){
-		global $post;
+		global $post,$wbf_styles_compiler;
+
+		if(!isset($wbf_styles_compiler) || !$wbf_styles_compiler instanceof Base_Compiler) return;
 
 		if ( current_user_can( 'manage_options' ) ) {
 			$args = array(

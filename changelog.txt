@@ -1,5 +1,17 @@
 == Change log ==
 
+Version 0.14.8 - 05/10/2016
+---------------------------------
+- Tweak: Ora i campi fields dei type delle theme options sono gestiti singolarmente
+- Tweak: Refactoring del check della licenza
+
+Version 0.14.7 - 20/09/2016
+---------------------------------
+- Fix: Ora la pagina di default di WBF non viene più mostrata in presenza di theme options
+- Fix: Utilities::get_attachment_id_by_url() non restituisce più errore
+- Fix: Notice di errore sulle theme options
+- Tweak: Ora è possibile un maggiore controllo sulla tabella della pagina status di WBF
+
 Version 0.14.6 - 14/09/2016
 ---------------------------------
 - Fix: Accorgimenti di compatibilità script theme options con altre plugin
