@@ -4,7 +4,7 @@ namespace WBF\components\pluginsframework;
 
 use WBF\components\utils\Utilities;
 
-class TemplatePlugin extends Plugin implements TemplatePlugin_Interface {
+class TemplatePlugin extends BasePlugin implements TemplatePlugin_Interface {
 	protected $templates;
 	protected $ctp_templates;
 	protected $wc_templates; //Embedded support for WooCommerce

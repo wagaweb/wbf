@@ -2,4 +2,4 @@
 
 namespace WBF\includes\pluginsframework;
 
-class Plugin extends \WBF\components\pluginsframework\Plugin{}
+class Plugin extends \WBF\components\pluginsframework\BasePlugin{}

@@ -9,7 +9,7 @@ use WBF\components\compiler\Styles_Compiler;
 use WBF\components\customupdater\Plugin_Update_Checker;
 use WBF\components\license\License_Manager;
 use WBF\components\mvc\HTMLView;
-use WBF\components\pluginsframework\Plugin;
+use WBF\components\pluginsframework\BasePlugin;
 use WBF\components\pluginsframework\TemplatePlugin;
 use WBF\components\utils\Utilities;
 use WBF\includes\GoogleFontsRetriever;
@@ -475,7 +475,7 @@ class PluginCore {
 	 * @return array
 	 */
 	function get_registered_plugins(){
-		return Plugin::get_loaded_plugins();
+		return BasePlugin::get_loaded_plugins();
 	}
 
 	/*
@@ -1035,7 +1035,7 @@ class PluginCore {
 			'plugins' => [
 				'title' => _x("Loaded Plugins","Settings page","wbf"),
 				'data' => call_user_func(function(){
-					$loaded_plugins = Plugin::get_loaded_plugins();
+					$loaded_plugins = BasePlugin::get_loaded_plugins();
 					$plugins = [];
 					if(!empty($loaded_plugins)){
 						foreach($loaded_plugins as $slug => $plugin){
