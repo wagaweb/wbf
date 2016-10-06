@@ -106,6 +106,11 @@ class BasePlugin {
 	 */
 	public $notice_manager;
 	/**
+	 * @var boolean
+	 * @since 0.14.8
+	 */
+	var $use_object_cache = false;
+	/**
 	 * @var bool
 	 */
 	protected $debug_mode = false;
@@ -272,6 +277,113 @@ class BasePlugin {
 		$this->i18n->set_domain( $this->get_plugin_name() );
 		$this->i18n->set_language_dir( $this->plugin_relative_dir."/languages/" );
 		$this->loader->add_action( 'plugins_loaded', $this->i18n, 'load_plugin_textdomain' );
+	}
+
+	/**
+	 * Check if cache is enabled
+	 *
+	 * @since 0.14.8
+	 *
+	 * @return bool
+	 */
+	public function cache_enabled(){
+		return $this->use_object_cache;
+	}
+
+	/**
+	 * Get a list of plugin transient
+	 *
+	 * @since 0.14.8
+	 *
+	 * @return array|null|object
+	 */
+	function list_transients(){
+		global $wpdb;
+		$sql = "SELECT `option_name` AS `name`, `option_value` AS `value`
+            FROM  $wpdb->options
+            WHERE `option_name` LIKE '%transient_".$this->get_plugin_name()."%'
+            ORDER BY `option_name`";
+		$results = $wpdb->get_results( $sql );
+
+		if(is_array($results)){
+			return $results;
+		}
+
+		return [];
+	}
+
+	/**
+	 * Clear plugin object cache
+	 *
+	 * @since 0.14.8
+	 *
+	 * @param null $node_type
+	 * @param $node_id
+	 */
+	public function clear_transients($node_type = null, $node_id = null){
+		global $wpdb;
+		$transients = $this->list_transients();
+		foreach($transients as $t){
+			if(!isset($node_type)){
+				$wpdb->delete($wpdb->options,[
+					'option_name' => $t->name
+				]);
+			}else{
+				if(isset($node_id)){
+					$transient_pattern = "\[".$node_type.":".$node_id."\]";
+				}else{
+					$transient_pattern = "\[".$node_type."[:a-zA-Z0-9]*\]";
+				}
+				if(preg_match("/".$transient_pattern."/",$t->name)){
+					$wpdb->delete($wpdb->options,[
+						'option_name' => $t->name
+					]);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Get a transient if cache is enabled
+	 *
+	 * @since 0.14.8
+	 *
+	 * @param $transient_name
+	 *
+	 * @return bool
+	 */
+	public function maybe_get_transient($transient_name){
+		if($this->cache_enabled()){
+			$transient_name = $this->get_plugin_name()."[".$transient_name."]";
+			return get_transient($transient_name);
+		}
+		return false;
+	}
+
+	/**
+	 * Add a transient if cache is enabled.
+	 *
+	 * @usage
+	 * This caching system supports a special type of transient names. Any provided transient name will be prefixed with the name of the plugin and wrapped in square brackets.
+	 *
+	 * So: foobar => pluginName[foobar]
+	 *
+	 * foobar will become a "node". You then can remove the whole node or parts of it.
+	 *
+	 * To create node parts, you have to specify their name after a colon: "foobar:baz".
+	 *
+	 * This is useful to create semantic nodes; by doing "maybe_set_transient("object:12",<value>)", you have just set the cache for the "object" with id 12. You then can remove only this cache or the whole "object".
+	 *
+	 * @since 0.14.8
+	 *
+	 * @param $transient_name
+	 * @param $value
+	 */
+	public function maybe_set_transient($transient_name,$value){
+		if($this->cache_enabled()){
+			$transient_name = $this->get_plugin_name()."[".$transient_name."]";
+			set_transient($transient_name,$value);
+		}
 	}
 
 	/**
