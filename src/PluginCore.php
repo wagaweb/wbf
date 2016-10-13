@@ -882,7 +882,7 @@ class PluginCore {
 	function add_admin_compile_button($wp_admin_bar){
 		global $post,$wbf_styles_compiler;
 
-		if(!isset($wbf_styles_compiler) || !$wbf_styles_compiler instanceof Base_Compiler) return;
+		if(!isset($wbf_styles_compiler) || !$wbf_styles_compiler instanceof Styles_Compiler) return;
 
 		if ( current_user_can( 'manage_options' ) ) {
 			$args = array(
