@@ -23,15 +23,12 @@ class Color extends BaseField implements Field{
 	public function sanitize( $input, $option ) {
 		$validate_hex = function($hex){
 			$hex = trim( $hex );
-			/* Strip recognized prefixes. */
-			if ( 0 === strpos( $hex, '#' ) ) {
-				$hex = substr( $hex, 1 );
-			}
-			elseif ( 0 === strpos( $hex, '%23' ) ) {
+			// Recognized prefixes.
+			if ( 0 === strpos( $hex, '%23' ) ) {
 				$hex = substr( $hex, 3 );
 			}
-			/* Regex match. */
-			if ( 0 === preg_match( '/^[0-9a-fA-F]{6}$/', $hex ) ) {
+			// Check if it is a valid hex.
+			if ( preg_match( '/^#[0-9a-fA-F]{6}$/', $hex ) === 0 && $hex != "" ) { //Is an invalid hex. Empty value are accepted @since 0.14.9
 				return false;
 			}
 			else {

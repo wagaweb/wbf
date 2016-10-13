@@ -144,6 +144,7 @@ class CodeEditor extends BaseField  implements Field  {
 			}
 			if(isset($content) && is_array($content)){
 				$new_css = implode("\n",$content);
+				$new_css = stripslashes($new_css);
 				$filename = apply_filters("wbf/modules/options/custom_css_filename","client-custom.css");
 				if(is_string($filename)){
 					$filepath = WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR."/".$filename;
