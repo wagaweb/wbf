@@ -174,4 +174,17 @@ class CodeEditor extends BaseField  implements Field  {
 		$output = wp_kses( $input, $allowedposttags);
 		return $output;
 	}
+
+	/**
+	 * Filter the option value before getting it
+	 *
+	 * @hooked (via WBF\modules\options\Framework) 'wbf/theme_options/<name>/get_value'
+	 *
+	 * @param $value
+	 *
+	 * @return mixed
+	 */
+	public function get_value($value){
+		return stripslashes($value);
+	}
 }

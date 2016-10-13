@@ -133,8 +133,12 @@ class MediaUploader extends BaseField implements Field {
 
 	public function sanitize( $input, $option ) {
 		$output = isset($option['std']) ? $option['std'] : "";
-		$filetype = wp_check_filetype($input);
-		if ( $filetype["ext"] ) {
+		if($input != ""){
+			$filetype = wp_check_filetype($input);
+			if ( $filetype["ext"] ) {
+				$output = $input;
+			}
+		}else{
 			$output = $input;
 		}
 		return $output;

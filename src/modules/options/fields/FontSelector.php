@@ -433,15 +433,12 @@ class FontSelector extends BaseField implements Field
 
 		$output['color'] = call_user_func(function($hex) use($option){
 			$hex = trim( $hex );
-			/* Strip recognized prefixes. */
-			if ( 0 === strpos( $hex, '#' ) ) {
-				$hex = substr( $hex, 1 );
-			}
-			elseif ( 0 === strpos( $hex, '%23' ) ) {
+			// Strip recognized prefixes.
+			if ( strpos( $hex, '%23' ) === 0 ) {
 				$hex = substr( $hex, 3 );
 			}
-			/* Regex match. */
-			if ( 0 === preg_match( '/^[0-9a-fA-F]{6}$/', $hex ) ) {
+			// Check if it is a valid hex.
+			if ( preg_match( '/^#[0-9a-fA-F]{6}$/', $hex ) === 0 && $hex != "" ) { //Is an invalid hex. Empty value are accepted @since 0.14.9
 				$r = isset($option['std']['color']) ? $option['std']['color'] : "";
 				return $r;
 			}
