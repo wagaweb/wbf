@@ -1,5 +1,10 @@
 == Change log ==
 
+Version 0.14.9 - 13/10/2016
+---------------------------------
+- Fix: Ora i campi MediaUploader e FontSelector accettano come valore una stringa vuota
+- Fix: Ora il CodeEditor effettua lo strip degli slashes prima dell'output
+
 Version 0.14.8 - 06/10/2016
 ---------------------------------
 - Tweak: Ora i campi fields dei type delle theme options sono gestiti singolarmente

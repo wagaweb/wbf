@@ -72,7 +72,7 @@ class PluginCore {
 	/**
 	 * @var string
 	 */
-	const version = "0.14.8";
+	const version = "0.14.9";
 
 	/**
 	 * Return a new instance of WBF
