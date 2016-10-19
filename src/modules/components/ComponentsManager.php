@@ -58,14 +58,25 @@ class ComponentsManager {
     static function detect_components( $components_directory, $child_theme = false ) {
 	    $registered_components = self::get_registered_components($child_theme);
 
-        //Unset deleted components
+	    $components_directories = apply_filters("wbf/modules/components/directories",[$components_directory],$child_theme);
+
+        //Unset deleted and invalid components
         foreach ( $registered_components as $name => $data ) {
             if ( ! is_file( $data['file'] ) ) {
-                unset( $registered_components[ $name ] );
+	            unset( $registered_components[ $name ] );
+            }else{
+            	foreach ($components_directories as $dir){
+		            if( preg_match("|".$dir."|", $data['file']) ){
+		            	$do_not_unset = true;
+		            }else{
+		            	$do_not_unset = false;
+		            }
+	            }
+	            if(!isset($do_not_unset) || !$do_not_unset){
+		            unset( $registered_components[ $name ] );
+	            }
             }
         }
-
-	    $components_directories = apply_filters("wbf/modules/components/directories",[$components_directory],$child_theme);
 
 	    foreach ($components_directories as $directory){
 		    $components_files = listFolderFiles( $directory );
@@ -112,10 +123,14 @@ class ComponentsManager {
 	 */
 	static function get_registered_components($get_child_components = false){
 		$theme = wp_get_theme();
-		if($get_child_components){
-			$rc = get_option( $theme->get_stylesheet()."_registered_components", array());
+		if(!$theme->errors()){
+			if($get_child_components){
+				$rc = get_option( $theme->get_stylesheet()."_registered_components", array());
+			}else{
+				$rc = get_option( $theme->get_template()."_registered_components", array());
+			}
 		}else{
-			$rc = get_option( $theme->get_template()."_registered_components", array());
+			$rc = [];
 		}
 		return $rc;
 	}
@@ -128,10 +143,12 @@ class ComponentsManager {
 	 */
 	static function update_registered_components( $registered_components, $update_child_theme){
 		$theme = wp_get_theme();
-		if($update_child_theme){
-			update_option( $theme->get_stylesheet()."_registered_components", $registered_components );
-		}else{
-			update_option( $theme->get_template()."_registered_components", $registered_components );
+		if(!$theme->errors()){
+			if($update_child_theme){
+				update_option( $theme->get_stylesheet()."_registered_components", $registered_components );
+			}else{
+				update_option( $theme->get_template()."_registered_components", $registered_components );
+			}
 		}
 	}
 
@@ -390,6 +407,8 @@ class ComponentsManager {
 	 */
 	private static function override_theme_options($theme_options){
 		$theme = wp_get_theme();
+		if(is_wp_error($theme->errors())) return $theme_options;
+
 		$component_options = get_option("wbf_".$theme->get_stylesheet()."_components_options",[]);
 		if(empty($component_options)) return $theme_options;
 
@@ -725,9 +744,9 @@ class ComponentsManager {
      */
     static function reset_components_state(){
 	    $theme = wp_get_theme();
-	    delete_option( $theme->get_stylesheet()."_registered_components");
-	    delete_option( $theme->get_template()."_registered_components");
+	    if(!$theme->errors()){
+		    delete_option( $theme->get_stylesheet()."_registered_components");
+		    delete_option( $theme->get_template()."_registered_components");
+	    }
     }
-
-
 }
