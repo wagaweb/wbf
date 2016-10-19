@@ -35,7 +35,7 @@ if($last_error): ?>
 		<div id="componentframework-metabox" class="metabox-holder">
 			<div id="componentframework" class="postbox">
 				<form method="post" action="admin.php?page=<?php echo GUI::$wp_menu_slug; ?>">
-					<div id="component-main" class="group">
+					<div id="component-main" class="group" data-components-list>
 						<table class="wp-list-table widefat components">
 							<thead>
 								<tr>

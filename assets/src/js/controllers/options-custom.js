@@ -50,6 +50,8 @@ module.exports = {
         function init_tabs($wrapper,localStorage_var_name) {
             var $tabs_links = $wrapper.find('[data-nav] a');
             var $tabs_first_link = $wrapper.find('[data-nav] a:first');
+            var $components_list = $wrapper.find('[data-components-list]');
+            var is_components_window = localStorage_var_name == "wbf_components_active_tab";
 
             // Hides all the .group sections to start
             $('[data-fieldgroup]').hide();
@@ -64,10 +66,13 @@ module.exports = {
             }
 
             // If active tab is saved and exists, load it's .group
-            if (active_tab != '' && $(active_tab).length ) {
+            if (active_tab != '' && $(active_tab).length && active_tab != '#component-main' ) {
                 $(active_tab).fadeIn();
                 $(active_tab + '-tab').addClass('nav-tab-active');
-            } else {
+                if(is_components_window){
+                    $components_list.hide();
+                }
+            } else if(!is_components_window) {
                 $('[data-fieldgroup]:first').fadeIn();
                 $tabs_first_link.addClass('nav-tab-active');
             }
