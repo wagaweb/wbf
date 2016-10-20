@@ -129,10 +129,12 @@ class acf_field_date_picker extends acf_field {
 	function render_field( $field ) {
 		
 		// format value
+		$hidden_value = '';
 		$display_value = '';
 		
 		if( $field['value'] ) {
 			
+			$hidden_value = acf_format_date( $field['value'], 'Ymd' );
 			$display_value = acf_format_date( $field['value'], $field['display_format'] );
 			
 		}
@@ -150,7 +152,7 @@ class acf_field_date_picker extends acf_field {
 			'class' 				=> 'input-alt',
 			'type'					=> 'hidden',
 			'name'					=> $field['name'],
-			'value'					=> $field['value'],
+			'value'					=> $hidden_value,
 		);
 		$input = array(
 			'class' 				=> 'input',
@@ -257,8 +259,10 @@ class acf_field_date_picker extends acf_field {
 	
 }
 
-new acf_field_date_picker();
 
-endif;
+// initialize
+acf_register_field_type( new acf_field_date_picker() );
+
+endif; // class_exists check
 
 ?>
