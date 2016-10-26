@@ -31,6 +31,8 @@ class ComponentsManager {
      * @hooked 'wbf_after_setup_theme'
      */
     static function init(){
+    	do_action("wbf/modules/components/before_init");
+
 	    add_action("wbf/theme_options/register",'\WBF\modules\components\ComponentsManager::addRegisteredComponentOptions',999); //register component options
 	    add_filter("wbf/modules/options/pre_save",'\WBF\modules\components\ComponentsManager::on_theme_options_saving',10,3);
 	    //add_filter("wbf/modules/options/after_restore",'\WBF\modules\components\ComponentsManager::on_theme_options_restore',10,1);
@@ -43,6 +45,8 @@ class ComponentsManager {
         }
 	    //Update registered_components global
 	    self::update_global_components_vars();
+
+	    do_action("wbf/modules/components/after_init");
     }
 
 	/**
@@ -57,12 +61,20 @@ class ComponentsManager {
      */
     static function detect_components( $components_directory, $child_theme = false ) {
 	    $registered_components = self::get_registered_components($child_theme);
+	    $states = self::get_components_state();
 
         //Unset deleted components
         foreach ( $registered_components as $name => $data ) {
             if ( ! is_file( $data['file'] ) ) {
                 unset( $registered_components[ $name ] );
+	            if(isset($states[$name])){
+	            	unset($states[$name]);
+		            $states_changed_flag = true;
+	            }
             }
+        }
+        if(isset($states_changed_flag) && $states_changed_flag){
+        	self::update_components_state($states);
         }
 
 	    $components_directories = apply_filters("wbf/modules/components/directories",[$components_directory],$child_theme);
@@ -81,16 +93,18 @@ class ComponentsManager {
 				    }
 				    //Buildup component data:
 				    $component_params = [
-					    'nicename'        => $component_name,
-					    'class_name'      => isset($component_data['Class Name']) && $component_data['Class Name'] != "" ? $component_data['Class Name'] : ComponentFactory::get_component_class_name($component_name),
-					    'file'            => $file,
-					    'metadata'        => [
+					    'nicename' => $component_name,
+					    'class_name' => isset($component_data['Class Name']) && $component_data['Class Name'] != "" ? $component_data['Class Name'] : ComponentFactory::get_component_class_name($component_name),
+					    'file' => $file,
+					    'metadata' => [
 					    	'tags' => isset($component_data['Tags']) && is_array($component_data['Tags']) ? $component_data['Tags'] : [],
 					    	'category' => isset($component_data['Category']) ? $component_data['Category'] : "",
 					    ],
 					    'child_component' => $child_theme,
-					    'enabled'         => array_key_exists( $component_name, $registered_components ) ? $registered_components[ $component_name ][ 'enabled' ] : false
+					    //'enabled' => array_key_exists( $component_name, $registered_components ) ? $registered_components[ $component_name ][ 'enabled' ] : false
 				    ];
+				    //if($component_params['enabled'] === null) $component_params['enabled'] = false;
+				    if(isset($component_params['enabled'])) unset($component_params['enabled']);
 				    if ( ! array_key_exists( $component_name, $registered_components ) || $registered_components[ $component_name ] != $component_data ) {
 					    $registered_components[ $component_name ] = $component_params;
 				    }
@@ -133,6 +147,27 @@ class ComponentsManager {
 		}else{
 			update_option( $theme->get_template()."_registered_components", $registered_components );
 		}
+	}
+
+	/**
+	 * Updates the component states (enabled or disabled) option for current theme
+	 *
+	 * @param array $states
+	 */
+	static function update_components_state($states){
+		$opt = get_option("wbf_".get_stylesheet()."_components_state", []);
+		update_option("wbf_".get_stylesheet()."_components_state", $states);
+	}
+
+	/**
+	 * Get the current component state (enabled or disabled) option for the current theme
+	 *
+	 * @return mixed|void
+	 */
+	static function get_components_state(){
+		$opt = get_option("wbf_".get_stylesheet()."_components_state", []);
+		$opt = apply_filters("wbf/modules/components/states",$opt,get_stylesheet());
+		return $opt;
 	}
 
 	/**
@@ -419,24 +454,26 @@ class ComponentsManager {
 
     /**
      * Check if the registered component is active (the component must exists)
-     * @param String|Array $component (l'array può essere ottenuto da get_option("waboot_registered_components"))
+     * @param string|array $component (l'array può essere ottenuto da get_option("waboot_registered_components"))
      * @return bool
      */
     static function is_active( $component ) {
-
         if(is_array($component)){
-            if ( $component['enabled'] == true ) {
-                return true;
-            }
+	        $states = self::get_components_state();
+	        if(isset($component['nicename'])){
+		        $name = $component['nicename'];
+		        if(isset($states[$name]) && $states[$name] == 1){
+			        return true;
+		        }
+	        }
         }elseif($component instanceof Component) {
 	        return $component->is_active();
         }else{
-            $registered_components = self::getAllComponents();
-            if(isset($registered_components[$component]) && $registered_components[$component]->is_active()){
+            $states = self::get_components_state();
+            if(isset($states[$component]) && $states[$component] == 1){
                 return true;
             }
         }
-
         return false;
     }
 
@@ -635,14 +672,14 @@ class ComponentsManager {
 					if($state == self::STATE_ENABLED){
 						$oComponent->onActivate();
 						$oComponent->active = true;
-						$registered_components[ $component_name ]['enabled'] = true;
+						//$registered_components[ $component_name ]['enabled'] = true;
 					}else{
 						$oComponent->onDeactivate();
 						$oComponent->active = false;
-						$registered_components[ $component_name ]['enabled'] = false;
+						//$registered_components[ $component_name ]['enabled'] = false;
 					}
 					//update the WP Option of registered component
-					self::update_registered_components($registered_components, $child_component);
+					//self::update_registered_components($registered_components, $child_component);
 					self::update_global_components_vars();
 				}
 			}catch(\Exception $e){

@@ -28,6 +28,15 @@ class ComponentFactory {
 		if(!file_exists($component_params['file'])) return false;
 		require_once( $component_params['file'] );
 		$class_name = self::get_component_class_name($component_params['nicename']);
+
+		//Check if component is active
+		$states = ComponentsManager::get_components_state();
+		if(isset($states[$component_params['nicename']]) && $states[$component_params['nicename']] == 1){
+			$component_params['enabled'] = true;
+		}else{
+			$component_params['enabled'] = false;
+		}
+
 		if(!class_exists($class_name)){
 			$class_name = $class_name."Component";
 		}
