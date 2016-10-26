@@ -1,9 +1,11 @@
 == Change log ==
 
-Version 0.14.10 -
+Version 0.14.10 - 26/10/2016
 ---------------------------------
 - Fix: Ora non compare più il primo tab dei componenti sotto la lista dei componenti
 - Fix: Ora non compare più in console l'errore di non esistenza cssSelectors
+- Fix: Ora lo stato dei componenti non viene più perso quando viene a mancare il file style.css
+- Tweak: Ora lo stato dei componenti viene salvato in una opzione separata
 
 Version 0.14.9 - 13/10/2016
 ---------------------------------
