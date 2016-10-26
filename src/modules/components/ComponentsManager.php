@@ -86,8 +86,6 @@ class ComponentsManager {
         	self::update_components_state($states);
         }
 
-	    $components_directories = apply_filters("wbf/modules/components/directories",[$components_directory],$child_theme);
-
 	    foreach ($components_directories as $directory){
 		    $components_files = listFolderFiles( $directory );
 		    foreach ( $components_files as $file ) {
