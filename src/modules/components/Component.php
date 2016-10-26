@@ -253,12 +253,22 @@ class Component {
 	}
 
     public function onActivate(){
+    	//Update the component state option
+	    $states = ComponentsManager::get_components_state();
+	    $states[$this->name] = 1;
+	    ComponentsManager::update_components_state($states);
+
         add_action( 'admin_notices', array($this,'activationNotice') );
         $this->register_options();
 	    $this->restore_theme_options();
     }
 
     public function onDeactivate(){
+	    //Update the component state option
+	    $states = ComponentsManager::get_components_state();
+	    $states[$this->name] = 0;
+	    ComponentsManager::update_components_state($states);
+
 		$this->backup_theme_options();
         add_action( 'admin_notices', array($this,'deactivationNotice') );
     }

@@ -1,5 +1,10 @@
 == Change log ==
 
+Version 0.14.10 -
+---------------------------------
+- Fix: Ora non compare più il primo tab dei componenti sotto la lista dei componenti
+- Fix: Ora non compare più in console l'errore di non esistenza cssSelectors
+
 Version 0.14.9 - 13/10/2016
 ---------------------------------
 - Fix: Ora i campi MediaUploader e FontSelector accettano come valore una stringa vuota

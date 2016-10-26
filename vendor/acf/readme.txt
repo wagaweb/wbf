@@ -2,7 +2,7 @@
 Contributors: elliotcondon
 Tags: acf, advanced, custom, field, fields, custom field, custom fields, simple fields, magic fields, more fields, repeater, edit
 Requires at least: 3.6.0
-Tested up to: 4.5.2
+Tested up to: 4.7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -105,6 +105,76 @@ http://support.advancedcustomfields.com/
 
 
 == Changelog ==
+
+= 5.4.8 =
+* Flexible Content field: Fixed bug in 'layout_title' filter preventing values being loaded correctly
+
+= 5.4.7 =
+* Time Picker field: Fixed bug preventing default time from being selected
+* Date Picker field: Improved compatibility with unix timestamp values
+* File field: Fixed validation bugs when used as a sub field (multiple selection)
+* Select field: Fixed bug incorrectly allowing a disabled field (hidden by conditional logic) to save values
+* API: Added new `add_sub_row()` function
+* API: Added new `update_sub_row()` function
+* API: Added new `delete_sub_row()` function
+* Core: Fixed bug causing 'sync' issues with sub clone fields
+* Core: Minor fixes and improvements
+
+= 5.4.6 =
+* Gallery field: Fixed bug where open sidebar fields were saved to post
+* Flexible Content field: Fixed bug causing Google map render issue within collapsed layout
+* Flexible Content field: Fixed bug during 'duplicate layout' where radio input values were lost
+* API: Fixed bug causing `get_row(true)` to return incorrect values
+* Core: Fixed bug where preview values did not load for a draft post
+* Core: Added notice when PRO license fails to validate URL
+* Core: Fixed bug where conditional logic would incorrectly enable select elements
+* Core: Minor fixes and improvements
+
+= 5.4.5 =
+* API: Fixed bug in `acf_form()` where AJAX validation ignored 'post_title'
+* API: Improved `update_field()` when saving a new value (when reference value does not yet exist)
+* Core: Added search input & toggle to admin field groups list
+* Core: Fixed bug where preview values did not load for a draft post
+
+= 5.4.4 =
+* WYSIWYG field: Fixed JS error when 'Disable the visual editor when writing' is checked
+
+= 5.4.3 =
+* WYSIWYG field: Fixed JS bug (since WP 4.6) causing conflicts with editor plugins
+* Google Maps field: Fixed JS error conflict with Divi theme
+* Radio field: Fixed bug (Chrome only) ignoring default values in cloned sub fields
+* Core: Fixed `wp_get_sites()` deprecated error (since WP 4.6) shown in network admin
+
+= 5.4.2 =
+* API: Fixed bug preventing post_title and post_content values saving in `acf_form()`
+
+= 5.4.1 =
+* API: Fixed bug causing `get_fields('options')` to return false
+* Core: Fixed bug causing `get_current_screen()` to throw PHP error
+* Core: Fixed bug causing 'Preview Post' to load empty field values
+
+= 5.4.0 =
+* Clone field: Added new field type (https://www.advancedcustomfields.com/resources/clone/)
+* Gallery field: Removed 'Preview Size' setting and improved UI
+* Taxonomy field: Added compatibility to save/load terms to user object
+* Select field: Added new 'Return Format' setting
+* Radio field: Added new 'Return Format' setting
+* Checkbox field: Added new 'Return Format' setting
+* Page link field: Added new 'Allow Archives URLs' setting
+* Core: Fixed plugin update bug delaying updates
+* Core: Fixed bug when editing field settings in Chrome causing required setting to self toggle
+* Core: Improved speed and fixed bugs when creating and restoring revisions
+* Core: Minor fixes and improvements
+* Language: Updated Portuguese translation - thanks to Pedro Mendonca
+* Language: Updated Brazilian Portuguese translation - thanks to Augusto Simão
+* Language: Updated Dutch translation - thanks to Derk Oosterveld
+* Language: Updated Persian translation - thanks to Kamel
+* Language: Updated German translation - thanks to Ralf Koller
+* Language: Updated Swiss German translation - thanks to Raphael Hüni
+
+= 5.3.10 =
+* Core: Added new 'google_api_key' and 'google_api_client' global settings
+* Google Map: Added new 'acf/fields/google_map/api' filter
 
 = 5.3.9.2 =
 * Time Picker field: Added compatibility with previous 3rd party field settings

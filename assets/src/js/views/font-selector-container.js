@@ -18,9 +18,11 @@ module.exports = {
         // check if we have css selectors
         if (selectorInput != undefined) {
             var cssSelectors = selectorInput.attr('data-css-selectors');
-            cssSelectors = cssSelectors.replace(/\s+/g, '');
-            cssSelectors = cssSelectors.replace(/,/g, '-');
-            cssSelectors = cssSelectors.split("|");
+            if(typeof cssSelectors !== "undefined" && cssSelectors.length > 0){
+                cssSelectors = cssSelectors.replace(/\s+/g, '');
+                cssSelectors = cssSelectors.replace(/,/g, '-');
+                cssSelectors = cssSelectors.split("|");
+            }
         }
 
         // check if we have values from the database
