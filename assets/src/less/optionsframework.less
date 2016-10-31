@@ -9,13 +9,9 @@ Author URI: https://waga.it
 
 /* General rules */
 
-div#optionsframework-wrap {
+.optionsframework-wrap {
   margin: 0 auto;
-
-  .wbf-copy {
-    float: left;
-    padding: 10px;
-  }
+  overflow: auto;
 
   .optionsframework-header {
     width: 100%;
@@ -24,38 +20,48 @@ div#optionsframework-wrap {
   }
 
   .optionsframework-header h2 {
-    font-size: 28px;
-    font-weight: bold;
+    font-size: 2.3em;
+    font-weight: 700;
     margin-left: 15%;
     margin-top: 25px;
     margin-bottom: 15px;
   }
 
-  div.optionsframework-content-wrapper{
-    .clearfix();
+  .optionsframework-content-wrapper{
+    clear: both;
+  }
+
+  .optionsframework-content-wrapper:before,
+  .optionsframework-content-wrapper:after {
+    content: " ";
+    display: table;
+  }
+  .optionsframework-content-wrapper:after {
+    clear: both;
   }
 
   /* Vertical Tabbed Navigation */
-
-  div.nav-tab-wrapper{
+  .nav-tab-wrapper{
     float: left;
     width: 15%;
     padding: 0;
     margin: 0;
 
-    ul{
-      margin-top: 83px;
+    ul {
+      margin-top: 80px;
+      overflow: auto;
     }
 
     .nav-tab{
-      font-size: 14px;
-      font-weight: bold;
+      font-size: 1.2em;
+      font-weight: 700;
       width: 100%;
-      padding: 12px 15px 12px 40px;
-      border-top: 1px solid #ddd !important;
-      border-bottom: 1px solid #ddd !important;
-      border-left: 1px solid #ddd !important;
-      border-right: none !important;
+      margin: 0;
+      padding: 15px 15px 15px 40px;
+      border-top: 1px solid #ddd;
+      border-bottom: 1px solid #ddd;
+      border-left: 1px solid #ddd;
+      border-right: none;
       box-sizing: border-box;
       background: #f1f1f1 url("../../images/icons/default-option-tab.svg") no-repeat 10px center;
     }
@@ -64,7 +70,7 @@ div#optionsframework-wrap {
       .nav-tab {
         font-size: 0px;
         background-position: center center;
-        padding: 12px 0px 12px 0px;
+        padding: 10px 0px;
       }
     }
 
@@ -74,18 +80,20 @@ div#optionsframework-wrap {
 
   }
 
-  #optionsframework-metabox{
+  .optionsframework-metabox {
     float: right;
     padding-right: 20px;
     width: 85%;
     box-sizing: border-box;
   }
+
+  .wbf-copy {
+    clear: both;
+  }
 }
 
 
-#optionsframework {
-
-  /* General Rules */
+.optionsframework {
 
   max-width: 100%;
 
@@ -96,7 +104,9 @@ div#optionsframework-wrap {
   h3 {
     background-color: #222222;
     color: #f1f1f1;
-    font-size: 24px;
+    font-size: 1.8em;
+    margin: 0;
+    padding: 1em;
   }
 
   .wp-picker-holder,
@@ -106,148 +116,90 @@ div#optionsframework-wrap {
     box-sizing: content-box;
   }
 
-  /*
-  .section-typography .wp-picker-container {
-    margin-left: 5px;
-    margin-top: 3px;
-  }
-
-  .controls .of-typography-weight {
-    width: 100px;
-    margin-left: 5px;
-    float: left;
-  }
-
-  .controls .of-typography-face {
-    width: 200px;
-  }
-  */
-
   .group {
     overflow: auto;
     padding-bottom: 0;
-    background-color: #fdfdfd;
-  }
-  .section {
-    width: 50%;
-    min-height: 245px;
-    box-sizing: border-box;
-    padding: 25px;
-    float: left;
-    background-position: right center;
-    background-repeat: no-repeat;
-    border-bottom: 1px solid #ddd;
 
-    &.full {
+    .section {
+      width: 100%;
+      padding: 20px;
+      border-bottom: 1px solid #ddd;
+      overflow: auto;
+    }
+
+    .section h4 {
+      margin: 0 0 10px;
+    }
+
+    .section .heading {
+      font-size: 1.5em;
       width: 100%;
     }
-  }
 
-  @media screen and (max-width:768px) {
-    .section,
-    .section:nth-child(odd),
-    .section:nth-child(even){
-      width:100% !important;
-      border-right: none;
+    .section .explain {
+      display: block;
+      margin-bottom: 15px;
     }
-  }
 
-  .section p {
-    text-align: center;
-  }
+    .section .controls {
+      padding: 0;
+      box-sizing: border-box;
+    }
+    .section .check-wrapper,
+    .section .radio-wrapper {
+      display: inline-block;
+      margin: 5px;
+    }
+    .section .controls .option-wrap {
+      display: inline-block;
+    }
+    .section .controls .option-wrap span {
+      line-height: 2em;
+      text-transform: capitalize;
+      display: block;
+      background-color: #f9f9f9;
+      margin: 0 10px;
+      text-align: center;
+    }
+    .section .controls .option-wrap img {
+      margin: 0 10px 0px;
+      max-height: 110px;
+    }
+    .section .controls img {
+      max-width: 350px;
+      max-height: 250px;
+    }
+    .section .controls .of-radio-img-selected {
+      border: 3px solid #666;
+    }
+    #section-waboot_custom_css .controls {
+      text-align: left;
+    }
 
-  .section h4 {
-    margin-bottom: 10px;
-  }
+    .section-info {
+      width: 100%;
+      border-right: none;
+      clear: both;
+      min-height: 0;
+      border-bottom: 1px solid #ddd;
+      margin: 0;
+      padding: 20px;
+      background-color: #666;
+      color: #fff;
+      h4 {
+        font-size: 2em;
+        margin-bottom: 10px;
+      }
+      p {
+        margin-bottom: 0px;
+      }
+    }
 
-  .section .heading {
-    font-size: 18px;
-    text-align: center;
-    width: 100%;
-  }
-
-  .section .explain {
-    width: 100%;
-    max-width: 100% !important;
-    text-align: center;
-    display: block;
-    float: none;
-    margin-bottom: 15px;
-  }
-
-  .section .controls {
-    width: 100% !important;
-    min-width: 100% !important;
-    text-align: center;
-    padding: 4px 15px 0;
-    box-sizing: border-box;
-  }
-  .section .check-wrapper,
-  .section .radio-wrapper {
-    display: inline-block;
-    margin: 5px;
-  }
-  .section .controls .option-wrap {
-    display: inline-block !important;
-  }
-  .section .controls .option-wrap span {
-    line-height: 2em;
-    text-transform: capitalize;
-    display: block;
-    background-color: #f9f9f9;
-    margin: 0 10px;
-  }
-  .section .controls .option-wrap img {
-    margin: 0 10px 0px;
-    max-height: 80px;
-  }
-  .section .controls img {
-    display: inline-block !important;
-    text-align: center;
-    float: none !important;
-  }
-  .section .controls .of-radio-img-selected {
-    border: 3px solid #666;
-  }
-  #section-waboot_custom_css .controls {
-    text-align: left !important;
-  }
-
-  .section-info {
-    width: 100%;
-    border-right: none;
-    clear: both;
-    min-height: 0;
-    border-bottom: 1px solid #ddd;
-    margin: 0;
-    padding: 10px 10px 25px;
-    background-color: #666;
-    color: #fff;
-  }
-
-  .section-info h4 {
-    font-size: 22px;
-    margin-bottom: 10px;
-  }
-
-  .section-color .heading,
-  .section-color .explain {
-    text-align: left;
-    padding-left: 15px;
-  }
-
-  .section-typography .heading,
-  .section-typography .explain {
-    text-align: left;
-    padding-left: 15px;
   }
 
   .wp-picker-holder {
     position: absolute;
     z-index: 99;
-  }
-  .wp-picker-container {
-    float: left;
   }
 
   .screenshot {
@@ -266,14 +218,14 @@ div#optionsframework-wrap {
 
   .wb-onoffswitch {
     position: relative;
-    width: 90px !important;
+    width: 90px;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     float: none;
-    min-width: 0 !important;
+    min-width: 0;
     padding: 0px;
-    margin: 0 auto 10px;
+    margin: 0 0 10px;
   }
   .wb-onoffswitch-checkbox {
     display: none;
@@ -294,7 +246,8 @@ div#optionsframework-wrap {
     -o-transition: margin 0.3s ease-in 0s;
     transition: margin 0.3s ease-in 0s;
   }
-  .wb-onoffswitch-inner:before, .wb-onoffswitch-inner:after {
+  .wb-onoffswitch-inner:before,
+  .wb-onoffswitch-inner:after {
     display: block;
     float: left;
     width: 50%;
@@ -303,8 +256,8 @@ div#optionsframework-wrap {
     line-height: 30px;
     font-size: 14px;
     color: white;
-    font-family: Trebuchet, Arial, sans-serif;
-    font-weight: bold;
+    //font-family: Trebuchet, Arial, sans-serif;
+    font-weight: 700;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
@@ -345,7 +298,54 @@ div#optionsframework-wrap {
     right: 0px;
   }
 
-
-
+  .section-fonts_selector {
+    > .option,
+    > .section {
+      width: 50%;
+      float: left;
+      border: 0;
+    }
+    .option .font-selector {
+      padding: 0;
+      border: 0;
+      > div {
+        margin-top: 20px;
+      }
+      .font-subset-wrap {
+        padding: 10px 0
+      }
+      .font-weight-selector {
+        padding: 15px;
+        background-color: #f7f7f7;
+        .font-weight-selector-preview {
+          overflow: auto;
+          display: block;
+          padding: 0 0 5px 0;
+          margin: 0 0 5px 0;
+          border-bottom: 1px solid #fff;
+          p {
+            margin-top: 0;
+            margin-bottom: 5px;
+          }
+        }
+      }
+    }
+    div[data-font-assign] {
+      > div {
+        margin-bottom: 20px;
+        border-bottom: 1px solid #ddd;
+      }
+      h4 {
+        font-size: 1.2em;
+      }
+      select {
+        width: 100%;
+      }
+      span[data-weight-assigned-list] {
+        padding: 10px 0;
+        display: block;
+      }
+    }
+  }
 
 }

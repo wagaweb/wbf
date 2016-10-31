@@ -32,9 +32,6 @@ class Admin{
 			// Add the options page and menu item.
 			add_action( 'admin_menu', array( $this, 'add_options_page' ) );
 
-			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ) );
-			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
-
 			// Settings need to be registered after admin_init
 			add_action( 'toplevel_page_wbf_options', array( $this, 'process_options_save' ) );
 			add_action( 'admin_init', array( $this, 'settings_init' ) );
@@ -364,35 +361,6 @@ class Admin{
 		}
 
 		return $output;
-	}
-
-	/**
-	 * Loads the required stylesheets
-	 *
-	 * @legacy
-	 *
-	 * @since 1.7.0
-	 */
-	function enqueue_admin_styles() {
-		if(!Admin::is_options_page()) return;
-		wp_enqueue_style( 'wp-color-picker' );
-		// Enqueue core CSS
-		$core_stylesheet = \WBF::prefix_url('assets/dist/css/optionsframework.min.css');
-		if ($core_stylesheet != ""){
-			wp_enqueue_style('wbf-theme-options-style', $core_stylesheet, [], false, 'all'); //Custom Theme Options CSS
-		}
-	}
-
-	/**
-	 * Loads the required javascript
-	 *
-	 * @since 1.7.0
-	 */
-	function enqueue_admin_scripts() {
-		if(!Admin::is_options_page()) return;
-		// Enqueue custom option panel JS
-		//wp_enqueue_script( 'options-custom', \WBF::prefix_url('assets/src/js/controllers/options-custom.js'), array( 'jquery', 'wp-color-picker' ) ); //todo: make a DIST version of this
-		//DIST version now included into wbf-admin (8/4/2016)
 	}
 
     /**

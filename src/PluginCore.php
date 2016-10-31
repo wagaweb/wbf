@@ -691,8 +691,8 @@ class PluginCore {
 				'type' => 'js',
 			],
 			'wbf-admin-style' => [
-				'uri' => Resources::getInstance()->prefix_url('assets/dist/css/admin.css'),
-				'path' => Resources::getInstance()->prefix_path('assets/dist/css/admin.css'),
+				'uri' => Resources::getInstance()->prefix_url('assets/dist/css/admin.min.css'),
+				'path' => Resources::getInstance()->prefix_path('assets/dist/css/admin.min.css'),
 				'type' => 'css'
 			]
 		];

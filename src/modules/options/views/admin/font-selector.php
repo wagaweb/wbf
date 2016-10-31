@@ -20,8 +20,8 @@
 		</select>
 
 		<% _.each(fonts,function(el){ %>
-
 		<% if(el.family == selected_font){ %>
+        <div class="font-subset-wrap">
 		<% _.each(el.subsets, function(subset){ %>
 		<% if( typeof selected_charset !== "undefined" && selected_charset.indexOf(subset) != -1){ %>
 		<input type="checkbox" checked="checked" class="font-subset-checkbox" name="<%= optionName %>[import][<%= counter %>][subset][]" value="<%= subset %>"/> <%= subset %>
@@ -29,6 +29,7 @@
 		<input type="checkbox" class="font-subset-checkbox" name="<%= optionName %>[import][<%= counter %>][subset][]" value="<%= subset %>"/> <%= subset %>
 		<% } %>
 		<% }) %>
+        </div>
 		<% } %>
 		<% }) %>
 		<div class="font-weight-selector" data-font-weight-selector>
@@ -74,7 +75,7 @@
 
 -->
 <script type="text/template" id="font-assign-inner-tpl">
-	<h4 style="display: inline-block; margin-right: 20px"><%= cssSelector %>: </h4>
+	<h4><%= cssSelector %>: </h4>
 	<select data-font-assigned-list name="<%= optionName %>[assign][<%= cssSelector %>][family]" class="font-assigned-list">
 		<option value="" <% if ("" == selectedFont) { %>selected="selected"<% } %>></option>
 		<% _.each(fonts,function(el){ %>

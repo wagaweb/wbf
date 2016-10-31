@@ -1,9 +1,9 @@
-<div id="optionsframework-wrap" class="wrap" data-options-gui>
+<div id="optionsframework-wrap" class="optionsframework-wrap wrap" data-options-gui>
 	<div class="optionsframework-header">
 		<h2><?php echo esc_html( $menu['page_title'] ); ?></h2>
 		<?php WBF()->notice_manager->show_notices(); ?>
 	</div>
-	<div id="optionsframework-content-wrapper">
+	<div id="optionsframework-content-wrapper" class="optionsframework-content-wrapper">
 		<!-- Navigation -->
 		<div class="nav-tab-wrapper" data-nav>
 			<ul>
@@ -19,12 +19,12 @@
 		</div>
 		<!-- /Navigation -->
 		<?php settings_errors( 'options-framework' ); ?>
-		<div id="optionsframework-metabox" class="metabox-holder">
-			<div id="optionsframework" class="postbox">
+		<div id="optionsframework-metabox" class="optionsframework-metabox metabox-holder">
+			<div id="optionsframework" class="optionsframework postbox">
 				<form action="" method="post">
 					<?php wp_nonce_field( 'update_'.\WBF\modules\options\Framework::get_options_root_id() ); ?>
 					<?php \WBF\modules\options\GUI::print_fields(); /* Settings */ ?>
-					<div id="optionsframework-submit">
+					<div id="optionsframework-submit" class="optionsframework-submit">
 						<input type="submit" class="button-primary" name="update_theme_options" value="<?php esc_attr_e( 'Save Options', "wbf" ); ?>" />
 						<input type="submit" class="reset-button button-secondary" name="restore_theme_options" value="<?php esc_attr_e( 'Restore Defaults', 'wbf' ); ?>" onclick="return confirm( '<?php print esc_js( __( 'Click OK to restore defaults', 'wbf' ) ); ?>' );" />&nbsp;
 						<input type="submit" class="reset-button button-secondary" name="reset_theme_options" value="<?php esc_attr_e( 'Reset Options', 'wbf' ); ?>" onclick="return confirm( '<?php print esc_js( __( 'Click OK to reset. Any theme settings will be lost!', 'wbf' ) ); ?>' );" />

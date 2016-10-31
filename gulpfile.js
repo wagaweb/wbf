@@ -39,6 +39,7 @@ var paths = {
     main_js: ['./assets/src/js/'+filenames.main_js],
     bundle_js: ['./assets/dist/js/'+filenames.bundle_js],
     //Styles:
+    main_admin_style: './assets/src/less/admin.less',
     styles: './assets/src/less/**/*.less',
     //Components:
     components_dir: "./src/components",
@@ -93,7 +94,7 @@ gulp.task('compile_css',function(){
         cssnano()
     ];
 
-    var styles = gulp.src(paths.styles)
+    var styles = gulp.src(paths.main_admin_style)
         .pipe(sourcemaps.init())
         .pipe(less({
             paths: ["vendor/bootstrap/less"]
