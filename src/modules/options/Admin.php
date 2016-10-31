@@ -31,6 +31,7 @@ class Admin{
 		if ( $all_options ) {
 			// Add the options page and menu item.
 			add_action( 'admin_menu', array( $this, 'add_options_page' ) );
+            add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ) );
 
 			// Settings need to be registered after admin_init
 			add_action( 'toplevel_page_wbf_options', array( $this, 'process_options_save' ) );
@@ -362,6 +363,18 @@ class Admin{
 
 		return $output;
 	}
+
+    /**
+     * Loads the required stylesheets
+     *
+     * @legacy
+     *
+     * @since 1.7.0
+     */
+    function enqueue_admin_styles() {
+        if(!Admin::is_options_page()) return;
+        wp_enqueue_style( 'wp-color-picker' );
+    }
 
     /**
      * Builds out the options panel.
