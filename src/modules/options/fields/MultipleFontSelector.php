@@ -16,6 +16,7 @@ class MultipleFontSelector extends BaseField implements Field {
 		});
 		add_action( 'wp_ajax_getFontsForAjax', [$this, 'getFontsForAjax']);
 		add_action( 'wp_ajax_nopriv_getFontsForAjax', [$this, 'getFontsForAjax']);
+		add_filter( 'wbf/modules/options/differences', [$this,'compute_differences_upon_saving'], 10, 3);
 	}
 
 	/**
@@ -143,5 +144,15 @@ class MultipleFontSelector extends BaseField implements Field {
 		}
 
 		return $output;
+	}
+
+	public function compute_differences_upon_saving($diff, $new_values, $old_values){
+		$options = Framework::get_registered_options_of_type("fonts_selector");
+		foreach($options as $opt){
+			if(isset($new_values[$opt['id']]) && isset($old_values[$opt['id']])){
+				$diff[$opt['id']] = $new_values[$opt['id']]; //todo: compute a real difference
+			}
+		}
+		return $diff;
 	}
 }
