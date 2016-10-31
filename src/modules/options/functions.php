@@ -109,6 +109,7 @@ function of_options_save($option, $old_value, $value){
 			}
 		}
 	}
+	$diff = apply_filters("wbf/modules/options/differences",$diff,$value,$old_value); //allows to manipulate the diff array.
 
 	//Doing actions with modified options
 	foreach($all_options as $k => $opt_data){
