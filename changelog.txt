@@ -1,5 +1,10 @@
 == Change log ==
 
+Version 0.14.11 -
+---------------------------------
+- Fix: Ora i valori dei campi del nuovo selettore di font vengono salvati correttamente nel file delle theme options
+- Tweak: Ora è disponibile il filtro "wbf/modules/options/differences" per alterare l'array che tiene conto delle differenze tra vecchie e nuove opzioni durante il salvataggio
+
 Version 0.14.10 - 26/10/2016
 ---------------------------------
 - Fix: Ora non compare più il primo tab dei componenti sotto la lista dei componenti
