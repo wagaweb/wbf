@@ -1,8 +1,9 @@
 == Change log ==
 
-Version 0.14.11 -
+Version 0.14.11 - 04/11/2016
 ---------------------------------
 - Fix: Ora i valori dei campi del nuovo selettore di font vengono salvati correttamente nel file delle theme options
+- Tweak: Nuovi stili Admin Theme Option
 - Tweak: Ora è disponibile il filtro "wbf/modules/options/differences" per alterare l'array che tiene conto delle differenze tra vecchie e nuove opzioni durante il salvataggio
 
 Version 0.14.10 - 26/10/2016
