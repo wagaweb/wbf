@@ -171,17 +171,29 @@ class Resources{
 	/**
 	 * Returns WBF working directory
 	 *
+	 * @param bool $base (return dirname() of working directory)
+	 *
 	 * @return bool|string
 	 */
-	function get_working_directory(){
+	function get_working_directory($base = false){
 		if($this->wbf_wd){
+			if($base){
+				return dirname(rtrim($this->wbf_wd,"/"));
+			}
 			return rtrim($this->wbf_wd,"/");
 		}
 		return false;
 	}
 
-    function get_working_directory_uri(){
-        return path_to_url($this->get_working_directory());
+	/**
+	 * Returns WBF working directory URI
+	 *
+	 * @param bool $base
+	 *
+	 * @return mixed
+	 */
+    function get_working_directory_uri($base = false){
+        return path_to_url($this->get_working_directory($base));
     }
 
 	private function __clone(){}
