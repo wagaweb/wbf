@@ -72,7 +72,7 @@ class PluginCore {
 	/**
 	 * @var string
 	 */
-	const version = "0.14.11";
+	const version = "0.15.0";
 
 	/**
 	 * Return a new instance of WBF
@@ -385,10 +385,18 @@ class PluginCore {
 			}
 		}
 
-		$exts_dir = self::get_path()."src/extensions";
-		$dirs = array_filter(glob($exts_dir."/*"), 'is_dir');
-		$dirs = apply_filters("wbf/extensions/available", $dirs); //Allow developers to add\delete extensions
-		foreach($dirs as $d){
+		$exts_source_dirs = [
+			WBF()->resources->get_working_directory(true)."/_extensions",
+			self::get_path()."src/extensions"
+		];
+		$exts_dirs = [];
+		foreach ($exts_source_dirs as $dir){
+			if(!is_dir($dir)) continue;
+			$dirs = array_filter(glob($dir."/*"), 'is_dir');
+			$exts_dirs = array_merge($exts_dirs,$dirs);
+		}
+		$exts_dirs = apply_filters("wbf/extensions/available", $exts_dirs); //Allow developers to add\delete extensions
+		foreach($exts_dirs as $d){
 			$current_ext_dir = $d;
 			if(is_file($current_ext_dir."/bootstrap.php")){
 				$exts[basename($d)] = array(
