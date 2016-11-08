@@ -185,13 +185,13 @@ class PluginCore {
 	/**
 	 * WBF Error handler. Registerd during startup.
 	 *
-	 * @param $errno
-	 * @param $errstr
-	 * @param $errfile
-	 * @param $errline
-	 * @param $errcontext
+	 * @param int $errno
+	 * @param string $errstr
+	 * @param string $errfile
+	 * @param int $errline
+	 * @param array $errcontext
 	 */
-	public function handle_errors($errno,$errstr,$errfile,$errline,$errcontext){
+	public function handle_errors($errno,$errstr,$errfile = "",$errline = 0,$errcontext = []){
 		$wbf_notice_manager = Utilities::get_wbf_notice_manager();
 		if($wbf_notice_manager && is_admin() && current_user_can("manage_options")){
 			$str = sprintf('[Admin Only] There was an USER_WARNING error generated at %s:%s: <strong>%s</strong>',basename($errfile),$errline,$errstr);
