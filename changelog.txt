@@ -1,7 +1,8 @@
 == Change log ==
 
-Version 0.15.0 -
+Version 0.15.0 - 09/11/2016
 ---------------------------------
+- Fix: fix get_behavior() per nodi is_page()
 - Tweak: rimosso ACF dai vendor
 - Feature: ora è possibile installare estensioni custom in {WBF-WD}/_extensions
 
