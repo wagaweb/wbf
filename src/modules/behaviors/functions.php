@@ -24,7 +24,7 @@ function get_behavior($name, $post_id = 0, $return = "value") {
 	static $retrieved_behaviors = array();
 
 	if ($post_id == 0 && !is_archive()) {
-		if(is_home() || is_404() || is_search()){
+		if(is_home() || is_404() || is_search() || is_page()){
 			$post_id = get_queried_object_id();
 		}else{
 			global $post;
