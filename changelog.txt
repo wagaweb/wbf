@@ -3,6 +3,7 @@
 Version 0.15.1 - 11/11/2016
 ---------------------------------
 - Fix: now standard template hierarchy files are correctly searched into plugins directories
+- Fix: now Views are included correctly from themes
 
 Version 0.15.0 - 09/11/2016
 ---------------------------------
