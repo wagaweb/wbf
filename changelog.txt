@@ -1,5 +1,9 @@
 == Change log ==
 
+Version 0.15.1 - 11/11/2016
+---------------------------------
+- Fix: now standard template hierarchy files are correctly searched into plugins directories
+
 Version 0.15.0 - 09/11/2016
 ---------------------------------
 - Fix: fix get_behavior() per nodi is_page()
