@@ -4,7 +4,7 @@
   "keywords": ["wordpress","framework"],
   "type": "wordpress-plugin",
   "homepage": "http://www.waga.it",
-  "version": "0.15.0",
+  "version": "0.15.1",
   "license": "proprietary",
   "authors": [
     {
