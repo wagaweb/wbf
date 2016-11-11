@@ -266,7 +266,8 @@ class TemplatePlugin extends BasePlugin implements TemplatePlugin_Interface {
 			 * Locate the template into theme directories.
 			 * Adds specific directories where the template file will be looked for
 			 */
-			$located = Utilities::locate_template(['names' => $tpl_filename],false,false,$this->get_directories_of_templates_in_theme());
+			$paths = $this->add_template_base_path($this->get_directories_of_templates_in_theme());
+			$located = Utilities::locate_template(['names' => $tpl_filename],false,false,$paths);
 			if(!empty($located)){
 				$file = $located;
 				break;
