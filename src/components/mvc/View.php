@@ -39,6 +39,7 @@ abstract class View{
 			foreach($search_paths as $path){
 				if(file_exists($path)){
 					$abs_path = $path;
+					break;
 				}
 			}
 		}else{
