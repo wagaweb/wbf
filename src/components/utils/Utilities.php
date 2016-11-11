@@ -144,6 +144,7 @@ class Utilities{
 	 * @param array $templates an associative array that must contain at least "names" key. It can have the "sources" key, with a list of path to files.
 	 * @param bool|false $load if TRUE it calls load_template()
 	 * @param bool|true $require_once it $load is TRUE, it assigned as the second argument to load_template()
+	 * @param array $additional_search_paths
 	 *
 	 * @return string
 	 */
@@ -161,11 +162,16 @@ class Utilities{
 				continue;
 			}
 
+			$child_directory = get_stylesheet_directory();
+			$parent_directory = get_template_directory();
+
 			$search_locations = [
-				get_stylesheet_directory() . '/',
-				get_stylesheet_directory()."/templates/parts/",
-				get_template_directory() . '/',
-				get_template_directory() . '/templates/parts/'
+				$child_directory . '/',
+				$child_directory."/templates",
+				$child_directory."/templates/parts/",
+				$parent_directory . '/',
+				$parent_directory . '/templates',
+				$parent_directory . '/templates/parts/'
 			];
 
 			$search_locations = array_merge($search_locations,$additional_search_paths);
