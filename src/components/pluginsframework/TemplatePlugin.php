@@ -58,7 +58,9 @@ class TemplatePlugin extends BasePlugin implements TemplatePlugin_Interface {
 	}
 
 	/**
-	 * Adds a template to the WP template hierarchy
+	 * Adds a template to the WP template hierarchy. This is not required for required for most standard template. WBF will try to guess
+	 * the template file name by get_queried_object (for archives) and post-type (for everything else) - see: locate_template_file_in_hierarchy() and then
+	 * search for that file name in current child/parent theme and in current plugin standard directories.
 	 * 
 	 * @param string $template_name 	the name of the template (must match WP template hierarchy scheme)
 	 * @param string|null $path 		the complete path to the template. If null, $this->get_src_dir()."templates/".$template_name will be taken.
@@ -260,13 +262,14 @@ class TemplatePlugin extends BasePlugin implements TemplatePlugin_Interface {
 			);
 		}
 
-		//Check if theme has a template for current post\page
+		//Check if theme or current plugin has a template for current post\page
 		foreach ( $possible_templates as $tpl_filename ) {
 			/*
-			 * Locate the template into theme directories.
+			 * Locate the template into theme or current plugin directories.
 			 * Adds specific directories where the template file will be looked for
 			 */
 			$paths = $this->add_template_base_path($this->get_directories_of_templates_in_theme());
+			//In Utility::locate_template is hooked $this->add_template_base_path at "wbf/locate_template/search_paths" which adds plugins paths to search locations
 			$located = Utilities::locate_template(['names' => $tpl_filename],false,false,$paths);
 			if(!empty($located)){
 				$file = $located;
@@ -274,6 +277,7 @@ class TemplatePlugin extends BasePlugin implements TemplatePlugin_Interface {
 			}
 		}
 
+		//If the template was not found in theme or in the standard plugin directory, looks for custom specified ones:
 		if(!$file){
 			//Check if plugin has a template for current post\page
 			foreach ( $possible_templates as $tpl_filename ) {
