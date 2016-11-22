@@ -189,6 +189,7 @@ class BasePlugin {
 
 		$this->load_dependencies();
 		$this->set_locale();
+		$this->set_plugin_action_link();
 	}
 
 	/**
