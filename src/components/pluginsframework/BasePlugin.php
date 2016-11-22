@@ -171,6 +171,11 @@ class BasePlugin {
 			$this->version = $version;
 		}
 
+		// Adds custom links in page plugins
+		$plugin_file = $this->plugin_name.'/'.$this->plugin_name.'.php';
+		$this->loader->add_action('plugin_action_links_'.$plugin_file, $this, 'add_plugin_action_links');
+
+
 		//Check if debug mode must be activated
 		if( (defined("WP_DEBUG") && WP_DEBUG) || (defined("WBF_ENV") && WBF_ENV == "dev") ){
 			$this->debug_mode = true;
@@ -185,6 +190,45 @@ class BasePlugin {
 		$this->load_dependencies();
 		$this->set_locale();
 	}
+
+	/**
+	 * Adds a settings link in the plugin page after deactivation link only (i.e. not visible unless you activate the plugin)
+	 *
+	 * @param array $links array of action links (e.g. activation/deactivation)
+	 * @hooked plugin_action_links_plugin_name/plugin_name.php
+	 * @return array
+	 */
+	public function add_plugin_action_links($links){
+		/**
+		 * Do we want some defaults ??
+		 */
+//		$default_settings_link = [
+//			[
+//				'name' => 'name',
+//				'link' => 'link'
+//			]
+//		];
+//		$pages = apply_filters('wbf/plugin_framework/base_plugin', $default_settings_links);
+		$pages = [];
+		$pages = apply_filters('wbf/plugin_framework/base_plugin/wbf_action_links', $pages);
+
+		if (isset($pages) && !empty($pages)) {
+			foreach ( $pages as $page ) {
+				$links[] = '<a href="' . esc_url( get_admin_url( null, $page['link'] ) ) . '">' . $page['name'] . '</a>';
+			}
+		}
+		return $links;
+	}
+
+	/**
+	 * Builds the add_action for add_plugin_action_link()
+	 *
+	 */
+	public function set_plugin_action_link() {
+		$plugin_file = $this->plugin_name.'/'.$this->plugin_name;
+		$this->loader->add_action('plugin_action_links_'.$plugin_file.'.php', $this, 'add_plugin_action_links');
+	}
+
 
 	/**
 	 * Set the update server for the plugin. You can specify also a License class.
