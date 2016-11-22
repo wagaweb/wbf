@@ -171,10 +171,6 @@ class BasePlugin {
 			$this->version = $version;
 		}
 
-		// Adds custom links in page plugins
-		$plugin_file = $this->plugin_name.'/'.$this->plugin_name.'.php';
-		$this->loader->add_action('plugin_action_links_'.$plugin_file, $this, 'add_plugin_action_links');
-
 
 		//Check if debug mode must be activated
 		if( (defined("WP_DEBUG") && WP_DEBUG) || (defined("WBF_ENV") && WBF_ENV == "dev") ){
