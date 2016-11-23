@@ -27,8 +27,9 @@ class Utilities{
 	 *
 	 * @param $slug
 	 * @param null $name
+	 * @param array $vars
 	 */
-	static function get_template_part($slug, $name = null){
+	static function get_template_part($slug, $name = null, $vars=[]){
 		do_action( "get_template_part_{$slug}", $slug, $name );
 
 		$templates = apply_filters("wbf/get_template_part/path:{$slug}",array(),array($slug,$name)); //@deprecated from WBF ^0.11.0
@@ -38,6 +39,11 @@ class Utilities{
 
 		$templates['names'][] = "{$slug}.php";
 
+		// take some vars and passes them in the $post object (e.g. shortcode vars can be used in parts)
+		if(is_array($vars) && !empty($vars)){
+			global $post;
+			$post->wbf_template_vars = $vars;
+		}
 		self::locate_template($templates, true, false);
 	}
 

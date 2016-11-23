@@ -19,9 +19,10 @@ if(!function_exists('wbf_get_template_part')):
 	 *
 	 * @param $slug
 	 * @param null $name
+	 * @param array $vars
 	 */
-	function wbf_get_template_part($slug, $name = null){
-		Utilities::get_template_part($slug,$name);
+	function wbf_get_template_part($slug, $name = null, $vars=[]){
+		Utilities::get_template_part($slug,$name,$vars);
 	}
 endif;
 
