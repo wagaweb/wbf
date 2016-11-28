@@ -59,4 +59,4 @@ A vast collection of classes with many build-in functionality to speed up plugin
 - **Utils**  
 A toolbox of useful functions
 
-You can learn more about each components by reading their specific readmes.
+You can learn more about each components by reading their specific readme.
