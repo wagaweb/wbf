@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:wagaweb/wbf_assets.git
+	branch = master
+	commit = 146003f5d894f408a2ca7eaef1559caba0ce39a0
+	parent = 09c04e2fc2d7c51159ba2ac779f1da4c1dd23174
+	cmdver = 0.3.0
