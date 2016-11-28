@@ -4,9 +4,13 @@ WBF is a modular framework for WordPress which can speed up development time.
 
 WBF is composed by different kind of parts: 
 
-- Components: which implement functionality that can be used separately, even without the whole framework (a composer-ready version will be available soon)
-- Modules: which implement a number of functionality based on WordPress hook system (like theme options, assets manager, custom updating procedures, ect...)
-- Extensions: through with WBF supports and\or enhance third-party plugins.
+- **Components**: which implement functionality that can be used separately, even without the whole framework (a composer-ready version will be available soon)
+
+- **Modules**: which implement a number of functionality based on WordPress hook system (like theme options, assets manager, custom updating procedures, ect...)
+
+- **Extensions**: through which WBF supports and\or enhance third-party plugins.
+
+Please note that the present documentation is in its early stage.
 
 ## Getting started
 
