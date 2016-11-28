@@ -274,6 +274,52 @@ class Framework{
 	}
 
 	/**
+	 * Retrieves an option value. If no value has been saved, it returns $default.
+	 *
+	 * @param $name
+	 * @param bool $default
+	 *
+	 * @return string|array
+	 */
+	static function get_option($name, $default = false){
+		static $config = '';
+		static $options_in_file = array();
+		static $options = array();
+
+		if(!is_array($config)) $config = self::get_options_root_id();
+
+		//[WABOOT MOD] Tries to return the default value sets into $options array if $default is false
+		if(!$default){
+			if(empty($options_in_file)) $options_in_file = self::get_registered_options();
+			foreach($options_in_file as $opt){
+				if(isset($opt['id']) && $opt['id'] == $name){
+					if(isset($opt['std'])){
+						$default = $opt['std'];
+					}
+				}
+			}
+		}
+
+		if(!isset($config) || !$config){
+			return $default;
+		}
+
+		if(empty($options)) $options = get_option( $config );
+
+		if ( isset( $options[$name] ) ) {
+			$option_type = self::get_option_type($name);
+			$value = $options[$name];
+			$value = apply_filters("wbf/theme_options/{$option_type}/get_value",$value);
+		}else{
+			$value = $default;
+		}
+
+		$value = apply_filters("wbf/theme_options/get/{$name}",$value);
+
+		return $value;
+	}
+
+	/**
 	 * Get the option entity for the specified ID
 	 * @param string $id
 	 *

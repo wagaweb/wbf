@@ -15,6 +15,7 @@
 
 namespace WBF\modules\options;
 
+use WBF\components\assets\AssetsManager;
 use WBF\components\utils\Utilities;
 use WBF\modules\options\fields\CodeEditor;
 
@@ -106,51 +107,6 @@ function convert_old_theme_options(){
 }
 
 /**
- * Helper function to return the theme option value.
- * If no value has been saved, it returns $default.
- * Needed because options are saved as serialized strings.
- *
- * Not in a class to support backwards compatibility in themes.
- */
-function of_get_option( $name, $default = false ) {
-    static $config = '';
-	static $options_in_file = array();
-	static $options = array();
-
-	if(!is_array($config)) $config = Framework::get_options_root_id();
-
-    //[WABOOT MOD] Tries to return the default value sets into $options array if $default is false
-    if(!$default){
-	    if(empty($options_in_file)) $options_in_file = Framework::get_registered_options();
-        foreach($options_in_file as $opt){
-            if(isset($opt['id']) && $opt['id'] == $name){
-                if(isset($opt['std'])){
-                    $default = $opt['std'];
-                }
-            }
-        }
-    }
-
-    if(!isset($config) || !$config){
-        return $default;
-    }
-
-    if(empty($options)) $options = get_option( $config );
-
-    if ( isset( $options[$name] ) ) {
-	    $option_type = Framework::get_option_type($name);
-	    $value = $options[$name];
-	    $value = apply_filters("wbf/theme_options/{$option_type}/get_value",$value);
-    }else{
-	    $value = $default;
-    }
-
-	$value = apply_filters("wbf/theme_options/get/{$name}",$value);
-
-    return $value;
-}
-
-/**
  * Adds client custom CSS
  */
 function add_client_custom_css(){
@@ -158,8 +114,13 @@ function add_client_custom_css(){
 	$client_custom_css = CodeEditor::custom_css_exists();
 	if($client_custom_css){
 		$uri = Utilities::path_to_url($client_custom_css);
-		$version = filemtime($client_custom_css);
-
-		wp_enqueue_style('client-custom',$uri,false,$version);
+		$am = new AssetsManager([
+			'client-custom' => [
+				'path' => $client_custom_css,
+				'uri' => $uri,
+				'type' => 'css'
+			]
+		]);
+		$am->enqueue();
 	}
 }

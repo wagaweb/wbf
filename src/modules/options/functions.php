@@ -719,3 +719,14 @@ function import_theme_options($exported_options) {
 function organizer(){
 	return Organizer::getInstance();
 }
+
+/**
+ * Helper function to return the theme option value.
+ * If no value has been saved, it returns $default.
+ * Needed because options are saved as serialized strings.
+ *
+ * Not in a class to support backwards compatibility in themes.
+ */
+function of_get_option( $name, $default = false ) {
+	return Framework::get_option($name,$default);
+}
