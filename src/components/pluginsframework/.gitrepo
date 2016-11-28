@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:wagaweb/pluginsframework.git
+	branch = master
+	commit = 7dd0d543dcaccdf2f21bae68e35ce64864e57ec8
+	parent = 0efdd9ce0148fd22108a2686f3960dec93df7aa7
+	cmdver = 0.3.0
