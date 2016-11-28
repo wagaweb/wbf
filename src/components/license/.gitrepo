@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:wagaweb/license.git
+	branch = master
+	commit = b8d0d3749d356a70a742046e603a1a6e5ca4c4e5
+	parent = 1bd1915d107f2a43afa17d7b20d3cfef9ed55414
+	cmdver = 0.3.0
