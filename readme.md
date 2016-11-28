@@ -41,7 +41,7 @@ Allows the management of customizable licenses for plugins and themes.
 - MVC  
 Allows developer to adopt a clean MVC pattern to templating.
 
-- NavWalker
+- NavWalker  
 A number of navwalker for WordPress menu. At the moment only a bootstrap-compatible walker is available.
 
 - Notices  
