@@ -3,7 +3,7 @@
   "description": "An helper component for admin notices management",
   "homepage": "https://www.waga.it",
   "version": "1.0.0",
-  "license": "proprietary",
+  "license": "GPL-2.0+",
   "authors": [
     {
       "name": "Waga Team",
