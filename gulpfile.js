@@ -187,7 +187,7 @@ gulp.task('make-pot', function () {
         .pipe(wpPot( {
             domain: slug,
             destFile: slug+'.pot',
-            team: 'Waga <info@waga.it>'
+            team: 'Waga Team <dev@waga.it>'
         } ))
         .pipe(gulp.dest('languages/'));
 });

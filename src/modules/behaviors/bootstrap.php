@@ -3,12 +3,6 @@
  * Behaviors Framework.
  *
  * As all other modules, keep in mind that this piece of code will be executed during "after_setup_theme"
- *
- * @package   Behavior Module
- * @author    Riccardo D'Angelo <riccardo@waga.it>, WAGA <dev@waga.it>
- * @license   GPL-2.0+
- * @link      http://www.waboot.com
- * @copyright WAGA.it
  */
 
 namespace WBF\modules\behaviors;

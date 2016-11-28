@@ -1,18 +1,14 @@
 <?php
-
 /**
  * Waboot Framework Plugin file
  *
- * @link              http://www.waga.it
- * @package           WBF
- *
  * @wordpress-plugin
  * Plugin Name:       Waboot Framework
- * Plugin URI:        http://www.waga.it
+ * Plugin URI:        https://www.waboot.io
  * Description:       WordPress Extension Framework
  * Version:           0.15.1
- * Author:            WAGA
- * Author URI:        http://www.waga.com/
+ * Author:            WAGA Team <dev@waga.it>
+ * Author URI:        https://www.waga.it/
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       wbf

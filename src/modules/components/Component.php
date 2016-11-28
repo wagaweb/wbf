@@ -1,12 +1,4 @@
 <?php
-/**
- * @package   Components Module
- * @author    Riccardo D'Angelo <riccardo@waga.it>, WAGA <dev@waga.it>
- * @license   GPL-2.0+
- * @link      http://www.waboot.com
- * @copyright WAGA.it
- */
-
 namespace WBF\modules\components;
 
 

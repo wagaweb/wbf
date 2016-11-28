@@ -3,14 +3,14 @@
   "description": "A comprehensive full-stack Wordpress framework",
   "keywords": ["wordpress","framework"],
   "type": "wordpress-plugin",
-  "homepage": "http://www.waga.it",
+  "homepage": "https://www.waga.it",
   "version": "0.13.13",
   "license": "proprietary",
   "authors": [
     {
       "name": "Waga Team",
       "email": "dev@waga.it",
-      "homepage": "http://www.waga.it",
+      "homepage": "https://www.waga.it",
       "role": "Developer"
     }
   ],

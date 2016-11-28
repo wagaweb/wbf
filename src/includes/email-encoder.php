@@ -2,12 +2,6 @@
 /**
  * Email Address Encoder.
  * This is the "Email address encoder" plugin by Till Krüss (www.tillkruess.com) integrated in Waboot theme.
- *
- * @package   Waboot
- * @author    Riccardo D'Angelo <me@riccardodangelo.com>
- * @license   GNU General Public License
- * @link      http://www.waga.it
- * @copyright 2014 Riccardo D'Angelo and WAGA.it
  */
 
 if(!function_exists('eae_encode_emails')) :
