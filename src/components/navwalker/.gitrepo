@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:wagaweb/navwalker.git
+	branch = master
+	commit = d5541ac48800e2929c1c0fd6648fd5b62475ebdd
+	parent = 9abb58a467495b9e5f1a9c335dd894d9e9bb490d
+	cmdver = 0.3.0
