@@ -4,7 +4,7 @@
 ; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
 ;
 [subrepo]
-	remote = git@github.com:wagaweb/notices.git
+	remote = git@github.com:wagaweb/wbf_notices.git
 	branch = master
 	commit = 8905ffe4fa6de1ebcd00581ce6678c32df967338
 	parent = eff59883ec9bd84aa5b6de32467f52a2aa0b82c1

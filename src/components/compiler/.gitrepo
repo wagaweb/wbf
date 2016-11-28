@@ -4,7 +4,7 @@
 ; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
 ;
 [subrepo]
-	remote = git@github.com:wagaweb/compiler.git
+	remote = git@github.com:wagaweb/wbf_compiler.git
 	branch = master
 	commit = aba0454505a095b624403cd091e98f21e9f67b68
 	parent = 72360bcd684fa20651256654a95e5ab6910b48a9
