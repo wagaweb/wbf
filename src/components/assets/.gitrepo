@@ -4,7 +4,7 @@
 ; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
 ;
 [subrepo]
-	remote = assets
+	remote = git@github.com:wagaweb/assets.git
 	branch = master
 	commit = 6a82fa8e13284086e68c0b4e9fc495524ba7aa81
 	parent = a9ff9faf06010c0c3cd3df15c894679a42b0a705
