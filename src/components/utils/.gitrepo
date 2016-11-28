@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:wagaweb/utils.git
+	branch = master
+	commit = 19663c15d23a126c47010b6816ff8dff74eb0e18
+	parent = 08836fc38aa20259c7c6259443ccfbdba2cf7f0e
+	cmdver = 0.3.0
