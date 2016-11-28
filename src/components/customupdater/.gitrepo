@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:wagaweb/customupdater.git
+	branch = master
+	commit = 2fe6773357bfb203b8f3a99fa4e79680285d61ca
+	parent = a29ef3ae4532712a60b796c522763a1d29443b7e
+	cmdver = 0.3.0
