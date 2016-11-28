@@ -189,23 +189,35 @@ class BasePlugin {
 	}
 
 	/**
+	 * Automatically adds actions link through filter. Called during object construction.
+	 */
+	private function set_plugin_action_link() {
+		$plugin_file = $this->plugin_name.'/'.$this->plugin_name;
+		$this->loader->add_action('plugin_action_links_'.$plugin_file.'.php', $this, 'add_plugin_action_links');
+	}
+
+	/**
 	 * Adds a settings link in the plugin page after deactivation link only (i.e. not visible unless you activate the plugin)
 	 *
 	 * @param array $links array of action links (e.g. activation/deactivation)
-	 * @hooked plugin_action_links_plugin_name/plugin_name.php
+	 *
+	 * @hooked 'plugin_action_links_plugin_name/plugin_name.php'
+	 *
 	 * @return array
 	 */
 	public function add_plugin_action_links($links){
-		/**
+		/*
 		 * Do we want some defaults ??
 		 */
-//		$default_settings_link = [
-//			[
-//				'name' => 'name',
-//				'link' => 'link'
-//			]
-//		];
-//		$pages = apply_filters('wbf/plugin_framework/base_plugin', $default_settings_links);
+		/*
+		$default_settings_link = [
+			[
+				'name' => 'name',
+				'link' => 'link'
+			]
+		];
+		$pages = apply_filters('wbf/plugin_framework/base_plugin', $default_settings_links);
+		*/
 		$pages = [];
 		$pages = apply_filters('wbf/plugin_framework/base_plugin/wbf_action_links', $pages);
 
@@ -218,14 +230,30 @@ class BasePlugin {
 	}
 
 	/**
-	 * Builds the add_action for add_plugin_action_link()
+	 * Adds settings link in the Wordpress Plugin page
 	 *
+	 * @param array $links
+	 *
+	 * $links_example = [
+	 *      [
+	 *          'name' => 'name',
+	 *          'link' => 'link'
+	 *      ]
+	 * ];
+	 *
+	 * @return void
 	 */
-	public function set_plugin_action_link() {
+	public function add_action_links($links = []){
 		$plugin_file = $this->plugin_name.'/'.$this->plugin_name;
-		$this->loader->add_action('plugin_action_links_'.$plugin_file.'.php', $this, 'add_plugin_action_links');
+		add_action('plugin_action_links_'.$plugin_file.'.php', function($current_links) use($links){
+			if(isset($links) && is_array($links)){
+				foreach ( $links as $link ) {
+					$current_links[] = '<a href="' . esc_url( get_admin_url( null, $link['link'] ) ) . '">' . $link['name'] . '</a>';
+				}
+			}
+			return $current_links;
+		});
 	}
-
 
 	/**
 	 * Set the update server for the plugin. You can specify also a License class.
