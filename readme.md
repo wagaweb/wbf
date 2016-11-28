@@ -18,7 +18,7 @@ You can download the latest standalone version [here](https://www.waboot.io) (av
 
 WBF Components implements tools and functionality not strictly related to WordPress hooks system.
 
-- Assets  
+- **Assets**  
 A number of tools for managing static assets.
 
     Assets can be registered through an Assets Manager that take care of:
@@ -26,31 +26,31 @@ A number of tools for managing static assets.
     - Automatically assign a version number to assets (to avoid issues with caching systems)
     - Enqueue the assets during WordPress execution
 
-- Breadcrumb  
+- **Breadcrumb**  
 Makes available a number of tools for managing breadcrumbs.
 
-- Compiler  
+- **Compiler**  
 Allows the live compilations of LESS files (SASS will be available in the future) and the generation of CSS files based on templates. Useful to implement certain type of theme options.
 
-- CustomUpdater  
+- **CustomUpdater**  
 Makes available a number of tools to implement custom updating systems for themes and plugins.
 
-- License  
+- **License**  
 Allows the management of customizable licenses for plugins and themes.
  
-- MVC  
+- **MVC**  
 Allows developer to adopt a clean MVC pattern to templating.
 
-- NavWalker  
+- **NavWalker**  
 A number of navwalker for WordPress menu. At the moment only a bootstrap-compatible walker is available.
 
-- Notices  
+- **Notices**  
 Allows developer to centralize the management of dashboard notices.
 
-- Plugins Framework  
+- **Plugins Framework**  
 A vast collection of classes with many build-in functionality to speed up plugin development.
 
-- Utils  
+- **Utils**  
 A toolbox of useful functions
 
 You can learn more about each components by reading their specific readmes.
