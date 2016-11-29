@@ -4,7 +4,7 @@
 ; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
 ;
 [subrepo]
-	remote = none
+	remote = git@github.com:wagaweb/wbf_assets.git
 	branch = master
 	commit = 17fd3dad6c82be595f2045ffa2e7241a34f98029
 	parent = 492487376c0644870ee9bac328181ef67b9b75da
