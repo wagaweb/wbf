@@ -4,6 +4,11 @@
   "homepage": "https://www.waga.it",
   "version": "1.0.0",
   "license": "GPL-2.0+",
+  "require": {
+    "wbf/notices": "^1.0.0",
+    "wbf/license": "^1.0.0",
+    "wbf/utils": "^1.0.0"
+  },
   "authors": [
     {
       "name": "Waga Team",
