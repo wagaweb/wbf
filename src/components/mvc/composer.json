@@ -2,7 +2,6 @@
   "name": "wbf/mvc",
   "description": "An helper component for MVC in Wordpress",
   "homepage": "https://www.waga.it",
-  "version": "1.0.0",
   "license": "GPL-2.0+",
   "authors": [
     {

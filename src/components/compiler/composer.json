@@ -2,7 +2,6 @@
   "name": "wbf/compiler",
   "description": "An helper component for styles compiling",
   "homepage": "https://www.waga.it",
-  "version": "1.0.0",
   "license": "GPL-2.0+",
   "authors": [
     {
