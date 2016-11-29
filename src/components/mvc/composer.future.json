@@ -13,6 +13,6 @@
     }
   ],
   "require": {
-    "waga/wbf/utils": "*"
+    "wbf/utils": "*"
   }
 }

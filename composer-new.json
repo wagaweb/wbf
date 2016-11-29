@@ -20,16 +20,16 @@
     "mobiledetect/mobiledetectlib": "~2.8.20"
   },
   "replace":{
-    "waga/wbf/assets": "self.version",
-    "waga/wbf/breadcrumb": "self.version",
-    "waga/wbf/compiler": "self.version",
-    "waga/wbf/customupdater": "self.version",
-    "waga/wbf/license": "self.version",
-    "waga/wbf/mvc": "self.version",
-    "waga/wbf/navwalker": "self.version",
-    "waga/wbf/notices": "self.version",
-    "waga/wbf/pluginsframework": "self.version",
-    "waga/wbf/utils": "self.version"
+    "wbf/assets": "self.version",
+    "wbf/breadcrumb": "self.version",
+    "wbf/compiler": "self.version",
+    "wbf/customupdater": "self.version",
+    "wbf/license": "self.version",
+    "wbf/mvc": "self.version",
+    "wbf/navwalker": "self.version",
+    "wbf/notices": "self.version",
+    "wbf/pluginsframework": "self.version",
+    "wbf/utils": "self.version"
   },
   "autoload": {
     "psr-4": {
