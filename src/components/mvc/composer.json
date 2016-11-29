@@ -12,6 +12,6 @@
     }
   ],
   "require": {
-    "waga/wbf/utils": "^1.0.0"
+    "waga/wbf/utils": "dev-master"
   }
 }
