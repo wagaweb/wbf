@@ -1,11 +1,10 @@
 {
   "name": "waga/wbf",
-  "description": "A comprehensive full-stack Wordpress framework",
+  "description": "A comprehensive WordPress framework",
   "keywords": ["wordpress","framework"],
   "type": "wordpress-plugin",
   "homepage": "https://www.waga.it",
-  "version": "0.15.1",
-  "license": "proprietary",
+  "license": "GPL-2.0+",
   "authors": [
     {
       "name": "WAGA Team",
