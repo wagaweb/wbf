@@ -8,7 +8,7 @@
   "license": "proprietary",
   "authors": [
     {
-      "name": "Waga Team",
+      "name": "WAGA Team",
       "email": "dev@waga.it",
       "homepage": "https://www.waga.it",
       "role": "Developer"
@@ -18,6 +18,18 @@
     "composer/installers": "^1.0",
     "mgargano/simplehtmldom": "dev-master",
     "mobiledetect/mobiledetectlib": "~2.8.20"
+  },
+  "replace":{
+    "waga/wbf/assets": "self.version",
+    "waga/wbf/breadcrumb": "self.version",
+    "waga/wbf/compiler": "self.version",
+    "waga/wbf/customupdater": "self.version",
+    "waga/wbf/license": "self.version",
+    "waga/wbf/mvc": "self.version",
+    "waga/wbf/navwalker": "self.version",
+    "waga/wbf/notices": "self.version",
+    "waga/wbf/pluginsframework": "self.version",
+    "waga/wbf/utils": "self.version"
   },
   "autoload": {
     "psr-4": {
