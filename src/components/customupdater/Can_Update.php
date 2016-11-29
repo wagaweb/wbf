@@ -1,4 +1,10 @@
 <?php
+/*
+ * This file is part of WBF Framework: https://www.waboot.io
+ *
+ * @author WAGA Team
+ */
+
 namespace WBF\components\customupdater;
 
 use WBF\components\notices\conditions\Condition;

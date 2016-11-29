@@ -1,4 +1,12 @@
 <?php
+/*
+ * This file is part of WBF Framework: https://www.waboot.io
+ *
+ * @author WAGA Team
+ */
+
+namespace WBF\components\mvc;
+
 /**
  * WBF Simple View Class.
  * @since 0.13.12
@@ -47,9 +55,6 @@
  *
  * Enjoy!
  */
-
-namespace WBF\components\mvc;
-
 class HTMLView extends View implements View_Interface{
 	/**
 	 * Print out the view. The provided vars will be extracted with extract() but they will be also available through $GLOBALS['template_vars'].
