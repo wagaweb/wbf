@@ -4,9 +4,9 @@
   "homepage": "https://www.waga.it",
   "license": "GPL-2.0+",
   "require": {
-    "wbf/notices": "^1.0.0",
-    "wbf/license": "^1.0.0",
-    "wbf/utils": "^1.0.0"
+    "wbf/notices": "dev-master",
+    "wbf/license": "dev-master",
+    "wbf/utils": "dev-master"
   },
   "authors": [
     {
