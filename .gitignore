@@ -22,6 +22,7 @@ vendor/autoload.php
 vendor/mgargano
 vendor/composer
 vendor/mobiledetect
+vendor/cmb2
 
 ############
 ## VENDORS (components)
