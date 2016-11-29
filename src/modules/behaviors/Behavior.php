@@ -74,7 +74,11 @@ class Behavior{
 					$this->default = \WBF\modules\options\of_get_option($this->optionname,"");
 				}
 			}
-		}
+		}else{
+		    if(isset($args['default'])){
+			    $this->default = $args['default'];
+            }
+        }
 
 		if(isset($args['valid'])){
 			$this->filters['post_type'] = array();
