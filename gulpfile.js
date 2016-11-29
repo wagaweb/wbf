@@ -64,6 +64,7 @@ var paths = {
         "vendor/composer/*.json",
         "vendor/acf/**/*",
         "!vendor/acf/lang/*",
+        "vendor/yahnis-elsts/**/*",
         "vendor/codemirror/lib/*",
         "vendor/codemirror/addon/hint/css-hint.js",
         "vendor/codemirror/addon/hint/show-hint.js",
