@@ -1,8 +1,8 @@
 <?php
 /*
- * This file is part of WBF Framework: https://www.waboot.io
+ * This file is part of WBF Framework: https://github.com/wagaweb/wbf
  *
- * @author WAGA Team
+ * @author WAGA Team <dev@waga.it>
  */
 
 namespace WBF\components\navwalker;
