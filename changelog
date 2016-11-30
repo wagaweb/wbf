@@ -1,5 +1,15 @@
 == Change log ==
 
+Version 0.15.2 & 1.0.0 - 11/29/2016
+---------------------------------
+- Fix: Default values of behaviors is now correctly retrieved in theme options page
+- Feature: now BasePlugin can easily adds actions link through add_action_links() function
+- Feature: Utilities::get_template_part() now supports a $vars argument.
+
+---------------------------------
+---------------------------------
+---------------------------------
+
 Version 0.15.1 - 11/11/2016
 ---------------------------------
 - Fix: now standard template hierarchy files are correctly searched into plugins directories

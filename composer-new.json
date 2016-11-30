@@ -4,11 +4,11 @@
   "keywords": ["wordpress","framework"],
   "type": "wordpress-plugin",
   "homepage": "https://www.waga.it",
-  "version": "0.13.13",
+  "version": "0.15.1",
   "license": "proprietary",
   "authors": [
     {
-      "name": "Waga Team",
+      "name": "WAGA Team",
       "email": "dev@waga.it",
       "homepage": "https://www.waga.it",
       "role": "Developer"
@@ -17,17 +17,19 @@
   "require": {
     "composer/installers": "^1.0",
     "mgargano/simplehtmldom": "dev-master",
-    "mobiledetect/mobiledetectlib": "~2.8.20",
-    "waga/wbf/assets": "*",
-    "waga/wbf/breadcrumb": "*",
-    "waga/wbf/compiler": "*",
-    "waga/wbf/customupdater": "*",
-    "waga/wbf/license": "*",
-    "waga/wbf/mvc": "*",
-    "waga/wbf/navwalker": "*",
-    "waga/wbf/notices": "*",
-    "waga/wbf/pluginsframework": "*",
-    "waga/wbf/utils": "*"
+    "mobiledetect/mobiledetectlib": "~2.8.20"
+  },
+  "replace":{
+    "wbf/assets": "self.version",
+    "wbf/breadcrumb": "self.version",
+    "wbf/compiler": "self.version",
+    "wbf/customupdater": "self.version",
+    "wbf/license": "self.version",
+    "wbf/mvc": "self.version",
+    "wbf/navwalker": "self.version",
+    "wbf/notices": "self.version",
+    "wbf/pluginsframework": "self.version",
+    "wbf/utils": "self.version"
   },
   "autoload": {
     "psr-4": {
@@ -36,9 +38,9 @@
     "classmap": [
       "src/components/compiler/less/lib/",
       "src/components/customupdater/vendor/",
-      "src/components/bredcrumb/vendor/",
+      "src/components/breadcrumb/vendor/",
       "src/components/navwalker/vendor/",
-      "vendor/acf/",
+      "src/legacy/",
       "src/modules/",
       "src/PluginCore.php"
     ],

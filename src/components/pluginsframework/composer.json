@@ -2,8 +2,12 @@
   "name": "wbf/pluginsframework",
   "description": "An helper component for Wordpress plugin development",
   "homepage": "https://www.waga.it",
-  "version": "1.0.0",
   "license": "GPL-2.0+",
+  "require": {
+    "wbf/notices": "dev-master",
+    "wbf/license": "dev-master",
+    "wbf/utils": "dev-master"
+  },
   "authors": [
     {
       "name": "Waga Team",

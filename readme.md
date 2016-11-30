@@ -16,13 +16,13 @@ Please note that the present documentation is in its early stage.
 
 The quickest way to start developing with WBF is to install it as WordPress plugin.
 
-You can download the latest standalone version [here](https://www.waboot.io) (available soon) or clone this repo.
+You can download the latest standalone version [here](http://update.waboot.org/resource/get/plugin/wbf) or clone this repo.
 
 In future version WBF will supports a composer-based installation.
 
 ## WBF Components
 
-WBF Components implements tools and functionality not strictly related to WordPress hooks system.
+WBF Components implements tools and functionality not strictly related to WordPress hooks system. You can embed use each component even without the whole framework by [installing it via composer](https://packagist.org/search/?q=wbf).
 
 - **Assets**  
 A number of tools for managing static assets.

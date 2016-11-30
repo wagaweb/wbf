@@ -64,6 +64,7 @@ var paths = {
         "vendor/composer/*.json",
         "vendor/acf/**/*",
         "!vendor/acf/lang/*",
+        "vendor/yahnis-elsts/**/*",
         "vendor/codemirror/lib/*",
         "vendor/codemirror/addon/hint/css-hint.js",
         "vendor/codemirror/addon/hint/show-hint.js",
@@ -214,6 +215,7 @@ gulp.task('copy-vendors',function() {
 
 /**
  * Register GIT remotes (for subtree)
+ * @deprecated
  */
 gulp.task('add-remotes', function(){
     var exec = require('child_process').exec;
@@ -232,6 +234,7 @@ gulp.task('add-remotes', function(){
 
 /**
  * Performs composer update into components directories
+ * @deprecated
  */
 gulp.task('component-composer-update', function(){
     var exec = require('child_process').execSync;
@@ -274,7 +277,7 @@ gulp.task('bower-update',function(){
  * Gets the plugin ready
  */
 gulp.task('setup', function(callback) {
-    runSequence('component-composer-update','bower-update', 'copy-vendors', ['compile_js', 'compile_css'], callback);
+    runSequence('bower-update', 'copy-vendors', ['compile_js', 'compile_css'], callback);
 });
 
 
@@ -282,7 +285,7 @@ gulp.task('setup', function(callback) {
  * Creates a build
  */
 gulp.task('build', function(callback) {
-    runSequence('component-composer-update','bower-update', 'copy-vendors',['compile_js', 'compile_css'], 'make-package', 'archive', callback);
+    runSequence('bower-update', 'copy-vendors',['compile_js', 'compile_css'], 'make-package', 'archive', callback);
 });
 
 /**

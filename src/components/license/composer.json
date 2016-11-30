@@ -2,7 +2,6 @@
   "name": "wbf/license",
   "description": "An helper component for managing licenses",
   "homepage": "https://www.waga.it",
-  "version": "1.0.0",
   "license": "GPL-2.0+",
   "authors": [
     {
@@ -11,5 +10,8 @@
       "homepage": "https://www.waga.it",
       "role": "Developer"
     }
-  ]
+  ],
+  "require": {
+    "wbf/utils": "dev-master"
+  }
 }
