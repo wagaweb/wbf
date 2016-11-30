@@ -4,7 +4,7 @@ namespace WBF\includes;
 
 class GoogleFontsRetriever{
     const api_url = "https://www.googleapis.com/webfonts/v1/webfonts";
-    private $api_key = "AIzaSyDXgT0NYjLhDmUzdcxC5RITeEDimRmpq3s";
+    private $api_key = "";
     var $last_error = "";
     var $cache_file_name = "wbf_font_cache.php";
 	var $cached_fonts;
@@ -21,8 +21,12 @@ class GoogleFontsRetriever{
         if(isset($api_key)){
             $this->api_key = $api_key;
         }
-        $this->read_font_cache_file();
-	    //$this->download_webfonts();
+        if(defined("WBF_GOOGLE_FONTS_API_KEY")){
+        	$this->api_key = WBF_GOOGLE_FONTS_API_KEY;
+	        $this->download_webfonts();
+        }else{
+	        $this->read_font_cache_file();
+        }
     }
 
     function get_webfonts(){
@@ -95,6 +99,9 @@ class GoogleFontsRetriever{
     function do_download_webfonts($url){
         $fonts_json = false;
         if(function_exists('wp_remote_get')){
+        	$url = add_query_arg([
+        		"key" => $this->api_key
+	        ],$url);
             $response = wp_remote_get($url, array('sslverify' => false));
             if(is_wp_error($response)){
                 $this->last_error = new GoogleFontsRetrieverException(__("Unable to connect to Google API"), "connection_failed");
