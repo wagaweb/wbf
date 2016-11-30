@@ -23,6 +23,14 @@ class GUI {
 	}
 
 	/**
+	 * Performs some operations in components options before saving
+	 */
+	private static function sanitize_components_options($options,$registered_components){
+		$options = apply_filters("wbf/modules/components/options_sanitization_before_save",$options,$registered_components);
+		return $options;
+	}
+
+	/**
 	 * Display the component page
 	 */
 	public static function components_admin_page() {
@@ -37,20 +45,9 @@ class GUI {
 		if ( isset( $_POST['submit-components-options'] ) ) {
 			$of_config_id = Framework::get_options_root_id();
 			if ( isset( $_POST[ $of_config_id ] ) ) {
-				$component_options = call_user_func( function () {
-					$cbs = Framework::get_registered_options();
-					$cbs = array_filter( $cbs, function ( $el ) {
-						if ( isset( $el['component'] ) && $el['component'] ) {
-							return true;
-						}
+				$component_options = ComponentsManager::get_components_options();
 
-						return false;
-					} );
-
-					return $cbs;
-				} ); //Gets the components options (not the actual values)
-
-				$options_to_update = $_POST[ $of_config_id ];
+				$options_to_update = self::sanitize_components_options($_POST[ $of_config_id ],$registered_components);
 
 				$options_to_update = Framework::update_theme_options( $options_to_update, true, $component_options );
 

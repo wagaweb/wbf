@@ -250,6 +250,8 @@ class Component {
 	    $states[$this->name] = 1;
 	    ComponentsManager::update_components_state($states);
 
+	    do_action("wbf/modules/components/on_activate",$this);
+
         add_action( 'admin_notices', array($this,'activationNotice') );
         $this->register_options();
 	    $this->restore_theme_options();
@@ -260,6 +262,8 @@ class Component {
 	    $states = ComponentsManager::get_components_state();
 	    $states[$this->name] = 0;
 	    ComponentsManager::update_components_state($states);
+
+	    do_action("wbf/modules/components/on_deactivate",$this);
 
 		$this->backup_theme_options();
         add_action( 'admin_notices', array($this,'deactivationNotice') );
