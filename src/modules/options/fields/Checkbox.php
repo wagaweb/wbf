@@ -17,11 +17,14 @@ class Checkbox extends BaseField implements Field{
 	}
 
 	public function sanitize( $input, $option ) {
-		if ( $input ) {
-			$output = '1';
-		} else {
+		if($input == "off"){
 			$output = false;
+		}elseif(!$input){
+			$output = false;
+		}else{
+			$output = '1';
 		}
+
 		return $output;
 	}
 }
