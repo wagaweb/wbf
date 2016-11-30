@@ -725,6 +725,28 @@ class ComponentsManager {
     }
 
 	/**
+	 * Gets all components options
+	 *
+	 * @return array
+	 */
+    static function get_components_options(){
+	    $component_options = call_user_func( function () {
+		    $cbs = Framework::get_registered_options();
+		    $cbs = array_filter( $cbs, function ( $el ) {
+			    if ( isset( $el['component'] ) && $el['component'] ) {
+				    return true;
+			    }
+
+			    return false;
+		    } );
+
+		    return $cbs;
+	    } ); //Gets the components options (not the actual values)
+
+	    return $component_options;
+    }
+
+	/**
 	 * Reset components state
 	 *
 	 * @throws \Exception
