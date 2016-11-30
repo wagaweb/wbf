@@ -422,7 +422,10 @@ class Framework{
 		} else {
 			$options_db_key = 'optionsframework';
 		}
-		$saved_options = get_option($options_db_key);	
+		$saved_options = get_option($options_db_key);
+
+		$saved_options = apply_filters("wbf/modules/options/get_saved_options",$saved_options);
+
 		return $saved_options;
 	}
 
