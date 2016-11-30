@@ -23,20 +23,10 @@ class GUI {
 	}
 
 	/**
-	 * Performs some operations in components
+	 * Performs some operations in components options before saving
 	 */
 	private static function sanitize_components_options($options,$registered_components){
-		foreach($registered_components as $name => $data){
-			if(isset($options[$name."_load_locations_ids"])){
-				$load_locations_by_ids = $options[$name."_load_locations_ids"];
-				$load_locations = isset($options[$name."_load_locations"]) ? $options[$name."_load_locations"] : [];
-				if($load_locations_by_ids == "" && empty($load_locations)){
-					$options[$name."_enabled_for_all_pages"] = "on";
-				}else{
-					$options[$name."_enabled_for_all_pages"] = "off";
-				}
-			}
-		}
+		$options = apply_filters("wbf/modules/components/options_sanitization_before_save",$options,$registered_components);
 		return $options;
 	}
 
@@ -55,18 +45,7 @@ class GUI {
 		if ( isset( $_POST['submit-components-options'] ) ) {
 			$of_config_id = Framework::get_options_root_id();
 			if ( isset( $_POST[ $of_config_id ] ) ) {
-				$component_options = call_user_func( function () {
-					$cbs = Framework::get_registered_options();
-					$cbs = array_filter( $cbs, function ( $el ) {
-						if ( isset( $el['component'] ) && $el['component'] ) {
-							return true;
-						}
-
-						return false;
-					} );
-
-					return $cbs;
-				} ); //Gets the components options (not the actual values)
+				$component_options = ComponentsManager::get_components_options();
 
 				$options_to_update = self::sanitize_components_options($_POST[ $of_config_id ],$registered_components);
 
