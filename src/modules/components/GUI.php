@@ -23,6 +23,24 @@ class GUI {
 	}
 
 	/**
+	 * Performs some operations in components
+	 */
+	private static function sanitize_components_options($options,$registered_components){
+		foreach($registered_components as $name => $data){
+			if(isset($options[$name."_load_locations_ids"])){
+				$load_locations_by_ids = $options[$name."_load_locations_ids"];
+				$load_locations = isset($options[$name."_load_locations"]) ? $options[$name."_load_locations"] : [];
+				if($load_locations_by_ids == "" && empty($load_locations)){
+					$options[$name."_enabled_for_all_pages"] = "on";
+				}else{
+					$options[$name."_enabled_for_all_pages"] = "off";
+				}
+			}
+		}
+		return $options;
+	}
+
+	/**
 	 * Display the component page
 	 */
 	public static function components_admin_page() {
@@ -50,7 +68,7 @@ class GUI {
 					return $cbs;
 				} ); //Gets the components options (not the actual values)
 
-				$options_to_update = $_POST[ $of_config_id ];
+				$options_to_update = self::sanitize_components_options($_POST[ $of_config_id ],$registered_components);
 
 				$options_to_update = Framework::update_theme_options( $options_to_update, true, $component_options );
 
