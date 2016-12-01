@@ -264,10 +264,10 @@ class Component {
 	    $states[$this->name] = 0;
 	    ComponentsManager::update_components_state($states);
 
-	    do_action("wbf/modules/components/on_deactivate",$this);
-
 		$this->backup_theme_options();
         add_action( 'admin_notices', array($this,'deactivationNotice') );
+
+	    do_action("wbf/modules/components/on_deactivate",$this);
     }
 
     public function activationNotice(){
