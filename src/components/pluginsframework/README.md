@@ -24,6 +24,10 @@ And provides a number of useful functions:
 - The ability to setup a custom update server
 - and much more...
 
+### Plugin directories structure
+
+...
+
 ### Template plugin
 
 ...
