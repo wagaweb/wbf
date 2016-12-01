@@ -250,11 +250,12 @@ class Component {
 	    $states[$this->name] = 1;
 	    ComponentsManager::update_components_state($states);
 
-	    do_action("wbf/modules/components/on_activate",$this);
-
         add_action( 'admin_notices', array($this,'activationNotice') );
         $this->register_options();
+        add_action("wbf/theme_options/register", [$this,"register_options"]);
 	    $this->restore_theme_options();
+
+	    do_action("wbf/modules/components/on_activate",$this);
     }
 
     public function onDeactivate(){
