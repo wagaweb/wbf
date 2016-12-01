@@ -15,37 +15,31 @@ $v = new \WBF\components\mvc\HTMLView("path/to/template.php");
 $vars = [
     'title' => "Hello World"
 ];
-$v->clean()->display();
+$v->display();
 ```
 - In template.php you can:
 ```php
 <?php echo $title; ?>
 ```
 
-The View has some really interesting features:
+The View has some really interesting features:  
+
 - You can provide a path relative to the current theme or relative to a plugin. The template file will be enqueued in a template hierarchy array, so you can override the template file by placing a new template with the same name/path in a child theme. If the path is relative to a plugin, any similiar template found in child theme or in parent theme will override the original template.
-```php
-//If you are in a twentysixteen child called "foobar"...
-$v = new \WBF\components\mvc\HTMLView("path/to/template.php");
-/* Will looking for (in order):
-/wp-content/themes/foobar/path/to/template.php
-/wp-content/themes/twentysixteen/path/to/template.php
-*/
-```
-- Without the `clean()` the template comes wrapped in a standard Wordpress admin page wrapper:
-```html
-<div class="wrap">
-    Page Title
-    ...
-</div>
-```
+    ```php
+    //If you are in a twentysixteen child called "foobar"...
+    $v = new \WBF\components\mvc\HTMLView("path/to/template.php");
+    /* Will looking for (in order):
+    /wp-content/themes/foobar/path/to/template.php
+    /wp-content/themes/twentysixteen/path/to/template.php
+    */
+    ```
 - You can easily cache the $vars array to boost performances. The same task can be tedious with a simple `require`.
 - You can easily implement some other templating systems by extending View.
 
-### Use default page wrapper
+### Use dashboard page wrapper
 ```php
 $v = new \WBF\components\mvc\HTMLView("path/to/template.php");
-$v->display([
+$v->for_dashboars()->display([
     'page_title' => "My awesome title",
     'my_name' => "Maya"
 ]);
