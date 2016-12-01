@@ -1,5 +1,15 @@
 == Change log ==
 
+Version 1.0.1 - 12/01/2016
+---------------------------------
+- Fix: now Components correctly register their options in the same page rendering cycle in which they are
+- Fix: now Checkbox field is sanitized correctly
+- Tweak: added "wbf/modules/options/get_saved_options" filter that allows altering of get_saved_options() output.
+- Tweak: added "wbf/modules/components/options_sanitization_before_save" filter
+- Tweak: added "wbf/modules/components/on_activate" and "wbf/modules/components/on_deactivate" actions
+- Tweak: updated google font cache
+- Feature: added Utilities::recursive_array_diff() and Utilities::recursive_array_diff_assoc()
+
 Version 0.15.2 & 1.0.0 - 11/29/2016
 ---------------------------------
 - Fix: Default values of behaviors is now correctly retrieved in theme options page
