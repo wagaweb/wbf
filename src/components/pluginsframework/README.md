@@ -5,7 +5,7 @@ It supports a "convention over configuration" principle to keep the environment 
 
 ## Getting started
 
-You start the development of a new plugin either by extensing BasePlugin or TemplatePlugin. 
+You start the development of a new plugin either by extending BasePlugin or TemplatePlugin. 
 
 The latter makes available a set of methods to add theme-overridable templates to the plugin.
 
