@@ -9,7 +9,7 @@ The latter makes available a set of methods to add theme-overridable templates t
 
 ### Simple plugin
 
-You can check out [here](#) a barebone plugin.
+You can check out [here](https://github.com/wagaweb/wbf-sample-plugin) a barebone plugin.
 
 BasePlugin takes care of:
 
