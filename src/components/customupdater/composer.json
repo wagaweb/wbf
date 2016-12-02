@@ -17,8 +17,7 @@
   },
   "autoload": {
     "classmap": [
-      "vendor/theme-update-checker.php",
-      "vendor/yahnis-elsts/"
+      "vendor/theme-update-checker.php"
     ]
   }
 }
