@@ -73,4 +73,7 @@ Allows developers to create 'components'; a component is a self-contained and re
  
     Components can be used to reduce clutter in `functions.php` file by splitting specific functionality; by this way those functionality are even easier to debug.
      
-     Components can be also moved from one theme to another for a clean DRY (Don't Repeat Yourself) approach.
+     Components can be also moved from one theme to another for a clean DRY (**D**on't **R**epeat **Y**ourself) approach.
+     
+- **Behaviors**  
+Behaviors API allows developer to create metaboxes with default values specified as theme options; by this way you can contradict specific options on post basis.
