@@ -64,6 +64,28 @@ The Loader instance within Plugin will receive a reference to both Frontend and 
 
 A practical example can be found [here](https://github.com/wagaweb/wbf-sample-plugin/tree/standard-structure-base).
 
+If you have a complex plugin with many classes and files, you can choose to further split the structure:
+
+```
+.
+|-src/
+|---includes/
+|-----index.php
+|-----wbf-plugin-check-functions.php
+|---admin/
+|-----Admin.php
+|-----more-files...
+|-----more-files...
+|---frontend/
+|-----Frontend.php
+|-----more-files...
+|-----more-files...
+|---Plugin.php
+|-index.php
+|-waboot-sample.php
+```
+
+An example can be found [here](https://github.com/wagaweb/wbf-sample-plugin/tree/standard-structure-complex).
 
 ### Template plugin
 
