@@ -18,7 +18,7 @@ The quickest way to start developing with WBF is to install it as WordPress plug
 
 You can download the latest standalone version [here](http://update.waboot.org/resource/get/plugin/wbf) or clone this repo.
 
-In future version WBF will supports a composer-based installation.
+WBF Components can be installed on project basis via [composer](https://packagist.org/search/?q=wbf).
 
 ## WBF Components
 
