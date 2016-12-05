@@ -168,11 +168,20 @@ class Component {
 
 	    $orgzr->set_section($section_name);
 
+        do_action("wbf/modules/components/component/{$section_name}/register_options",$this,$section_name);
+        $custom_options = apply_filters("wbf/modules/components/component/{$section_name}/register_custom_options",[],$this,$section_name);
+        if(is_array($custom_options) && !empty($custom_options)){
+            foreach($custom_options as $opt){
+                $orgzr->add($opt,null,null,$additional_params);
+            }
+        }
+
 	    $orgzr->add(array(
 		    'name' => __( 'Enable on all pages', 'wbf' ),
 		    'desc' => __( 'Check this box to load the component in every page (load locations will be ignored).', 'wbf' ),
 		    'id'   => $this->name.'_enabled_for_all_pages',
 		    'std'  => '1',
+            'class' => 'enabled_for_all_pages full_option',
 		    'type' => 'checkbox',
 		    'component' => true
 	    ),null,null,$additional_params);
@@ -183,6 +192,7 @@ class Component {
 		    'id' => $this->name.'_load_locations',
 		    'name' => __('Load locations','wbf'),
 		    'desc' => __('You can load the component only into one ore more page types by selecting them from the list below', 'wbf'),
+            'class' => 'load_locations full_option',
 		    'type' => 'multicheck',
 		    'options' => $filter_locs,
 		    'component' => true
@@ -192,17 +202,11 @@ class Component {
 		    'id' => $this->name.'_load_locations_ids',
 		    'name' => __('Load locations by ID','wbf'),
 		    'desc' => __('You can load the component for specific pages by enter here the respective ids (comma separated)', 'wbf'),
+            'class' => 'load_locations_id full_option',
 		    'type' => 'text',
 		    'component' => true
 	    ),null,null,$additional_params);
 
-	    do_action("wbf/modules/components/component/{$section_name}/register_options",$this,$section_name);
-		$custom_options = apply_filters("wbf/modules/components/component/{$section_name}/register_custom_options",[],$this,$section_name);
-	    if(is_array($custom_options) && !empty($custom_options)){
-		    foreach($custom_options as $opt){
-			    $orgzr->add($opt,null,null,$additional_params);
-		    }
-	    }
 
 	    $orgzr->reset_group();
 	    $orgzr->reset_section();
