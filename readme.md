@@ -1,6 +1,6 @@
 # Waboot Framework
 
-WBF is a modular framework for WordPress which can speed up development time.
+WBF is a modular framework for WordPress which can speed up development.
 
 WBF is composed by different kind of parts: 
 
@@ -31,6 +31,8 @@ A number of tools for managing static assets.
     - Checking the actual existence of the asset and notify its absence.
     - Automatically assign a version number to assets (to avoid issues with caching systems)
     - Enqueue the assets during WordPress execution
+    
+    [Learn more](https://github.com/wagaweb/wbf/tree/master/src/components/assets)
 
 - **Breadcrumb**  
 Makes available a number of tools for managing breadcrumbs.
@@ -38,14 +40,20 @@ Makes available a number of tools for managing breadcrumbs.
 - **Compiler**  
 Allows the live compilations of LESS files (SASS will be available in the future) and the generation of CSS files based on templates. Useful to implement certain type of theme options.
 
+    [Learn more](https://github.com/wagaweb/wbf/tree/master/src/components/compiler)
+
 - **CustomUpdater**  
 Makes available a number of tools to implement custom updating systems for themes and plugins.
 
 - **License**  
 Allows the management of customizable licenses for plugins and themes.
  
+    [Learn more](https://github.com/wagaweb/wbf/tree/master/src/components/license) 
+ 
 - **MVC**  
 Allows developer to adopt a clean MVC pattern to templating.
+
+    [Learn more](https://github.com/wagaweb/wbf/tree/master/src/components/mvc)
 
 - **NavWalker**  
 A number of navwalker for WordPress menu. At the moment only a bootstrap-compatible walker is available.
@@ -56,10 +64,10 @@ Allows developer to centralize the management of dashboard notices.
 - **Plugins Framework**  
 A vast collection of classes with many build-in functionality to speed up plugin development.
 
+    [Learn more](https://github.com/wagaweb/wbf/tree/master/src/components/pluginsframework)
+
 - **Utils**  
 A toolbox of useful functions
-
-You can learn more about each components by reading their specific readme.
 
 ## WBF Modules
 
