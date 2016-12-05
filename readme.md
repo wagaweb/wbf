@@ -71,7 +71,7 @@ Allows developers to easily create a series of options that final users can use 
 - **Theme Components**  
 Allows developers to create 'components'; a component is a self-contained and reusable theme-specific functionality that can be enabled or disabled through a GUI.  
  
-    Components can be used to reduce clutter in `functions.php` file by splitting specific functionality; by this way those functionality are even easier to debug.
+    Components can be used to reduce clutter in `functions.php` file by splitting specific functionality; by this way these functionality are even easier to debug.
      
      Components can be also moved from one theme to another for a clean DRY (**D**on't **R**epeat **Y**ourself) approach.
      
