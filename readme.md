@@ -63,7 +63,7 @@ You can learn more about each components by reading their specific readme.
 
 ## WBF Modules
 
-To use modules functionality WBF has to be installed as plugin or embedded into a theme and initialized within the `functions.php` file.
+To use module APIs WBF has to be installed as plugin or embedded into a theme and initialized within the `functions.php` file.
 
 - **Theme Options**  
 Allows developers to easily create a series of options that final users can use to customize the theme.
