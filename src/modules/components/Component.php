@@ -254,7 +254,7 @@ class Component {
 	    $states[$this->name] = 1;
 	    ComponentsManager::update_components_state($states);
 
-        add_action( 'admin_notices', array($this,'activationNotice') );
+        Utilities::add_admin_notice("$this->name"."_activated",_ex( sprintf("Activated: %s",$this->name),"component", "wbf" ),"success");
         $this->register_options();
         add_action("wbf/theme_options/register", [$this,"register_options"]);
 	    $this->restore_theme_options();
@@ -269,7 +269,7 @@ class Component {
 	    ComponentsManager::update_components_state($states);
 
 		$this->backup_theme_options();
-        add_action( 'admin_notices', array($this,'deactivationNotice') );
+	    Utilities::add_admin_notice("$this->name"."_deactivated",_ex( sprintf("Deactivated: %s",$this->name),"component", "wbf" ),"success");
 
 	    do_action("wbf/modules/components/on_deactivate",$this);
     }
