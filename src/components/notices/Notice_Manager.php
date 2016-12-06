@@ -50,14 +50,16 @@ class Notice_Manager {
      * Enqueue the notices. WBF Plugin will hook this function to "init" callback, after "wbf_init".
      */
     function enqueue_notices(){
-        add_action( 'admin_notices', array($this,'show_notices'));
+        add_action( 'admin_notices', array($this,'show_automatic_notices'));
     }
 
     /**
      * Show the notices
      */
-    function show_notices(){
+    public function show_notices($type = "automatic"){
          foreach($this->notices as $id => $notice){
+            if($notice['manual_display'] && $type == "automatic") continue;
+            if(!$notice['manual_display'] && $type == "manual") continue;
             switch($notice['level']){
                 case 'updated':
                 case 'success':
@@ -89,6 +91,14 @@ class Notice_Manager {
         }
     }
 
+    function show_automatic_notices(){
+        $this->show_notices("automatic");
+    }
+
+    function show_manual_notices(){
+        $this->show_notices("manual");
+    }
+
     private function get_notices(){
         $notices = get_option("wbf_admin_notices",array());
         return $notices;
@@ -103,15 +113,17 @@ class Notice_Manager {
 	 * @param String $category (can be anything. Categories are used to group notices for easy clearing them later. If the category is set to "_flash_", however, the notice will be cleared after displaying.
 	 * @param null|String $condition a class name that implements Condition interface
 	 * @param null|mixed $cond_args parameters to pass to $condition constructor
+	 * @param bool $manual_display if TRUE, the notice will not be displayed at "admin_notices" hook.
 	 */
-	function add_notice($id,$message,$level,$category = 'base', $condition = null, $cond_args = null){
+	function add_notice($id,$message,$level,$category = 'base', $condition = null, $cond_args = null, $manual_display = false){
         $notices = $this->get_notices();
         $notices[$id] = array(
             'message' => $message,
             'level'   => $level,
             'category' => $category,
             'condition' => $condition,
-            'condition_args' => $cond_args
+            'condition_args' => $cond_args,
+            'manual_display' => $manual_display,
         );
         $this->notices = $notices;
         $this->update_notices($notices);
