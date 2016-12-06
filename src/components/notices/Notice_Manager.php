@@ -62,7 +62,7 @@ class Notice_Manager {
             if(!$notice['manual_display'] && $type == "manual") continue;
 
             /*
-             * LOL! We need "inline" class for manual notices because WordPress automatically append notices without this class after the first h1, see: wp-admin/js/common.js:400
+             * LOL! We need "inline" class for manual notices because WordPress automatically append notices without this class after the first .wrap h1 or the first .wrap h2, see: wp-admin/js/common.js:400
              */
 
             switch($notice['level']){
