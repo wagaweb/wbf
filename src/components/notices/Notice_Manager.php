@@ -60,18 +60,23 @@ class Notice_Manager {
          foreach($this->notices as $id => $notice){
             if($notice['manual_display'] && $type == "automatic") continue;
             if(!$notice['manual_display'] && $type == "manual") continue;
+
+            /*
+             * LOL! We need "inline" class for manual notices because WordPress automatically append notices without this class after the first h1, see: wp-admin/js/common.js:400
+             */
+
             switch($notice['level']){
                 case 'updated':
                 case 'success':
                     ?>
-                    <div class="updated">
+                    <div class="updated <?php if($notice['manual_display']): ?>inline<?php endif; ?>">
                         <p><?php echo $notice['message']; ?></p>
                     </div>
                     <?php
                     break;
                 case 'error':
                     ?>
-                    <div class="error">
+                    <div class="error <?php if($notice['manual_display']): ?>inline<?php endif; ?>">
                         <p><?php echo $notice['message']; ?></p>
                     </div>
                     <?php
@@ -79,7 +84,7 @@ class Notice_Manager {
                 case 'nag':
                 case 'warning':
                     ?>
-                    <div class="update-nag">
+                    <div class="update-nag <?php if($notice['manual_display']): ?>inline<?php endif; ?>">
                         <p><?php echo $notice['message']; ?></p>
                     </div>
                     <?php
