@@ -254,7 +254,7 @@ class Component {
 	    $states[$this->name] = 1;
 	    ComponentsManager::update_components_state($states);
 
-        Utilities::add_admin_notice("$this->name"."_activated",_ex( sprintf("Activated: %s",$this->name),"component", "wbf" ),"success");
+        Utilities::add_admin_notice("$this->name"."_activated",_x( sprintf("Activated: %s",$this->name),"component", "wbf" ),"success",['manual_display' => true]);
         $this->register_options();
         add_action("wbf/theme_options/register", [$this,"register_options"]);
 	    $this->restore_theme_options();
@@ -269,25 +269,9 @@ class Component {
 	    ComponentsManager::update_components_state($states);
 
 		$this->backup_theme_options();
-	    Utilities::add_admin_notice("$this->name"."_deactivated",_ex( sprintf("Deactivated: %s",$this->name),"component", "wbf" ),"success");
+	    Utilities::add_admin_notice("$this->name"."_deactivated",_x( sprintf("Deactivated: %s",$this->name),"component", "wbf" ),"success",['manual_display' => true]);
 
 	    do_action("wbf/modules/components/on_deactivate",$this);
-    }
-
-    public function activationNotice(){
-        ?>
-        <div class="updated">
-            <p><?php _ex( sprintf("Activated: %s",$this->name),"component", "wbf" ); ?></p>
-        </div>
-        <?php
-    }
-
-    public function deactivationNotice(){
-        ?>
-        <div class="updated">
-            <p><?php _ex( sprintf("Deactivated: %s",$this->name),"component", "wbf" ); ?></p>
-        </div>
-        <?php
     }
 
     /**
