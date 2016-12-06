@@ -1,15 +1,9 @@
 <?php use WBF\modules\components\ComponentFactory;
 use WBF\modules\components\GUI;
+?>
 
-if($last_error): ?>
-	<div class="error">
-		<p><?php echo $last_error; ?></p>
-	</div>
-<?php elseif($options_updated_flag) : ?>
-	<div class="updated">
-		<p><?php _ex("Options updated successfully","Component Page","wbf"); ?></p>
-	</div>
-<?php endif; ?>
+<?php WBF()->notice_manager->show_manual_notices(); ?>
+
 <?php if(count($registered_components) <= 0) : ?>
 <div class="wrap">
 	<h2><?php _e("Components", "wbf"); ?></h2>
@@ -18,6 +12,7 @@ if($last_error): ?>
 	</p>
 </div>
 <?php return; endif; ?>
+
 <div id="componentframework-wrapper" class="wrap" data-components-gui>
 	<div class="componentframework-header">
 		<h2><?php _e("Components", "wbf"); ?></h2>
