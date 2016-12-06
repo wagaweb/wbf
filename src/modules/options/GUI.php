@@ -100,7 +100,8 @@ class GUI{
 
 			            $output .= $group_wrapper_start->get([
 			                'count' => $counter,
-				            'class' => $class
+				            'class' => $class,
+				            'section_id' => $section_id
 			            ]);
 		            }
 
