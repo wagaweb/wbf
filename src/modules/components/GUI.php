@@ -3,6 +3,7 @@
 namespace WBF\modules\components;
 
 use WBF\components\mvc\HTMLView;
+use WBF\components\utils\Utilities;
 use WBF\modules\components\ComponentsManager;
 use WBF\modules\options\Framework;
 use WBF\modules\options\Organizer;
@@ -66,6 +67,8 @@ class GUI {
 				}
 
 				$options_updated_flag = true;
+				
+				Utilities::add_admin_notice("options_updated",_x("Options updated successfully","Component Page","wbf"),"success",['manual_display' => true]);
 			}
 		}
 
@@ -107,6 +110,11 @@ class GUI {
 			}
 			return $a < $b ? - 1 : 1;
 		});
+		
+		//Checking for errors
+		if( ( isset( $_GET['enable'] ) || isset( $_GET['disable'] ) ) && ! empty( ComponentsManager::$last_error ) ){
+			Utilities::add_admin_notice("options_updated",ComponentsManager::$last_error,"error",['manual_display' => true]);
+		}
 
 		$v = new HTMLView( "src/modules/components/views/components-page.php", "wbf");
 		$v->clean()->display([
