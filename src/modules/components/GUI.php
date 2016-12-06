@@ -108,7 +108,7 @@ class GUI {
 			return $a < $b ? - 1 : 1;
 		});
 
-		$v = new HTMLView( "src/modules/components/views/components_page.php", "wbf");
+		$v = new HTMLView( "src/modules/components/views/components-page.php", "wbf");
 		$v->clean()->display([
 			'registered_components'             => $registered_components,
 			'categorized_registered_components' => $categorized_registered_components,
