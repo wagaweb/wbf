@@ -373,10 +373,11 @@ class Utilities{
 		$args = wp_parse_args($args,[
 			"category" => '_flash_',
 			"condition" => null,
-			"cond_args" => null
+			"cond_args" => null,
+			"manual_display" => false
 		]);
 
-		$wbf_notice_manager->add_notice($id,$message,$level,$args['category'],$args['condition'],$args['cond_args']);
+		$wbf_notice_manager->add_notice($id,$message,$level,$args['category'],$args['condition'],$args['cond_args'],$args['manual_display']);
 	}
 
 	/**
