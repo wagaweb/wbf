@@ -64,9 +64,9 @@ class MediaUploader extends BaseField implements Field {
 			$output .= '<p><i>' . __( 'Upgrade your version of WordPress for full media support.', 'textdomain' ) . '</i></p>';
 		}
 
-		if ( $this->get_description() != '' ) {
+		/*if ( $this->get_description() != '' ) {
 			$output .= '<span class="of-metabox-desc">' . $this->get_description() . '</span>' . "\n";
-		}
+		}*/
 		// insert thumbnail
 
 
