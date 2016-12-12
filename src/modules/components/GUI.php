@@ -86,11 +86,18 @@ class GUI {
 
 		//Let's categorize the components
 		$categorized_registered_components = [];
+		$component_categories_weights = [];
 		foreach ($registered_components as $c){
 			if(isset($c->category)){
 				$categorized_registered_components[$c->category][$c->name] = $c;
+				if(!array_key_exists($c->category,$component_categories_weights)){
+					$component_categories_weights[$c->category] = 10;
+				}
 			}else{
 				$categorized_registered_components["_uncategorized"][$c->name] = $c;
+				if(!array_key_exists("_uncategorized",$component_categories_weights)){
+					$component_categories_weights["_uncategorized"] = 10;
+				}
 			}
 		}
 		//...And sort them among categories
@@ -102,6 +109,18 @@ class GUI {
 				return $a < $b ? - 1 : 1;
 			});
 		}
+
+		//Sort by categories
+		$component_categories_weights = apply_filters("wbf/modules/components/categories_weights",$component_categories_weights);
+		uksort($categorized_registered_components,function($a,$b) use($component_categories_weights){
+			if($component_categories_weights[$a] < $component_categories_weights[$b]){
+				return -1;
+			}elseif($component_categories_weights[$a] > $component_categories_weights[$b]){
+				return 1;
+			}else{
+				return 0;
+			}
+		});
 
 		//Sort the un-categorized components array
 		uksort($registered_components, function($a, $b){
