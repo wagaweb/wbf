@@ -322,6 +322,9 @@ class Component {
 		$component_options_backup = get_option("wbf_component_options_backup",[]);
 		if(isset($component_options_backup[$this->name])){
 			$current_options = Framework::get_options_values();
+			if(!is_array($current_options)){
+				$current_options = [];
+			}
 			return Framework::update_theme_options(array_merge($current_options,$component_options_backup[$this->name]));
 		}else{
 			return false;
