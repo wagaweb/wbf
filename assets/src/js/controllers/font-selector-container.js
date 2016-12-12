@@ -2,18 +2,18 @@ module.exports = {
 
     appendSelect: function (selector, template) {
         selector
-            .closest('#section-fonts')
+            .closest('[data-section]')
             .find('[data-font-selector]')
             .append(template);
     },
     appendContainer: function (selector, template) {
         selector
-            .closest('#section-fonts')
+            .closest('[data-section]')
             .append(template);
     },
     appendFontAssigner: function (selector, template) {
         selector
-            .closest('#section-fonts')
+            .closest('[data-section]')
             .append(template);
     },
     appendAssignContainer: function (selector, template) {
