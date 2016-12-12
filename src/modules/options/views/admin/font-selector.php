@@ -21,16 +21,16 @@
 
 		<% _.each(fonts,function(el){ %>
 		<% if(el.family == selected_font){ %>
-        <div class="font-subset-wrap">
-		<% _.each(el.subsets, function(subset){ %>
-		<% if( typeof selected_charset !== "undefined" && selected_charset.indexOf(subset) != -1){ %>
-		<input type="checkbox" checked="checked" class="font-subset-checkbox" name="<%= optionName %>[import][<%= counter %>][subset][]" value="<%= subset %>"/> <%= subset %>
-		<% } else { %>
-		<input type="checkbox" class="font-subset-checkbox" name="<%= optionName %>[import][<%= counter %>][subset][]" value="<%= subset %>"/> <%= subset %>
-		<% } %>
-		<% }) %>
-        </div>
-		<% } %>
+            <div class="font-subset-wrap">
+                <% _.each(el.subsets, function(subset){ %>
+                <% if( typeof selected_charset !== "undefined" && selected_charset.indexOf(subset) != -1){ %>
+                <input type="checkbox" checked="checked" class="font-subset-checkbox" name="<%= optionName %>[import][<%= counter %>][subset][]" value="<%= subset %>"/> <%= subset %>
+                <% } else { %>
+                <input type="checkbox" class="font-subset-checkbox" name="<%= optionName %>[import][<%= counter %>][subset][]" value="<%= subset %>"/> <%= subset %>
+                <% } %>
+                <% }) %>
+            </div>
+            <% } %>
 		<% }) %>
 		<div class="font-weight-selector" data-font-weight-selector>
 			<% _.each(fonts,function(el){ %>
