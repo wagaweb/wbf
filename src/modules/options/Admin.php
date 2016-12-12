@@ -381,6 +381,7 @@ class Admin{
     function display_options_page() {
 		$v = new HTMLView("src/modules/options/views/admin/options-page.php","wbf");
 		$v->clean()->display([
+			'page_title' => _x("Theme Options","Theme Options page title","wbf"),
 			'menu' => $this->menu_settings(),
 			'tabs' => GUI::get_tabs(),
 		]);

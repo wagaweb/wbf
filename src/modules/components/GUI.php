@@ -137,6 +137,7 @@ class GUI {
 
 		$v = new HTMLView( "src/modules/components/views/components-page.php", "wbf");
 		$v->clean()->display([
+			'page_title'                        => _x("Components","Components page title","wbf"),
 			'registered_components'             => $registered_components,
 			'categorized_registered_components' => $categorized_registered_components,
 			'compiled_components_options'       => $compiled_components_options,
