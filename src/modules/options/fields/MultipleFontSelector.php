@@ -42,7 +42,7 @@ class MultipleFontSelector extends BaseField implements Field {
 		}
 
 		// start the section
-		$output .= '<div class="section font-selector" data-font-selector>';
+		$output .= '<div class="font-selector" data-font-selector>';
 
 		if (!empty($val)) {
 			$output .= $this->selectedOutput();
