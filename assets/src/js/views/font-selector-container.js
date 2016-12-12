@@ -65,7 +65,7 @@ module.exports = {
                             objAssignedFonts = JSON.parse(jsonAssignedFonts);
 
                         // retrieve user selected weight
-                        var wrapper = button.closest('#section-fonts'),
+                        var wrapper = button.closest('[data-section]'),
                             fontWeights = {},
                             sel = wrapper.find("[data-fontlist]"); // these are the fonts <select>
 
@@ -104,12 +104,12 @@ module.exports = {
         button.on('click', function(e) {
             e.preventDefault();
 
-            if (button.closest('#section-fonts').find(".all-fonts-select").length == 0) {
+            if (button.closest('[data-section]').find(".all-fonts-select").length == 0) {
                 counter = 1;
             }
             // if is the first time we click append all the div we need
             if (counter == 1) {
-                var $new_el = $("<div class='section'><div data-font-assign></div></div>");
+                var $new_el = $("<div class='font-assign-wrapper'><div data-font-assign></div></div>");
                 controller.appendContainer($(this), $new_el);
 
                 $.each(cssSelectors, function (i, selector) {
