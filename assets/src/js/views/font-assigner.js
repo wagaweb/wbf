@@ -27,7 +27,7 @@ module.exports = Backbone.View.extend({
     render: function(rebind_actions){
         var self = this,
             $ = jQuery,
-            wrapper = $(this.$el).closest('#section-fonts'),
+            wrapper = $(this.$el).closest('[data-section]'),
             container = this.model.get("container");
 
         if(typeof rebind_actions == "undefined"){
@@ -67,7 +67,7 @@ module.exports = Backbone.View.extend({
                 // if is the last select remove also the assigner
                 if (wrapper.find(".all-fonts-select").length == 0) {
                     var fontassign = wrapper.find("[data-font-assign]");
-                    fontassign.closest('.section').remove();
+                    fontassign.closest('.font-assign-wrapper').remove();
                 }
             } else if ( $(e.target).hasClass('font-weight-checkbox')){
                 self.model.updateFontWeights(e.target);
