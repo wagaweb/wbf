@@ -176,37 +176,40 @@ class Component {
             }
         }
 
-	    $orgzr->add(array(
-		    'name' => __( 'Enable on all pages', 'wbf' ),
-		    'desc' => __( 'Check this box to load the component in every page (load locations will be ignored).', 'wbf' ),
-		    'id'   => $this->name.'_enabled_for_all_pages',
-		    'std'  => '1',
-            'class' => 'enabled_for_all_pages full_option',
-		    'type' => 'checkbox',
-		    'component' => true
-	    ),null,null,$additional_params);
-
 	    $filter_locs = array_merge(array("front"=>"Frontpage","home"=>"Blog"),wbf_get_filtered_post_types());
 
-	    $orgzr->add(array(
-		    'id' => $this->name.'_load_locations',
-		    'name' => __('Load locations','wbf'),
-		    'desc' => __('You can load the component only into one ore more page types by selecting them from the list below', 'wbf'),
-            'class' => 'load_locations full_option',
-		    'type' => 'multicheck',
-		    'options' => $filter_locs,
-		    'component' => true
-	    ),null,null,$additional_params);
+        $component_default_options = [
+        	'enable_on_all_pages' => [
+		        'name' => __( 'Enable on all pages', 'wbf' ),
+		        'desc' => __( 'Check this box to load the component in every page (load locations will be ignored).', 'wbf' ),
+		        'id'   => $this->name.'_enabled_for_all_pages',
+		        'std'  => '1',
+		        'class' => 'enabled_for_all_pages',
+		        'type' => 'checkbox'
+	        ],
+        	'load_locations' => [
+		        'id' => $this->name.'_load_locations',
+		        'name' => __('Load locations','wbf'),
+		        'desc' => __('You can load the component only into one ore more page types by selecting them from the list below', 'wbf'),
+		        'class' => 'load_locations',
+		        'type' => 'multicheck',
+		        'options' => $filter_locs,
+	        ],
+        	'load_locations_ids' => [
+		        'id' => $this->name.'_load_locations_ids',
+		        'name' => __('Load locations by ID','wbf'),
+		        'desc' => __('You can load the component for specific pages by enter here the respective ids (comma separated)', 'wbf'),
+		        'class' => 'load_locations_id',
+		        'type' => 'text',
+	        ],
+        ];
 
-	    $orgzr->add(array(
-		    'id' => $this->name.'_load_locations_ids',
-		    'name' => __('Load locations by ID','wbf'),
-		    'desc' => __('You can load the component for specific pages by enter here the respective ids (comma separated)', 'wbf'),
-            'class' => 'load_locations_id full_option',
-		    'type' => 'text',
-		    'component' => true
-	    ),null,null,$additional_params);
+        $component_default_options = apply_filters("wbf/modules/components/component/default_options",$component_default_options,$this);
 
+        foreach ($component_default_options as $k => $v){
+	        $component_default_options[$k]['component'] = true;
+	        $orgzr->add($component_default_options[$k],null,null,$additional_params);
+        }
 
 	    $orgzr->reset_group();
 	    $orgzr->reset_section();
