@@ -124,7 +124,7 @@ use WBF\modules\components\GUI;
 					<!-- Active components tabs -->
 					<?php foreach($registered_components as $comp_data): if(!\WBF\modules\components\ComponentsManager::is_active($comp_data)) continue; ?>
 						<?php $data = ComponentFactory::get_component_data( $comp_data->file ); ?>
-						<div id="component-<?php echo $comp_data->name; ?>" class="group" style="display: none;" data-fieldgroup>
+						<div id="component-<?php echo $comp_data->name; ?>" class="group" style="display: none;" data-fieldgroup="component-<?php echo $comp_data->name; ?>">
 							<h3><?php _e(sprintf("%s Settings",isset($data['Name']) ? $data['Name'] : ucfirst($comp_data->name)),"wbf"); ?></h3>
 							<?php \WBF\modules\options\GUI::print_fields($compiled_components_options[$comp_data->name]); ?>
 						</div>

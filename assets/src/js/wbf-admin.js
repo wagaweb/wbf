@@ -3,7 +3,6 @@ import $ from "jquery";
 
 import * as custom_acf_fields from "./acf-fields/custom_fields";
 
-import ComponentsPageView from "./components/component-page";
 import OptionsPageView from "./components/options-page";
 import {MediaUploaderView} from "./components/options-fields/media-uploader";
 import CodeEditorView from "./components/options-fields/code-editor";
@@ -18,46 +17,40 @@ jQuery(document).ready(function($) {
         }
     });
 
-    //Init options page
-    if(wbfData.wp_screen.base.match(/wbf_options/)){
-        OptionsPageView.init();
-    }
-
-    //Init component page
-    if(wbfData.wp_screen.base.match(/wbf_components/)){
-        ComponentsPageView.init();
-    }
-
     //Init options fields components
     if(wbfData.wp_screen.base.match(/wbf_options/) || wbfData.wp_screen.base.match(/wbf_components/)){
         //Init Code Editor
         CodeEditorView.init();
+
         //Init Multiple Font Selector
+        let getFonts = function(){
+            // ajax call for wordpress
+            return $.ajax(wbfData.ajaxurl,{
+                data: { action: 'getFontsForAjax' },
+                dataType: 'json',
+                method: 'POST'
+            })
+                .done(function(data, textStatus, jqXHR){
+                    console.log('fonts retrieved');
+                })
+                .fail(function(jqXHR, textStatus, errorThrown){
+                    alert(errorThrown);
+                })
+                .always(function(result, textStatus, type){
+                    return result;
+                });
+        };
         getFonts().then(function(fontsData){
             MultipleFontSelectorView.init(fontsData);
         });
+
         //Init Media Uploader
         MediaUploaderView.init();
+
+        //Finally, init Options page
+        OptionsPageView.init();
     }
 
     //Init behavior view
     BehaviorMetaboxesView.init();
-
-    function getFonts(){
-        // ajax call for wordpress
-        return $.ajax(wbfData.ajaxurl,{
-            data: { action: 'getFontsForAjax' },
-            dataType: 'json',
-            method: 'POST'
-        })
-            .done(function(data, textStatus, jqXHR){
-                console.log('fonts retrieved');
-            })
-            .fail(function(jqXHR, textStatus, errorThrown){
-                alert(errorThrown);
-            })
-            .always(function(result, textStatus, type){
-                return result;
-            });
-    }
 });
