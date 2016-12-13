@@ -1,6 +1,7 @@
 module.exports = Backbone.View.extend({
     template: _.template(jQuery('#font-select-tpl').html()),
     initialize: function(options){
+        this.template =
 
         //set variables
         this.model.set("selected_font",options.selectedFont);

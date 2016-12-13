@@ -1,4 +1,3 @@
-import * as Backbone from "backbone";
 import * as _ from "underscore";
 import $ from "jquery";
 
@@ -8,6 +7,7 @@ import ComponentsPageView from "./components/component-page";
 import OptionsPageView from "./components/options-page";
 import {MediaUploaderView} from "./components/options-fields/media-uploader";
 import CodeEditorView from "./components/options-fields/code-editor";
+import {MultipleFontSelectorView} from "./components/options-fields/multiple-font-selector"
 import BehaviorMetaboxesView from "./components/behavior"
 
 jQuery(document).ready(function($) {
@@ -34,9 +34,7 @@ jQuery(document).ready(function($) {
         CodeEditorView.init();
         //Init Multiple Font Selector
         getFonts().then(function(fontsData){
-            let multi_font_selector_controller = require("./controllers/font-selector-container.js"),
-                multi_font_selector_view = require("./views/font-selector-container.js");
-            multi_font_selector_view.init_interface(multi_font_selector_controller, fontsData);
+            MultipleFontSelectorView.init(fontsData);
         });
         //Init Media Uploader
         MediaUploaderView.init();
