@@ -1,19 +1,15 @@
-module.exports = {
-    init_interface: function(my_controller){
-        "use strict";
-        var $ = jQuery;
-
-        var controller = my_controller;
-
+class SingleFontSelectorView{
+    static init(){
         $(".font-family-selector").on("change",function(){
-            var $familySeletor = $(this);
-            var $styleSelector = $(this).siblings(".font-style-selector");
-            var styleOptName = $styleSelector.find('input:first').attr("name");
-            var $charsetSelector = $(this).siblings(".font-charset-selector");
-            var charsetOptName = $charsetSelector.find('input:first').attr("name");
-            var $categoryInput = $(this).siblings(".font-category-selector");
-            var $fontPreview = $(this).siblings(".font-preview");
-            var request = $.ajax({
+            let $familySeletor = $(this),
+                $styleSelector = $(this).siblings(".font-style-selector"),
+                styleOptName = $styleSelector.find('input:first').attr("name"),
+                $charsetSelector = $(this).siblings(".font-charset-selector"),
+                charsetOptName = $charsetSelector.find('input:first').attr("name"),
+                $categoryInput = $(this).siblings(".font-category-selector"),
+                $fontPreview = $(this).siblings(".font-preview");
+
+            let request = $.ajax({
                 url: ajaxurl,
                 type: "POST",
                 data: {
@@ -31,7 +27,7 @@ module.exports = {
                 console.log(data);
                 //Load GFonts and set the preview
                 if(data.kind == "webfonts#webfont"){
-                    controller.loadWebFonts([$familySeletor.val()]);
+                    SingleFontSelectorController.loadWebFonts([$familySeletor.val()]);
                 }
                 $fontPreview.find("p").css("font-family","'"+data.family+"',"+data.category);
                 //Assign new styles to the html select
@@ -63,4 +59,18 @@ module.exports = {
             });
         });
     }
-};
+}
+
+class SingleFontSelectorController{
+    static loadWebFonts(families){
+        if(!_.isEmpty(families)){
+            WebFont.load({
+                google: {
+                    families: families
+                }
+            });
+        }
+    }
+}
+
+export { SingleFontSelectorView };
