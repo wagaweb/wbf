@@ -1,14 +1,10 @@
-import * as Backbone from "backbone";
-import * as _ from "underscore";
 import $ from "jquery";
 
 export default class{
+    /**
+     * Init theme options and components interface
+     */
     static init(){
-        /*
-         * Custom scripts needed for the colorpicker, image button selectors,
-         * and navigation tabs.
-         */
-        let $ = jQuery;
         let of_elements = {
             'color': $('.of-color'),
             'advanced_color': $(".advanced-color"),
@@ -51,6 +47,13 @@ export default class{
             this.init_components_navigation($components_wrapper,"wbf_components_active_tab");
         }
     }
+
+    /**
+     * Init component page navigation
+     *
+     * @param $wrapper
+     * @param localStorage_var_name
+     */
     static init_components_navigation($wrapper,localStorage_var_name){
         let $tabs_links = $wrapper.find('[data-nav] a');
         let $tabs_first_link = $wrapper.find('[data-nav] a:first');
@@ -58,7 +61,7 @@ export default class{
         let $main_tab_link = $wrapper.find("[data-show-comp-settings='component-main']");
 
         // Hides all the groups sections to start
-        $('section[data-fieldgroup]').hide();
+        $('[data-fieldgroup]').hide();
 
         // Find if a selected tab is saved in localStorage
         let active_tab = this.get_active_tab(localStorage_var_name);
@@ -98,6 +101,13 @@ export default class{
             self.reinit_wp_editor();
         });
     }
+
+    /**
+     * Init theme options page navigation
+     *
+     * @param $wrapper
+     * @param localStorage_var_name
+     */
     static init_theme_options_navigation($wrapper,localStorage_var_name){
         let $tabs_links = $wrapper.find('[data-nav] a');
         let $tabs_first_link = $wrapper.find('[data-nav] a:first');
@@ -138,6 +148,13 @@ export default class{
             self.reinit_wp_editor();
         });
     }
+
+    /**
+     * Get the active tab from local storage
+     *
+     * @param localStorage_var_name
+     * @returns {string}
+     */
     static get_active_tab(localStorage_var_name){
         // Find if a selected tab is saved in localStorage
         let active_tab = '';
@@ -149,6 +166,10 @@ export default class{
         }
         return active_tab;
     }
+
+    /**
+     * Make some adjustment to any wp-editor
+     */
     static reinit_wp_editor(){
         // Editor height sometimes needs adjustment when unhidden
         $('.wp-editor-wrap').each(function() {
