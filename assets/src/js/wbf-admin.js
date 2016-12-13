@@ -1,46 +1,49 @@
+import * as Backbone from "backbone";
+import * as _ from "underscore";
+import $ from "jquery";
+
+import * as custom_acf_fields from "./acf-fields/custom_fields";
+
+import ComponentsPageView from "./components/component-page";
+import OptionsPageView from "./components/options-page";
+import {MediaUploaderView} from "./components/options-fields/media-uploader";
+import CodeEditorView from "./components/options-fields/code-editor";
+import BehaviorMetaboxesView from "./components/behavior"
+
 jQuery(document).ready(function($) {
     //Init ACF Custom Fields
-    var acf_fields_views = require("./views/acf-fields.js");
-    _.each(acf_fields_views,function(element,index,list){
+    _.each(custom_acf_fields,function(element,index,list){
         if(!_.isUndefined(element.init_interface)){
             element.init_interface();
         }
     });
 
-    //Init component page
-    if(wbfData.wp_screen.base.match(/wbf_components/)){
-        var component_page_view = require("./views/component-page.js");
-        component_page_view.init_interface();
+    //Init options page
+    if(wbfData.wp_screen.base.match(/wbf_options/)){
+        OptionsPageView.init();
     }
 
+    //Init component page
+    if(wbfData.wp_screen.base.match(/wbf_components/)){
+        ComponentsPageView.init();
+    }
+
+    //Init options fields components
     if(wbfData.wp_screen.base.match(/wbf_options/) || wbfData.wp_screen.base.match(/wbf_components/)){
-        //Init code editor view
-        var code_editor_view = require("./views/code-editor.js");
-        code_editor_view.init_interface();
-        //Init font selector
-        /*if(!_.isUndefined(wbfData.wbfOfFonts)){
-            var font_selector_controller = require("./controllers/font-selector.js"),
-                font_selector_view = require("./views/font-selector.js");
-            font_selector_controller.loadWebFonts(wbfData.wbfOfFonts.families);
-            font_selector_view.init_interface(font_selector_controller);
-        }*/
-        // init multiple font selector
+        //Init Code Editor
+        CodeEditorView.init();
+        //Init Multiple Font Selector
         getFonts().then(function(fontsData){
-            var multi_font_selector_controller = require("./controllers/font-selector-container.js"),
+            let multi_font_selector_controller = require("./controllers/font-selector-container.js"),
                 multi_font_selector_view = require("./views/font-selector-container.js");
             multi_font_selector_view.init_interface(multi_font_selector_controller, fontsData);
         });
-        //Init media uploader
-        var media_uploader = require("./controllers/media-uploader");
-        media_uploader.init();
-        //Init options custom
-        var options_custom = require("./controllers/options-custom");
-        options_custom.init();
+        //Init Media Uploader
+        MediaUploaderView.init();
     }
 
     //Init behavior view
-    var behavior_view = require("./views/behavior.js");
-    behavior_view.init_interface();
+    BehaviorMetaboxesView.init();
 
     function getFonts(){
         // ajax call for wordpress
