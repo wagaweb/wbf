@@ -54,7 +54,7 @@ module.exports = {
             var is_components_window = localStorage_var_name == "wbf_components_active_tab";
 
             // Hides all the .group sections to start
-            $('[data-fieldgroup]').hide();
+            $('section[data-category]').hide();
 
             // Find if a selected tab is saved in localStorage
             var active_tab = '';
@@ -66,14 +66,14 @@ module.exports = {
             }
 
             // If active tab is saved and exists, load it's .group
-            if (active_tab != '' && $(active_tab).length && active_tab != '#component-main' ) {
-                $(active_tab).fadeIn();
-                $(active_tab + '-tab').addClass('nav-tab-active');
+            if (active_tab != '' && $('section[data-category='+active_tab+']').length > 0 && active_tab != '#component-main' ) {
+                $('section[data-category='+active_tab+']').fadeIn();
+                $tabs_links.filter('[data-category='+active_tab+']').addClass('nav-tab-active');
                 if(is_components_window){
                     $components_list.hide();
                 }
             } else if(!is_components_window) {
-                $('[data-fieldgroup]:first').fadeIn();
+                $('section[data-category]:first').fadeIn();
                 $tabs_first_link.addClass('nav-tab-active');
             }
 
@@ -87,14 +87,14 @@ module.exports = {
 
                 $(this).addClass('nav-tab-active').blur();
 
-                var group = $(this).attr('href');
+                var category = $(this).data('category');
 
                 if (typeof(localStorage) != 'undefined' ) {
-                    localStorage.setItem(localStorage_var_name, $(this).attr('href') ); //Store the active tab on click (this will be saved with # included)
+                    localStorage.setItem(localStorage_var_name, category ); //Store the active tab on click (this will be saved with # included)
                 }
 
-                $('[data-fieldgroup]').hide();
-                $(group).fadeIn();
+                $('section[data-category]').hide();
+                $('section[data-category='+category+']').fadeIn();
 
                 // Editor height sometimes needs adjustment when unhidden
                 $('.wp-editor-wrap').each(function() {

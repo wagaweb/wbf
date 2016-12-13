@@ -4,11 +4,11 @@ module.exports = {
             $ = jQuery;
 
         $('.remove-image, .remove-file').on('click', function() {
-            remove_file( $(this).parents('.section') );
+            remove_file( $(this).parents('[data-section]') );
         });
 
         $('.upload-button').click( function( event ) {
-            add_file(event, $(this).parents('.section'));
+            add_file(event, $(this).parents('[data-section]'));
         });
 
         /**
@@ -59,7 +59,7 @@ module.exports = {
                     $field_container.find('.upload-button').unbind().addClass('remove-file').removeClass('upload-button').val(wbfData.of_media_uploader.remove);
                     $field_container.find('.of-background-properties').slideDown();
                     $field_container.find('.remove-image, .remove-file').on('click', function() {
-                        remove_file( $(this).parents('.section') );
+                        remove_file( $(this).parents('[data-section]') );
                     });
                 });
 

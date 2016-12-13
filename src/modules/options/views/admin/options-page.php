@@ -13,7 +13,7 @@
 						$class = !empty( $value['id'] ) ? $value['id'] : $value['name'];
 						$class = preg_replace( '/[^a-zA-Z0-9._\-]/', '', strtolower($class) ) . '-tab';
 					?>
-					<li><a id="options-group-<?php echo $counter; ?>-tab" class="nav-tab <?php echo $class ?>" title="<?php echo esc_attr( $value['name'] ) ?>" href="<?php echo esc_attr( '#options-group-'.  $counter ) ?>"><?php echo esc_html( $value['name'] ); ?></a></li>
+					<li><a id="options-category-<?php echo $counter; ?>-tab" class="nav-tab <?php echo $class ?>" title="<?php echo esc_attr( $value['name'] ) ?>" href="<?php echo esc_attr( '#options-category-'.  $counter ) ?>" data-category="category-<?php echo $counter; ?>"><?php echo esc_html( $value['name'] ); ?></a></li>
 				<?php endforeach; ?>
 			</ul>
 		</div>
