@@ -89,4 +89,5 @@ An example can be found [here](https://github.com/wagaweb/wbf-sample-plugin/tree
 
 ### Template plugin
 
-...
+Plugins that extends TemplatePlugin can include template files hooked into WordPress template hierarchy (so themes can override them).
+
