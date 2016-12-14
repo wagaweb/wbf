@@ -76,12 +76,21 @@ To use module APIs WBF has to be installed as plugin or embedded into a theme an
 - **Theme Options**  
 Allows developers to easily create a series of options that final users can use to customize the theme.
 
+    [Learn more](https://github.com/wagaweb/wbf/tree/master/src/modules/options)
+
 - **Theme Components**  
 Allows developers to create 'components'; a component is a self-contained and reusable theme-specific functionality that can be enabled or disabled through a GUI.  
  
     Components can be used to reduce clutter in `functions.php` file by splitting specific functionality; by this way these functionality are even easier to debug.
      
-     Components can be also moved from one theme to another for a clean DRY (**D**on't **R**epeat **Y**ourself) approach.
+    Components can be also moved from one theme to another for a clean DRY (**D**on't **R**epeat **Y**ourself) approach.
+
+    [Learn more](https://github.com/wagaweb/wbf/tree/master/src/modules/components)
      
 - **Behaviors**  
 Behaviors API allows developer to create metaboxes with default values specified as theme options; by this way you can contradict specific options on post basis.
+
+    [Learn more](https://github.com/wagaweb/wbf/tree/master/src/modules/behaviors)
+    
+- **License Manager**  
+A simple frontend to License_Manager component. It will make available a dashboard page with all registered licenses.  
