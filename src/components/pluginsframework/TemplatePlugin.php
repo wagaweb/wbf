@@ -9,7 +9,7 @@ namespace WBF\components\pluginsframework;
 
 use WBF\components\utils\Utilities;
 
-class TemplatePlugin extends BasePlugin implements TemplatePlugin_Interface {
+class TemplatePlugin extends BasePlugin {
 	protected $templates;
 	protected $ctp_templates;
 	protected $wc_templates; //Embedded support for WooCommerce
@@ -20,8 +20,6 @@ class TemplatePlugin extends BasePlugin implements TemplatePlugin_Interface {
 		$this->templates       = array();
 		$this->templates_paths = array();
 		$this->ctp_templates   = array();
-		$this->loader->add_filter( 'page_attributes_dropdown_pages_args', $this, "register_templates" );
-		$this->loader->add_filter( 'wp_insert_post_data', $this, "register_templates" );
 		$this->loader->add_filter( 'template_include', $this, "view_template" );
 		$this->loader->add_filter( 'wbf/locate_template/search_paths', $this, 'add_template_base_path', 10, 2 );
 		//Embedded support for WooCommerce
@@ -45,19 +43,25 @@ class TemplatePlugin extends BasePlugin implements TemplatePlugin_Interface {
 
 	/**
 	 * Adds a new template to WP page template selector.
-	 * 
-	 * @param string $template_name
-	 * @param string $label
-	 * @param string $path the complete path to the template
 	 *
+	 * @param string $label the label to the template
+	 * @param string $path the complete path to the template
+	 * @param string $post_type the post type to link the template to (default to: "page")
+ 	 *
 	 * @return array
 	 */
-	public function add_template( $template_name, $label, $path ) {
-		$current_wp_templates = wp_get_theme()->get_page_templates(); //current wp registered templates
+	public function add_template( $label, $path, $post_type = "page" ) {
+		$template_name = basename($path);
 
 		$this->templates[ $template_name ] = __( $label, $this->plugin_name );
 		$this->templates_paths[ $template_name ] = $path;
-		$current_wp_templates = array_merge( $current_wp_templates, $this->templates );
+
+		add_filter( "theme_{$post_type}_templates", function($post_templates, $theme, $post, $post_type) use($template_name,$label){
+			if(!array_key_exists($template_name,$post_templates)){
+				$post_templates[$template_name] = $label;
+			}
+			return $post_templates;
+		}, 10, 4 );
 
 		return $this->templates;
 	}
@@ -123,44 +127,6 @@ class TemplatePlugin extends BasePlugin implements TemplatePlugin_Interface {
 		}
 
 		return $template;
-	}
-
-	/**
-	 * Adds plugin templates to the pages cache in order to trick WordPress
-	 * into thinking the template file exists where it doens't really exist.
-	 *
-	 * @hooked 'wp_insert_post_data'
-	 *
-	 * @param array $atts The attributes for the page attributes dropdown
-	 *
-	 * @return array
-	 */
-	public function register_templates( $atts ) {
-		if(!is_admin()) return $atts; //Otherwise this method will be called on every post creation.
-
-		// Create the key used for the themes cache
-		$cache_key = 'page_templates-' . md5( get_theme_root() . '/' . get_stylesheet() );
-
-		// Retrieve the cache list. If it doesn't exist, or it's empty prepare an array
-		$templates = wp_cache_get( $cache_key, 'themes' );
-		if(empty($templates) && function_exists("get_page_templates")){
-			$templates = array_flip(get_page_templates());
-		}
-
-		if(is_array($templates)){
-			// Since we've updated the cache, we need to delete the old cache
-			wp_cache_delete( $cache_key, 'themes' );
-
-			// Now add our template to the list of templates by merging our templates
-			// with the existing templates array from the cache.
-			$templates = array_merge( $templates, $this->templates ); //Adding plugin templates
-
-			// Add the modified cache to allow WordPress to pick it up for listing
-			// available templates
-			wp_cache_add( $cache_key, $templates, 'themes', 1800 );
-		}
-
-		return $atts;
 	}
 
 	/**
