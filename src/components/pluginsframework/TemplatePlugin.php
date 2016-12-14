@@ -11,7 +11,7 @@ use WBF\components\utils\Utilities;
 
 class TemplatePlugin extends BasePlugin {
 	protected $templates;
-	protected $ctp_templates;
+	protected $hierarchy_templates;
 	protected $wc_templates; //Embedded support for WooCommerce
 	protected $templates_paths;
 
@@ -19,7 +19,7 @@ class TemplatePlugin extends BasePlugin {
 		parent::__construct( $plugin_name, $dir, $version );
 		$this->templates       = array();
 		$this->templates_paths = array();
-		$this->ctp_templates   = array();
+		$this->hierarchy_templates   = array();
 		$this->loader->add_filter( 'template_include', $this, "view_template" );
 		$this->loader->add_filter( 'wbf/locate_template/search_paths', $this, 'add_template_base_path', 10, 2 );
 		//Embedded support for WooCommerce
@@ -31,6 +31,23 @@ class TemplatePlugin extends BasePlugin {
 		$this->loader->add_action( 'init', $this, "maybe_attach_wrapper", 20 );
 		//Just to be sure...
 		$this->loader->add_action( 'init', $this, "flush_rewrites", 99 );
+		//Automatically adds any template under /src/templates
+		$this->loader->add_action( 'init', $this, "loads_hierarchy_templates", 999 );
+	}
+
+	/**
+	 * Automatically adds any not already added template to hierarchy templates
+	 *
+	 * @hooked 'init', 999
+	 */
+	public function loads_hierarchy_templates(){
+		$templates = glob($this->get_src_dir()."/templates/*.php");
+		foreach ($templates as $tpl){
+			$template_name = basename($tpl);
+			if(!array_key_exists($template_name,$this->templates) && !in_array($template_name,$this->hierarchy_templates)){
+				$this->add_hierarchy_template($template_name,$tpl);
+			}
+		}
 	}
 
 	/**
@@ -70,20 +87,24 @@ class TemplatePlugin extends BasePlugin {
 	 * Adds a template to the WP template hierarchy. This is not required for most standard template. WBF will try to guess
 	 * the template file name by get_queried_object (for archives) and post-type (for everything else) - see: locate_template_file_in_hierarchy() and then
 	 * search for that file name in current child/parent theme and in current plugin standard directories.
-	 * 
+	 *
 	 * @param string $template_name 	the name of the template (must match WP template hierarchy scheme)
 	 * @param string|null $path 		the complete path to the template. If null, $this->get_src_dir()."templates/".$template_name will be taken.
 	 *
 	 * @return array 					the registered templates
 	 */
-	public function add_cpt_template( $template_name, $path = null ) {
-		$this->ctp_templates[] = $template_name;
+	public function add_hierarchy_template($template_name, $path = null){
+		$this->hierarchy_templates[] = $template_name;
 		if(!isset($path)){
 			$this->templates_paths[ $template_name ] = $this->get_src_dir()."templates/".$template_name;
 		}else{
 			$this->templates_paths[ $template_name ] = $path;
 		}
-		return $this->ctp_templates;
+		return $this->hierarchy_templates;
+	}
+
+	public function add_cpt_template( $template_name, $path = null ) {
+		return $this->add_hierarchy_template($template_name,$path);
 	}
 
 	/**
@@ -235,6 +256,7 @@ class TemplatePlugin extends BasePlugin {
 
 		//Check if theme or current plugin has a template for current post\page
 		foreach ( $possible_templates as $tpl_filename ) {
+			if(!in_array($tpl_filename,$this->hierarchy_templates)) continue; //skip not registered templates
 			/*
 			 * Locate the template into theme or current plugin directories.
 			 * Adds specific directories where the template file will be looked for
@@ -245,19 +267,6 @@ class TemplatePlugin extends BasePlugin {
 			if(!empty($located)){
 				$file = $located;
 				break;
-			}
-		}
-
-		//If the template was not found in theme or in the standard plugin directory, looks for custom specified ones:
-		if(!$file){
-			//Check if plugin has a template for current post\page
-			foreach ( $possible_templates as $tpl_filename ) {
-				if ( is_array($this->ctp_templates) && in_array( $tpl_filename, $this->ctp_templates ) ) {
-					$located = $this->templates_paths[ $tpl_filename ];
-					//todo: do some checks?
-					$file = $located;
-					break;
-				}
 			}
 		}
 
@@ -327,7 +336,7 @@ class TemplatePlugin extends BasePlugin {
 	 */
 	public function get_registered_templates(){
 		$tpl = [
-			'cpt_templates' => $this->ctp_templates,
+			'cpt_templates' => $this->hierarchy_templates,
 			'std_templates' => $this->templates,
 			'wc_templates' => isset($this->wc_templates) ? $this->wc_templates : []
 		];
