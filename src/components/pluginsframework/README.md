@@ -91,3 +91,27 @@ An example can be found [here](https://github.com/wagaweb/wbf-sample-plugin/tree
 
 Plugins that extends TemplatePlugin can include template files hooked into WordPress template hierarchy (so themes can override them).
 
+**Register common templates**
+
+You can add a common wordpress template (selectable through admin dashboard) with:
+
+```php
+$this->add_template("Custom Page Template",$this->get_src_dir()."/templates/custom-page-template.php");
+```
+
+**Register hierarchy templates**
+
+The hierarchy templates are loaded automatically. During 'init' the framework register any templates (not previously registered) under `/src/templates` as hierarchy template.
+Then during 'template_include' it will serve any registered templates not overridden by the theme from the plugin directory.
+
+You can manually register hierarchy template with:
+
+```php
+$this->add_hierarchy_template("single-sample-post-type.php", $this->get_src_dir()."/custom_hierarchy_templates/single-sample-post-type.php");
+```
+
+An example con be found [here](https://github.com/wagaweb/wbf-sample-plugin/tree/template-plugin-standard).
+
+
+
+
