@@ -67,7 +67,7 @@ class TemplatePlugin extends BasePlugin {
 	}
 
 	/**
-	 * Adds a template to the WP template hierarchy. This is not required for required for most standard template. WBF will try to guess
+	 * Adds a template to the WP template hierarchy. This is not required for most standard template. WBF will try to guess
 	 * the template file name by get_queried_object (for archives) and post-type (for everything else) - see: locate_template_file_in_hierarchy() and then
 	 * search for that file name in current child/parent theme and in current plugin standard directories.
 	 * 
