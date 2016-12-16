@@ -44,6 +44,8 @@ vendor/jquery-modal
 vendor/codemirror
 vendor/bootstrap
 vendor/spectrum
+vendor/owl.carousel
+vendor/owlcarousel
 assets/src/js/spectrum.js
 assets/src/css/spectrum.css
 

@@ -720,8 +720,8 @@ class PluginCore {
 				'enqueue' => false
 			],
 			"owlcarousel-css" => [
-				'uri' => $res->prefix_url("/vendor/owlcarousel/assets/owl.carousel.css"),
-				'path' => $res->prefix_path("/vendor/owlcarousel/assets/owl.carousel.css"),
+				'uri' => $res->prefix_url("/vendor/owl.carousel/dist/assets/owl.carousel.css"),
+				'path' => $res->prefix_path("/vendor/owl.carousel/dist/assets/owl.carousel.css"),
 				'type' => 'css',
 				'enqueue' => false
 			],
@@ -739,8 +739,8 @@ class PluginCore {
 				'in_footer' => true,
 			],
 			"owlcarousel-js" => [
-				"uri" => $res->prefix_url("/vendor/owlcarousel/owl.carousel.min.js"),
-				"path" => $res->prefix_path("/vendor/owlcarousel/owl.carousel.min.js"),
+				"uri" => $res->prefix_url("/vendor/owl.carousel/dist/owl.carousel.min.js"),
+				"path" => $res->prefix_path("/vendor/owl.carousel/dist/owl.carousel.min.js"),
 				"type" => "js",
 				'enqueue' => false,
 				'in_footer' => true,
