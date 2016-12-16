@@ -10,16 +10,33 @@ namespace WBF\components\pluginsframework;
 use WBF\components\utils\Utilities;
 
 class TemplatePlugin extends BasePlugin {
+	/*
+	 * @var array registered common templates
+	 */
 	protected $templates;
+	/*
+	 * @var array registered hierarchy templates
+	 */
 	protected $hierarchy_templates;
+	/*
+	 * @var array registered WC templates
+	 */
 	protected $wc_templates; //Embedded support for WooCommerce
+	/**
+	 * @var array paths of registered templates
+	 */
 	protected $templates_paths;
+	/**
+	 * @var array store current templates searched by WordPress (update during template_redirect)
+	 */
+	protected $current_searched_templates;
 
 	public function __construct( $plugin_name, $dir, $version = "1.0.0" ) {
 		parent::__construct( $plugin_name, $dir, $version );
 		$this->templates       = array();
 		$this->templates_paths = array();
 		$this->hierarchy_templates   = array();
+		$this->loader->add_filter( 'template_redirect', $this, "store_searched_hierarchy_templates" ); //Make use of $type_template_hierarchy filter introduced by WordPress 4.7
 		$this->loader->add_filter( 'template_include', $this, "view_template" );
 		$this->loader->add_filter( 'wbf/locate_template/search_paths', $this, 'add_template_base_path', 10, 2 );
 		//Embedded support for WooCommerce
@@ -151,6 +168,32 @@ class TemplatePlugin extends BasePlugin {
 	}
 
 	/**
+	 * Store current searched template, used later in locate_template_file_in_hierarchy()
+	 *
+	 * @hooked 'template_redirect'
+	 */
+	public function store_searched_hierarchy_templates(){
+		$templates_types = [
+			'archive',
+			'category',
+			'tag',
+			'taxonomy',
+			'emded',
+			'page',
+			'single',
+			'singular',
+			'attachment'
+		];
+		foreach ($templates_types as $type){
+			add_filter("{$type}_template_hierarchy", function($templates) use($type){
+				if(!is_array($this->current_searched_templates)) $this->current_searched_templates = [];
+				$this->current_searched_templates = array_merge($this->current_searched_templates,$templates);
+				return $templates;
+			});
+		}
+	}
+
+	/**
 	 * Checks if the template is assigned to the page
 	 *
 	 * @hooked 'template_include'
@@ -214,12 +257,50 @@ class TemplatePlugin extends BasePlugin {
 	/**
 	 * Locate a WordPress template hierarchy file (that can also be registered with $this->register_cpt_template())
 	 *
+	 * @uses $this->assemble_possible_hierarchy_templates
+	 *
 	 * @return bool|string
 	 */
 	private function locate_template_file_in_hierarchy(){
-		global $post;
 		$file = false;
+		if(isset($this->current_searched_templates) && !empty($this->current_searched_templates)){
+			/*
+			 * This part make use of {$type}_template_hierarchy filter introduced with WordPress 4.7
+			 */
+			$possible_templates = $this->current_searched_templates;
+		}else{
+			/*
+			 * This is a fallback
+			 */
+			$possible_templates = $this->assemble_possible_hierarchy_templates();
+		}
 
+		//Check if theme or current plugin has a template for current post\page
+		foreach ( $possible_templates as $tpl_filename ) {
+			if(!in_array($tpl_filename,$this->hierarchy_templates)) continue; //skip not registered templates
+			/*
+			 * Locate the template into theme or current plugin directories.
+			 * Adds specific directories where the template file will be looked for
+			 */
+			$paths = $this->add_template_base_path($this->get_directories_of_templates_in_theme());
+			//In Utility::locate_template is hooked $this->add_template_base_path at "wbf/locate_template/search_paths" which adds plugins paths to search locations
+			$located = Utilities::locate_template(['names' => $tpl_filename],false,false,$paths);
+			if(!empty($located)){
+				$file = $located;
+				break;
+			}
+		}
+
+		return $file;
+	}
+
+	/**
+	 * Mimic the WordPress template-loader.php logic
+	 *
+	 * @return array
+	 */
+	private function assemble_possible_hierarchy_templates(){
+		global $post;
 		if(is_archive()){
 			$q_obj = get_queried_object();
 			if(is_category()){
@@ -243,6 +324,10 @@ class TemplatePlugin extends BasePlugin {
 					"archive-{$post_type}.php"
 				);
 			}
+		}elseif(is_search()){
+			$possible_templates = [
+				'search.php'
+			];
 		}else{
 			$post_type = get_post_type( $post->ID );
 			$possible_templates = array(
@@ -253,24 +338,7 @@ class TemplatePlugin extends BasePlugin {
 				"single-" . $post->ID . ".php"
 			);
 		}
-
-		//Check if theme or current plugin has a template for current post\page
-		foreach ( $possible_templates as $tpl_filename ) {
-			if(!in_array($tpl_filename,$this->hierarchy_templates)) continue; //skip not registered templates
-			/*
-			 * Locate the template into theme or current plugin directories.
-			 * Adds specific directories where the template file will be looked for
-			 */
-			$paths = $this->add_template_base_path($this->get_directories_of_templates_in_theme());
-			//In Utility::locate_template is hooked $this->add_template_base_path at "wbf/locate_template/search_paths" which adds plugins paths to search locations
-			$located = Utilities::locate_template(['names' => $tpl_filename],false,false,$paths);
-			if(!empty($located)){
-				$file = $located;
-				break;
-			}
-		}
-
-		return $file;
+		return $possible_templates;
 	}
 
 	/**
