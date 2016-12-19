@@ -89,7 +89,7 @@ An example can be found [here](https://github.com/wagaweb/wbf-sample-plugin/tree
 
 ### Template plugin
 
-Plugins that extends TemplatePlugin can include template files hooked into WordPress template hierarchy (so themes can override them).
+Plugins that extends TemplatePlugin can inject their template into Wordpress "template_include" mechanism.
 
 **Register common templates**
 
@@ -112,6 +112,56 @@ $this->add_hierarchy_template("single-sample-post-type.php", $this->get_src_dir(
 
 An example con be found [here](https://github.com/wagaweb/wbf-sample-plugin/tree/template-plugin-standard).
 
+### More features
+
+**Using built-in cache mechanism**
+
+BasePlugin has a built-in caching feature based on transients.
 
 
 
+**Adding custom links for the plugin in Wordpress plugins list**
+
+From constructor of the class that extends BasePlugin:
+
+```php
+$this->add_action_links([
+    [
+        'name' => "New link"
+        'link' => "/path/to/link"
+    ],
+    //more links
+]);
+```
+
+**Setting up an update server**
+
+From the constructor of the class that extends BasePlugin: [...]
+
+```php
+$this->set_update_server("my/end/point");
+```
+
+Endpoint must be compatible with CustomUpdater WBF component.
+
+For more info about CustomUpdater WBF component: [click here](https://github.com/wagaweb/wbf/tree/master/src/components/customupdater).
+
+For more info about License WBF component: [click here](https://github.com/wagaweb/wbf/tree/master/src/components/license).
+
+**Register a license**
+
+From the constructor of the class that extends BasePlugin:
+
+```php
+$license = new \WBF\components\license\License("my-license")
+$this->register_license($license);
+```
+
+You can also link a license to the custom updater (the update will be blocked with invalid licenses)
+
+```php
+$license = new \WBF\components\license\License("my-license")
+$this->set_update_server("my/end/point",$license);
+```
+
+For more info about License WBF component: [click here](https://github.com/wagaweb/wbf/tree/master/src/components/license).
