@@ -217,7 +217,8 @@ if (!function_exists( 'wbf_sanitize_file_name_chars')):
 
             $sanitized_filename = remove_accents($sanitized_filename);
 
-            $sanitized_filename = preg_replace('/[^a-zA-Z0-9-_\.]/', 'x', strtolower($sanitized_filename));
+            //$sanitized_filename = preg_replace('/[^a-zA-Z0-9-_\.]/', 'x', strtolower($sanitized_filename));
+            $sanitized_filename = preg_replace('/[^a-zA-Z0-9-_\.]/', '', strtolower($sanitized_filename));
 
             return $sanitized_filename;
         }
