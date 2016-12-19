@@ -131,7 +131,7 @@ class BasePlugin {
 	 * @param string $dir
 	 * @param string $version
 	 */
-	public function __construct( $plugin_name, $dir, $version = "1.0.0" ) {
+	public function __construct( $plugin_name, $dir, $version = false ) {
 		$this->plugin_name = $plugin_name;
 		$this->plugin_dir  = $dir;
 		$this->plugin_path = $this->plugin_dir.$this->plugin_name.".php";
@@ -165,17 +165,29 @@ class BasePlugin {
 		}
 
 		//Get the version
-		if(function_exists("get_plugin_data")){
-			$pluginHeader = get_plugin_data($this->plugin_path, false, false);
-			if ( isset($pluginHeader['Version']) ) {
-				$this->version = $pluginHeader['Version'];
+		if(!$version){
+			$default_headers = array(
+				'Name' => 'Plugin Name',
+				'PluginURI' => 'Plugin URI',
+				'Version' => 'Version',
+				'Description' => 'Description',
+				'Author' => 'Author',
+				'AuthorURI' => 'Author URI',
+				'TextDomain' => 'Text Domain',
+				'DomainPath' => 'Domain Path',
+				'Network' => 'Network',
+				// Site Wide Only is deprecated in favor of Network.
+				'_sitewide' => 'Site Wide Only',
+			);
+			$data = \get_file_data($this->get_path(),$default_headers,"plugin");
+			if ( isset($data['Version']) ) {
+				$this->version = $data['Version'];
 			} else {
-				$this->version = $version;
+				$this->version = "1.0.0";
 			}
 		}else{
 			$this->version = $version;
 		}
-
 
 		//Check if debug mode must be activated
 		if( (defined("WP_DEBUG") && WP_DEBUG) || (defined("WBF_ENV") && WBF_ENV == "dev") ){
