@@ -146,8 +146,6 @@ Endpoint must be compatible with CustomUpdater WBF component.
 
 For more info about CustomUpdater WBF component: [click here](https://github.com/wagaweb/wbf/tree/master/src/components/customupdater).
 
-For more info about License WBF component: [click here](https://github.com/wagaweb/wbf/tree/master/src/components/license).
-
 **Register a license**
 
 From the constructor of the class that extends BasePlugin:
