@@ -8,6 +8,7 @@ Version 1.0.2 -
 - Tweak: js assets refactored to ES6
 - Tweak: Template_Plugin now supports new WP 4.7 hooks
 - Tweak: Owlcarousel now managed by bower
+- Tweak: BasePlugin now can autodetect the correct version of plugins
 - Fix: Template_Plugin now search only the templates registered by the plugin
 
 Version 1.0.1 - 12/01/2016
