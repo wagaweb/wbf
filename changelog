@@ -1,5 +1,15 @@
 == Change log ==
 
+Version 1.0.2 -
+---------------------------------
+- Feature: Notices can now be displayed manually
+- Tweak: GUIs for Component and Options refactored
+- Tweak: Components now use Notice_Manager
+- Tweak: js assets refactored to ES6
+- Tweak: Template_Plugin now supports new WP 4.7 hooks
+- Tweak: Owlcarousel now managed by bower
+- Fix: Template_Plugin now search only the templates registered by the plugin
+
 Version 1.0.1 - 12/01/2016
 ---------------------------------
 - Fix: now Components correctly register their options in the same page rendering cycle in which they are
