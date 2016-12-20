@@ -51,7 +51,7 @@ public function allow_updates($can_update, Theme_Update_Checker $checker){
 
 public function show_update_notice(Theme_Update_Checker $checker, $can_update){
     if(!$can_update){
-        $message = sprintf(__( 'A new version of %s is available! <a href="%s" title="Enter a valid license">Enter a valid license</a> to get latest updates.', 'wbf' ),$this->theme,"admin.php?page=wbf_licenses");
+        $message = sprintf(__( 'A new version of %s is available! <a href="%s" title="Enter a valid license">Enter a valid license</a> to get latest updates.', 'wbf' ),"my-theme","admin.php?page=wbf_licenses");
         //Show notice whatever you like
         //...
     }
