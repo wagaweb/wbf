@@ -29,7 +29,6 @@ vendor/yahnis-elsts
 ## VENDORS (components)
 ############
 src/components/**/vendor/**
-!src/components/customupdater/vendor/theme-update-checker.php
 !src/components/navwalker/vendor/BootstrapNavMenuWalker.php
 !src/components/breadcrumb/vendor/breadcrumb-trail.php
 
