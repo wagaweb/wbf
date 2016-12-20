@@ -28,17 +28,40 @@ You can look at the WBF implementation in License_Manager class:
 
 `license_page()` => display the admin page.
 
-## Manage theme updates
+## Lock theme updates with license
 
-Once your license is registered, WBF automatically binds it to the theme custom update mechanism (provided by customupdater component). So updates will be blocked for invalid license owner.
+If you use the WBF Custom Updater, you can use an hook or two to lock the updates once your license is registered.
 
-This behavior will be changed in the future to allow more flexibility.
+In your License constructor:
 
-## Manage plugins updates
+```php
+add_filter("wbf/custom_theme_updater/can_update", [$this, "allow_updates"], 10, 2);
+add_action("wbf/custom_theme_updater/after_update_inject", [$this, "show_update_notice"], 10, 2);
+```
+
+Then, in your License class:
+
+```php
+public function allow_updates($can_update, Theme_Update_Checker $checker){
+    if(!$this->is_valid()){
+        $can_update = false;
+    }
+    return $can_update;
+}
+
+public function show_update_notice(Theme_Update_Checker $checker, $can_update){
+    if(!$can_update){
+        $message = sprintf(__( 'A new version of %s is available! <a href="%s" title="Enter a valid license">Enter a valid license</a> to get latest updates.', 'wbf' ),$this->theme,"admin.php?page=wbf_licenses");
+        //Show notice whatever you like
+        //...
+    }
+}
+```
+
+## Lock plugins updates with
 
 For now WBF alone does not automatically binds plugins licenses to update mechanism. On the other hand Plugins Framework does it within the `set_update_server()` method.
 
-TBD
-
+[...]
 
 
