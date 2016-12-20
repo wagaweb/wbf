@@ -2,14 +2,15 @@
 
 Version 1.0.2 -
 ---------------------------------
-- Feature: Notices can now be displayed manually
+- Fix: Template_Plugin now search only the templates registered by the plugin
 - Tweak: GUIs for Component and Options refactored
 - Tweak: Components now use Notice_Manager
 - Tweak: js assets refactored to ES6
 - Tweak: Template_Plugin now supports new WP 4.7 hooks
 - Tweak: Owlcarousel now managed by bower
 - Tweak: BasePlugin now can autodetect the correct version of plugins
-- Fix: Template_Plugin now search only the templates registered by the plugin
+- Tweak: Theme_Update_Checker modernized and refactored
+- Feature: Notices can now be displayed manually
 
 Version 1.0.1 - 12/01/2016
 ---------------------------------
