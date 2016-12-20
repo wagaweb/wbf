@@ -45,6 +45,8 @@ Allows the live compilations of LESS files (SASS will be available in the future
 - **CustomUpdater**  
 Makes available a number of tools to implement custom updating systems for themes and plugins.
 
+    [Learn more](https://github.com/wagaweb/wbf/tree/master/src/components/customupdater)
+
 - **License**  
 Allows the management of customizable licenses for plugins and themes.
  
