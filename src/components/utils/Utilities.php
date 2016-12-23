@@ -1070,6 +1070,19 @@ class Utilities{
 		return false;
 	}
 
+
+	/**
+	 * Convert full URL paths to path relative to wp-content.
+	 *
+	 * Removes the http or https protocols the domain and wp-content.
+	 *
+	 * @param string $link Full URL path.
+	 * @return string path.
+	 */
+	static function wb_make_link_relative_to_wpcontent( $link ) {
+		return preg_replace( '|^(https?:)?\/\/[^/]+(\/?wp-content)(\/?.*)|i', '$3', $link );
+	}
+
 	/**
 	 * Convert an url to the absolute path of that url in wordpress
 	 *
