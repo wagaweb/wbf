@@ -1,3 +1,144 @@
+/**********************************
+ * GENERAL
+ **********************************/
+
+.admin-wrapper {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 20px 20px 0;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+
+  * {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+  }
+}
+
+
+.admin-wrapper {
+
+  .optionsframework-nav,
+  .componentframework-nav {
+    background-color: #999;
+    ul {
+      overflow: auto;
+      margin: 0;
+    }
+    li {
+      display: inline-block;
+      float: left;
+      padding: 15px 20px 10px;
+      margin: 0;
+      color: #fff;
+      border-right: 1px solid;
+      border-right-color: rgba(0, 0, 0, 0.15);
+      border-bottom: 5px solid;
+      border-bottom-color: rgba(0, 0, 0, 0);
+      cursor: pointer;
+    }
+    li.active {
+      border-bottom-color: rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  .optionsframework-content,
+  .componentframework-content {
+    background-color: #fff;
+    overflow: auto;
+  }
+
+  .section-info {
+    width: 100%;
+    clear: both;
+    min-height: 0;
+    margin: 0 0px 15px;
+    padding: 10px 15px;
+    background-color: #f7f7f7;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    h4 {
+      font-size: 1.2em;
+      margin: 0px;
+    }
+    p {
+      margin-bottom: 0px;
+    }
+  }
+
+
+  .field-option {
+    &.field-option-upload {
+      input[type='text'] {
+        width: 50%;
+        display: inline-block;
+      }
+      .of-metabox-desc {
+        display: block;
+        font-size: 0.9em;
+        opacity: 0.7;
+      }
+    }
+    .controls {
+      padding: 0;
+      box-sizing: border-box;
+    }
+    .check-wrapper,
+    .radio-wrapper {
+      display: inline-block;
+      margin: 5px;
+    }
+    .controls .option-wrap {
+      display: inline-block;
+    }
+    .controls .option-wrap span {
+      line-height: 2em;
+      text-transform: capitalize;
+      display: block;
+      background-color: #f9f9f9;
+      margin: 0 10px;
+      text-align: center;
+    }
+    .controls .option-wrap img {
+      margin: 0 10px 0px;
+      max-height: 110px;
+    }
+    .controls img {
+      max-width: 350px;
+      max-height: 250px;
+    }
+    .controls .of-radio-img-selected {
+      border: 3px solid #666;
+    }
+
+    .wp-picker-holder {
+      position: absolute;
+      z-index: 99;
+    }
+
+    .screenshot {
+      margin: 20px 0 0;
+      width: 100%;
+    }
+    .screenshot img {
+      border: 1px solid #ddd;
+    }
+
+    .screenshot .remove-image {
+      display: none;
+    }
+
+  }
+
+}
+
+
+
+
+
+
 .wp-core-ui .clearcache-button {
   margin-left: 10px;
 }
