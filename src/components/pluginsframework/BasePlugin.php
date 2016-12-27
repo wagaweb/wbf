@@ -261,11 +261,11 @@ class BasePlugin {
 	 * @return void
 	 */
 	public function add_action_links($links = []){
-		$plugin_file = $this->plugin_name.'/'.$this->plugin_name;
-		add_action('plugin_action_links_'.$plugin_file.'.php', function($current_links) use($links){
+		$plugin_file = ltrim($this->plugin_relative_dir,"/").'/'.basename($this->plugin_path);
+		add_action('plugin_action_links_'.$plugin_file, function($current_links) use($links){
 			if(isset($links) && is_array($links)){
 				foreach ( $links as $link ) {
-					$current_links[] = '<a href="' . esc_url( get_admin_url( null, $link['link'] ) ) . '">' . $link['name'] . '</a>';
+					$current_links[sanitize_title_with_dashes($link['name'])] = '<a href="' . esc_url( get_admin_url( null, $link['link'] ) ) . '">' . $link['name'] . '</a>';
 				}
 			}
 			return $current_links;
