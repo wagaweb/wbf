@@ -97,7 +97,7 @@ class OptionHasValue implements \WBF\components\notices\conditions\Condition{
     }    
 }
 
-WBF()->notice_manage->("test","Test content","error","base", "OptionHasValue");
+WBF()->notice_manager->("test","Test content","error","base", "OptionHasValue");
 ```
 
 For a more general purpose class, you can use the `$cond_args` param of `add_notice()` to customize the Condition instance upon initialization.
@@ -119,5 +119,5 @@ class OptionHasValue implements \WBF\components\notices\conditions\Condition{
     }    
 }
 
-WBF()->notice_manage->add_notice("test","Test content","error","base", "OptionHasValue",['opt_name' => 'foo', 'desidered_value' => 'bar']);
+WBF()->notice_manager->add_notice("test","Test content","error","base", "OptionHasValue",['opt_name' => 'foo', 'desidered_value' => 'bar']);
 ```
