@@ -29,7 +29,7 @@ Adds a flash notice (see below)
 
 ### Automatic, flash and manual notices
 
-The default behavior for `add_notice()` is to add an **automatic notice**. Automatic notices are hooked to "admin_notices" action and will be displayed automatically by WordPress.
+The default behavior for `add_notice()` is to add an **automatic notice**. Automatic notices are hooked to "admin_notices" action and are displayed automatically by WordPress.
 
 **Manual notices** can be displayed at any time by calling `show_manual_notices()`. They are useful if you want to display notices in other place than the top of the single admin page.
 
