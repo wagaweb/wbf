@@ -80,7 +80,7 @@ clear_notices($category = null)
 
 ## Notice conditions
 
-Normally you can adds a notice and remove it manually if something happens. `WBF\components\notices\conditions\Condition` interface allows you to abstract this behavior in a class.
+Normally you can add a notice and remove it manually if something happens. `WBF\components\notices\conditions\Condition` interface allows you to abstract this behavior in a class.
 
 If you provide to `add_notice()` a class name of a class that implements this interface, the Notice_Manager will calls the `verify()` method automatically, removing the notices which return a `true` value.
 
