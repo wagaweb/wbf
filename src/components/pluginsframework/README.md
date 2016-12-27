@@ -179,14 +179,14 @@ For more info about CustomUpdater WBF component: [click here](https://github.com
 From the constructor of the class that extends BasePlugin:
 
 ```php
-$license = new \WBF\components\license\License("my-license")
+$license = new \My\License("my-license"); //a class which extends \WBF\components\license\License and implements \WBF\components\license\Licence_Interface
 $this->register_license($license);
 ```
 
 You can also link a license to the custom updater (the update will be blocked with invalid licenses)
 
 ```php
-$license = new \WBF\components\license\License("my-license")
+$license = new \My\License("my-license");
 $this->set_update_server("my/end/point",$license);
 ```
 
