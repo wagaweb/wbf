@@ -33,7 +33,7 @@ The default behavior for `add_notice()` is to add an **automatic notice**. Autom
 
 **Manual notices** can be displayed at any time by calling `show_manual_notices()`. They are useful if you want to display notices in other place than the top of the single admin page.
 
-You can add a manual notice by passing true as the last argument of `add_notice()` (see below).
+You can add a manual notice by passing `true` as the last argument of `add_notice()` (see below).
 
 **Flash notices** are notices added with `_flash_` as category. Flash notices will be removed after the first display.
 
