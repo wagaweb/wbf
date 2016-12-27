@@ -32,7 +32,7 @@ interface License_Interface {
 	function get_license_status();
 	/**
 	 * Print out the license status
-	 * @return string
+	 * @return void
 	 */
 	function print_license_status();
 }
