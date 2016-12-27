@@ -1,4 +1,4 @@
-# License
+# Notice Manager
 
 An integrated notice manager for Wordpress; with WBF Notice Manager you can:
 
