@@ -27,6 +27,11 @@ class Notice_Manager {
         }
     }
 
+	/**
+     * Clears notices. Clears all the notices if no $category is specified.
+     *
+	 * @param string|null $category
+	 */
     function clear_notices($category = null){
         $notices = $this->get_notices();
 	    if(!is_array($notices)){
@@ -96,14 +101,25 @@ class Notice_Manager {
         }
     }
 
+	/**
+	 * Print out automatic notices
+	 */
     function show_automatic_notices(){
         $this->show_notices("automatic");
     }
 
+	/**
+	 * Print out manual notices
+	 */
     function show_manual_notices(){
         $this->show_notices("manual");
     }
 
+	/**
+     * Get all notices
+     *
+	 * @return array|FALSE
+	 */
     private function get_notices(){
         $notices = get_option("wbf_admin_notices",array());
         return $notices;
@@ -112,10 +128,10 @@ class Notice_Manager {
 	/**
 	 * Add a new notice to the system
 	 *
-	 * @param String $id
-	 * @param String $message
-	 * @param String $level (can be: "updated","error","nag"
-	 * @param String $category (can be anything. Categories are used to group notices for easy clearing them later. If the category is set to "_flash_", however, the notice will be cleared after displaying.
+	 * @param string $id an unique identifier
+	 * @param string $message the notice content
+	 * @param string $level (can be: "updated","error","nag"
+	 * @param string $category (can be anything. Categories are used to group notices for easy clearing them later. If the category is set to "_flash_", however, the notice will be cleared after displaying.
 	 * @param null|String $condition a class name that implements Condition interface
 	 * @param null|mixed $cond_args parameters to pass to $condition constructor
 	 * @param bool $manual_display if TRUE, the notice will not be displayed at "admin_notices" hook.
@@ -134,6 +150,11 @@ class Notice_Manager {
         $this->update_notices($notices);
     }
 
+	/**
+     * Remove a notice
+     *
+	 * @param string $id
+	 */
     function remove_notice($id){
         $notices = $this->get_notices();
         if(isset($notices[$id])) unset($notices[$id]);
@@ -141,6 +162,13 @@ class Notice_Manager {
         $this->update_notices($notices);
     }
 
+	/**
+     * Update notices option
+     *
+	 * @param $notices
+	 *
+	 * @return bool
+	 */
     function update_notices($notices){
 	    $current_notices = get_option("wbf_admin_notices",array());
 	    if(is_array($notices)){
@@ -151,8 +179,17 @@ class Notice_Manager {
         return $result;
     }
 
+	/**
+     * Check if conditions are met
+     *
+	 * @param $notice
+	 *
+	 * @return bool
+	 * @throws \Exception
+	 */
     private function conditions_met($notice){
         $className = $notice['condition'];
+        if(!class_exists($className)) throw new \Exception("The condition class ({$className}) for the notice does not exists");
         if(isset($notice['condition_args'])){
             $cond = new $className($notice['condition_args']);
         }else{
