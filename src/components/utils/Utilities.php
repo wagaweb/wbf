@@ -11,19 +11,13 @@ use Mockery\CountValidator\Exception;
 use WBF\components\notices\Notice_Manager;
 
 class Utilities{
-
-	const PAGE_TYPE_DEFAULT_HOME = "default_home";
-	const PAGE_TYPE_STATIC_HOME = "static_home";
-	const PAGE_TYPE_BLOG_PAGE = "blog_page";
-	const PAGE_TYPE_COMMON = "common";
-
 	/**
 	 * Return a sanitized version of blog name
 	 *
 	 * @return string
 	 */
 	static function get_sanitized_blogname(){
-		return sanitize_title_with_dashes(get_bloginfo("name"));
+		return WordPress::get_sanitized_blogname();
 	}
 
 	/**
@@ -33,23 +27,11 @@ class Utilities{
 	 * @param $slug
 	 * @param null $name
 	 * @param array $vars
+	 *
+	 * @return string
 	 */
 	static function get_template_part($slug, $name = null, $vars=[]){
-		do_action( "get_template_part_{$slug}", $slug, $name );
-
-		$templates = apply_filters("wbf/get_template_part/path:{$slug}",array(),array($slug,$name)); //@deprecated from WBF ^0.11.0
-		$name = (string) $name;
-		if ( '' !== $name )
-			$templates['names'][] = "{$slug}-{$name}.php";
-
-		$templates['names'][] = "{$slug}.php";
-
-		// take some vars and passes them in the $post object (e.g. shortcode vars can be used in parts)
-		if(is_array($vars) && !empty($vars)){
-			global $post;
-			$post->wbf_template_vars = $vars;
-		}
-		self::locate_template($templates, true, false);
+		return Paths::get_template_part($slug,$name,$vars);
 	}
 
 	/**
@@ -108,44 +90,7 @@ class Utilities{
 	 * @throws \Exception
 	 */
 	static function locate_file($file, $load = false, $require_once = true){
-		$located = '';
-
-		//Defining search paths
-		$search_paths = [];
-		if(defined("WBF_DIRECTORY")){
-			$search_paths[] = WBF_DIRECTORY;
-		}
-		$wbf_path_opt = get_option("wbf_path");
-		if($wbf_path_opt && !empty($wbf_path_opt) && $wbf_path_opt != WBF_DIRECTORY){
-			$search_paths[] = $wbf_path_opt;
-			unset($wbf_path_opt);
-		}
-		$search_paths[] = get_template_directory();
-		$search_paths[] = get_stylesheet_directory();
-
-		//Searching:
-
-		foreach($search_paths as $p){
-			$path = rtrim($p,"/") . '/'.ltrim($file,"/");
-			if(file_exists($path)){
-				$located = $path;
-				break;
-			}
-		}
-
-		if($located == ''){
-			throw new \Exception(sprintf(__("File: %s non found in any of the followinf paths: %s","wbf"),$file,implode(";\n",$search_paths)));
-		}
-
-		if ( $load && '' != $located ){
-			if($require_once){
-				require_once $located;
-			}else{
-				require $located;
-			}
-		}
-
-		return $located;
+		return Paths::locate_file($file,$load,$require_once);
 	}
 
 	/**
@@ -160,75 +105,7 @@ class Utilities{
 	 * @return string
 	 */
 	static function locate_template($templates, $load = false, $require_once = true, $additional_search_paths = [] ) {
-		$located = '';
-		$template_names = $templates['names'];
-		$template_sources = isset($templates['sources']) ? $templates['sources'] : [];
-		if(empty($additional_search_paths) || !is_array($additional_search_paths)){
-			$additional_search_paths = apply_filters("wbf/locate_template/search_paths", []);
-		}
-
-		//Search for templates
-		foreach( (array) $template_names as $template_name){
-			if(!$template_name){
-				continue;
-			}
-
-			$child_directory = get_stylesheet_directory();
-			$parent_directory = get_template_directory();
-
-			$search_locations = [
-				$child_directory . '/',
-				$child_directory."/templates",
-				$child_directory."/templates/parts/",
-				$parent_directory . '/',
-				$parent_directory . '/templates',
-				$parent_directory . '/templates/parts/'
-			];
-
-			$search_locations = array_merge($search_locations,$additional_search_paths);
-
-			$search_locations = array_unique($search_locations);
-
-			foreach($search_locations as $loc){
-				$found = false;
-				$locs = [
-					rtrim($loc,"/") . '/'.ltrim($template_name,"/"),
-					rtrim($loc,"/") . '/'.ltrim(basename($template_name),"/")
-				];
-				foreach ($locs as $path){
-					if(file_exists($path)){
-						$located = $path;
-						$found = true;
-						break;
-					}
-				}
-				if($found){
-					break;
-				}
-			}
-
-			if(!empty($located)){
-				break;
-			}
-		}
-
-		//Search for templates into sources (complete file paths)
-		if(empty($located)) {
-			foreach($template_sources as $template_name){
-				if ( !$template_name )
-					continue;
-				if( file_exists($template_name)){
-					$located = $template_name;
-					break;
-				}
-			}
-		}
-
-		if ( $load && $located != '' ){
-			load_template( $located, $require_once );
-		}
-
-		return $located;
+		return Paths::locate_template($templates,$load,$require_once,$additional_search_paths);
 	}
 
 	/**
@@ -241,21 +118,7 @@ class Utilities{
 	 * @return string The URI of the file if one is located.
 	 */
 	static function locate_template_uri($template_names){
-		$located = '';
-		foreach ((array)$template_names as $template_name) {
-			if (!$template_name)
-				continue;
-
-			if (file_exists(get_stylesheet_directory() . '/' . $template_name)) {
-				$located = get_stylesheet_directory_uri() . '/' . $template_name;
-				break;
-			} else if (file_exists(get_template_directory() . '/' . $template_name)) {
-				$located = get_template_directory_uri() . '/' . $template_name;
-				break;
-			}
-		}
-
-		return $located;
+		return Paths::locate_template_uri($template_names);
 	}
 
 	/**
@@ -264,19 +127,7 @@ class Utilities{
 	 * @return string
 	 */
 	static function get_current_page_type(){
-		if ( is_front_page() && is_home() ) {
-			// Default homepage
-			return self::PAGE_TYPE_DEFAULT_HOME;
-		} elseif ( is_front_page() ) {
-			// static homepage
-			return self::PAGE_TYPE_STATIC_HOME;
-		} elseif ( is_home() ) {
-			// blog page
-			return self::PAGE_TYPE_BLOG_PAGE;
-		} else {
-			//everything else
-			return self::PAGE_TYPE_COMMON;
-		}
+		return Query::get_current_page_type();
 	}
 
 	/**
@@ -285,7 +136,7 @@ class Utilities{
 	 * @return bool
 	 */
 	static function is_default_home(){
-		return self::get_current_page_type() == self::PAGE_TYPE_DEFAULT_HOME;
+		return Query::is_default_home();
 	}
 
 	/**
@@ -294,7 +145,7 @@ class Utilities{
 	 * @return bool
 	 */
 	static function is_static_home(){
-		return self::get_current_page_type() == self::PAGE_TYPE_STATIC_HOME;
+		return Query::is_static_home();
 	}
 
 	/**
@@ -303,7 +154,7 @@ class Utilities{
 	 * @return bool
 	 */
 	static function is_blog_page(){
-		return self::get_current_page_type() == self::PAGE_TYPE_BLOG_PAGE;
+		return Query::is_blog_page();
 	}
 
 	/**
@@ -312,7 +163,7 @@ class Utilities{
 	 * @return bool
 	 */
 	static function is_common_page(){
-		return self::get_current_page_type() == self::PAGE_TYPE_COMMON;
+		return Query::is_common_page();
 	}
 
 	/**
@@ -323,8 +174,7 @@ class Utilities{
 	 * @return bool
 	 */
 	static function mkpath($path) {
-		if(@mkdir($path) or file_exists($path)) return true;
-		return (self::mkpath(dirname($path)) and mkdir($path));
+		return Paths::mkpath($path);
 	}
 
 	/**
@@ -387,20 +237,7 @@ class Utilities{
 	 * @return array
 	 */
 	static function get_filtered_post_types($blacklist = array()){
-		$post_types = get_post_types();
-		$result = array();
-		$blacklist = array_merge($blacklist,array('attachment','revision','nav_menu_item','ml-slider'));
-		$blacklist = array_unique(apply_filters("wbf/utilities/get_filtered_post_types/blacklist",$blacklist));
-		foreach($post_types as $pt){
-			if(!in_array($pt,$blacklist)){
-				$pt_obj = get_post_type_object($pt);
-				$result[$pt_obj->name] = $pt_obj->label;
-			}
-		}
-
-		$result = array_unique(apply_filters("wbf/utilities/get_filtered_post_types",$result));
-
-		return $result;
+		return Posts::get_filtered_post_types($blacklist);
 	}
 
 	/**
@@ -413,42 +250,7 @@ class Utilities{
 	 * @return array of posts
 	 */
 	static function recursive_get_posts(\closure $callback = null, $args = array(), $include_meta = false){
-		$all_posts = [];
-		$page = 1;
-		$get_posts = function ( $args ) use ( &$page ) {
-			$args = wp_parse_args( $args, array(
-				'post_type' => 'post',
-				'paged' => $page,
-			) );
-			$all_posts = new \WP_Query( $args );
-			if ( count( $all_posts->posts ) > 0 ) {
-				return $all_posts;
-			} else {
-				return false;
-			}
-		};
-		while ( $paged_posts = $get_posts( $args ) ) {
-			$i = 0;
-			while ( $i <= count( $paged_posts->posts ) - 1 ) { //while($all_posts->have_posts()) WE CANNOT USE have_posts... too many issue
-				//if($i == 1) $all_posts->next_post(); //The first next post does not change $all_posts->post for some reason... so we need to do it double...
-				$p = $paged_posts->posts[ $i ];
-				if($include_meta){
-					$p->meta = get_post_meta($p->ID);
-				}
-				if(isset($callback)){
-					$result = call_user_func( $callback, $p );
-					if($result){
-						$all_posts[$p->ID] = $p;
-					}
-				}else{
-					$all_posts[$p->ID] = $p;
-				}
-				//if($i < count($all_posts->posts)) $all_posts->next_post();
-				$i ++;
-			}
-			$page ++;
-		}
-		return $all_posts;
+		return Posts::recursive_get_posts($callback,$args,$include_meta);
 	}
 
 	/**
@@ -459,24 +261,7 @@ class Utilities{
 	 * @return bool
 	 */
 	static function table_exists($table_name){
-		global $wpdb;
-		$wpdb->suppress_errors();
-		static $cache;
-
-		//If prefix already exists, strip it
-		if(preg_match("/{$wpdb->prefix}/",$table_name)){
-			$table_name = ltrim($table_name,$wpdb->prefix);
-		}
-
-		if(isset($cache[$table_name])) return $cache[$table_name];
-
-		$search = $wpdb->query("SHOW TABLES LIKE '".$wpdb->prefix.$table_name."'");
-		if($search){
-			$cache[$table_name] = true;
-			return true;
-		}
-		$cache[$table_name] = false;
-		return false;
+		return DB::table_exists($table_name);
 	}
 
 	/**
@@ -585,18 +370,7 @@ class Utilities{
 	 * @return \stdClass
 	 */
 	static function wpTerm_to_stdClass(\WP_Term $instance){
-		$std = new \stdClass();
-		$std->term_id = $instance->term_id;
-		$std->name = $instance->name;
-		$std->slug = $instance->slug;
-		$std->taxonomy = $instance->taxonomy;
-		$std->term_group = $instance->term_group;
-		$std->term_taxonomy_id = $instance->term_taxonomy_id;
-		$std->description = $instance->description;
-		$std->parent = $instance->parent;
-		$std->count = $instance->count;
-		$std->filter = $instance->filter;
-		return $std;
+		return Terms::wpTerm_to_stdClass($instance);
 	}
 
 	/**
@@ -614,214 +388,7 @@ class Utilities{
 	 * @return array
 	 */
 	static function get_post_terms_hierarchical($post_id, $taxonomy, $args = [], $flatten = true, $convert_to_wp_term = false){
-		static $cache;
-
-		if(isset($cache[$taxonomy][$post_id]) && is_array($cache[$taxonomy][$post_id])) return $cache[$taxonomy][$post_id];
-
-		$args = wp_parse_args($args,[
-			'orderby' => 'parent'
-		]);
-		$args['orderby'] = 'parent'; //we need to force this
-		$terms = wp_get_post_terms( $post_id, $taxonomy, $args);
-
-		/**
-		 * Convert WP_Term to old-fashion stdClass
-		 *
-		 * @param $instance
-		 *
-		 * @return \stdClass
-		 */
-		$WPTermToStdClass = function($instance) {
-			$std = new \stdClass();
-			$std->term_id = $instance->term_id;
-			$std->name = $instance->name;
-			$std->slug = $instance->slug;
-			$std->term_group = $instance->term_group;
-			$std->term_taxonomy_id = $instance->term_taxonomy_id;
-			$std->description = $instance->description;
-			$std->parent = $instance->parent;
-			$std->count = $instance->count;
-			$std->filter = $instance->filter;
-			return $std;
-		};
-
-		/**
-		 * Insert a mixed at specified position into input $array
-		 *
-		 * @param array $input
-		 * @param $position
-		 * @param $insertion
-		 *
-		 * @return array
-		 */
-		$array_insert = function(Array $input,$position,$insertion){
-			$insertion = array($insertion);
-			$first_array = array_splice ($input, 0, $position);
-			$output = array_merge ($first_array, $insertion, $input);
-			return $output;
-		};
-
-		/**
-		 * Insert $insertion after the element with $term->id == $insert_at_term_id of array $input
-		 * @param array $input
-		 * @param int   $insert_at_term_id
-		 * @param array $insertion
-		 *
-		 * @return array|bool
-		 */
-		$children_insert = function(Array $input,$insert_at_term_id,$insertion) use(&$children_insert,$WPTermToStdClass){
-			$output = $input;
-
-			foreach($output as $k => $t){
-				if($t instanceof \WP_Term){
-					$output[$k] = $WPTermToStdClass($t);
-				}
-			}
-
-			foreach($input as $k => $v){
-				if($v->term_id == $insert_at_term_id){ //We found the parent
-					if(!isset($output[$k]->childeren) || !is_integer(array_search($insertion,$output[$k]->children))){
-						$output[$k]->children[] = $insertion;
-						return $output;
-					}
-				}elseif(isset($v->children) && count($v->children) >= 1){ //Search in parent children
-					$new_children = $children_insert($v->children,$insert_at_term_id,$insertion);
-					if(is_array($new_children)){
-						$output[$k]->children = $new_children;
-						return $output;
-					}
-				}
-			}
-			return false; //We haven't found any point of insertion
-		};
-
-		/**
-		 * Complete the terms list with missing parents. Missing parents will be labeled with "not_assigned = true"
-		 *
-		 * @param $terms
-		 *
-		 * @return mixed
-		 * @internal param $p
-		 * @internal param $t
-		 *
-		 */
-		$complete_missing_terms = function($terms) use($taxonomy){
-			/**
-			 * Add the parent pf $child into the $terms_list (if not present)
-			 * @param $child
-			 * @param $terms_list
-			 *
-			 * @return array
-			 */
-			$add_parent = function($child,$terms_list) use(&$add_parent,$taxonomy){
-				$parent = get_term($child->parent,$taxonomy);
-				$terms_list_as_array = json_decode(json_encode($terms_list),true);
-				$found = self::associative_array_search($terms_list_as_array,"term_id",$parent->term_id);
-				if(empty($found)){
-					$parent->not_assigned = true; //Set a flag to tell that this parent is added programmatically and not by the user
-					$terms_list[] = $parent;
-				}
-				if($parent->parent != 0){
-					return $add_parent($parent,$terms_list);
-				}else{
-					return $terms_list;
-				}
-			};
-			$new_term_list = $terms;
-			foreach($terms as $t){
-				if($t->parent != 0){
-					$new_term_list = $add_parent($t,$new_term_list);
-				}
-			}
-			return $new_term_list;
-		};
-
-		/**
-		 * Build term hierarchy
-		 * @param array $cats the terms to reorder
-		 *
-		 * @return array
-		 */
-		$build_hierarchy = function(Array $cats) use ($array_insert, $children_insert){
-			$cats_count = count($cats); //meow! How many terms have we?
-			$result = [];
-
-			if($cats_count < 1){
-				return $result;
-			}
-			elseif($cats_count == 1){
-				return $cats;
-			}
-
-			//Populate all the parent
-			foreach ($cats as $i => $cat) {
-				if($cat->parent == 0){
-					$result[] = $cat;
-					unset($cats[$i]); //remove the parent from the list
-				}
-			}
-
-			$inserted_cats = count($result); //Count the items inserted at this point
-			$cats = array_values($cats); //resort the array
-
-			if($inserted_cats == 0){
-				return []; //Here we return if no parents are present within the terms
-			}
-
-			//Populate with children
-			while(count($cats) > 0){ //Go on until we reached have some terms to order
-				foreach ($cats as $i => $cat) {
-					$parent_term_id = $cat->parent;
-					$r = $children_insert($result,$parent_term_id,$cat);
-					if(is_array($r)){ //We found a valid parent, and $r is the new array with $cat appended into parent
-						$result = $r;
-						unset($cats[$i]);
-						$cats = array_values($cats); //resort the array
-						break; //and break!
-					}
-				}
-			}
-
-			return $result;
-		};
-
-		$flatten_terms_hierarchy = function($term_hierarchy) use($convert_to_wp_term){
-			$output_terms = [];
-			$flat = function($term_hierarchy) use (&$output_terms,&$flat,$convert_to_wp_term){
-				foreach($term_hierarchy as $k => $t){
-					$output_terms[] = $convert_to_wp_term ? \WP_Term::get_instance($t->term_id,$t->taxonomy) : $t;
-					if(isset($t->children) && $t->children >= 1){
-						$flat($t->children);
-					}
-				}
-			};
-			$flat($term_hierarchy);
-
-			foreach($output_terms as $k=>$v){
-				if(isset($v->children)){
-					unset($output_terms[$k]->children);
-				}
-			}
-
-			return $output_terms;
-		};
-
-		if(!is_array($terms) || empty($terms)) return [];
-
-		foreach($terms as $k => $t){
-			if($t instanceof \WP_Term){
-				$terms[$k] = $WPTermToStdClass($t);
-			}
-		}
-
-		$terms = $complete_missing_terms($terms);
-		$h = $build_hierarchy($terms);
-
-		$sortedTerms = $flatten ? $flatten_terms_hierarchy($h) : $h; //Extract the children
-
-		$cache[$taxonomy][$post_id] = $sortedTerms;
-
-		return $sortedTerms;
+		return Terms::get_post_terms_hierarchical($post_id,$taxonomy,$args,$flatten,$convert_to_wp_term);
 	}
 
 	/**
@@ -835,28 +402,7 @@ class Utilities{
 	 * @return array
 	 */
 	static function recursive_array_diff($arr1, $arr2) {
-		$outputDiff = [];
-		foreach ($arr1 as $key => $value) {
-			//if the key exists in the second array, recursively call this function
-			//if it is an array, otherwise check if the value is in arr2
-			if (array_key_exists($key, $arr2)) {
-				if (is_array($value)) {
-					$recursiveDiff = self::recursive_array_diff($value, $arr2[$key]);
-					if (count($recursiveDiff)) {
-						$outputDiff[$key] = $recursiveDiff;
-					}
-				}
-				else if (!in_array($value, $arr2)) {
-					$outputDiff[$key] = $value;
-				}
-			}
-			//if the key is not in the second array, check if the value is in
-			//the second array (this is a quirk of how array_diff works)
-			else if (!in_array($value, $arr2)) {
-				$outputDiff[$key] = $value;
-			}
-		}
-		return $outputDiff;
+		return Arrays::recursive_array_diff($arr1,$arr2);
 	}
 
 	/**
@@ -870,22 +416,7 @@ class Utilities{
 	 * @return array
 	 */
 	static function recursive_array_diff_assoc($array1, $array2) {
-		$difference = array();
-		foreach ( $array1 as $key => $value ) {
-			if ( is_array( $value ) ) {
-				if ( ! array_key_exists( $key, $array2 ) || ! is_array( $array2[ $key ] ) ) {
-					$difference[ $key ] = $value;
-				} else {
-					$new_diff = self::recursive_array_diff_assoc( $value, $array2[ $key ] );
-					if ( ! empty( $new_diff ) ) {
-						$difference[ $key ] = $new_diff;
-					}
-				}
-			} elseif ( ! array_key_exists( $key, $array2 ) || $array2[ $key ] !== $value ) {
-				$difference[ $key ] = $value;
-			}
-		}
-		return $difference;
+		return Arrays::recursive_array_diff_assoc($array1,$array2);
 	}
 
 	/**
@@ -896,13 +427,7 @@ class Utilities{
 	 * @return bool|int|string
 	 */
 	static function recursive_array_search($needle,$haystack) {
-		foreach($haystack as $key=>$value) {
-			$current_key=$key;
-			if($needle===$value OR (is_array($value) && recursive_array_search($needle,$value) !== false)) {
-				return $current_key;
-			}
-		}
-		return false;
+		return Arrays::recursive_array_search($needle,$haystack);
 	}
 
 	/**
@@ -915,25 +440,7 @@ class Utilities{
 	 * @return array with the found pairs, or empty.
 	 */
 	static function associative_array_search($array,$key,$value){
-		$search_r = function($array, $key, $value, &$results, $subarray_key = null) use(&$search_r){
-			if (!is_array($array)) {
-				return;
-			}
-
-			if (isset($array[$key]) && $array[$key] == $value) {
-				if(isset($subarray_key))
-					$results[$subarray_key] = $array;
-				else
-					$results[] = $array;
-			}
-
-			foreach ($array as $k => $subarray) {
-				$search_r($subarray, $key, $value, $results, $k);
-			}
-		};
-		$results = array();
-		$search_r($array, $key, $value, $results);
-		return $results;
+		return Arrays::associative_array_search($array,$key,$value);
 	}
 
 	/**
@@ -946,18 +453,7 @@ class Utilities{
 	 * @return array
 	 */
 	static function associative_array_add_element_after(array $element,$key,array $array){
-		$i = 1;
-		foreach($array as $k => $v){
-			if($k == $key){
-				break;
-			}
-			$i++;
-		}
-		$head = array_slice($array,0,$i,true);
-		$tail = array_slice($array,$i);
-		$result = array_merge($head,$element);
-		$result = array_merge($result,$tail);
-		return $result;
+		return Arrays::associative_array_add_element_after($element,$key,$array);
 	}
 
 	/**
@@ -968,25 +464,7 @@ class Utilities{
 	 * @return array
 	 */
 	static function array_neighbor($arr, $key){
-		$keys = array_keys($arr);
-		$keyIndexes = array_flip($keys);
-
-		$return = array();
-		if (isset($keys[$keyIndexes[$key]-1])) {
-			$return[] = $keys[$keyIndexes[$key]-1];
-		}
-		else {
-			$return[] = $keys[sizeof($keys)-1];
-		}
-
-		if (isset($keys[$keyIndexes[$key]+1])) {
-			$return[] = $keys[$keyIndexes[$key]+1];
-		}
-		else {
-			$return[] = $keys[0];
-		}
-
-		return $return;
+		return Arrays::array_neighbor($arr,$key);
 	}
 
 	/**
@@ -1032,15 +510,7 @@ class Utilities{
 	 * @return string
 	 */
 	static function get_current_url() {
-		$pageURL = 'http';
-		if ($_SERVER["HTTPS"] == "on") {$pageURL .= "s";}
-		$pageURL .= "://";
-		if ($_SERVER["SERVER_PORT"] != "80") {
-			$pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
-		} else {
-			$pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
-		}
-		return $pageURL;
+		return Paths::get_current_url();
 	}
 
 	/**
@@ -1049,9 +519,7 @@ class Utilities{
 	 * @return string
 	 */
 	static function wp_get_current_url(){
-		global $wp;
-		$current_url = add_query_arg( $wp->query_string, '', home_url( $wp->request ) );
-		return $current_url;
+		return Paths::wp_get_current_url();
 	}
 
 	/**
@@ -1062,12 +530,7 @@ class Utilities{
 	 * @return mixed
 	 */
 	static function get_post_thumbnail_src($post_id,$size=null){
-		$post_thumbnail_id = get_post_thumbnail_id($post_id);
-		$thumbnail = wp_get_attachment_image_src($post_thumbnail_id,$size);
-		if(isset($thumbnail[0])){
-			return $thumbnail[0];
-		}
-		return false;
+		return Posts::get_post_thumbnail_src($post_id,$size);
 	}
 
 
@@ -1090,15 +553,7 @@ class Utilities{
 	 * @return mixed
 	 */
 	static function url_to_path($url){
-		$blogurl = get_bloginfo("url");
-		$blogurl = preg_replace("(https?://)", "", $blogurl );
-		//$result = preg_match("/^https?:\/\/$blogurl\/([[:space:]a-zA-Z0-9\/_.-]+)/", $url, $matches);
-		$result = preg_replace("|^https?://$blogurl|", ABSPATH, $url);
-		//$blogpath = ABSPATH;
-
-		//$filepath = $blogpath."/".$matches[1];
-		//return $filepath;
-		return $result;
+		return Paths::url_to_path($url);
 	}
 
 	/**
@@ -1108,10 +563,7 @@ class Utilities{
 	 * @return mixed
 	 */
 	static function path_to_url($path){
-		$blogurl = trailingslashit(get_bloginfo("url"));
-		$blogpath = ABSPATH;
-		$result = preg_replace("|^$blogpath|", $blogurl, $path);
-		return $result;
+		return Paths::path_to_url($path);
 	}
 
 	/**
@@ -1142,18 +594,7 @@ class Utilities{
 	 * @param string $dir the directory path
 	 */
 	static function deltree($dir){
-		if(!preg_match("|[A-Za-z0-9]+/$|",$dir)) $dir .= "/"; // ensure $dir ends with a slash
-
-		$files = glob( $dir . '*', GLOB_MARK );
-		foreach($files as $file){
-			if( substr( $file, -1 ) == '/' )
-				deltree( $file );
-			else
-				unlink( $file );
-		}
-		if(is_dir($dir)){
-			rmdir( $dir );
-		}
+		Paths::deltree($dir);
 	}
 
 	/**
@@ -1202,13 +643,7 @@ class Utilities{
 	 * @return array
 	 */
 	static function listFolderFiles($dir,$extension = "php"){
-		$files_in_root = glob($dir."/*.{$extension}");
-		$files = glob($dir."/*/*.{$extension}");
-
-		if(!$files_in_root) $files_in_root = array();
-		if(!$files) $files = array();
-
-		return array_merge($files_in_root,$files);
+		return Paths::listFolderFiles($dir,$extension);
 	}
 
 	/**
@@ -1220,14 +655,7 @@ class Utilities{
 	 * @throws \Exception
 	 */
 	static function mkdir($path,$chmod = 0777){
-		if(!is_dir($path)){
-			if(!mkdir($path,$chmod)){
-				throw new \Exception(_("Unable to create folder {$path}"));
-			}else{
-				return true;
-			}
-		}
-		return false;
+		return Paths::mkdir($path,$chmod);
 	}
 
 	/**
@@ -1301,32 +729,7 @@ class Utilities{
 	 * @throws \Exception
 	 */
 	static function add_tinymce_plugin($id,$params){
-
-		$params = wp_parse_args($params,[
-			'plugin_path' => '',
-			'create_button' => false
-		]);
-
-		// init process for registering our button
-		add_action('init', function() use($id, $params){
-			//Abort early if the user will never see TinyMCE
-			if ( ! current_user_can('edit_posts') && ! current_user_can('edit_pages') && get_user_option('rich_editing') == 'true') return;
-
-			//Add a callback to regiser our tinymce plugin
-			add_filter("mce_external_plugins", function($plugin_array) use($id, $params) {
-				$plugin_array[$id] = $params['plugin_path'];
-				return $plugin_array;
-			});
-
-			if($params['create_button']){
-				// Add a callback to add our button to the TinyMCE toolbar
-				add_filter('mce_buttons', function($buttons) use($id, $params) {
-					//Add the button ID to the $button array
-					$buttons[] = $id;
-					return $buttons;
-				});
-			}
-		});
+		WordPress::add_tinymce_plugin($id,$params);
 	}
 
 	/**
@@ -1345,26 +748,7 @@ class Utilities{
 	 * @return int|null $attachment Returns an attachment ID, or null if no attachment is found
 	 */
 	static function get_attachment_id_by_url($url) {
-		// Split the $url into two parts with the wp-content directory as the separator
-		$parsed_url  = explode( parse_url( WP_CONTENT_URL, PHP_URL_PATH ), $url );
-
-		// Get the host of the current site and the host of the $url, ignoring www
-		$this_host = str_ireplace( 'www.', '', parse_url( home_url(), PHP_URL_HOST ) );
-		$file_host = str_ireplace( 'www.', '', parse_url( $url, PHP_URL_HOST ) );
-		// Return nothing if there aren't any $url parts or if the current host and $url host do not match
-		if ( ! isset( $parsed_url[1] ) || empty( $parsed_url[1] ) || ( $this_host != $file_host ) ) {
-			return null;
-		}
-		// Now we're going to quickly search the DB for any attachment GUID with a partial path match
-		// Example: /uploads/2013/05/test-image.jpg
-		global $wpdb;
-		$attachment = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM {$wpdb->prefix}posts WHERE guid RLIKE %s;", $parsed_url[1] ) );
-		// Returns null if no attachment is found
-		if ( ! empty( $attachment[0] ) ) {
-			return $attachment[0];
-		} else {
-			return false;
-		}
+		return Posts::get_attachment_id_by_url($url);
 	}
 
 	/**
