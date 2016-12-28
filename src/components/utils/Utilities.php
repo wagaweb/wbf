@@ -10,6 +10,13 @@ namespace WBF\components\utils;
 use Mockery\CountValidator\Exception;
 use WBF\components\notices\Notice_Manager;
 
+/**
+ * Class Utilities
+ *
+ * @note Yes, we know traits, but, you know, WordPress PHP compatibility...
+ *
+ * @package WBF\components\utils
+ */
 class Utilities{
 	/**
 	 * Return a sanitized version of blog name
