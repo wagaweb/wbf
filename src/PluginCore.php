@@ -150,7 +150,7 @@ class PluginCore {
 		add_action( "init", [$this,"init"], 11 );
 
 		add_action( 'wp_enqueue_scripts', [$this,"register_libs"] );
-		add_action( "admin_enqueue_scripts", [$this, "enqueue_admin_assets"], 99);
+		add_action( "admin_enqueue_scripts", [$this, "enqueue_admin_assets"]);
 		add_action( 'admin_enqueue_scripts', [$this,"register_libs"] );
 
 		/*
