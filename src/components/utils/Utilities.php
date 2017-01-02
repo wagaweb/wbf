@@ -18,6 +18,12 @@ use WBF\components\notices\Notice_Manager;
  * @package WBF\components\utils
  */
 class Utilities{
+
+	const PAGE_TYPE_DEFAULT_HOME = "default_home";
+	const PAGE_TYPE_STATIC_HOME = "static_home";
+	const PAGE_TYPE_BLOG_PAGE = "blog_page";
+	const PAGE_TYPE_COMMON = "common";
+
 	/**
 	 * Return a sanitized version of blog name
 	 *
