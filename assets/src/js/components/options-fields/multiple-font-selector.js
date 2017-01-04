@@ -2,7 +2,8 @@ import $ from "jquery";
 import * as Backbone from "backbone";
 import * as _ from "underscore";
 
-class MultipleFontSelectorView{
+class MultipleFontSelectorView
+{
     static init(fontsData){
         let counter = 1,
             cssSelectors,
@@ -60,7 +61,7 @@ class MultipleFontSelectorView{
                     $('[data-font-assign]').append("<div "+newAssignContainer+"></div>");
 
                     // check if we have values from the database
-                    if (assignStoredValues != undefined) {
+                    if (assignStoredValues != undefined && assignStoredValues.attr('data-stored-values') != null) {
                         let jsonAssignedFonts = assignStoredValues.attr('data-stored-values'),
                             objAssignedFonts = JSON.parse(jsonAssignedFonts);
 
@@ -84,19 +85,32 @@ class MultipleFontSelectorView{
                             // add the array of selected weights to the object
                             fontWeights[family] = newWeights;
                         }
-                    }
+                        let fav = new FontAssignerView({
+                            optionName: optionsName,
+                            cssSelector: selector,
+                            alreadySelectedFonts: objFonts,
+                            container: newAssignContainer,
+                            fontWeights: fontWeights,
+                            selectedFont: objAssignedFonts[selector]['family'], // the font already selected to be assigned
+                            selectedWeight: objAssignedFonts[selector]['weight'], // the weight already selected to be assigned
+                            el: $new_ass_div,
+                            model: new FontAssignerModel(fontsData)
+                        });
+                    } else {
 
-                    let fav = new FontAssignerView({
-                        optionName: optionsName,
-                        cssSelector: selector,
-                        alreadySelectedFonts: objFonts,
-                        container: newAssignContainer,
-                        fontWeights: fontWeights,
-                        selectedFont: objAssignedFonts[selector]['family'], // the font already selected to be assigned
-                        selectedWeight: objAssignedFonts[selector]['weight'], // the weight already selected to be assigned
-                        el: $new_ass_div,
-                        model: new FontAssignerModel(fontsData)
-                    });
+                        // if no info from db is found just init some empty assigner
+                        let fav = new FontAssignerView({
+                            optionName: optionsName,
+                            cssSelector: selector,
+                            alreadySelectedFonts: objFonts,
+                            container: newAssignContainer,
+                            fontWeights: '',
+                            selectedFont: '',
+                            selectedWeight: '',
+                            el: $new_ass_div,
+                            model: new FontAssignerModel(fontsData)
+                        });
+                    }
                 })
             }
         }
@@ -336,15 +350,6 @@ class FontAssignerView extends Backbone.View{
  * FontAssigner Model
  */
 class FontAssignerModel extends Backbone.Model{
-    defaults(){
-        return {
-            "fonts": "",
-            "fontSubset": [], // the subset of fonts selected in the font selector above
-            "selectedFont": "", // the font already selected to be assigned
-            "selectedWeight": "", // the weight already selected to be assigned
-            "fontWeights": {}
-        };
-    }
     initialize(fontsData, selectorModel){
         this.set('fonts', fontsData);
     }
