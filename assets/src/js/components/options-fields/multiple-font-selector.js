@@ -309,7 +309,7 @@ class FontAssignerView extends Backbone.View{
                     selectedWeight = fontWeights[selectedFont][0];
                 }
             }
-        } else if (this.model.get('selectedWeight').lenght > 0) {
+        } else {
             selectedWeight = this.model.get('selectedWeight');
         }
         this.$el.find('['+container+']').html(this.template({
