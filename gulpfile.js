@@ -76,9 +76,9 @@ var paths = {
         "vendor/jquery-modal/*.js",
         "vendor/mgargano/simplehtmldom/src/*.*",
         "vendor/mobiledetect/mobiledetectlib/Mobile_Detect.php",
-        "vendor/owlcarousel/**/*",
+        "vendor/owl.carousel/dist/**/*",
         "vendor/theme-updates/**/*",
-        "vendor/autoload.php",
+        "vendor/autoload.php"
     ]
 };
 
