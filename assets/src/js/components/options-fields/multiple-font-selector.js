@@ -299,13 +299,26 @@ class FontAssignerView extends Backbone.View{
             rebind_actions = false;
         }
 
+        // set the default selectedWeight
+        var selectedWeight = '',
+            selectedFont = this.model.get('selectedFont');
+        if(this.model.get('selectedWeight') == '') {
+            if (typeof this.model.get('fontWeights') != 'undefined' && !_.isEmpty(this.model.get('fontWeights')) ) {
+                let fontWeights = this.model.get('fontWeights');
+                if ( typeof fontWeights[selectedFont] != 'undefined') { // more controls
+                    selectedWeight = fontWeights[selectedFont][0];
+                }
+            }
+        } else if (this.model.get('selectedWeight').lenght > 0) {
+            selectedWeight = this.model.get('selectedWeight');
+        }
         this.$el.find('['+container+']').html(this.template({
             cssSelector: this.model.get('cssSelector'),
             optionName: this.model.get('optionName'),
             fonts: this.model.get('fontSubset'),
             selectedFont: this.model.get('selectedFont'),
             fontWeights: this.model.get('fontWeights'),
-            selectedWeight: this.model.get('selectedWeight')
+            selectedWeight: selectedWeight
         }));
 
         if(rebind_actions){
@@ -350,6 +363,15 @@ class FontAssignerView extends Backbone.View{
  * FontAssigner Model
  */
 class FontAssignerModel extends Backbone.Model{
+    defaults(){
+        return {
+            "fonts": "",
+            "fontSubset": [], // the subset of fonts selected in the font selector above
+            "selectedFont": "", // the font already selected to be assigned
+            "selectedWeight": "", // the weight already selected to be assigned
+            "fontWeights": {}
+        };
+    }
     initialize(fontsData, selectorModel){
         this.set('fonts', fontsData);
     }
@@ -431,7 +453,7 @@ class FontAssignerModel extends Backbone.Model{
 
             if (family == newFont) {
                 // theese are the checkboxes
-                let weights = jQuery(sel[i]).closest('.font-select-wrapper').find('.font-weight-checkbox');
+                var weights = jQuery(sel[i]).closest('.font-select-wrapper').find('.font-weight-checkbox');
             }
             if(typeof weights !== "undefined") {
                 for (let j = 0; j < weights.length; j++) {
