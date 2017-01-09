@@ -21,12 +21,16 @@ class MediaUploaderController{
             frame,
             $el = $(this);
 
+        this.$field_container = $field_container;
+
         event.preventDefault();
 
         // If the media frame already exists, reopen it.
         if ( this.upload_window ) {
             this.upload_window.open();
         } else {
+            let self = this;
+
             // Create the media frame.
             this.upload_window = new wp.media.view.MediaFrame.Select({
                 // Set the title of the modal.
@@ -47,18 +51,17 @@ class MediaUploaderController{
             });
 
             // When an image is selected, run a callback.
-            let self = this;
             this.upload_window.on( 'select', function(event) {
                 let attachment = self.upload_window.state().get('selection').first(); // Grab the selected attachment.
                 self.upload_window.close();
 
-                $field_container.find('.upload').val(attachment.attributes.url);
+                self.$field_container.find('.upload').val(attachment.attributes.url);
                 if ( attachment.attributes.type == 'image' ) {
-                    $field_container.find('.screenshot').empty().hide().append('<img src="' + attachment.attributes.url + '"><a class="remove-image">Remove</a>').slideDown('fast');
+                    self.$field_container.find('.screenshot').empty().hide().append('<img src="' + attachment.attributes.url + '"><a class="remove-image">Remove</a>').slideDown('fast');
                 }
-                $field_container.find('.upload-button').unbind().addClass('remove-file').removeClass('upload-button').val(wbfData.of_media_uploader.remove);
-                $field_container.find('.of-background-properties').slideDown();
-                $field_container.find('.remove-image, .remove-file').on('click', function() {
+                self.$field_container.find('.upload-button').unbind().addClass('remove-file').removeClass('upload-button').val(wbfData.of_media_uploader.remove);
+                self.$field_container.find('.of-background-properties').slideDown();
+                self.$field_container.find('.remove-image, .remove-file').on('click', function() {
                     self.remove_file( $(this).parents('[data-section]') );
                 });
             });
