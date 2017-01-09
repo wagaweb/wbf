@@ -1,6 +1,12 @@
 == Change log ==
 
-Version 1.0.2 -
+Version 1.0.3 - 01/09/2017
+---------------------------------
+- Fix: Theme_Update_Checker no longer throws errors
+- Fix: Upload field now works properly
+- Tweak: Behaviors now support custom classes
+
+Version 1.0.2 - 01/04/2017
 ---------------------------------
 - Fix: Template_Plugin now search only the templates registered by the plugin
 - Tweak: GUIs for Component and Options refactored
