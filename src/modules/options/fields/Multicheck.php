@@ -27,7 +27,7 @@ class Multicheck extends BaseField implements Field{
 	}
 
 	public function sanitize( $input, $option ) {
-		$output = '';
+		$output = [];
 		if ( is_array( $input ) ) {
 			foreach( $option['options'] as $key => $value ) {
 				$output[$key] = false;

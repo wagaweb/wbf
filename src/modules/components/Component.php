@@ -117,8 +117,14 @@ class Component {
               'post_type' => array(),
               'node_id' => array()
             );
-            $allowed_post_types = \WBF\modules\options\of_get_option($this->name."_load_locations",array());
-            if($allowed_post_types['front'] == 1){
+            $allowed_post_types = \WBF\modules\options\of_get_option($this->name."_load_locations",[]);
+            if(!is_array($allowed_post_types)){
+            	$allowed_post_types = [
+            		'front' => 0,
+		            'home' => 0
+	            ]; //Ensure the data type
+            }
+	        if($allowed_post_types['front'] == 1){
                 array_push($this->filters['node_id'],get_option("page_on_front"));
                 unset($allowed_post_types['front']);
             }
