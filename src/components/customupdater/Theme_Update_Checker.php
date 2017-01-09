@@ -115,7 +115,7 @@ class Theme_Update_Checker{
 		$state = $this->get_current_state();
 
 		//Is there an update to insert?
-		if ( $state instanceOf Theme_State && isset($state->update) && !empty($state->update) ){
+		if ( $state instanceOf Theme_State && isset($state->update) && !empty($state->update) && $state->update instanceof Theme_Update){
 			$can_update = apply_filters("wbf/custom_theme_updater/can_update", true, $this);
 			if($can_update){
 				$updates->response[$this->theme] = $state->update->export_to_wp_format();
@@ -183,7 +183,9 @@ class Theme_Update_Checker{
 		$update = $this->requestUpdate();
 		$update = apply_filters("wbf/custom_theme_updater/theme/update_state",$update,$this); //Make possibile to block\alter the update state (eg: with Licenses)
 		$state->update = $update;
-		$state->update->theme = $this->theme;
+		if($state->update instanceof Theme_Update){
+			$state->update->theme = $this->theme;
+		}
 		$this->set_current_state($state);
 	}
 
