@@ -8,6 +8,7 @@ class Behavior{
 	var $posttypes_values;
 	var $title;
 	var $description;
+	var $class;
 	var $type;
 
 	var $value; //the current value displayed (of current post)
@@ -38,6 +39,7 @@ class Behavior{
 		if(isset($args['title'])) $this->title = $args['title']; else $this->title = "";
 		if(isset($args['desc'])) $this->description = $args['desc']; else $this->description = "";
 		if(isset($args['type'])) $this->type = $args['type']; else $this->type = "";
+		if(isset($args['class'])) $this->class = $args['class']; else $this->class = "";
 
 		if(isset($args['options'])){
 			$this->possible_values = $args['options'];
@@ -257,6 +259,7 @@ class Behavior{
 			'desc' => $this->description,
 			'id' => !empty($prefix) ? "behavior_" . $prefix . "_" . $this->name : "behavior_" . $this->name,
 			'type' => $type,
+            'class' => $this->class
 		);
 
 		switch ($type) {
