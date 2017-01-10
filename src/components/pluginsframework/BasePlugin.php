@@ -601,19 +601,19 @@ class BasePlugin {
 	 * @return array with 'core', 'admin' and 'public' keys. Each keys is associated with respective classes.
 	 * @throws \Exception
 	 */
-	static function get_instances_of($plugin){
+	static function get_instances_of($plugin_name){
 		global $wbf_loaded_plugins;
-		if(isset($wbf_loaded_plugins[$plugin])){
-			$plugin = $wbf_loaded_plugins[$plugin];
-			$loader = $plugin->get_loader();
-			if($plugin && (isset($loader->public_plugin) || isset($loader->admin_plugin))){
+		if(isset($wbf_loaded_plugins[$plugin_name])){
+			$plugin = $wbf_loaded_plugins[$plugin_name];
+			if($plugin instanceof BasePlugin || $plugin instanceof TemplatePlugin){
+				$loader = $plugin->get_loader();
 				return [
 					'core' => $plugin,
 					'public' => isset($loader->public_plugin) ? $loader->public_plugin : false,
 					'admin' => isset($loader->admin_plugin) ? $loader->admin_plugin : false
 				];
 			}else{
-				throw new \Exception("Trying to get $plugin instances: module $plugin has no instances");
+				throw new \Exception("Trying to get $plugin_name instances: plugin $plugin_name has no instances");
 			}
 		}else{
 			return [];
