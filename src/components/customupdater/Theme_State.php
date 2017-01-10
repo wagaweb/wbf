@@ -1,5 +1,5 @@
 <?php
-namespace wbf\components\customupdater;
+namespace WBF\components\customupdater;
 
 class Theme_State {
 	/**

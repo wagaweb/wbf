@@ -1,5 +1,5 @@
 <?php
-namespace wbf\components\utils;
+namespace WBF\components\utils;
 
 
 class WordPress {
