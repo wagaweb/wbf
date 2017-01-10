@@ -1,8 +1,9 @@
 == Change log ==
 
-Version 1.0.4 -
+Version 1.0.4 - 01/10/2017
 ---------------------------------
 - Fix: BasePlugin::get_instance_of now works as expected
+- Fix: Theme_State namespace is now uppercase (theme updates should work fine now)
 - Tweak: Added is_wp_cli() to WBF\components\utils\WordPress
 
 Version 1.0.3 - 01/09/2017
