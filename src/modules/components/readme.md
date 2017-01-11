@@ -82,13 +82,13 @@ The most basic component could look like that:
 	    }
 	}
 
-## Project objectives
+## Project goals
 
-Components can be used for many things by advanced developers, and could be somewhat intimidating to beginners ones or to WordPress advanced users which only toss snippets of code found online into functions.php file.
+Components are born to address the issue of messy `functions.php` files that are found more often than not among WordPress themes, but can be used for many different things by advanced developers. An example of an advanced usage can be found in [Waboot theme](https://github.com/wagaweb/waboot#components).
 
-The latter practices can be easy at early stages but they could easily lead to a nightmare code base later on. Even some premiun plugins and themes are completely un-moddable.
+We believe that the initial learning cost is compensated by the advantages. Tossing snippets of code found online into `functions.php` file can be easier at early stages but could easily lead to a nightmare code base later on. Even some premiun plugins and themes are completely un-moddable.
 
-Components can be used as a standard procedure to encaplulate distinct functionality, improving code quality and code usability among WordPress community.
+Components can be used as a standard procedure to encapsulate distinct theme functionality, improving code quality and code usability among WordPress community.
 
 ## Advanced topics
 
