@@ -1,3 +1,5 @@
+[Components](#wbf-components) | [Modules](#wbf-modules) [Roadmap](#roadmap)
+
 # Waboot Framework
 
 WBF is a modular framework for WordPress which can speed up development.
@@ -71,6 +73,8 @@ A vast collection of classes with many build-in functionality to speed up plugin
 - **Utils**  
 A toolbox of useful functions
 
+<span style="font-size:smaller"><a href="#waboot-framework">Back to top.</a></span>
+
 ## WBF Modules
 
 To use module APIs WBF has to be installed as plugin or embedded into a theme and initialized within the `functions.php` file.
@@ -95,4 +99,20 @@ Behaviors API allows developer to create metaboxes with default values specified
     [Learn more](https://github.com/wagaweb/wbf/tree/master/src/modules/behaviors)
     
 - **License Manager**  
-A simple frontend to License_Manager component. It will make available a dashboard page with all registered licenses.  
+A simple frontend to License_Manager component. It will make available a dashboard page with all registered licenses.
+
+<span style="font-size:smaller"><a href="#waboot-framework">Back to top.</a></span>
+  
+# Roadmap
+
+**v1.0.x**
+
+Bugfix releases
+
+**v1.1.x**
+
+- Implementation of tests
+- Make behaviors use theme options fields
+- Refactoring of Plugin_Update_Checker to a more modern version.
+
+<span style="font-size:smaller"><a href="#waboot-framework">Back to top.</a></span>
