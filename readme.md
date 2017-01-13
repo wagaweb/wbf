@@ -1,4 +1,4 @@
-[Components](#wbf-components) | [Modules](#wbf-modules) [Roadmap](#roadmap)
+[Components](#wbf-components) | [Modules](#wbf-modules) | [Roadmap](#roadmap)
 
 # Waboot Framework
 
