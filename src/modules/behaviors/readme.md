@@ -176,7 +176,9 @@ $behaviors[] = [
     
 ### The 'valid' property
 
-This property can be used to specify where the metabox relative to the behavior have to display itself or its value must be interpreted. It is an array of filter. Available filters:
+This property can be used to specify where the metabox relative to the behavior has to display itself or its value must be interpreted. It's an array of strings which represent filters. 
+
+Available filters are:
 
 - "post": visible \ interpreted for posts
 
