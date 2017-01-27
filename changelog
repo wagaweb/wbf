@@ -1,5 +1,9 @@
 == Change log ==
 
+Version 1.0.5 -
+---------------------------------
+- Fix: Now Text and TextArea fields will strip slashes before outputting their value
+
 Version 1.0.4 - 01/10/2017
 ---------------------------------
 - Fix: BasePlugin::get_instance_of now works as expected
