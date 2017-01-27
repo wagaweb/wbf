@@ -4,6 +4,25 @@ namespace WBF\modules\options\fields;
 
 class Text extends BaseField implements Field{
 
+	public function init(){
+		add_filter("wbf/theme_options/text/get_value",[$this,"get_value"]);
+	}
+
+	/**
+	 * Perform some operation before printing out the option value
+	 *
+	 * @hooked 'wbf/theme_options/text/get_value'
+	 *
+	 * @param $value
+	 * @return string
+	 */
+	public function get_value($value){
+		if(is_string($value)){
+			$value = stripslashes($value);
+		}
+		return $value;
+	}
+
 	/**
 	 * return string
 	 */
