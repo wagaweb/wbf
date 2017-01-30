@@ -11,7 +11,7 @@ class Text extends Field {
 			       type="text"
 			       id="<?php echo $this->id; ?>"
 			       name="<?php echo $this->name; ?>"
-			       value="<?php echo esc_attr( (isset($instance[$this->slug])) ? $instance[$this->slug] : $this->options['default'] ); ?>"
+			       value="<?php echo esc_attr( (isset($this->instance[$this->slug])) ? $this->instance[$this->slug] : $this->options['default'] ); ?>"
 			>
 		</p>
 	<?php }
