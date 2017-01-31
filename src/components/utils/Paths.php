@@ -252,6 +252,7 @@ class Paths {
 		// take some vars and passes them in the $post object (e.g. shortcode vars can be used in parts)
 		if(is_array($vars) && !empty($vars)){
 			global $post;
+			if (!isset($post))$post = new \stdClass(); // in case we use this in admin
 			$post->wbf_template_vars = $vars;
 		}
 		return self::locate_template($templates, true, false);
