@@ -1,0 +1,14 @@
+{
+  "name": "wbf/widgets",
+  "description": "An helper component for widgets development",
+  "homepage": "http://www.waga.it",
+  "license": "GPL-2.0+",
+  "authors": [
+    {
+      "name": "Waga Team",
+      "email": "dev@waga.it",
+      "homepage": "http://www.waga.it",
+      "role": "Developer"
+    }
+  ]
+}
