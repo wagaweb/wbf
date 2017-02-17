@@ -21,7 +21,6 @@ class Loader {
 	/**
 	 * The array of actions registered with WordPress.
 	 *
-	 * @since    1.0.0
 	 * @access   protected
 	 * @var      array $actions The actions registered with WordPress to fire when the plugin loads.
 	 */
@@ -30,7 +29,6 @@ class Loader {
 	/**
 	 * The array of filters registered with WordPress.
 	 *
-	 * @since    1.0.0
 	 * @access   protected
 	 * @var      array $filters The filters registered with WordPress to fire when the plugin loads.
 	 */
@@ -44,8 +42,6 @@ class Loader {
 
 	/**
 	 * Initialize the collections used to maintain the actions and filters.
-	 *
-	 * @since    1.0.0
 	 *
 	 * @param Plugin $caller
 	 */
@@ -69,7 +65,6 @@ class Loader {
 	/**
 	 * Add a new action to the collection to be registered with WordPress.
 	 *
-	 * @since    1.0.0
 	 * @var      string $hook The name of the WordPress action that is being registered.
 	 * @var      object $component A reference to the instance of the object on which the action is defined.
 	 * @var      string $callback The name of the function definition on the $component.
@@ -81,10 +76,28 @@ class Loader {
 	}
 
 	/**
+	 * Add a new ajax action
+	 *
+	 * @since 1.0.5
+	 *
+	 * @param string $action
+	 * @param object $component
+	 * @param string $callback
+	 * @param bool $public if TRUE wp_ajax_nopriv will be added as well
+	 * @param int $priority
+	 * @param int $accepted_args
+	 */
+	public function add_ajax_action($action, $component, $callback, $public = true, $priority = 10, $accepted_args = 1){
+		$this->actions = $this->add( $this->actions, "wp_ajax_".$action, $component, $callback, $priority, $accepted_args);
+		if($public){
+			$this->actions = $this->add( $this->actions, "wp_ajax_nopriv_".$action, $component, $callback, $priority, $accepted_args);
+		}
+	}
+
+	/**
 	 * A utility function that is used to register the actions and hooks into a single
 	 * collection.
 	 *
-	 * @since    1.0.0
 	 * @access   private
 	 * @var      array $hooks The collection of hooks that is being registered (that is, actions or filters).
 	 * @var      string $hook The name of the WordPress filter that is being registered.
@@ -111,7 +124,6 @@ class Loader {
 	/**
 	 * Add a new filter to the collection to be registered with WordPress.
 	 *
-	 * @since    1.0.0
 	 * @var      string $hook The name of the WordPress filter that is being registered.
 	 * @var      object $component A reference to the instance of the object on which the filter is defined.
 	 * @var      string $callback The name of the function definition on the $component.
@@ -131,7 +143,6 @@ class Loader {
 	/**
 	 * Register the filters and actions with WordPress.
 	 *
-	 * @since    1.0.0
 	 */
 	public function run() {
 
