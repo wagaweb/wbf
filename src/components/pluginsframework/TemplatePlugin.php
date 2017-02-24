@@ -41,9 +41,10 @@ class TemplatePlugin extends BasePlugin {
 		$this->loader->add_filter( 'wbf/locate_template/search_paths', $this, 'add_template_base_path', 10, 2 );
 		//Embedded support for WooCommerce
 		$this->wc_templates = array();
-		if(function_exists('is_woocommerce')){
-			$this->loader->add_filter( 'woocommerce_locate_template',$this,"override_wc_templates", 11, 3);
-		}
+		//if(function_exists('is_woocommerce')){
+			//$this->loader->add_filter( 'woocommerce_locate_template',$this,"override_wc_locate_templates", 11, 3);
+			$this->loader->add_filter( 'wc_get_template',$this,"override_wc_get_templates", 11, 5);
+		//}
 		//Embedded support for template wrappers
 		$this->loader->add_action( 'init', $this, "maybe_attach_wrapper", 20 );
 		//Just to be sure...
@@ -149,10 +150,12 @@ class TemplatePlugin extends BasePlugin {
 	 * @param $template_name
 	 * @param $template_path
 	 *
+	 * @deprecated in favor of override_wc_get_templates
+	 *
 	 * @return mixed
 	 */
-	public function override_wc_templates($template, $template_name, $template_path){
-		remove_filter("woocommerce_locate_template",[$this,"override_wc_templates"],11);
+	public function override_wc_locate_templates($template, $template_name, $template_path){
+		remove_filter("woocommerce_locate_template",[$this,"override_wc_locate_templates"],11);
 
 		//Check if theme has a template for current post\page
 		$file = wc_locate_template($template_name);
@@ -164,7 +167,38 @@ class TemplatePlugin extends BasePlugin {
 			return $file;
 		}
 
+		add_filter("woocommerce_locate_template",[$this,"override_wc_locate_templates"],11,3);
+
 		return $template;
+	}
+
+	/**
+	 * Inject templates into WC template hierarchy
+	 *
+	 * @hooked 'wc_get_template'
+	 *
+	 * @param $located
+	 * @param $template_name
+	 * @param $args
+	 * @param $template_path
+	 * @param $default_path
+	 *
+	 * @return mixed
+	 */
+	public function override_wc_get_templates($located, $template_name, $args, $template_path, $default_path){
+		if(in_array($template_name,$this->wc_templates)){
+			//Check if theme has a template for current post\page
+			$theme_dir = get_stylesheet_directory();
+			if(preg_match("|$theme_dir|",$located)){
+				return $located; //Return if the theme override the template
+			}
+			//Check if plugin has a template for current post\page
+			if(isset($this->templates_paths[ $template_name ]) && is_file($this->templates_paths[ $template_name ])){
+				$located = $this->templates_paths[ $template_name ];
+			}
+		}
+
+		return $located;
 	}
 
 	/**
