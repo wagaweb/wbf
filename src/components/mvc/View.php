@@ -95,12 +95,21 @@ abstract class View{
 	 * The View will look for a valid file in these locations:
 	 *
 	 * IF PLUGIN (when $relative_file_path == "src/view/foo.php"):
-	 * - <parent_theme>/<relative_file_path WITHOUT /src/ if present>/<plugin_dir_name>-<file_name> (eg: wp-content/themes/twentyfifteen/views/wb-sample-foo.php)
-	 * - <parent_theme/child_theme>/<plugin_dir_name>/<relative_file_path WITHOUT /src/ if present>/<file_name> (eg: wp-content/themes/twentyfifteen/wb-sample/views/foo.php)
+	 *
+	 * - <child_theme>/<plugin_dir_name>/<relative_file_path> (eg: wp-content/themes/mytheme/plugin-name/views/foo.php)
+	 *
+	 * - <child_theme>/<plugin_dir_name>/<file-name> (eg: wp-content/themes/mytheme/plugin-name/foo.php)
+	 *
+	 * - <parent_theme>/<plugin_dir_name>/<relative_file_path> (eg: wp-content/themes/twentyfifteen/plugin-name/views/foo.php)
+	 *
+	 * - <parent_theme>/<plugin_dir_name>/<file-name> (eg: wp-content/themes/twentyfifteen/plugin-name/foo.php)
+	 *
 	 * - <plugin_path>
 	 *
 	 * IF THEME:
 	 * <parent_theme/child_theme>/<relative_file_path>
+	 *
+	 * WHERE <relative_file_path> is the path name starting from plugin root folder. If the 'src' directory is present, it not will be considered (as in example above).
 	 *
 	 * @param $relative_file_path
 	 * @param null $plugin
@@ -123,11 +132,12 @@ abstract class View{
 			$relative_file_path = preg_replace("/^\/?src\//","",$relative_file_path); //Strip src/
 			//Theme and parent
 			foreach([Utilities::maybe_strip_trailing_slash(get_stylesheet_directory()),Utilities::maybe_strip_trailing_slash(get_template_directory())] as $template_dir){
-				$search_paths[] = $template_dir."/".dirname($relative_file_path)."/".$plugin_dirname."-".basename($relative_file_path);
+				$search_paths[] = $template_dir."/".$plugin_dirname."/".dirname($relative_file_path)."/".basename($relative_file_path);
 				$search_paths[] = $template_dir."/".$plugin_dirname."/".basename($relative_file_path);
 			}
 			//Plugin
 			$search_paths[] = $plugin_abspath;
+			$search_paths = array_unique($search_paths);
 		}else{
 			$search_paths = [];
 			foreach([Utilities::maybe_strip_trailing_slash(get_stylesheet_directory()),Utilities::maybe_strip_trailing_slash(get_template_directory())] as $template_dir){
