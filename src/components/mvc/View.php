@@ -137,7 +137,6 @@ abstract class View{
 			}
 			//Plugin
 			$search_paths[] = $plugin_abspath;
-			$search_paths = array_unique($search_paths);
 		}else{
 			$search_paths = [];
 			foreach([Utilities::maybe_strip_trailing_slash(get_stylesheet_directory()),Utilities::maybe_strip_trailing_slash(get_template_directory())] as $template_dir){
