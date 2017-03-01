@@ -1,8 +1,12 @@
 == Change log ==
 
-Version 1.0.5 -
+Version 1.0.5 - 03/01/2017
 ---------------------------------
 - Fix: Now Text and TextArea fields will strip slashes before outputting their value
+- Fix: Post non-existing condition in Paths::get_template_part()
+- Fix: Fix to WC Template overriding on TemplatePlugin
+- Tweak: Added add_ajax_action() to Plugin Loader class
+- Feature: Added "Widgets" component
 
 Version 1.0.4 - 01/10/2017
 ---------------------------------
