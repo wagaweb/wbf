@@ -16,8 +16,8 @@ class DB {
 		static $cache;
 
 		//If prefix already exists, strip it
-		if(preg_match("/{$wpdb->prefix}/",$table_name)){
-			$table_name = ltrim($table_name,$wpdb->prefix);
+		if(preg_match("/^{$wpdb->prefix}/",$table_name)){
+			$table_name = preg_replace("/^$wpdb->prefix/","",$table_name);
 		}
 
 		if(isset($cache[$table_name])) return $cache[$table_name];
