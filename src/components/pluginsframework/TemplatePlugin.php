@@ -247,7 +247,7 @@ class TemplatePlugin extends BasePlugin {
 
 		$required_tpl = get_post_meta( $post->ID, '_wp_page_template', true ); //Get the template set via wp editor
 
-		if($required_tpl == "" || !$required_tpl || !is_string($required_tpl)){
+		if($required_tpl == "" || $required_tpl == "default" || !$required_tpl || !is_string($required_tpl)){
 			$file = $this->locate_template_file_in_hierarchy();
 		}else{
 			$file = $this->locate_template_file($required_tpl);
