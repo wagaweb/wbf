@@ -417,13 +417,16 @@ class TemplatePlugin extends BasePlugin {
 	 * Gets the paths where template file can be looked for in themes
 	 */
 	private function get_directories_of_templates_in_theme(){
+		$stylesheet_dir = \get_stylesheet_directory();
+		$template_dir = \get_template_directory();
+
 		$directories = [
-			\get_stylesheet_directory()."/".$this->get_plugin_name(),
-			\get_stylesheet_directory()."/templates/".$this->get_plugin_name(),
-			\get_stylesheet_directory()."/templates/".$this->get_plugin_name()."/parts",
-			\get_template_directory()."/".$this->get_plugin_name(),
-			\get_template_directory()."/templates/".$this->get_plugin_name(),
-			\get_template_directory()."/templates/".$this->get_plugin_name()."/parts"
+			$stylesheet_dir."/".$this->get_plugin_name(),
+			$stylesheet_dir."/templates/".$this->get_plugin_name(),
+			$stylesheet_dir."/templates/".$this->get_plugin_name()."/parts",
+			$template_dir."/".$this->get_plugin_name(),
+			$template_dir."/templates/".$this->get_plugin_name(),
+			$template_dir."/templates/".$this->get_plugin_name()."/parts"
 		];
 
 		$directories = array_unique($directories);
