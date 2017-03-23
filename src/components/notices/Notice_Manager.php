@@ -13,18 +13,28 @@ class Notice_Manager {
 
     function __construct(){
         $notices = $this->get_notices();
-        if(!empty($notices)){
-            foreach($notices as $id => $notice){
-                if(isset($notice['condition']) && is_string($notice['condition'])){
-                    if($this->conditions_met($notice)){ //Remove notices that mets the conditions
-                        unset($notices[$id]);
-                        continue;
-                    }
-                }
-            }
-            $this->update_notices($notices);
-            $this->notices = $notices;
-        }
+	    if(!empty($notices)){
+		    foreach($notices as $id => $notice){
+			    if(isset($notice['condition']) && is_string($notice['condition'])){
+				    try{
+					    if($this->conditions_met($notice)){ //Remove notices that mets the conditions
+						    unset($notices[$id]);
+						    continue;
+					    }
+				    }catch (\Exception $e){
+					    add_action( 'admin_notices', function() use($e){
+						    ?>
+                            <div class="error">
+                                <p><?php echo $e->getMessage(); ?></p>
+                            </div>
+						    <?php
+					    });
+				    }
+			    }
+		    }
+		    $this->update_notices($notices);
+		    $this->notices = $notices;
+	    }
     }
 
 	/**
@@ -74,14 +84,14 @@ class Notice_Manager {
                 case 'updated':
                 case 'success':
                     ?>
-                    <div class="updated <?php if($notice['manual_display']): ?>inline<?php endif; ?>">
+                    <div id="<?php echo $id; ?>-notice" class="updated <?php if($notice['manual_display']): ?>inline<?php endif; ?>">
                         <p><?php echo $notice['message']; ?></p>
                     </div>
                     <?php
                     break;
                 case 'error':
                     ?>
-                    <div class="error <?php if($notice['manual_display']): ?>inline<?php endif; ?>">
+                    <div id="<?php echo $id; ?>-notice" class="error <?php if($notice['manual_display']): ?>inline<?php endif; ?>">
                         <p><?php echo $notice['message']; ?></p>
                     </div>
                     <?php
@@ -89,7 +99,7 @@ class Notice_Manager {
                 case 'nag':
                 case 'warning':
                     ?>
-                    <div class="update-nag <?php if($notice['manual_display']): ?>inline<?php endif; ?>">
+                    <div id="<?php echo $id; ?>-notice" class="update-nag <?php if($notice['manual_display']): ?>inline<?php endif; ?>">
                         <p><?php echo $notice['message']; ?></p>
                     </div>
                     <?php
@@ -133,7 +143,7 @@ class Notice_Manager {
 	 * @param string $level (can be: "updated","error","nag"
 	 * @param string $category (can be anything. Categories are used to group notices for easy clearing them later. If the category is set to "_flash_", however, the notice will be cleared after displaying.
 	 * @param null|String $condition a class name that implements Condition interface
-	 * @param null|mixed $cond_args parameters to pass to $condition constructor
+	 * @param null|mixed $cond_args parameters to pass to $condition constructor. You can include a '_file' item to specify a php file to require before setting up the condition instance
 	 * @param bool $manual_display if TRUE, the notice will not be displayed at "admin_notices" hook.
 	 */
 	function add_notice($id,$message,$level,$category = 'base', $condition = null, $cond_args = null, $manual_display = false){
@@ -189,7 +199,17 @@ class Notice_Manager {
 	 */
     private function conditions_met($notice){
         $className = $notice['condition'];
+
+        if(isset($notice['condition_args']) && isset($notice['condition_args']['_file'])){
+            if(file_exists($notice['condition_args']['_file'])){
+                require_once $notice['condition_args']['_file'];
+            }else{
+	            throw new \Exception("The condition file ({$notice['condition_args']['_file']}) for the notice does not exists");
+            }
+        }
+
         if(!class_exists($className)) throw new \Exception("The condition class ({$className}) for the notice does not exists");
+
         if(isset($notice['condition_args'])){
             $cond = new $className($notice['condition_args']);
         }else{
