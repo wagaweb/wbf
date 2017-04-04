@@ -613,6 +613,8 @@ class ComponentsManager {
 	        }, $registered_components );
 	        Utilities::admin_show_message(__("Component status reset","wbf"),"success");
         }
+
+	    self::setupComponentsFilters();
     }
 
     /**
