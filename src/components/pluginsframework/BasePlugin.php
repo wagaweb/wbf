@@ -397,7 +397,20 @@ class BasePlugin {
 	public function get_plugin_settings(){
 		$setting_option_name = $this->get_plugin_settings_option_name();
 
-		return get_option($setting_option_name,[]);
+		$defaults = $this->get_plugin_default_settings();
+
+		$settings = get_option($setting_option_name,$defaults);
+
+		return $settings;
+	}
+
+	/**
+	 * Retrieve the default settings. This method is meant to be overrided.
+	 *
+	 * @return array
+	 */
+	public function get_plugin_default_settings(){
+		return [];
 	}
 
 	/**
