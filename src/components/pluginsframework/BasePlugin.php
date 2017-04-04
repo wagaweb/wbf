@@ -366,6 +366,47 @@ class BasePlugin {
 	}
 
 	/**
+	 * Saves the vars specified in $settings into a standard option name
+	 *
+	 * @return bool
+	 */
+	public function save_plugin_settings($settings, $override = false){
+		$setting_option_name = $this->get_plugin_settings_option_name();
+
+		if(!is_array($settings)) return false;
+
+		if(!$override) {
+			//Get the current settings
+			$actual = $this->get_plugin_settings();
+
+			//Merge the differences
+			$settings = wp_parse_args( $settings, $actual );
+		}
+
+		return update_option($setting_option_name,$settings);
+	}
+
+	/**
+	 * Retrieve the plugin settings
+	 *
+	 * @return array
+	 */
+	public function get_plugin_settings(){
+		$setting_option_name = $this->get_plugin_settings_option_name();
+
+		return get_option($setting_option_name,[]);
+	}
+
+	/**
+	 * Return the standard plugin settings option name
+	 *
+	 * @return string
+	 */
+	private function get_plugin_settings_option_name(){
+		return "wbf_".$this->plugin_name."_settings";
+	}
+
+	/**
 	 * Check if cache is enabled
 	 *
 	 * @since 0.14.8
