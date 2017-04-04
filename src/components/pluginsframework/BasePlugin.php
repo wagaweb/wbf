@@ -368,6 +368,9 @@ class BasePlugin {
 	/**
 	 * Saves the vars specified in $settings into a standard option name
 	 *
+	 * @param array $settings
+	 * @param bool $override
+	 *
 	 * @return bool
 	 */
 	public function save_plugin_settings($settings, $override = false){
