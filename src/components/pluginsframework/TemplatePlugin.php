@@ -138,6 +138,27 @@ class TemplatePlugin extends BasePlugin {
 		if(!isset($path)){
 			$this->templates_paths[ $template_name ] = $this->get_src_dir()."templates/woocommerce/".$template_name;
 		}
+
+		//WE NEED A SPECIAL CASE FOR "archive-product.php" read on...
+		if($template_name == "archive-product.php"){
+			add_filter("template_include",function($template){
+				//WooCommerce hard code the archive-product.php template in template_include. See class-wc-template-loader.php
+				//We need to bypass this.
+				if(!function_exists('wc_get_page_id')) return $template; //return early if no WC is detected
+				if(is_post_type_archive('product') || is_page( wc_get_page_id('shop'))){ //For some reason this targets the SHOP PAGE
+					//This is a copy-paste from WC source:
+					$file 	= 'archive-product.php';
+					$find[] = $file;
+					$find[] = WC()->template_path() . $file;
+					$theme_template = locate_template( array_unique( $find ) );
+					if(!$theme_template && !WC_TEMPLATE_DEBUG_MODE && file_exists($this->templates_paths['archive-product.php'])){
+						$template = $this->templates_paths['archive-product.php']; //If no theme template was found, inject our template (if exists)
+					}
+				}
+				return $template;
+			},11);
+		}
+
 		return $this->wc_templates;
 	}
 
