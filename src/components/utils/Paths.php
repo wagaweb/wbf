@@ -258,36 +258,38 @@ class Paths {
 		return self::locate_template($templates, true, false);
 	}
 
-	/**
-	 * Convert an url to the absolute path of that url in wordpress
-	 *
-	 * @param $url
-	 * @return mixed
-	 */
-	static function url_to_path($url){
-		$blogurl = get_bloginfo("url");
-		$blogurl = preg_replace("(https?://)", "", $blogurl );
-		//$result = preg_match("/^https?:\/\/$blogurl\/([[:space:]a-zA-Z0-9\/_.-]+)/", $url, $matches);
-		$result = preg_replace("|^https?://$blogurl|", ABSPATH, $url);
-		//$blogpath = ABSPATH;
+    /**
+     * Convert an url to the absolute path of that url in wordpress
+     *
+     * @param $url
+     * @return mixed
+     */
+    static function url_to_path($url){
+        //$blogurl = get_bloginfo("url");
+        $siteurl = site_url();
+        $blogurl = preg_replace("(https?://)", "", $siteurl );
+        //$result = preg_match("/^https?:\/\/$blogurl\/([[:space:]a-zA-Z0-9\/_.-]+)/", $url, $matches);
+        $result = preg_replace("|^https?://$blogurl|", ABSPATH, $url);
+        //$blogpath = ABSPATH;
 
-		//$filepath = $blogpath."/".$matches[1];
-		//return $filepath;
-		return $result;
-	}
+        //$filepath = $blogpath."/".$matches[1];
+        //return $filepath;
+        return $result;
+    }
 
-	/**
-	 * Convert a path to the uri relative to wordpress installation
-	 *
-	 * @param $path
-	 * @return mixed
-	 */
-	static function path_to_url($path){
-		$blogurl = trailingslashit(get_bloginfo("url"));
-		$blogpath = ABSPATH;
-		$result = preg_replace("|^$blogpath|", $blogurl, $path);
-		return $result;
-	}
+    /**
+     * Convert a path to the uri relative to wordpress installation
+     *
+     * @param $path
+     * @return mixed
+     */
+    static function path_to_url($path){
+        //$blogurl = trailingslashit(get_bloginfo("url"));
+        $siteurl = trailingslashit(site_url());
+        $blogpath = ABSPATH;
+        $result = preg_replace("|^$blogpath|", $siteurl, $path);
+        return $result;
+    }
 
 	/**
 	 * Get the current url via vanilla function
