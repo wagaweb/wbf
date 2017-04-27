@@ -70,10 +70,11 @@ class AssetsManager {
 				'version' => false, //If FALSE, the filemtime will be used (if path is set)
 				'deps' => [], //Dependencies
 				'i10n' => [], //the Localication array for wp_localize_script
-				'type' => '', //js or css
+				'type' => '', //js or css. Optional. Its autodetected if empty.
 				'enqueue_callback' => false, //A valid callable that must be return true or false
 				'in_footer' => false, //Used for scripts
-				'enqueue' => true //If FALSE the script\css will only be registered
+				'enqueue' => true, //If FALSE the script\css will only be registered
+				'media' => apply_filters('wbf/assets/styles/default_media','all') //The media for which this stylesheet has been defined. Accepts media types like 'all', 'print' and 'screen', or media queries like '(orientation: portrait)' and '(max-width: 640px)'.
 			]);
 			if($param['path'] != "" && !file_exists($param['path'])){
 				if(is_admin()){
@@ -93,10 +94,17 @@ class AssetsManager {
 					$version = false;
 				}
 			}
+			if($param['path'] != "" && file_exists($param['path']) && $param['type'] == ""){
+				//Autodetect types
+				$ext = pathinfo($param['path'], PATHINFO_EXTENSION);
+				if(in_array($ext,['js','css'])){
+					$param['type'] = $ext;
+				}
+			}
 			if($param['type'] == "js"){
 				wp_register_script($name,$param['uri'],$param['deps'],$version,$param['in_footer']);
 			}elseif($param['type'] == "css"){
-				wp_register_style($name,$param['uri'],$param['deps'],$version);
+				wp_register_style($name,$param['uri'],$param['deps'],$version,$param['media']);
 			}else{
 				throw new \Exception("Unknow asset type for $name");
 			}
