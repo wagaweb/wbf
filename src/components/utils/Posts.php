@@ -2,6 +2,8 @@
 namespace WBF\components\utils;
 
 
+use WBF\components\mvc\HTMLView;
+
 class Posts {
 	/**
 	 * Get a list of post types without the blacklisted ones
@@ -126,5 +128,65 @@ class Posts {
 		} else {
 			return false;
 		}
+	}
+
+	/**
+	 * Display the content navigation.
+	 *
+	 * This require a valid WBF View. Into this view some variables will be passed:
+	 * - {bool} $can_display_pagination
+	 * - {bool} $show_pagination
+	 * - {string} $pagination
+	 * - {int} $max_num_pages ($query->max_num_pages)
+	 *
+	 * @throws \Exception
+	 *
+	 * @param string|array $tpl_file a pointer to a file to render the template into. If array, must contain the file path at [0] and the plugin name at [1].
+	 * @param bool $show_pagination
+	 * @param bool $query
+	 * @param bool $current_page
+	 * @param string $paged_var_name You can supply different paged var name for multiple pagination. The name must be previously registered with add_rewrite_tag()
+	 */
+	static function the_post_navigation($tpl_file, $show_pagination = false, $query = false, $current_page = false, $paged_var_name = "paged"){
+		if($show_pagination){
+			$big = 999999999; // need an unlikely integer
+			if($paged_var_name != "paged"){
+				$base =  add_query_arg([
+					$paged_var_name => "%#%"
+				]);
+				$base = home_url().$base;
+			}else{
+				$base =  str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) );
+			}
+			$paginate = paginate_links([
+				'base' => $base,
+				'format' => '?'.$paged_var_name.'=%#%',
+				'current' => $current_page ? intval($current_page) : max( 1, intval(get_query_var($paged_var_name)) ),
+				'total' => $query->max_num_pages
+			]);
+			$paginate_array = explode("\n",$paginate);
+			foreach($paginate_array as $k => $link){
+				$paginate_array[$k] = "<li>".$link."</li>";
+			}
+			$pagination = implode("\n",$paginate_array);
+		}else{
+			$pagination = "";
+		}
+
+		if(is_array($tpl_file)){
+			if(count($tpl_file) != 2){
+				throw new \Exception('Invalid number of indexes for $tpl_file');
+			}
+			$v = new HTMLView($tpl_file[0],$tpl_file[1]);
+		}else{
+			$v = new HTMLView($tpl_file);
+		}
+
+		$v->display([
+			'can_display_pagination' => true, //todo: do some condition?
+			'show_pagination' => $show_pagination,
+			'pagination' => $pagination,
+			'max_num_pages' => $query->max_num_pages
+		]);
 	}
 }
