@@ -1,10 +1,23 @@
 == Change log ==
 
+Version 1.0.6 - 04/27/2017
+---------------------------------
+- Fix: Now TemplatePlugin takes into account when _wp_page_template == "default"
+- Fix: Now TemplatePlugin can correctly override archive-product.php when in main shop page.
+- Fix: Old options framework constants removed
+- Fix: Now WBF\components\utils uses site_url() instead of bloginfo('url') in path_to_uri() and uri_to_path() functions.
+- Tweak: Assets Manager now auto detect types
+- Tweak: Assets Manager now supports media as WP does
+- Tweak: BasePlugin now have three functions to manager the settings of a plugin easily
+- Tweak: NoticeManager now support a "_file" parameter inside add_notice() $cond_arg argument to point to a file that will be required before checking the condition.
+- Tweak: WBF_Widget is more refined now
+
 Version 1.0.5 - 03/01/2017
 ---------------------------------
 - Fix: Now Text and TextArea fields will strip slashes before outputting their value
 - Fix: Post non-existing condition in Paths::get_template_part()
 - Fix: Fix to WC Template overriding on TemplatePlugin
+- Fix: Now WBF\components\utils\DB will correctly strip db prefix from table name when present
 - Tweak: Adjusted the View search paths.
 - Tweak: Added add_ajax_action() to Plugin Loader class
 - Feature: Added "Widgets" component
