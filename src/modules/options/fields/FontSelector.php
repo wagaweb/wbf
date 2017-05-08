@@ -18,7 +18,7 @@ class FontSelector extends BaseField implements Field
 			return;
 		}
 
-        wp_register_script('gfont_loader','http://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js');
+        wp_register_script('gfont_loader','//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js');
         /*if(WBF_ENV == "dev"){
             wp_register_script('font-selector', WBF_URL . '/assets/src/js/admin/font-selector.js',array('jquery','gfont_loader','underscore'));
         }else{
