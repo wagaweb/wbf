@@ -40,7 +40,7 @@ if( ! class_exists('\WBF\WBF') ) :
 		define("WBF_URL", $url);
 	}else{
 		//If is in the plugin directory
-		define("WBF_URL", get_bloginfo("url") . "/wp-content/plugins/wbf/");
+		define("WBF_URL", site_url() . "/wp-content/plugins/wbf/");
 	}
 	define("WBF_ADMIN_DIRECTORY", WBF_DIRECTORY . "/admin");
 	define("WBF_PUBLIC_DIRECTORY", WBF_DIRECTORY . "/public");
@@ -79,11 +79,11 @@ else:
 
 	//If this is a plugin, then force the options to point over the plugin.
 	if(preg_match("/plugins/",WBF_DIRECTORY."/wbf.php") && preg_match("/themes/",get_option("wbf_path"))){
-		define("WBF_URL", get_bloginfo("url") . "/wp-content/plugins/wbf/");
+		define("WBF_URL", site_url() . "/wp-content/plugins/wbf/");
 		define("WBF_ADMIN_DIRECTORY", WBF_DIRECTORY . "/admin");
 		define("WBF_PUBLIC_DIRECTORY", WBF_DIRECTORY . "/public");
 		update_option( "wbf_path", WBF_DIRECTORY );
-		update_option( "wbf_url", get_bloginfo("url") . "/wp-content/plugins/wbf/" );
+		update_option( "wbf_url", site_url() . "/wp-content/plugins/wbf/" );
 	}
 
 endif; // class_exists check
