@@ -149,6 +149,10 @@ class Posts {
 	 */
 	static function the_post_navigation($tpl_file, $show_pagination = false, $query = false, $current_page = false, $paged_var_name = "paged"){
 		if($show_pagination){
+			if(!$query){
+				global $wp_query;
+				$query = $wp_query;
+			}
 			$big = 999999999; // need an unlikely integer
 			if($paged_var_name != "paged"){
 				$base =  add_query_arg([
@@ -158,10 +162,18 @@ class Posts {
 			}else{
 				$base =  str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) );
 			}
+			if(!$current_page){
+				if(!$query){
+					$current_page = max( 1, intval(get_query_var($paged_var_name)) );
+				}else{
+					$current_page = $query->get($paged_var_name);
+				}
+				$current_page = intval($current_page);
+			}
 			$paginate = paginate_links([
 				'base' => $base,
 				'format' => '?'.$paged_var_name.'=%#%',
-				'current' => $current_page ? intval($current_page) : max( 1, intval(get_query_var($paged_var_name)) ),
+				'current' => $$current_page,
 				'total' => $query->max_num_pages
 			]);
 			$paginate_array = explode("\n",$paginate);
