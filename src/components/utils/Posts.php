@@ -201,4 +201,47 @@ class Posts {
 			'max_num_pages' => $query->max_num_pages
 		]);
 	}
+
+	/**
+	 * Adds a new custom column
+	 *
+	 * @param $post_type
+	 * @param $slug
+	 * @param $label
+	 * @param callable $display_callback
+	 * @param bool $sortable
+	 * @param bool|callable $sortable_callback
+	 *
+	 * @throws \Exception
+	 */
+	static function add_custom_column($post_type,$slug,$label, Callable $display_callback, $sortable = false, $sortable_callback = false){
+		add_filter("manage_".$post_type."_posts_columns", function($columns) use($slug,$label){
+			$columns[$slug] = $label;
+			return $columns;
+		}, 11, 2);
+		if($sortable){
+			add_filter('manage_edit-'.$post_type.'_sortable_columns', function($columns) use($slug){
+				$columns[$slug] = $slug;
+				return $columns;
+			});
+		}
+		add_action("manage_".$post_type."_posts_custom_column", function($column_name,$post_id) use($slug,$display_callback){
+			if($column_name == $slug){
+				$display_callback($post_id);
+			}
+		}, 11, 2);
+		if($sortable){
+			if(!$sortable_callback){
+				throw new \Exception("Sortable callback was not defined");
+			}
+			add_action( 'pre_get_posts', function($query) use($post_type, $sortable_callback){
+				if(!is_admin()) return;
+				if(!function_exists("get_current_screen")) return;
+				$screen = get_current_screen();
+				if(!$screen instanceof \WP_Screen) return;
+				if($screen->id != "edit-".$post_type) return;
+				$sortable_callback($query);
+			} );
+		}
+	}
 }
