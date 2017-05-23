@@ -166,10 +166,10 @@ class Posts {
 				if(!$query){
 					$current_page = max( 1, intval(get_query_var($paged_var_name)) );
 				}else{
-					$current_page = $query->get($paged_var_name);
+					$current_page = max(1, intval($query->get($paged_var_name)) );
 				}
-				$current_page = intval($current_page);
 			}
+			$current_page = intval($current_page);
 			$paginate = paginate_links([
 				'base' => $base,
 				'format' => '?'.$paged_var_name.'=%#%',
