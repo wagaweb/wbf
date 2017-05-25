@@ -731,6 +731,19 @@ class Utilities{
 	}
 
 	/**
+	 * Secure dump. var_dump only in presence of an admin or when $_GET['wbf_debug'] is active.
+	 */
+	static function sdump($var,$format = true){
+		if(current_user_can("manage_options") || isset($_GET['wbf_debug'])){
+			if($format){
+				self::predump($var);
+			}else{
+				var_dump($var);
+			}
+		}
+	}
+
+	/**
 	 * Adds a new TinyMCE plugin
 	 *
 	 * @param string $id plugin identifier (can be any [a-z_]+ string.
