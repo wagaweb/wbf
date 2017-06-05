@@ -60,25 +60,7 @@ var paths = {
         "!{node_modules,node_modules/**}",
         "!{bower_components,bower_components/**}",
         //Vendors
-        "vendor/composer/*.php",
-        "vendor/composer/*.json",
-        "vendor/acf/**/*",
-        "!vendor/acf/lang/*",
-        "vendor/yahnis-elsts/**/*",
-        "vendor/codemirror/lib/*",
-        "vendor/codemirror/addon/hint/css-hint.js",
-        "vendor/codemirror/addon/hint/show-hint.js",
-        "vendor/codemirror/addon/hint/show-hint.css",
-        "vendor/codemirror/theme/ambiance.css",
-        "vendor/codemirror/mode/css/css.js",
-        "vendor/spectrum/spectrum.css",
-        "vendor/imagesloaded/*.js",
-        "vendor/jquery-modal/*.js",
-        "vendor/mgargano/simplehtmldom/src/*.*",
-        "vendor/mobiledetect/mobiledetectlib/Mobile_Detect.php",
-        "vendor/owl.carousel/dist/**/*",
-        "vendor/theme-updates/**/*",
-        "vendor/autoload.php"
+        "vendor/**"
     ]
 };
 
