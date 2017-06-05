@@ -1,5 +1,13 @@
 == Change log ==
 
+Version 1.0.7 - 06/05/2017
+---------------------------------
+- Fix: now site_url() is used in place of get_bloginfo("url") in many cases. This prevents the bug where contents under https is served via http.
+- Fix: now Google Fonts is now loaded accordingly to the http protocol used by the browser
+- Fix: \WBF\components\utils\Posts::the_post_pagination has been fixed
+- Feature: introduced \WBF\components\utils\Posts::add_custom_column(). A shortcut to the tedious task of adding a custom column to a post type list view in dashboard.
+- Feature: introduced \WBF\components\utils\Utilities::sdump() a \WBF\components\utils\Utilities:predump() variant that output the dump only when user has "manage options" privilege or $_GET['wbf_debug'] is set.
+
 Version 1.0.6 - 04/27/2017
 ---------------------------------
 - Fix: Now TemplatePlugin takes into account when _wp_page_template == "default"
