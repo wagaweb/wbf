@@ -18,12 +18,8 @@ assets/dist/js/includes/wbfgmap.min.js
 ############
 ## VENDORS (composer)
 ############
-vendor/autoload.php
-vendor/mgargano
-vendor/composer
-vendor/mobiledetect
-vendor/cmb2
-vendor/yahnis-elsts
+vendor/**/*
+!vendor/options-framework
 
 ############
 ## VENDORS (components)
