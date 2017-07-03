@@ -11,46 +11,33 @@ require_once( dirname(__FILE__).'/vendor/BootstrapNavMenuWalker.php');
 
 class Bootstrap_NavWalker extends \BootstrapNavMenuWalker {
 
-    /**
-     * Menu Fallback
-     * =============
-     * If this function is assigned to the wp_nav_menu's fallback_cb variable
-     * and a manu has not been assigned to the theme location in the WordPress
-     * menu manager the function with display nothing to a non-logged in user,
-     * and will add a link to the WordPress menu manager if logged in as an admin.
-     *
-     */
-    public static function fallback($args = null)
-    {
-        if (!current_user_can('manage_options')) {
-            return;
-        }
+	/**
+	 * @var boolean
+	 */
+	var $print_description = false;
+	/**
+	 * @var array
+	 */
+	var $args = [];
 
-        // see wp-includes/nav-menu-template.php for available arguments
-        extract($args);
-
-        $link = $link_before
-            . '<a href="' . admin_url('nav-menus.php') . '">' . $before . 'Add a menu' . $after . '</a>'
-            . $link_after;
-
-        // We have a list
-        if (FALSE !== stripos($items_wrap, '<ul')
-            or FALSE !== stripos($items_wrap, '<ol')
-        ) {
-            $link = "<li>$link</li>";
-        }
-
-        $output = sprintf($items_wrap, $menu_id, $menu_class, $link);
-        if (!empty ($container)) {
-            $output = "<$container class='$container_class' id='$container_id'>$output</$container>";
-        }
-
-        if ($echo) {
-            echo $output;
-        }
-
-        return $output;
-    }
+	/**
+	 * BootstrapNavMenuWalker constructor.
+	 *
+	 * @param array $args
+	 */
+	function __construct($args = []) {
+		$default = [
+			'print_description' => false,
+		];
+		$args = wp_parse_args($args,$default);
+		$args = apply_filters("wbf/navwalker/bootstrap/args",$args);
+		$this->args = $args;
+		if($args['print_description']){
+			$this->print_description = true;
+		}else{
+			$this->print_description = false;
+		}
+	}
 
     /**
      * Starts a new <ul> element
@@ -107,10 +94,10 @@ class Bootstrap_NavWalker extends \BootstrapNavMenuWalker {
         }
 
 
-        $class_names = join( ' ', apply_filters( 'nav_menu_css_class', array_filter( $classes ), $item, $args ) ); //array_filter( $classes ) will remove any empty or false element
+        $class_names = join( ' ', apply_filters( 'wbf/navwalker/bootstrap/nav_menu_css_class', array_filter( $classes ), $item, $args ) ); //array_filter( $classes ) will remove any empty or false element
         $class_names = ' class="' . esc_attr( $class_names ) . '"';
 
-        $id = apply_filters( 'nav_menu_item_id', 'menu-item-'. $item->ID, $item, $args );
+        $id = apply_filters( 'wbf/navwalker/bootstrap/nav_menu_item_id', 'menu-item-'. $item->ID, $item, $args );
         $id = strlen( $id ) ? ' id="' . esc_attr( $id ) . '"' : '';
 
         $output .= $indent . '<li' . $id . $class_names . '>';
@@ -129,8 +116,9 @@ class Bootstrap_NavWalker extends \BootstrapNavMenuWalker {
         $item_output = $args->before;
         $item_output .= '<a'. $attributes .'>';
         $item_output .= $args->link_before . apply_filters( 'the_title', $item->title, $item->ID ) . $args->link_after;
-        if(!empty($item->description))
+        if(!empty($item->description) && $this->print_description){
             $item_output .= '<span class="menudescription">' . $item->description . '</span>';
+        }
         if($args->has_children && $depth == 0){
             $item_output .= '<b class="caret"></b></a>'; //first level <li><a> with submenus
         }elseif($args->has_children && $depth > 0){
@@ -140,40 +128,50 @@ class Bootstrap_NavWalker extends \BootstrapNavMenuWalker {
         }
         $item_output .= $args->after;
 
-        $output .= apply_filters( 'walker_nav_menu_start_el', $item_output, $item, $depth, $args );
+        $output .= apply_filters( 'wbf/navwalker/bootstrap/nav_menu_start_el', $item_output, $item, $depth, $args );
     }
+
+	/**
+	 * Menu Fallback
+	 * =============
+	 * If this function is assigned to the wp_nav_menu's fallback_cb variable
+	 * and a manu has not been assigned to the theme location in the WordPress
+	 * menu manager the function with display nothing to a non-logged in user,
+	 * and will add a link to the WordPress menu manager if logged in as an admin.
+	 *
+	 * @param null $args
+	 *
+	 * @return string|void
+	 */
+	public static function fallback($args = null)
+	{
+		if (!current_user_can('manage_options')) {
+			return;
+		}
+
+		// see wp-includes/nav-menu-template.php for available arguments
+		extract($args);
+
+		$link = $link_before . '<a href="' . admin_url('nav-menus.php') . '">' . $before . 'Add a menu' . $after . '</a>' . $link_after;
+
+		// We have a list
+		if (FALSE !== stripos($items_wrap, '<ul') or FALSE !== stripos($items_wrap, '<ol') ) {
+			$link = "<li>$link</li>";
+		}
+
+		$output = sprintf($items_wrap, $menu_id, $menu_class, $link);
+		if (!empty ($container)) {
+			$output = "<$container class='$container_class' id='$container_id'>$output</$container>";
+		}
+
+		if ($echo) {
+			echo $output;
+		}
+
+		return $output;
+	}
 }
 
-function waboot_nav_menu_fallback($args){
-    if ( ! current_user_can( 'manage_options' ) )
-    {
-        return false;
-    }
-
-    extract( $args ); // see wp-includes/nav-menu-template.php for available arguments
-
-    $link = $link_before
-        . '<a href="' .admin_url( 'nav-menus.php' ) . '">' . $before . 'Add a menu' . $after . '</a>'
-        . $link_after;
-
-    // We have a list
-    if ( FALSE !== stripos( $items_wrap, '<ul' )
-        or FALSE !== stripos( $items_wrap, '<ol' )
-    )
-    {
-        $link = "<li>$link</li>";
-    }
-
-    $output = sprintf( $items_wrap, $menu_id, $menu_class, $link );
-    if ( ! empty ( $container ) )
-    {
-        $output  = "<$container class='$container_class' id='$container_id'>$output</$container>";
-    }
-
-    if ( $echo )
-    {
-        echo $output;
-    }
-
-    return $output;
+function bootstrap_menu_fallback($args){
+    return Bootstrap_NavWalker::fallback($args);
 }
