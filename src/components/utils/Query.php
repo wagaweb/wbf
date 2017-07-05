@@ -64,4 +64,14 @@ class Query {
 	static function is_common_page(){
 		return self::get_current_page_type() == self::PAGE_TYPE_COMMON;
 	}
+
+	/**
+	 * Get the post type of the current queried object
+	 *
+	 * @return string|false
+	 */
+	static function get_queried_object_post_type(){
+		$o = get_queried_object();
+		return WordPress::get_object_post_type($o);
+	}
 }

@@ -60,4 +60,24 @@ class WordPress {
 	static function is_wp_cli(){
 		return defined("WP_CLI") && WP_CLI;
 	}
+
+	/**
+	 * Get post type accordingly provided object
+	 *
+	 * @param $object
+	 *
+	 * @return false|string
+	 */
+	public static function get_object_post_type($object){
+		if($object instanceof \WP_Term){
+			return Terms::get_post_type_by_term($object);
+		}elseif($object instanceof \WP_Taxonomy){
+			return Terms::get_post_type_by_taxonomy($object);
+		}elseif($object instanceof \WP_Post_Type){
+			return $object->name;
+		}elseif($object instanceof \WP_Post){
+			return $object->post_type;
+		}
+		return false;
+	}
 }

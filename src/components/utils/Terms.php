@@ -255,17 +255,17 @@ class Terms {
 	 *
 	 * @return string|false
 	 */
-	public static function get_post_type_of_term(\WP_Term $term){
+	public static function get_post_type_by_term(\WP_Term $term){
 		$taxonomy = $term->taxonomy;
-		return self::get_post_type_of_taxonomy($taxonomy);
+		return self::get_post_type_by_taxonomy($taxonomy);
 	}
 
 	/**
 	 * @param \WP_Taxonomy|string $taxonomy
 	 *
-	 * @return bool|false
+	 * @return string|false
 	 */
-	public static function get_post_type_of_taxonomy($taxonomy){
+	public static function get_post_type_by_taxonomy($taxonomy){
 		global $wp_taxonomies;
 		if($taxonomy instanceof \WP_Taxonomy){
 			$taxonomy = $taxonomy->name;
