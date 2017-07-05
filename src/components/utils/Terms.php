@@ -249,4 +249,34 @@ class Terms {
 
 		return $sortedTerms;
 	}
+
+	/**
+	 * @param \WP_Term $term
+	 *
+	 * @return string|false
+	 */
+	public static function get_post_type_of_term(\WP_Term $term){
+		$taxonomy = $term->taxonomy;
+		return self::get_post_type_of_taxonomy($taxonomy);
+	}
+
+	/**
+	 * @param \WP_Taxonomy|string $taxonomy
+	 *
+	 * @return bool|false
+	 */
+	public static function get_post_type_of_taxonomy($taxonomy){
+		global $wp_taxonomies;
+		if($taxonomy instanceof \WP_Taxonomy){
+			$taxonomy = $taxonomy->name;
+		}
+
+		if(isset($taxonomy) && isset($wp_taxonomies[$taxonomy])){
+			$tax_obj = $wp_taxonomies[$taxonomy];
+			if(is_array($tax_obj->object_type) && !empty($tax_obj->object_type)){
+				return $tax_obj->object_type[0];
+			}
+		}
+		return false;
+	}
 }
