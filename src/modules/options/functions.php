@@ -720,6 +720,6 @@ function organizer(){
  *
  * Not in a class to support backwards compatibility in themes.
  */
-function of_get_option( $name, $default = false ) {
+function of_get_option( $name, $default = null ) {
 	return Framework::get_option($name,$default);
 }

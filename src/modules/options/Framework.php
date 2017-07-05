@@ -269,17 +269,17 @@ class Framework{
 	 * @param $name
 	 * @param bool $default
 	 *
-	 * @return string|array
+	 * @return mixed
 	 */
-	static function get_option($name, $default = false){
+	static function get_option($name, $default = null){
 		static $config = '';
 		static $options_in_file = array();
 		static $options = array();
 
 		if(!is_array($config)) $config = self::get_options_root_id();
 
-		//[WABOOT MOD] Tries to return the default value sets into $options array if $default is false
-		if(!$default){
+		//[WABOOT MOD] Tries to return the default value sets into $options array if $default is null
+		if(is_null($default)){
 			if(empty($options_in_file)) $options_in_file = self::get_registered_options();
 			foreach($options_in_file as $opt){
 				if(isset($opt['id']) && $opt['id'] == $name){
