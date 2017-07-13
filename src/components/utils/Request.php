@@ -31,7 +31,7 @@ class Request{
 	 *
 	 * @param $filename
 	 *
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	static function send_pdf($filename){
 		if(headers_sent()){
