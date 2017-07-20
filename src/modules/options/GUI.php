@@ -20,7 +20,7 @@ class GUI{
         $saved_options = Framework::get_saved_options(); //the current saved options
 	    
         if(!isset($options)){
-            $options = &Framework::get_registered_options(); //the current registered options (some of which may not be saved already)
+            $options = Framework::get_registered_options(); //the current registered options (some of which may not be saved already)
         }
 
         $counter = 0;
@@ -133,7 +133,7 @@ class GUI{
      * Generates the tabs that are used in the options menu
      */
     static function get_tabs() {
-        $options = & Framework::get_registered_options();
+        $options = Framework::get_registered_options();
         $tabs = [];
         if(is_array($options) && !empty($options)){
 			$tabs = array_filter($options, function($el){
