@@ -24,11 +24,9 @@ if(!defined('WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR')){
 
 //Initialization
 add_action( "wbf_after_setup_theme", __NAMESPACE__.'\\module_init', 1 );
-add_action( "wbf_after_setup_theme", __NAMESPACE__.'\\register_options', 12 );
-add_action( "wbf_init", __NAMESPACE__.'\\admin_init', 11 );
 
 //Backward compatibility hack:
-add_action( "wbf_init", __NAMESPACE__."\\convert_old_theme_options", 12 );
+//add_action( "wbf_init", __NAMESPACE__."\\convert_old_theme_options", 12 );
 
 /*
  * Options saving
@@ -64,8 +62,7 @@ function module_init(){
     //add_action( 'init', '\WBF\modules\options\optionsframework_init', 20 );
 
 	// Instantiate the main plugin class.
-	$options_framework = new Framework;
-	$options_framework->init();
+	$options_framework = new Framework();
 
 	$GLOBALS['wbf_options_framework'] = $options_framework; //todo: this is bad, found another way
 

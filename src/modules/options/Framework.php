@@ -16,11 +16,9 @@ class Framework{
 	 */
 	var $fields;
 
-	/**
-	 * Initialize the framework.
-	 */
-	public function init(){
+	public function __construct() {
 		Framework::set_theme_option_default_root_id();
+
 		//Create the framework working directory
 		if(defined("WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR") && !is_dir(WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR)){
 			Utilities::mkpath(WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR);
@@ -68,8 +66,20 @@ class Framework{
 				}
 			}
 		}
-		
+
+		$this->load_hooks();
+
 		do_action("wbf/modules/options/after_init");
+	}
+
+	/**
+	 * Initialize the framework.
+	 */
+	public function load_hooks(){
+		add_action( "wbf_after_setup_theme", [$this,'register_options'], 12 );
+		add_action( "wbf_init", function(){
+			$this->admin->init();
+		}, 11 );
 	}
 
 	/**
@@ -124,11 +134,45 @@ class Framework{
 	/**
 	 * Get current registered theme options.
 	 *
-	 * @alias-of Framework::_optionsframework_options()
-	 * @return array
+	 * The functions use the filter "options_framework_location" to determine options file existance and location, then try to call the function "optionsframework_options()".
+	 * At the end it calls the action "wbf/theme_options/register" and the filter "of_options" (with the current $options as parameter)
+	 *
+	 * Allows for manipulating or setting options via 'of_options' filter
+	 * For example:
+	 *
+	 * <code>
+	 * add_filter( 'of_options', function( $options ) {
+	 *     $options[] = array(
+	 *         'name' => 'Input Text Mini',
+	 *         'desc' => 'A mini text input field.',
+	 *         'id' => 'example_text_mini',
+	 *         'std' => 'Default',
+	 *         'class' => 'mini',
+	 *         'type' => 'text'
+	 *     );
+	 *
+	 *     return $options;
+	 * });
+	 * </code>
+	 *
+	 * Also allows for setting options via a return statement in the
+	 * options.php file.  For example (in options.php):
+	 *
+	 * <code>
+	 * return array(...);
+	 * </code>
+	 *
+	 * @return array (by reference)
 	 */
-	static function &get_registered_options(){
-		return self::_optionsframework_options();
+	static function get_registered_options(){
+		static $options = null;
+
+		if ( !$options ) {
+			$orgzr = Organizer::getInstance();
+			$options = $orgzr->generate();
+		}
+
+		return $options;
 	}
 
 	/**
@@ -152,49 +196,6 @@ class Framework{
 		}
 		return $registered_options_of_type;
 	}
-
-    /**
-     * Get current registered theme options.
-     * The functions use the filter "options_framework_location" to determine options file existance and location, then try to call the function "optionsframework_options()".
-     * At the end it calls the action "wbf/theme_options/register" and the filter "of_options" (with the current $options as parameter)
-     *
-     * Allows for manipulating or setting options via 'of_options' filter
-     * For example:
-     *
-     * <code>
-     * add_filter( 'of_options', function( $options ) {
-     *     $options[] = array(
-     *         'name' => 'Input Text Mini',
-     *         'desc' => 'A mini text input field.',
-     *         'id' => 'example_text_mini',
-     *         'std' => 'Default',
-     *         'class' => 'mini',
-     *         'type' => 'text'
-     *     );
-     *
-     *     return $options;
-     * });
-     * </code>
-     *
-     * Also allows for setting options via a return statement in the
-     * options.php file.  For example (in options.php):
-     *
-     * <code>
-     * return array(...);
-     * </code>
-     *
-     * @return array (by reference)
-     */
-    static function &_optionsframework_options() {
-        static $options = null;
-
-        if ( !$options ) {
-	        $orgzr = Organizer::getInstance();
-	        $options = $orgzr->generate();
-        }
-
-        return $options;
-    }
 
 	/**
 	 * Update theme options with new values
