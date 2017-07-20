@@ -23,7 +23,9 @@ if(!defined('WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR')){
 }
 
 //Initialization
-add_action( "wbf_init", __NAMESPACE__.'\\module_init', 11 );
+add_action( "wbf_after_setup_theme", __NAMESPACE__.'\\module_init', 1 );
+add_action( "wbf_after_setup_theme", __NAMESPACE__.'\\register_options', 12 );
+add_action( "wbf_init", __NAMESPACE__.'\\admin_init', 11 );
 
 //Backward compatibility hack:
 add_action( "wbf_init", __NAMESPACE__."\\convert_old_theme_options", 12 );
@@ -60,7 +62,6 @@ add_action( 'wp_enqueue_scripts', __NAMESPACE__.'\\add_client_custom_css', 99 );
  */
 function module_init(){
     //add_action( 'init', '\WBF\modules\options\optionsframework_init', 20 );
-	global $wbf_options_framework;
 
 	// Instantiate the main plugin class.
 	$options_framework = new Framework;
@@ -70,6 +71,16 @@ function module_init(){
 
 	//Bind to Theme Customizer
 	CustomizerManager::init();
+}
+
+function register_options(){
+	global $wbf_options_framework;
+	$wbf_options_framework->register_options();
+}
+
+function admin_init(){
+	global $wbf_options_framework;
+	$wbf_options_framework->admin->init();
 }
 
 /**

@@ -27,7 +27,6 @@ class Framework{
 		}
 
 		$this->admin = new Admin();
-		$this->admin->init();
 
 		//Loads up fields
 		$fields = [
@@ -82,6 +81,44 @@ class Framework{
 		$current_theme_name = preg_replace("/\W/", "_", strtolower($current_theme_name));
 		$current_root_id = "wbf_".$current_theme_name."_options";
 		self::set_options_root_id($current_root_id);
+	}
+
+	public function register_options(){
+		// Load options from options.php file (if it exists)
+		$locations = apply_filters( 'options_framework_location', false ); //todo: will be deprecated
+		$locations = apply_filters( 'wbf/modules/options/include_file', $locations );
+
+		if(is_array($locations)){
+			foreach($locations as $loc){
+				if(is_file($loc)){
+					require_once $loc;
+				}else{
+					$r = locate_template( $loc, true );
+				}
+			}
+		}elseif(is_string($locations)){
+			if(is_file($locations)){
+				require_once $locations;
+			}else{
+				$r = locate_template( $locations, true );
+			}
+		}
+
+		$orgzr = Organizer::getInstance();
+
+		do_action("wbf/theme_options/register",$orgzr); //This action can hook different functions to of_options filter (is used by Component Manager for example)
+
+		// Allow setting/manipulating options via filters
+		$orgzr->reset_section();
+		$orgzr->reset_group();
+		$additional_options = [];
+		$additional_options = apply_filters( 'of_options', $additional_options ); //todo: will be deprecated
+		$additional_options = apply_filters( 'wbf/modules/options/available', $additional_options );
+		if(is_array($additional_options) && !empty($additional_options)){
+			foreach($additional_options as $opt){
+				$orgzr->add($opt);
+			}
+		}
 	}
 
 	/**
@@ -152,42 +189,7 @@ class Framework{
         static $options = null;
 
         if ( !$options ) {
-            // Load options from options.php file (if it exists)
-            $locations = apply_filters( 'options_framework_location', false ); //todo: will be deprecated
-            $locations = apply_filters( 'wbf/modules/options/include_file', $locations );
-
-			if(is_array($locations)){
-				foreach($locations as $loc){
-					if(is_file($loc)){
-						require_once $loc;
-					}else{
-						$r = locate_template( $loc, true );
-					}
-				}
-			}elseif(is_string($locations)){
-				if(is_file($locations)){
-					require_once $locations;
-				}else{
-					$r = locate_template( $locations, true );
-				}
-			}
-
 	        $orgzr = Organizer::getInstance();
-
-	        do_action("wbf/theme_options/register",$orgzr); //This action can hook different functions to of_options filter (is used by Component Manager for example)
-
-            // Allow setting/manipulating options via filters
-	        $orgzr->reset_section();
-	        $orgzr->reset_group();
-	        $additional_options = [];
-            $additional_options = apply_filters( 'of_options', $additional_options ); //todo: will be deprecated
-            $additional_options = apply_filters( 'wbf/modules/options/available', $additional_options );
-	        if(is_array($additional_options) && !empty($additional_options)){
-		        foreach($additional_options as $opt){
-			        $orgzr->add($opt);
-		        }
-	        }
-
 	        $options = $orgzr->generate();
         }
 
