@@ -25,9 +25,6 @@ if(!defined('WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR')){
 //Initialization
 add_action( "wbf_after_setup_theme", __NAMESPACE__.'\\module_init', 1 );
 
-//Backward compatibility hack:
-//add_action( "wbf_init", __NAMESPACE__."\\convert_old_theme_options", 12 );
-
 /*
  * Options saving
  */
@@ -59,53 +56,12 @@ add_action( 'wp_enqueue_scripts', __NAMESPACE__.'\\add_client_custom_css', 99 );
  * @hooked 'wbf_init'
  */
 function module_init(){
-    //add_action( 'init', '\WBF\modules\options\optionsframework_init', 20 );
-
-	// Instantiate the main plugin class.
 	$options_framework = new Framework();
 
 	$GLOBALS['wbf_options_framework'] = $options_framework; //todo: this is bad, found another way
 
 	//Bind to Theme Customizer
 	CustomizerManager::init();
-}
-
-function register_options(){
-	global $wbf_options_framework;
-	$wbf_options_framework->register_options();
-}
-
-function admin_init(){
-	global $wbf_options_framework;
-	$wbf_options_framework->admin->init();
-}
-
-/**
- * Init the framework
- *
- * @hooked 'init'
- */
-function optionsframework_init() {
-	//Moved to module_init()
-}
-
-/**
- * From WBF 0.14.0 the "root_id" has changed from <theme-name> to <wbf_theme-name_options>.
- * This function transfer old theme options to the new one.
- *
- * @hooked 'wbf_init'
- */
-function convert_old_theme_options(){
-    $new_theme_options = get_option(Framework::get_options_root_id());
-    if(is_array($new_theme_options) && !empty($new_theme_options)){
-        return;
-    }
-    $theme = wp_get_theme();
-    $old_theme_options = get_option($theme->get_stylesheet(),false);
-    if($old_theme_options && is_array($old_theme_options) && !empty($old_theme_options)){
-        update_option(Framework::get_options_root_id(),$old_theme_options);
-        //delete_option($theme->get_stylesheet());
-    }
 }
 
 /**
