@@ -226,7 +226,11 @@ class WBF_Breadcrumb_Trail extends \Breadcrumb_Trail{
 	                $added_terms = array();
 	                if ($terms) {
 		                /* Sort the terms by ID and get the first category. */
-		                usort($terms, '_usort_terms_by_ID');
+		                if(function_exists('wp_sort_lis')){
+		                	$terms = wp_list_sort($terms,'term_id','DESC');
+		                }else{
+			                usort($terms, '_usort_terms_by_ID');
+		                }
 		                /* Add the category archive link to the trail. */
 		                foreach($terms as $t){
 			                if('post' == $post->post_type){
