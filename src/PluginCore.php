@@ -625,6 +625,8 @@ class PluginCore {
 
 		$this->modules = $this->load_modules();
 
+		do_action("wbf_after_module_loaded");
+
 		do_action("wbf_after_setup_theme");
 
 		// Make framework available for translation.
@@ -641,6 +643,8 @@ class PluginCore {
 
 		// Google Fonts
 		if(class_exists("WBF\\includes\\GoogleFontsRetriever")) $GLOBALS['wbf_gfont_fetcher'] = GoogleFontsRetriever::getInstance();
+
+		do_action("wbf_after_setup_theme_end");
 	}
 
 	/**
@@ -675,6 +679,8 @@ class PluginCore {
 
 		if(function_exists('\WBF\modules\options\of_check_options_deps')) \WBF\modules\options\of_check_options_deps(); //Check if theme options dependencies are met
 		$GLOBALS['wbf_notice_manager']->enqueue_notices(); //Display notices
+
+		do_action("wbf_init_end");
 	}
 
 	/**
