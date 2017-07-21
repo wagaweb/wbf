@@ -85,9 +85,7 @@ nbproject/
 ############
 ## Misc
 ############
-
 _bak/
-bin/
 tmp/
 *.tmp
 *.bak
