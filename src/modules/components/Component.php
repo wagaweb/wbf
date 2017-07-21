@@ -263,10 +263,8 @@ class Component {
 	    $states[$this->name] = 1;
 	    ComponentsManager::update_components_state($states);
 
-        Utilities::add_admin_notice("$this->name"."_activated",_x( sprintf("Activated: %s",$this->name),"component", "wbf" ),"success",['manual_display' => true]);
-        $this->register_options();
-        add_action("wbf/theme_options/register", [$this,"register_options"]);
 	    $this->restore_theme_options();
+        Utilities::add_admin_notice("$this->name"."_activated",_x( sprintf("Activated: %s",$this->name),"component", "wbf" ),"success",['manual_display' => true]);
 
 	    do_action("wbf/modules/components/on_activate",$this);
     }

@@ -76,8 +76,8 @@ class Framework{
 	 * Initialize the framework.
 	 */
 	public function load_hooks(){
-		add_action( "wbf_after_setup_theme", [$this,'register_options'], 12 );
-		add_action( "wbf_init", function(){
+		add_action( "wbf_init_end", [$this,'register_options'] );
+		add_action( "wbf_init_end", function(){
 			$this->admin->init();
 		}, 11 );
 	}
