@@ -279,4 +279,19 @@ class Terms {
 		}
 		return false;
 	}
+
+	/**
+	 * Returns current taxonomy name or FALSE
+	 *
+	 * @return false|string
+	 */
+	public static function get_current_taxonomy(){
+		$o = get_queried_object();
+		if($o instanceof \WP_Term){
+			return $o->taxonomy;
+		}elseif($o instanceof \WP_Taxonomy){
+			return $o->name;
+		}
+		return false;
+	}
 }
