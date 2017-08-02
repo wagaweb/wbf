@@ -5,6 +5,11 @@ namespace WBF\components\utils\woocommerce;
 use WBF\components\utils\WooCommerce;
 
 class WBF_Product_Variable extends \WC_Product_Variable{
+	use WBF_Product_Trait,WBF_Product_Variable_Trait{
+		WBF_Product_Variable_Trait::is_on_sale_for_real insteadof WBF_Product_Trait;
+		WBF_Product_Variable_Trait::get_discount_percentage insteadof WBF_Product_Trait;
+	}
+
 	/**
 	 * Get only the available children. Without doing much queries as the vanilla wc counterpart
 	 *
