@@ -18,7 +18,7 @@ class WooCommerce{
 	 *
 	 * @return mixed
 	 */
-	public static function wc_get_product($id){
+	public static function get_product($id){
 		static $ids;
 		if(!isset($ids[$id])){
 			$ids[$id] = wc_get_product($id);
@@ -28,29 +28,24 @@ class WooCommerce{
 
 	/**
 	 * Adds an hook to "woocommerce_product_class" that replace the vanilla WC classes with WBF ones
-	 *
-	 * @param $classname
-	 * @param $product_type
-	 * @param $post_type
-	 * @param $product_id
 	 */
-	public static function replace_wc_product_classes($classname, $product_type, $post_type, $product_id){
-		add_filter("woocommerce_product_class", function() use($classname, $product_type, $post_type, $product_id){
+	public static function replace_wc_product_classes(){
+		add_filter("woocommerce_product_class", function($classname, $product_type, $post_type, $product_id){
 			$prefix = '\WBF\components\utils\woocommerce';
 
 			switch($classname){
-				case "WC_Product_Simple":
-					$classname = $prefix."WBF_Product_Simple";
+				case 'WC_Product_Simple':
+					$classname = $prefix.'\WBF_Product_Simple';
 					break;
-				case "WC_Product_Variable":
-					$classname = $prefix."WBF_Product_Variable";
+				case 'WC_Product_Variable':
+					$classname = $prefix.'\WBF_Product_Variable';
 					break;
-				case "WC_Product_Variation":
-					$classname = $prefix."WBF_Product_Variation";
+				case 'WC_Product_Variation':
+					$classname = $prefix.'\WBF_Product_Variation';
 					break;
 			}
 			return $classname;
-		});
+		},10,4);
 	}
 
 	/**
@@ -60,9 +55,9 @@ class WooCommerce{
 	 *
 	 * @return FALSE|WBF_Product_Simple|WBF_Product_Variable|WBF_Product_Variation
 	 */
-	public static function wrap_product($product){
+	public static function get_wbf_product($product){
 		if(is_numeric($product)){
-			$product = self::wc_get_product( $product );
+			$product = self::get_product( $product );
 		}
 
 		if($product instanceof \WC_Product_Simple){
