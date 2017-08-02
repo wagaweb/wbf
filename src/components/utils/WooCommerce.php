@@ -3,6 +3,9 @@
 namespace WBF\components\utils;
 
 use WBF\components\utils\woocommerce\DBUtilities;
+use WBF\components\utils\woocommerce\WBF_Product_Simple;
+use WBF\components\utils\woocommerce\WBF_Product_Variable;
+use WBF\components\utils\woocommerce\WBF_Product_Variation;
 
 class WooCommerce{
 
@@ -23,9 +26,53 @@ class WooCommerce{
 		return $ids[$id];
 	}
 
-	public static function replace_wc_product_classes(){
-		add_filter("woocommerce_product_class", function(){
+	/**
+	 * Adds an hook to "woocommerce_product_class" that replace the vanilla WC classes with WBF ones
+	 *
+	 * @param $classname
+	 * @param $product_type
+	 * @param $post_type
+	 * @param $product_id
+	 */
+	public static function replace_wc_product_classes($classname, $product_type, $post_type, $product_id){
+		add_filter("woocommerce_product_class", function() use($classname, $product_type, $post_type, $product_id){
+			$prefix = '\WBF\components\utils\woocommerce';
 
+			switch($classname){
+				case "WC_Product_Simple":
+					$classname = $prefix."WBF_Product_Simple";
+					break;
+				case "WC_Product_Variable":
+					$classname = $prefix."WBF_Product_Variable";
+					break;
+				case "WC_Product_Variation":
+					$classname = $prefix."WBF_Product_Variation";
+					break;
+			}
+			return $classname;
 		});
+	}
+
+	/**
+	 * Create a new WBF_Product_* instance starting from a vanilla $product
+	 *
+	 * @param \WC_Product|int $product
+	 *
+	 * @return FALSE|WBF_Product_Simple|WBF_Product_Variable|WBF_Product_Variation
+	 */
+	public static function wrap_product($product){
+		if(is_numeric($product)){
+			$product = self::wc_get_product( $product );
+		}
+
+		if($product instanceof \WC_Product_Simple){
+			return new WBF_Product_Simple($product->id);
+		}elseif($product instanceof \WC_Product_Variation){
+			return new WBF_Product_Variation($product->id);
+		}elseif($product instanceof \WC_Product_Variable){
+			return new WBF_Product_Variable($product->id);
+		}
+
+		return false;
 	}
 }
