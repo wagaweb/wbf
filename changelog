@@ -1,5 +1,11 @@
 == Change log ==
 
+Version 1.0.8 - 07/24/2017
+---------------------------------
+- Fix: wp_list_sort() used in \WBF\components\breadcrumb\WBF_Breadcrumb_Trail
+- Tweak: Added various methods to get post type from objects
+- Tweak: \WBF\components\utils\Request added
+
 Version 1.0.7 - 06/05/2017
 ---------------------------------
 - Fix: now site_url() is used in place of get_bloginfo("url") in many cases. This prevents the bug where contents under https is served via http.

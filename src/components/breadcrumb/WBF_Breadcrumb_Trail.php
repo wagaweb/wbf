@@ -226,8 +226,8 @@ class WBF_Breadcrumb_Trail extends \Breadcrumb_Trail{
 	                $added_terms = array();
 	                if ($terms) {
 		                /* Sort the terms by ID and get the first category. */
-		                if(function_exists('wp_sort_lis')){
-		                	$terms = wp_list_sort($terms,'term_id','DESC');
+		                if(function_exists('wp_list_sort')){
+			                $terms = wp_list_sort($terms,'term_id','ASC');
 		                }else{
 			                usort($terms, '_usort_terms_by_ID');
 		                }
