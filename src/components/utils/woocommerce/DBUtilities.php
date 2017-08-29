@@ -14,7 +14,7 @@ trait DBUtilities {
 	 *
 	 * @return bool|false|int
 	 */
-	static function db_variable_product_maybe_set_out_of_stock($post_id,$pretend = false){
+	public static function db_variable_product_maybe_set_out_of_stock($post_id,$pretend = false){
 		global $wpdb;
 		$posts_table = $wpdb->prefix."posts";
 		$metas_table = $wpdb->prefix."postmeta";
@@ -48,7 +48,7 @@ trait DBUtilities {
 	 *
 	 * @return null|string
 	 */
-	static function db_get_product_variation_parent($variation_id){
+	public static function db_get_product_variation_parent($variation_id){
 		global $wpdb;
 		$posts_table = $wpdb->prefix."posts";
 		$parent = $wpdb->get_var("SELECT post_parent FROM {$posts_table} WHERE ID = {$variation_id}");
@@ -61,7 +61,7 @@ trait DBUtilities {
 	 * @param $order_id
 	 * @return array|null|object
 	 */
-	static function db_get_order_meta($order_id,$lang = null){
+	public static function db_get_order_meta($order_id,$lang = null){
 		global $wpdb;
 
 		$meta = $wpdb->get_results("SELECT * FROM {$wpdb->postmeta} WHERE post_id = $order_id");
