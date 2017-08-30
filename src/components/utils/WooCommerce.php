@@ -219,4 +219,85 @@ class WooCommerce{
 
 		return $meta;
 	}
+
+	/**
+	 * Update a stock quantity of a product
+	 *
+	 * @param int $product_id
+	 * @param int $new_stock
+	 * @param bool $dry_run
+	 *
+	 * @return bool|int
+	 */
+	public static function update_product_stock($product_id,$new_stock,$dry_run = false){
+		global $wpdb;
+
+		//Get product
+		$product = self::get_product($product_id);
+
+		//Get the metas
+		$metas = self::get_post_metas($product);
+
+		//Get parent and parent metas
+		$parent = isset($product->parent) ? $product->parent : false;
+		$parent_metas = $parent ? self::get_post_metas($parent) : false;
+
+		/*
+		 * UPDATING STOCK QUANTITY
+		 */
+		if(!$dry_run){
+			$update_result = update_post_meta($product_id,"_stock",$new_stock);
+		}else{
+			$update_result = 1;
+		}
+		if($new_stock === 0 || $new_stock === "0"){
+			//Product is out-of-stock
+			if(!$dry_run){
+				update_post_meta($product_id,"_stock_status","outofstock");
+			}
+			if($parent && ( $parent instanceof \WC_Product_Variable || $parent instanceof WBF_Product_Variable ) ){
+				if(self::db_variable_product_maybe_set_out_of_stock($parent->id,true)){
+					//All product variations are out-of-stock;
+					if(!$dry_run) {
+						update_post_meta( $parent->id, "_stock_status", "outofstock" ); //Set the parent out of stock if needed
+					}
+				}
+			}
+		}
+		if($parent && ( $parent instanceof \WC_Product_Variable || $parent instanceof WBF_Product_Variable ) ){
+			//Sync variations;
+			if(!$dry_run){
+				$parent->variable_product_sync();
+			}
+		}
+
+		return $update_result;
+	}
+
+	/**
+	 * @param $product
+	 *
+	 * @return bool
+	 */
+	public static function is_simple_product($product){
+		return $product instanceof \WC_Product_Simple || $product instanceof WBF_Product_Simple;
+	}
+
+	/**
+	 * @param $product
+	 *
+	 * @return bool
+	 */
+	public static function is_variable_product($product){
+		return $product instanceof \WC_Product_Variable || $product instanceof WBF_Product_Variable;
+	}
+
+	/**
+	 * @param $product
+	 *
+	 * @return bool
+	 */
+	public static function is_variation($product){
+		return $product instanceof \WC_Product_Variation || $product instanceof WBF_Product_Variation;
+	}
 }
