@@ -37,4 +37,13 @@ trait WBF_Product_Trait{
 		$percentage = round((( ( $regular_price - $sale_price ) / $regular_price ) * 100),0) ;
 		return $percentage;
 	}
+
+	/**
+	 * Returns the product attributes
+	 *
+	 * @return array
+	 */
+	public function get_attributes(){
+		return WooCommerce::get_product_attributes($this);
+	}
 }
