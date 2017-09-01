@@ -1,4 +1,4 @@
-#Behaviors Module
+# Behaviors Module
 
 This module enables developers to have custom metaboxes for post types with default values specified within theme options interface. 
 Let's say, for example, that you want to set an option to let user decide whatever or not display the site sidebar, both site-wide and post-specific. You then can implement a very complicated theme option... or use a behavior!
@@ -36,15 +36,15 @@ add_filter('wbf/modules/behaviors/available', function($behaviors){
 });
 ```
 
-##Behaviors specifications
+## Behaviors specifications
 
 Every behavior must have at least a name and a type.
 
-##Available types
+## Available types
 
 In future releases the behaviors types will be aligned with Theme Options types. By now you can choose between: text, textarea, checkbox, multicheck, radio, images, select.
 
-###Samples
+### Samples
 
 ```php
 /**
