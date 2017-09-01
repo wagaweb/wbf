@@ -1,4 +1,4 @@
-#Plugins Framework
+# Plugins Framework
 Plugins Framework component is an set of tools and extensible classes to help WordPress plugins developers.  
 
 It supports a "convention over configuration" principle to keep the environment clean and maintainable.

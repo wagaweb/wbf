@@ -1,8 +1,8 @@
-#Options Module
+# Options Module
 
 This module enables developers to enhance themes with options.
 
-##Defining options
+## Defining options
 You can define new options by hooking to `wbf/theme_options/register` action from within theme `functions.php`.
 
 Then you can use `Organizer` class to add options.
@@ -30,7 +30,7 @@ Then you can use `Organizer` class to add options.
 		$orgzr->reset_section();
 	});
 
-##The Organizer
+## The Organizer
 Organizer allows to organize options into group and sections. These are some of the available methods:
 
 **`set_section(string $section_name)`**
@@ -53,7 +53,7 @@ Adds a new option. For $option params see below. You can specify a group and som
 
 Update an already existing options or create a new option. For $values params see below.
 
-##Options values
+## Options values
 
 Options are defined by an array of properties.
 
@@ -61,7 +61,7 @@ Any option must have at least an "id" and a "type".
 
 The id can be any ^[a-z_]+$ string.
 
-##Available types
+## Available types
 
 You can find available fields `fields/*`. Every field implements `Field` interface and therefore has `get_html()` and `sanitize($input, $option)` methods.
 

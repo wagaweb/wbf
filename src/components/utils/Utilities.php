@@ -301,7 +301,7 @@ class Utilities{
 	}
 
 	/**
-	 * Get IP Info
+	 * Get info about an IP address using http://www.geoplugin.net service
 	 * @from http://stackoverflow.com/questions/12553160/getting-visitors-country-from-their-ip
 	 *
 	 * @param null $ip

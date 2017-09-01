@@ -1,8 +1,8 @@
-#Components Module
+# Components Module
 
 This module enables developers to build self-contained modifications to Wordpress themes that can be enabled and disabled (among other options) via dashboard. This avoids cluttering functions.php file with code, enhances code quality and simplifies debugging.
 
-##Defining a component
+## Defining a component
 You can define new options by create a new folder under `/components` inside your theme directory (through filters it is possible to change this directory or even to have multiple directories as well - documented below). 
 
 A component is defined by a main file that contains a **component class** and a **component header**.
