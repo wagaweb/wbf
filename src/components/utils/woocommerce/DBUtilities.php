@@ -6,7 +6,9 @@ use WBF\components\utils\Utilities;
 
 trait DBUtilities {
 	/**
-	 * Set a variable product 'out-of-stock' directly from the DB if needed
+	 * Set a variable product 'out-of-stock' directly from the DB if needed.
+	 *
+	 * This function can help when you have products with 0 as stock quantity, but that are not properly set out-of-stock.
 	 *
 	 * @param $post_id
 	 *
@@ -42,7 +44,7 @@ trait DBUtilities {
 	}
 
 	/**
-	 * Get a variation parent directly from the DB
+	 * Get a variation parent directly from the DB. Useful to save some resource.
 	 *
 	 * @param $variation_id
 	 *
@@ -56,7 +58,7 @@ trait DBUtilities {
 	}
 
 	/**
-	 * Get metas of a Order directly from the database
+	 * Get metas of a Order directly from the DB. Useful to save some resources.
 	 *
 	 * @param $order_id
 	 * @return array|null|object
