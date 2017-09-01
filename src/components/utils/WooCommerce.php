@@ -169,13 +169,12 @@ class WooCommerce{
 
 		$metas = $get_metas($post_id);
 
-		$cache[$post_id] = $metas;
-
 		if($post instanceof \WC_Product_Variation || $post instanceof WBF_Product_Variation){
 			$parent_metas = $get_metas($post->parent->id);
-
-			$cache[$post_id]['__parent'] = $parent_metas;
+			$metas['__parent'] = $parent_metas;
 		}
+
+		$cache[$post_id] = $metas;
 
 		return $metas;
 	}
