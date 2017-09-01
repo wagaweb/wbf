@@ -35,8 +35,9 @@ trait WBF_Product_Variable_Trait{
 
 		$max_percentage = 0;
 		$variations = $this->get_available_variations();
+		$variations_number = count($variations);
 
-		for($i = 0; $i < count($variations); ++$i) {
+		for($i = 0; $i < $variations_number; ++$i) {
 			$variable_product = WooCommerce::get_product($variations[$i]['variation_id']);
 			$regular_price = $variable_product->regular_price;
 			$sales_price = $variable_product->sale_price;
