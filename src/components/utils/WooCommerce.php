@@ -61,11 +61,11 @@ class WooCommerce{
 		}
 
 		if($product instanceof \WC_Product_Simple){
-			return new WBF_Product_Simple($product->id);
+			return new WBF_Product_Simple($product->get_id());
 		}elseif($product instanceof \WC_Product_Variation){
-			return new WBF_Product_Variation($product->id);
+			return new WBF_Product_Variation($product->get_id());
 		}elseif($product instanceof \WC_Product_Variable){
-			return new WBF_Product_Variable($product->id);
+			return new WBF_Product_Variable($product->get_id());
 		}
 
 		return false;
@@ -92,7 +92,7 @@ class WooCommerce{
 			foreach ($taxs as $att_tax){
 				$real_tax_name = 'pa_'.$att_tax->attribute_name;
 				if(taxonomy_exists($real_tax_name)){
-					$term_list = wp_get_post_terms($product->id,$real_tax_name);
+					$term_list = wp_get_post_terms($product->get_id(),$real_tax_name);
 					if(is_array($term_list) && !empty($term_list)){
 						$terms[$real_tax_name][] = $term_list;
 					}
@@ -256,10 +256,10 @@ class WooCommerce{
 				update_post_meta($product_id,"_stock_status","outofstock");
 			}
 			if($parent && ( $parent instanceof \WC_Product_Variable || $parent instanceof WBF_Product_Variable ) ){
-				if(self::db_variable_product_maybe_set_out_of_stock($parent->id,true)){
+				if(self::db_variable_product_maybe_set_out_of_stock($parent->get_id(),true)){
 					//All product variations are out-of-stock;
 					if(!$dry_run) {
-						update_post_meta( $parent->id, "_stock_status", "outofstock" ); //Set the parent out of stock if needed
+						update_post_meta( $parent->get_id(), "_stock_status", "outofstock" ); //Set the parent out of stock if needed
 					}
 				}
 			}
