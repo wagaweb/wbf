@@ -1,0 +1,4 @@
+wbf-sample.php.tpl:/{{slug}}.php
+Plugin.php:/src/Plugin.php
+index.php:/src/includes/index.php
+wbf-plugin-check-functions.php.tpl:/src/includes/wbf-plugin-check.functions.php
