@@ -3,9 +3,9 @@
 namespace WBF\modules\commands;
 
 add_action('init', function(){
-	/*if( !defined('WP_CLI') || !WP_CLI ){
+	if( !defined('WP_CLI') || !WP_CLI ){
 		return;
-	}*/
+	}
 
 	$registered_commands = [];
 	$commands_directories = [
@@ -22,6 +22,9 @@ add_action('init', function(){
 		foreach ($files as $file){
 			require_once $file;
 			$class_name = rtrim(basename($file),'.php');
+			if(preg_match('|'.__DIR__.'|',$file)){
+				$class_name = '\WBF\modules\commands\cli\\'.$class_name;
+			}
 			if(class_exists($class_name)){
 				$command_instance = new $class_name();
 				if($command_instance instanceof BaseCommand){
@@ -31,11 +34,16 @@ add_action('init', function(){
 						'runner' => $command_instance
 					];
 				}elseif(class_exists('\WP_CLI_Command') && $command_instance instanceof \WP_CLI_Command){
+					if(preg_match('|'.__DIR__.'|',$file)){
+						$name = strtolower(substr($class_name, strrpos($class_name, '\\') + 1)); //Strip namespace
+					}else{
+						$name = $class_name;
+					}
 					$registered_commands[] = [
 						'type' => 'class',
 						'class_name' => $class_name,
 						'runner' => $class_name,
-						'name' => $class_name
+						'name' => $name
 					];
 				}
 			}
