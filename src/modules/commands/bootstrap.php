@@ -53,14 +53,6 @@ add_action('init', function(){
 	//Getting all other command types
 	$registered_commands = apply_filters('wbf/commands/registered',$registered_commands);
 
-	$registered_commands[] = [
-		'type' => 'callable',
-		'name' => 'wbf:test-callable',
-		'runner' => function(){
-			\WP_CLI::success('Command ready');
-		}
-	];
-
 	foreach ($registered_commands as $command_entry){
 		$command_entry = wp_parse_args($command_entry,[
 			'type' => null,
