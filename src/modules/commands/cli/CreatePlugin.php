@@ -8,13 +8,7 @@ class CreatePlugin extends BaseCommand {
 	public function configure() {
 		$this->set_name('wbf:create-plugin');
 		$this->set_shortdesc("Create e new WBF-compatible plugin.");
-		$this->set_synopsis([
-			[
-				'type' => 'positional',
-				'name' => 'type',
-				'description' => 'The plugin type to create'
-			]
-		]);
+		$this->add_arg('type',self::ARG_TYPE_POSITIONAL,'The plugin type to create');
 	}
 
 	public function __invoke($args,$assoc_args) {
