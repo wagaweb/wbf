@@ -14,6 +14,11 @@ abstract class BaseCommand{
 	 */
 	private $args = [];
 
+	const ARG_TYPE_POSITIONAL = 'positional';
+	const ARG_TYPE_ASSOC = 'assoc';
+	const ARG_TYPE_GENERIC = 'generic';
+	const ARG_TYPE_FLAG = 'flag';
+
 	/**
 	 * BaseCommand constructor.
 	 */
@@ -46,9 +51,12 @@ abstract class BaseCommand{
 
 	/**
 	 * @param string $name
+	 *
+	 * @return $this
 	 */
 	public function set_name( $name ) {
 		$this->name = $name;
+		return $this;
 	}
 
 	/**
@@ -60,9 +68,12 @@ abstract class BaseCommand{
 
 	/**
 	 * @param $content
+	 *
+	 * @return $this
 	 */
 	public function set_shortdesc($content){
 		$this->args['shortdesc'] = $content;
+		return $this;
 	}
 
 	/**
@@ -91,9 +102,35 @@ abstract class BaseCommand{
 	 * ]
 	 *
 	 * @param array|string $content
+	 *
+	 * @return $this
 	 */
 	public function set_synopsis($content){
 		$this->args['synopsis'] = $content;
+		return $this;
+	}
+
+	/**
+	 * Adds an argument
+	 *
+	 * @param string $name
+	 * @param string $type (can be: positional, assoc, generic, flag)
+	 * @param string $description
+	 *
+	 * @return $this
+	 */
+	public function add_arg($name,$type,$description = ''){
+		$current_synopsis = $this->get_synopsis();
+		if(!isset($current_synopsis) || !is_array($current_synopsis) ){
+			$current_synopsis = [];
+		}
+		$current_synopsis[] = [
+			'name' => $name,
+			'type' => $type,
+			'description' => $description
+		];
+		$this->set_synopsis($current_synopsis);
+		return $this;
 	}
 
 	/**
@@ -105,9 +142,12 @@ abstract class BaseCommand{
 
 	/**
 	 * @param $content
+	 *
+	 * @return $this
 	 */
 	public function set_when($content){
 		$this->args['when'] = $content;
+		return $this;
 	}
 
 	/**
@@ -119,9 +159,12 @@ abstract class BaseCommand{
 
 	/**
 	 * @param $content
+	 *
+	 * @return $this
 	 */
 	public function set_before_invoke($content){
 		$this->args['before_invoke'] = $content;
+		return $this;
 	}
 
 	/**
@@ -133,9 +176,12 @@ abstract class BaseCommand{
 
 	/**
 	 * @param $content
+	 *
+	 * @return $this
 	 */
 	public function set_after_invoke($content){
 		$this->args['after_invoke'] = $content;
+		return $this;
 	}
 
 	/**
@@ -147,9 +193,12 @@ abstract class BaseCommand{
 
 	/**
 	 * @param array $args
+	 *
+	 * @return $this
 	 */
 	public function set_args( $args ) {
 		$this->args = $args;
+		return $this;
 	}
 
 	/**
