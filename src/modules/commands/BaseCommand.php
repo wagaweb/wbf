@@ -54,20 +54,6 @@ abstract class BaseCommand{
 	/**
 	 * @return string|null
 	 */
-	public function get_description(){
-		return isset($this->args['description']) ? $this->args['description'] : null;
-	}
-
-	/**
-	 * @param $content
-	 */
-	public function set_description($content){
-		$this->args['description'] = $content;
-	}
-
-	/**
-	 * @return string|null
-	 */
 	public function get_shortdesc(){
 		return isset($this->args['shortdesc']) ? $this->args['shortdesc'] : null;
 	}
@@ -87,7 +73,24 @@ abstract class BaseCommand{
 	}
 
 	/**
-	 * @param $content
+	 * Set the command synopsis. WP_CLI uses this for validation if array is provided.
+	 * See: SynopsisParser.php and class-wp-cli.php in wp-cli.phar for info about the array format.
+	 *
+	 * @example:
+	 *
+	 * [
+	 *      [
+	 *          'type' => 'positional' //can be: positional, assoc, generic, flag
+	 *          'name' => 'foobar',
+	 *          'description' => 'Foobar description'
+	 *      ],
+	 *      [
+	 *          ...
+	 *      ]
+	 *      ...
+	 * ]
+	 *
+	 * @param array|string $content
 	 */
 	public function set_synopsis($content){
 		$this->args['synopsis'] = $content;
@@ -152,7 +155,7 @@ abstract class BaseCommand{
 	/**
 	 * Invoke the command
 	 */
-	public function __invoke() {
+	public function __invoke( $args, $assoc_args ) {
 		if(class_exists('WP_CLI')){
 			\WP_CLI::success('Command ready');
 		}
