@@ -209,4 +209,17 @@ abstract class BaseCommand{
 			\WP_CLI::success('Command ready');
 		}
 	}
+
+	/**
+	 * Get a value from STDIN
+	 *
+	 * @param $question
+	 *
+	 * @return string
+	 */
+	public function get_cli_value($question){
+		fwrite( STDOUT, $question  );
+		$answer = strtolower( trim( fgets( STDIN ) ) );
+		return $answer;
+	}
 }
