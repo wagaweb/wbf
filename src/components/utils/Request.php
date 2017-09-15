@@ -25,30 +25,4 @@ class Request{
 
 		return $var;
 	}
-
-	/**
-	 * Send a PDF to the browser
-	 *
-	 * @param $filename
-	 *
-	 * @throws \Exception
-	 */
-	static function send_pdf($filename){
-		if(headers_sent()){
-			throw new \Exception('Cannot send headers to display the PDF. Headers already sent');
-		}
-
-		if(!is_file($filename)){
-			http_response_code(404);
-			die();
-		}
-
-		header('Content-Type: application/pdf');
-		header('Content-disposition: inline; filename="' . $filename . '"');
-		header('Cache-Control: public, must-revalidate, max-age=0');
-		header('Pragma: public');
-		header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
-		header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-		readfile($filename);
-	}
 }
