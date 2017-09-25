@@ -102,11 +102,15 @@ class CreatePlugin extends BaseCommand {
 			preg_match("|^([a-zA-Z-.]+):([\/a-zA-Z-.{}]+)$|",$line,$matches);
 			if(isset($matches) && isset($matches[2])){
 				$source_filename = $matches[1];
+				$source_filepath = dirname($templatefile).'/'.$source_filename;
 				$destination_path = $matches[2];
 				//File creation:
 				wp_mkdir_p($output_directory);
 				if(dirname($destination_path) === '/'){
+					$deep_output_directory = $output_directory;
 					//We must generate the file in the plugin root directory
+					$content = file_get_contents($source_filepath);
+
 				}else{
 					//We must generate the file into deeper path
 					$deep_output_directory = $output_directory.$destination_path;
