@@ -20,8 +20,10 @@ class CreatePlugin extends BaseCommand {
 		}
 
 		$this->new_plugin_data['type'] = $type;
-		$this->new_plugin_data['name'] = $this->get_cli_value('What is the slug of your plugin? (eg: foobar)');
-		$this->new_plugin_data['namespace'] = $this->get_cli_value('What is the namespace of your plugin? (eg: FooBar)');
+
+		$this->obtain_new_plugin_data('name','What is the slug of your plugin? (eg: Foobar Plugin)');
+		$this->obtain_new_plugin_data('slug','What is the slug of your plugin? (eg: foobar)');
+		$this->obtain_new_plugin_data('namespace','What is the namespace of your plugin? (eg: FooBar)');
 
 		switch($type){
 			case 's':
@@ -33,18 +35,75 @@ class CreatePlugin extends BaseCommand {
 			case 'm':
 				$this->create_modular_plugin();
 				break;
+			default:
+				\WP_CLI::error('Invalid plugin type');
+				break;
 		}
 	}
 
 	private function create_simple_plugin(){
-		\WP_CLI::success('Creating a simple plugin called: '.$this->new_plugin_data['name']);
+		$tpl_directory = __DIR__.'/skeleton/create-plugin/simple';
+		$new_plugin_directory = $this->get_new_plugin_directory();
+		$templatefile = $tpl_directory.'/templatefile';
+
+		$this->parse_templatefile($templatefile,$new_plugin_directory);
+
+		\WP_CLI::success('Creating a simple plugin called: '.$this->new_plugin_data['name'].' in: '.$new_plugin_directory);
 	}
 
 	private function create_complex_plugin(){
-		\WP_CLI::success('Creating a complex plugin called: '.$this->new_plugin_data['name']);
+		$tpl_directory = __DIR__.'/skeleton/create-plugin/complex';
+		$new_plugin_directory = $this->get_new_plugin_directory();
+		$templatefile = $tpl_directory.'/templatefile';
+
+		$this->parse_templatefile($templatefile,$new_plugin_directory);
+
+		\WP_CLI::success('Created a complex plugin called: '.$this->new_plugin_data['name'].' in: '.$new_plugin_directory);
 	}
 
 	private function create_modular_plugin(){
-		\WP_CLI::success('Creating a modular plugin called: '.$this->new_plugin_data['name']);
+		$tpl_directory = __DIR__.'/skeleton/create-plugin/modular';
+		$new_plugin_directory = $this->get_new_plugin_directory();
+		$templatefile = $tpl_directory.'/templatefile';
+
+		$this->parse_templatefile($templatefile,$new_plugin_directory);
+		
+		\WP_CLI::success('Created a modular plugin called: '.$this->new_plugin_data['name'].' in: '.$new_plugin_directory);
+	}
+
+	/**
+	 * @param $data_name
+	 * @param $msg
+	 */
+	private function obtain_new_plugin_data($data_name,$msg){
+		$this->new_plugin_data[$data_name] = $this->get_cli_value($msg);
+		if(empty($this->new_plugin_data[$data_name])){
+			\WP_CLI::error('This value cannot be empty');
+		}
+	}
+	
+	/**
+	 * @return string
+	 */
+	private function get_new_plugin_directory(){
+		return WP_CONTENT_DIR.'/plugins/'.$this->new_plugin_data['slug'];
+	}
+
+	/**
+	 * Parse a templatefile and create the skeleton to the output directory
+	 *
+	 * @param $templatefile
+	 * @param $output_directory
+	 */
+	private function parse_templatefile($templatefile,$output_directory,$args = []){
+		$file = new \SplFileObject($templatefile);
+		while(!$file->eof()){
+			$line = $file->fgets();
+			preg_match("|^([a-zA-Z-.]+):([\/a-zA-Z-.{}]+)$|","wbf-sample.php.tpl:/{{slug}}.php",$matches);
+			if(isset($matches) && isset($matches[2])){
+				$source_filename = $matches[1];
+				$destination_path = $matches[2];
+			}
+		}
 	}
 }
