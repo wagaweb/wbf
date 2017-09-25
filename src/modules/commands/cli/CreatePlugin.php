@@ -99,10 +99,19 @@ class CreatePlugin extends BaseCommand {
 		$file = new \SplFileObject($templatefile);
 		while(!$file->eof()){
 			$line = $file->fgets();
-			preg_match("|^([a-zA-Z-.]+):([\/a-zA-Z-.{}]+)$|","wbf-sample.php.tpl:/{{slug}}.php",$matches);
+			preg_match("|^([a-zA-Z-.]+):([\/a-zA-Z-.{}]+)$|",$line,$matches);
 			if(isset($matches) && isset($matches[2])){
 				$source_filename = $matches[1];
 				$destination_path = $matches[2];
+				//File creation:
+				wp_mkdir_p($output_directory);
+				if(dirname($destination_path) === '/'){
+					//We must generate the file in the plugin root directory
+				}else{
+					//We must generate the file into deeper path
+					$deep_output_directory = $output_directory.$destination_path;
+					wp_mkdir_p(dirname($deep_output_directory));
+				}
 			}
 		}
 	}
