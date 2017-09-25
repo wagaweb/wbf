@@ -4,7 +4,7 @@ namespace WBF\modules\commands\cli;
 
 use WBF\modules\commands\BaseCommand;
 
-class CreatePlugin extends BaseCommand {
+class CreatePlugin /*extends BaseCommand*/ {
 	private $new_plugin_data;
 
 	public function configure() {
@@ -95,7 +95,7 @@ class CreatePlugin extends BaseCommand {
 	 * @param $templatefile
 	 * @param $output_directory
 	 */
-	private function parse_templatefile($templatefile,$output_directory,$args = []){
+	public function parse_templatefile($templatefile,$output_directory,$args = []){
 		$file = new \SplFileObject($templatefile);
 		while(!$file->eof()){
 			$line = $file->fgets();
@@ -104,13 +104,17 @@ class CreatePlugin extends BaseCommand {
 				$source_filename = $matches[1];
 				$source_filepath = dirname($templatefile).'/'.$source_filename;
 				$destination_path = $matches[2];
+				$destination_filename = basename($destination_path);
+				$destination_filename = str_replace("{{slug}}",$this->new_plugin_data['slug'],$destination_filename);
 				//File creation:
 				wp_mkdir_p($output_directory);
 				if(dirname($destination_path) === '/'){
 					$deep_output_directory = $output_directory;
 					//We must generate the file in the plugin root directory
 					$content = file_get_contents($source_filepath);
-
+					//Parsing tags:
+					//...
+					file_put_contents($deep_output_directory.'/'.$destination_filename,$content);
 				}else{
 					//We must generate the file into deeper path
 					$deep_output_directory = $output_directory.$destination_path;
