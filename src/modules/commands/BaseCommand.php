@@ -2,6 +2,8 @@
 
 namespace WBF\modules\commands;
 
+use function GuzzleHttp\Psr7\str;
+
 abstract class BaseCommand{
 	//See class-wp-cli.php add_command() method for the implemented setter \ getter methods
 
@@ -215,11 +217,16 @@ abstract class BaseCommand{
 	 *
 	 * @param $question
 	 *
+	 * @param bool $strtolower
+	 *
 	 * @return string
 	 */
-	public function get_cli_value($question){
+	public function get_cli_value($question, $strtolower = false){
 		fwrite( STDOUT, $question  );
-		$answer = strtolower( trim( fgets( STDIN ) ) );
+		$answer = trim( fgets( STDIN ) );
+		if($strtolower){
+			$answer = strtolower($answer);
+		}
 		return $answer;
 	}
 }
