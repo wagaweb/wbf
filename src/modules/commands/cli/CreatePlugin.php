@@ -4,7 +4,7 @@ namespace WBF\modules\commands\cli;
 
 use WBF\modules\commands\BaseCommand;
 
-class CreatePlugin /*extends BaseCommand*/ {
+class CreatePlugin extends BaseCommand {
 	private $new_plugin_data;
 
 	public function configure() {
@@ -21,7 +21,7 @@ class CreatePlugin /*extends BaseCommand*/ {
 
 		$this->new_plugin_data['type'] = $type;
 
-		$this->obtain_new_plugin_data('name','What is the slug of your plugin? (eg: Foobar Plugin)');
+		$this->obtain_new_plugin_data('name','What is the name of your plugin? (eg: Foobar Plugin)');
 		$this->obtain_new_plugin_data('slug','What is the slug of your plugin? (eg: foobar)');
 		$this->obtain_new_plugin_data('namespace','What is the namespace of your plugin? (eg: FooBar)');
 		$this->obtain_new_plugin_data('description','What is the description of your plugin? (default: empty)', true, true);
@@ -54,7 +54,7 @@ class CreatePlugin /*extends BaseCommand*/ {
 			\WP_CLI::error($e->getMessage());
 		}
 
-		\WP_CLI::success('Creating a plugin called: '.$this->new_plugin_data['name'].' in: '.$new_plugin_directory);
+		\WP_CLI::success('Created a new plugin called: '.$this->new_plugin_data['name'].' in: '.$new_plugin_directory);
 	}
 
 	/**
