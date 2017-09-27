@@ -2,7 +2,7 @@
 
 # Waboot Framework
 
-WBF is a modular framework for WordPress which can speed up development.
+WBF is a modular framework for WordPress.
 
 WBF is composed by different kind of parts: 
 
