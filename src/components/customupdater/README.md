@@ -28,10 +28,10 @@ add_action("init", "set_update_server");
 
 #### Block updates
 
-It is possible to block updates (maybe for licensing issue?) by hooking at `"wbf/custom_theme_updater/can_update"`
+It is possible to block updates (if you sell licenses for example) by hooking at `"wbf/custom_theme_updater/can_update"`
 
 ```php
-add_filter("wbf/custom_theme_updater/can_update", ["disallow_updates"], 10, 2);
+add_filter("wbf/custom_theme_updater/can_update", "disallow_updates", 10, 2);
 function disallow_updates($can_update, Theme_Update_Checker $checker){
     if(<some_reason>){
         $can_update = false;
