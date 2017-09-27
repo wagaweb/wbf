@@ -13,11 +13,11 @@ namespace {{ namespace }};
  * Author URI:        http://www.foo.bar/
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain:       wb-sample
+ * Text Domain:       {{ slug }}
  * Domain Path:       /languages
  */
 
-use WBSample\Plugin;
+use {{ namespace }}\Plugin;
 
 if ( ! defined( 'WPINC' ) ) {
 	die; //If this file is called directly, abort.
