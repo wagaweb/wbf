@@ -1,6 +1,6 @@
 <?php
 
-namespace WBSample\includes;
+namespace {{ namespace }}\includes;
 
 /**
  * Get WBF Path

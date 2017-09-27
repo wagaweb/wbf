@@ -5,7 +5,7 @@ namespace {{ namespace }};
 /**
  * The plugin bootstrap file
  *
- * Plugin Name:       {{ title }}
+ * Plugin Name:       {{ name }}
  * Plugin URI:        {{ url }}
  * Description:       {{ description }}
  * Version:           0.0.1
