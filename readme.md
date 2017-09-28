@@ -112,6 +112,10 @@ A simple frontend to License_Manager component. It will make available a dashboa
 
 Bugfix releases
 
+**v1.0.9**
+
+New hooks logic for components and theme options
+
 **v1.1.x**
 
 - Introduction of Commands module
