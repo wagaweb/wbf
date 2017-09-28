@@ -98,8 +98,7 @@ Behaviors API allows developer to create metaboxes with default values specified
 
     [Learn more](https://github.com/wagaweb/wbf/tree/master/src/modules/behaviors)
     
-- **Commands**
-
+- **Commands**  
 WP Cli extension with many adhoc commands for Waboot \ WBF environment (about to be released!)
 
 - **License Manager**
