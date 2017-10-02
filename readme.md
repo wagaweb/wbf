@@ -18,9 +18,9 @@ Please note that the present documentation is in its early stage.
 
 The quickest way to start developing with WBF is to install it as WordPress plugin.
 
-You can download the latest standalone version [here](http://update.waboot.org/resource/get/plugin/wbf) or clone this repo.
+You can download the latest standalone version [here](http://update.waboot.org/resource/get/plugin/wbf) or clone this repo and run the composer\npm\bower build.
 
-WBF Components can be installed on project basis via [composer](https://packagist.org/search/?q=wbf).
+WBF Components can be installed on project basis via [composer](https://packagist.org/search/?q=wbf) (still experimental).
 
 ## WBF Components
 
@@ -98,7 +98,10 @@ Behaviors API allows developer to create metaboxes with default values specified
 
     [Learn more](https://github.com/wagaweb/wbf/tree/master/src/modules/behaviors)
     
-- **License Manager**  
+- **Commands**  
+WP Cli extension with many adhoc commands for Waboot \ WBF environment (about to be released!)
+
+- **License Manager**
 A simple frontend to License_Manager component. It will make available a dashboard page with all registered licenses.
 
 <span style="font-size:smaller"><a href="#waboot-framework">Back to top.</a></span>
@@ -109,7 +112,16 @@ A simple frontend to License_Manager component. It will make available a dashboa
 
 Bugfix releases
 
+**v1.0.9**
+
+New hooks logic for components and theme options
+
 **v1.1.x**
+
+- Introduction of Commands module
+- Bugfixing
+
+**v1.2.x**
 
 - Implementation of tests
 - Make behaviors use theme options fields
