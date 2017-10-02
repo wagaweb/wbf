@@ -1,0 +1,6 @@
+wbf-sample.php.tpl:/{{slug}}.php
+index.php.tpl:/src/includes/index.php
+wbf-plugin-check-functions.php.tpl:/src/includes/wbf-plugin-check-functions.php
+Plugin.php.tpl:/src/Plugin.php
+Admin.php.tpl:/src/Admin.php
+Frontend.php.tpl:/src/Frontend.php
