@@ -44,7 +44,7 @@ function module_init(){
     ComponentsManager::init();
     ComponentsManager::toggle_components(); //enable or disable components if necessary (manage the disable\enable actions sent by admin page)
 }
-add_action("wbf_after_setup_theme",'\WBF\modules\components\module_init');
+add_action("wbf_init",'\WBF\modules\components\module_init', 10);
 
 function setup_components(){
     ComponentsManager::setupComponentsFilters();
