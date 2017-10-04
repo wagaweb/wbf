@@ -81,7 +81,7 @@ class MyHelloWorld extends BaseCommand{
 }
 ```
 
-If you do not want to use `\WBF\modules\commands\BaseCommand` you can simply extend `\WP_CLI_Command` and code your command as you normally would do with standard [WP CLI API](https://make.wordpress.org/cli/handbook/commands-cookbook/).
+If you do not want to use `\WBF\modules\commands\BaseCommand` you can simply extend `\WP_CLI_Command` and code your command as you normally would with standard [WP CLI API](https://make.wordpress.org/cli/handbook/commands-cookbook/).
 
 ### Define a new command with a callable
 You can define a new command with a callable by hooking to `wbf/commands/registered`:
