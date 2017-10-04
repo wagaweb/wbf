@@ -221,7 +221,7 @@ class Admin{
 	 * @throws \Exception
 	 * @return bool|string
 	 */
-	private function backup_options_to_file( $download = false ) {
+	public function backup_options_to_file( $download = false ) {
 		$current_settings = $this->get_current_active_theme_options();
 		$backup_path      = WBF()->resources->get_working_directory() . "/theme-options-backups";
 		$backup_url       = WBF()->resources->get_working_directory_uri() . "/theme-options-backups";
@@ -278,7 +278,7 @@ class Admin{
 	 * @return bool
 	 * @throws \Exception
 	 */
-	private function restore_options_from_file( $file ) {
+	public function restore_options_from_file( $file ) {
 		$optionsframework_settings = Framework::get_options_root_id();
 		$settings                  = array();
 
