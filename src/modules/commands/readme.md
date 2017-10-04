@@ -9,7 +9,7 @@ A new command can be defined in two ways:
 2. By hooking to `wbf/commands/registered` filter and define the command with a callable.
 
 ### Define a new command with a class
-You can create a command by extending `\WP_CLI_Command` or `\WBF\modules\commands\BaseCommand`. The latter offer a more object oriented API to define commands args and description and implements some new functionality.
+You can create a command by extending `\WP_CLI_Command` or `\WBF\modules\commands\BaseCommand`. The latter offers a more object oriented API to define commands arguments and description and implements some new functionality.
 
 For example, put the following lines in a file called `MyHelloWorld.php` under `/wp-content/themes/yourtheme/inc/cli`.
 
