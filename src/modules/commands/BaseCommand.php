@@ -24,9 +24,7 @@ abstract class BaseCommand{
 	/**
 	 * BaseCommand constructor.
 	 */
-	public function __construct() {
-		$this->configure();
-	}
+	public function __construct() {}
 
 	/**
 	 * Configure the command
