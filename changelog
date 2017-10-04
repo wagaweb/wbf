@@ -1,11 +1,25 @@
 == Change log ==
 
-Version 1.0.9 - 10/04/2017
+Version 1.0.10 - 10/04/2017
 ---------------------------------
 - Tweak: New loading\hook system for options and components
 - Tweak: Renowed plugin framework Loader (now $component param in add_action and add_filter is deprecated)
 - Feature: Added WooCommerce utils
 - Feature: Added Commands module (with wbf:theme-options and wbf:create-plugin)
+
+Version 1.0.9-beta3 - 08/31/2017
+---------------------------------
+- Tweak: More WooCommerce utils tweaks and functions
+
+Version 1.0.9-beta2 - 08/30/2017
+---------------------------------
+- Tweak: More WooCommerce utils tweaks and functions
+
+Version 1.0.9-beta - 08/29/2017
+---------------------------------
+- Tweak: New loading\hook system for options and components
+- Tweak: Renowed plugin framework Loader (now $component param in add_action and add_filter is deprecated)
+- Feature: Added WooCommerce utils
 
 Version 1.0.8 - 07/24/2017
 ---------------------------------
