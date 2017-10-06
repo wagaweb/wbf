@@ -112,18 +112,11 @@ A simple frontend to License_Manager component. It will make available a dashboa
 
 **v1.0.x**
 
-Bugfix releases
-
-**v1.0.9**
-
-New hooks logic for components and theme options
+- :white_check_mark: New hooks logic for components and theme options
+- :white_check_mark: Introduction of Commands module
+- Bug fixing
 
 **v1.1.x**
-
-- Introduction of Commands module
-- Bugfixing
-
-**v1.2.x**
 
 - Implementation of tests
 - Make behaviors use theme options fields
