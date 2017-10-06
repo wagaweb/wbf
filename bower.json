@@ -1,7 +1,7 @@
 {
   "name": "waga/wbf",
-  "version": "1.0.10",
-  "description": "A comprehensive full-stack Wordpress framework",
+  "version": "1.0.11",
+  "description": "A comprehensive WordPress framework",
   "license": "proprietary",
   "private": "true",
   "ignore": [

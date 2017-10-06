@@ -1,14 +1,14 @@
 {
   "name": "WabootFramework",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "author": "WAGA Team",
-  "homepage": "https://www.waga.it/",
+  "homepage": "https://www.waboot.io/",
   "repository": {
     "type": "git",
-    "url": "https://bitbucket.org/waga/waboot"
+    "url": "https://github.com/wagaweb/wbf"
   },
   "bugs": {
-    "url": "https://bitbucket.org/waga/waboot/issues?status=new&status=open"
+    "url": "https://github.com/wagaweb/wbf/issues"
   },
   "licenses": [
     {

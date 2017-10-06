@@ -1,5 +1,10 @@
 == Change log ==
 
+Version 1.0.11 - 10/06/2017
+---------------------------------
+- Tweak: wbf:create-plugin renamed to wbf:generate:plugin
+- Tweak: Now plugins generated with wbf:generate:plugin command have the built-in wbf autoinstaller.
+
 Version 1.0.10 - 10/04/2017
 ---------------------------------
 - Tweak: New loading\hook system for options and components
