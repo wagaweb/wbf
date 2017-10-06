@@ -64,10 +64,7 @@ if(class_exists("\\WBF\\components\\pluginsframework\\BasePlugin")){
 			?>
             <div class="error">
                 <p>
-					<?php printf(
-						__( basename(__FILE__). ' requires Waboot Framework. Please <a href="%s">install</a>.'),
-						includes\get_wbf_admin_download_link() );
-					?>
+                    <?php echo includes\get_wbf_download_button('{{ name }}'); ?>
                 </p>
             </div>
 			<?php

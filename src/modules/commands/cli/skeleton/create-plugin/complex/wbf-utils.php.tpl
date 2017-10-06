@@ -40,6 +40,22 @@ function get_wbf_admin_download_link(){
 }
 
 /**
+ * Get the WBF download button
+ *
+ * @param $plugin_name
+ *
+ * @return string
+ */
+function get_wbf_download_button($plugin_name){
+	$button = sprintf(
+		__( '<strong>'.$plugin_name.'</strong> requires Waboot Framework. <span class="wbf-install-now"><a class="wbf-install-btn button" href="%s">%s</a></span>'),
+		get_wbf_admin_download_link(),
+		__( 'Install Now' )
+	);
+	return $button;
+}
+
+/**
  * Mod WordPress update system to install WBF from an external source.
  */
 function install_wbf_wp_update_hooks(){
@@ -65,4 +81,45 @@ function install_wbf_wp_update_hooks(){
 		}
 		return $res;
 	},10,3);
+	add_action('admin_head', function(){
+		$labels = [
+			'installing' => __( 'Installing...' ), //@see: script-loader.php
+			'installFailedShort' => __( 'Install Failed!' ), //@see: script-loader.php
+			'activate' => __( 'Activate' ) //@see: class-wp-plugin-install-list-table.php
+		];
+		//@see: class-wp-plugin-install-list-table.php
+		$activate_link = add_query_arg([
+			'action' => 'activate',
+			'plugin' => 'wbf/wbf.php',
+			'_wpnonce' => wp_create_nonce('activate-plugin_' . 'wbf/wbf.php')
+		],network_admin_url('plugins.php'));
+		?>
+		<!-- WBF Custom Installer: Begin -->
+		<script type="text/javascript">
+            if(typeof wbf_install_script_flag === 'undefined'){
+                jQuery( document ).ready(function(){
+                    var $wbf_install_buttons_wrapper = jQuery('.wbf-install-now'),
+                        $wbf_install_buttons = $wbf_install_buttons_wrapper.find('a.wbf-install-btn');
+                    $wbf_install_buttons.on('click', function(e){
+                        e.preventDefault();
+                        var $my_parent_wrapper = jQuery(this).parents('.wbf-install-now');
+                        $wbf_install_buttons_wrapper.not($my_parent_wrapper).html('');
+                        jQuery(this).addClass('updating-message').html('<?php echo $labels['installing']; ?>');
+                        var req = wp.updates.installPlugin( {
+                            slug: 'wbf'
+                        } );
+                        req.then(function(){
+                            $my_parent_wrapper.find('a.wbf-install-btn').removeClass('updating-message').addClass('button-primary').html('<?php echo $labels['activate']; ?>').attr('href','<?php echo $activate_link; ?>');
+                            $wbf_install_buttons.off('click');
+                        },function(){
+                            $my_parent_wrapper.find('a.wbf-install-btn').removeClass('updating-message').removeClass('button-primary').html('<?php echo $labels['installFailedShort']; ?>').attr('disabled','disabled');
+                        });
+                    });
+                });
+                var wbf_install_script_flag = true;
+            }
+		</script>
+		<!-- WBF Custom Installer: End -->
+		<?php
+	},99);
 }
