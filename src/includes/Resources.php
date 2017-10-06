@@ -20,23 +20,51 @@ class Resources{
 	 */
 	private $wbf_wd = false;
 
+	/**
+	 * Resources constructor.
+	 *
+	 * @param null $path
+	 * @param null $url
+	 *
+	 * @throws \Exception
+	 */
 	public function __construct($path = null,$url = null){
-		if(!$path) $path = get_option("wbf_path");
-		if(!$url) $url = $url = get_option("wbf_url");
-		if(defined("WBF_DIRECTORY")){
-			$path = rtrim(WBF_DIRECTORY,"/")."/";
-			$this->wbf_path = $path;
-		}elseif($path && is_string($path) && !empty($path)){
+		$update_wbf_path_flag = false;
+		$update_wbf_url_flag = false;
+
+		if(!$path){
+			$path = get_option("wbf_path");
+		}else{
+			$update_wbf_path_flag = true;
+		}
+
+		if(!$url){
+			$url = $url = get_option("wbf_url");
+		}else{
+			$update_wbf_url_flag = true;
+		}
+
+		if($path && is_string($path) && !empty($path)){
 			$path = rtrim($path,"/")."/";
-			$this->wbf_path = $path;
+		}else{
+			throw new \Exception('Invalid path provided');
 		}
-		if(defined("WBF_URL")){
-			$url = rtrim(WBF_URL,"/")."/";
-			$this->wbf_url = $url;
-		}elseif($url && is_string($url) && !empty($url)){
+
+		if($url && is_string($url) && !empty($url)){
 			$url = rtrim($url,"/")."/";
-			$this->wbf_url = $url;
+		}else{
+			throw new \Exception('Invalid url provided');
 		}
+
+		if( $update_wbf_path_flag && ( get_option('wbf_path','') !== $path) ){
+			update_option('wbf_path',$path);
+		}
+		if( $update_wbf_url_flag && ( get_option('wbf_url','') !== $url) ){
+			update_option('wbf_path',$url);
+		}
+
+		$this->wbf_path = $path;
+		$this->wbf_url = $url;
 	}
 
 	/**
@@ -45,6 +73,9 @@ class Resources{
 	 * @return bool|string
 	 */
 	public function get_url(){
+		if(defined('WBF_URL')){
+			return WBF_URL;
+		}
 		return $this->wbf_url;
 	}
 
@@ -54,6 +85,9 @@ class Resources{
 	 * @return bool|string
 	 */
 	public function get_path(){
+		if(defined('WBF_PATH')){
+			return WBF_PATH;
+		}
 		return $this->wbf_path;
 	}
 

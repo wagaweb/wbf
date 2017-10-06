@@ -905,6 +905,11 @@ class PluginCore {
 	 *
 	 */
 
+	/**
+	 * Calls $this->activation() if the option 'wbf_installed' is FALSE
+	 *
+	 * @param bool $force
+	 */
 	public function maybe_run_activation($force = false){
 		if($force){
 			$this->activation();
@@ -916,25 +921,38 @@ class PluginCore {
 		}
 	}
 
+	/**
+	 * Calls $this->add_wbf_options() if the option 'wbf_installed' is FALSE
+	 */
 	public function maybe_add_option() {
-		$opt = get_option( "wbf_installed" );
+		$opt = get_option( "wbf_installed", false );
 		if( ! $opt || !$this->has_valid_wbf_path()) {
 			$this->add_wbf_options();
-		}else{
-			if(WBF_DIRECTORY != get_option("wbf_path")){
-				//This case may fire when switch from a wbf-as-plugin to a wbf-in-theme environment @since 0.13.8
-				$this->add_wbf_options();
-			}
 		}
 	}
 
+	/**
+	 * Adds common WBF options
+	 */
 	public function add_wbf_options(){
 		update_option( "wbf_installed", true ); //Set a flag to make other component able to check if framework is installed
-		update_option( "wbf_path", WBF_DIRECTORY );
-		update_option( "wbf_url", WBF_URL );
+
+		if(!get_option('wbf_path',false)){
+			update_option( "wbf_path", $this->resources->get_path() );
+		}
+
+		if(!get_option('wbf_url',false)){
+			update_option( "wbf_url", $this->resources->get_url() );
+		}
+
 		update_option( "wbf_components_saved_once", false );
 	}
 
+	/**
+	 * Checks if 'wbf_path' option is a valid path to wbf.php
+	 *
+	 * @return bool
+	 */
 	public function has_valid_wbf_path(){
 		$path = get_option("wbf_path");
 		if(!$path || empty($path) || !is_string($path)){
@@ -946,6 +964,9 @@ class PluginCore {
 		return false;
 	}
 
+	/**
+	 * Loads modules activations and setup common options
+	 */
 	public function activation() {
 		$this->load_modules_activation_hooks();
 
@@ -954,6 +975,11 @@ class PluginCore {
 		//$this->enable_default_components();
 	}
 
+	/**
+	 * Remove WBF from the database and calls modules de-activations
+	 *
+	 * @param null $template
+	 */
 	public function deactivation($template = null) {
 		$this->load_modules_deactivation_hooks();
 		delete_option( "wbf_installed" );
