@@ -4,11 +4,11 @@ namespace WBF\modules\commands\cli;
 
 use WBF\modules\commands\BaseCommand;
 
-class CreatePlugin extends BaseCommand {
+class GeneratePlugin extends BaseCommand {
 	private $new_plugin_data;
 
 	public function configure() {
-		$this->set_name('wbf:create-plugin');
+		$this->set_name('wbf:generate:plugin');
 		$this->set_shortdesc("Create a new WBF-compatible plugin.");
 	}
 
