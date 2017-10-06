@@ -41,20 +41,6 @@ if( !isset($GLOBALS['wbf']) || !$GLOBALS['wbf'] instanceof \WBF\PluginCore ) {
 	//Utilities
 	require_once( 'src/includes/utilities-functions.php' );
 
-	//Define directory
-	if(!defined("WBF_DIRECTORY")){
-		define("WBF_DIRECTORY", __DIR__);
-	}
-	//Define uri
-	if(preg_match("/wp-content\/themes/", WBF_DIRECTORY )){
-		//If WBF is in a theme
-		$url = rtrim(path_to_url(dirname(WBF_DIRECTORY."/wbf.php")),"/")."/"; //ensure trailing slash
-		define("WBF_URL", $url);
-	}else{
-		//If is in the plugin directory
-		define("WBF_URL", site_url() . "/wp-content/plugins/wbf/");
-	}
-
 	if(!defined("WBF_WORK_DIRECTORY_NAME")){
 		define("WBF_WORK_DIRECTORY_NAME","wbf-wd");
 	}
