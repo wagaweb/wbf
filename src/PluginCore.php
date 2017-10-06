@@ -93,30 +93,23 @@ class PluginCore {
 	/**
 	 * WBF constructor.
 	 *
+	 * @param Resources $resources
 	 * @param array $args options that will be used in startup
 	 */
-	protected function __construct($args = []){
-		if(!defined("WBF_PREVENT_STARTUP")){
-			if($this->is_plugin()){
-				$this->startup($args);
-			}
-		}
-	}
-	
-	/**
-	 * WBF Startup. Adds filters and actions.
-	 *
-	 * @param array $options
-	 */
-	function startup($options = []){
-		//Check options
+	public function __construct(Resources $resources, $options = []){
+		$this->resources = $resources;
 		$options = wp_parse_args($options,[
 			'do_global_theme_customizations' => true,
 			'check_for_updates' => true,
 			'handle_errors' => true
 		]);
 		$this->options = $options;
+	}
 
+	/**
+	 * WBF Startup. Adds filters and actions.
+	 */
+	public function startup(){
 		if($this->options['handle_errors']){
 			set_error_handler([$this,"handle_errors"],E_USER_WARNING); //http://php.net/manual/en/language.types.callable.php
 		}
@@ -125,7 +118,6 @@ class PluginCore {
 		$this->maybe_add_option();
 		update_option("wbf_version",self::version);
 
-		$this->resources = includes\Resources::getInstance();
 		$this->url = $this->resources->get_url();
 		$this->path = $this->resources->get_path();
 
@@ -218,7 +210,7 @@ class PluginCore {
 	 * @param $args
 	 * @param null|Base_Compiler $base_compiler
 	 */
-	function set_styles_compiler($args,$base_compiler = null){
+	public function set_styles_compiler($args,$base_compiler = null){
 		global $wbf_styles_compiler;
 
 		if(!isset($wbf_styles_compiler) || !$wbf_styles_compiler){
@@ -235,12 +227,12 @@ class PluginCore {
 	 * Checks if current admin page is part of WBF
 	 * @return bool
 	 */
-	static function is_wbf_admin_page(){
+	public function is_wbf_admin_page(){
 		global $plugin_page,$wbf_options_framework;
 
 		//todo: this is ugly, we could expose a function like register_wbf_admin_page()
 		$valid_pages = [
-			self::getInstance()->wp_menu_slug,
+			WBF()->wp_menu_slug,
 			GUI::$wp_menu_slug,
 			'wbf_licenses'
 		];
@@ -261,7 +253,7 @@ class PluginCore {
 	 *
 	 * @return string
 	 */
-	static function get_copyright(){
+	public function get_copyright(){
 		$v = new components\mvc\HTMLView("src/views/admin/copyright.php","wbf");
 
 		$label = "WBF";
@@ -295,8 +287,8 @@ class PluginCore {
 	 *
 	 * @return void
 	 */
-	static function print_copyright(){
-		echo self::get_copyright();
+	public function print_copyright(){
+		echo $this->get_copyright();
 	}
 
 	/**
@@ -306,8 +298,8 @@ class PluginCore {
 	 *
 	 * @return bool
 	 */
-	static function module_is_loaded($module_name){
-		$modules = self::get_modules();
+	public function module_is_loaded($module_name){
+		$modules = $this->get_modules();
 		foreach($modules as $name => $params){
 			if($name == $module_name) return true;
 		}
@@ -322,7 +314,7 @@ class PluginCore {
 	 *
 	 * @return mixed
 	 */
-	static function get_modules($include = false){
+	public function get_modules($include = false){
 		static $modules = array();
 		if(!empty($modules)){
 			if(!$include){
@@ -334,7 +326,7 @@ class PluginCore {
 			}
 		}
 
-		$modules_dir = self::get_path()."src/modules";
+		$modules_dir = $this->get_path()."src/modules";
 		$dirs = array_filter(glob($modules_dir."/*"), 'is_dir');
 		$dirs = apply_filters("wbf/modules/available", $dirs); //Allow developers to add\delete modules
 		foreach($dirs as $d){
@@ -373,7 +365,7 @@ class PluginCore {
 	 *
 	 * @return mixed
 	 */
-	static function get_extensions($include = false){
+	public function get_extensions($include = false){
 		static $exts = array();
 		if(!empty($exts)){
 			if(!$include){
@@ -386,8 +378,8 @@ class PluginCore {
 		}
 
 		$exts_source_dirs = [
-			WBF()->resources->get_working_directory(true)."/_extensions",
-			self::get_path()."src/extensions"
+			$this->resources->get_working_directory(true)."/_extensions",
+			$this->get_path()."src/extensions"
 		];
 		$exts_dirs = [];
 		foreach ($exts_source_dirs as $dir){
@@ -416,7 +408,7 @@ class PluginCore {
 	 *
 	 * @return mixed
 	 */
-	function load_modules(){
+	public function load_modules(){
 		return $this->get_modules(true);
 	}
 
@@ -429,14 +421,14 @@ class PluginCore {
 	 *
 	 * @return mixed
 	 */
-	function load_extensions(){
+	public function load_extensions(){
 		return $this->get_extensions(true);
 	}
 
 	/**
 	 * Init modules activations procedures
 	 */
-	function load_modules_activation_hooks(){
+	public function load_modules_activation_hooks(){
 		$modules = $this->get_modules();
 		foreach($modules as $m){
 			if($m['activation']){
@@ -462,13 +454,9 @@ class PluginCore {
 	 *
 	 * @return bool
 	 */
-	static function is_plugin(){
-		$path = self::get_path();
-		if(preg_match("/plugins/",$path)){
-			$is_plugin = true;
-		}else{
-			$is_plugin = false;
-		}
+	public function is_plugin(){
+		$path = WBF()->resources->get_path();
+		$is_plugin = strpos( $path, "plugins" ) !== false;
 		return apply_filters("wbf/is_plugin",$is_plugin);
 	}
 
@@ -477,7 +465,7 @@ class PluginCore {
 	 *
 	 * @return array
 	 */
-	function get_registered_plugins(){
+	public function get_registered_plugins(){
 		return BasePlugin::get_loaded_plugins();
 	}
 
@@ -494,8 +482,8 @@ class PluginCore {
 	 *
 	 * @return bool|string
 	 */
-	static function get_url(){
-		return includes\Resources::getInstance()->get_url();
+	public function get_url(){
+		return WBF()->resources->get_url();
 	}
 
 	/**
@@ -503,8 +491,8 @@ class PluginCore {
 	 *
 	 * @return bool|string
 	 */
-	static function get_path(){
-		return includes\Resources::getInstance()->get_path();
+	public function get_path(){
+		return WBF()->resources->get_path();
 	}
 
 	/**
@@ -512,8 +500,8 @@ class PluginCore {
 	 *
 	 * @return bool|string
 	 */
-	static function get_admin_assets_uri(){
-		return includes\Resources::getInstance()->get_admin_assets_uri();
+	public function get_admin_assets_uri(){
+		return WBF()->resources->get_admin_assets_uri();
 	}
 
 	/**
@@ -522,8 +510,8 @@ class PluginCore {
 	 *
 	 * @return bool|string
 	 */
-	static function get_assets_uri($admin_assets_flag = false){
-		return includes\Resources::getInstance()->get_assets_uri($admin_assets_flag);
+	public function get_assets_uri($admin_assets_flag = false){
+		return WBF()->resources->get_assets_uri($admin_assets_flag);
 	}
 
 	/**
@@ -531,8 +519,8 @@ class PluginCore {
 	 *
 	 * @return bool|string
 	 */
-	static function get_wd(){
-		return includes\Resources::getInstance()->get_working_directory();
+	public function get_wd(){
+		return WBF()->resources->get_working_directory();
 	}
 
 	/**
@@ -541,8 +529,8 @@ class PluginCore {
 	 *
 	 * @return bool|string
 	 */
-	static function prefix_url($to){
-		return includes\Resources::getInstance()->prefix_url($to);
+	public function prefix_url($to){
+		return WBF()->resources->prefix_url($to);
 	}
 
 	/**
@@ -551,8 +539,8 @@ class PluginCore {
 	 *
 	 * @return bool|string
 	 */
-	static function prefix_path($to){
-		return includes\Resources::getInstance()->prefix_path($to);
+	public function prefix_path($to){
+		return WBF()->resources->prefix_path($to);
 	}
 
 	/*
@@ -563,7 +551,7 @@ class PluginCore {
 	 *
 	 */
 
-	static function get_behavior( $name, $post_id = 0, $return = "value" ) {
+	public function get_behavior( $name, $post_id = 0, $return = "value" ) {
 		if ( $post_id == 0 ) {
 			global $post;
 			$post_id = $post->ID;
@@ -595,7 +583,7 @@ class PluginCore {
 	 *
 	 * @called at 'after_setup_theme', 11
 	 */
-	function do_global_theme_customizations(){
+	public function do_global_theme_customizations(){
 		// Global Customization
 		wbf_locate_file( '/src/includes/theme-customs.php', true );
 
@@ -606,7 +594,7 @@ class PluginCore {
 	/**
 	 * Wordpress "plugins_loaded" callback
 	 */
-	function plugins_loaded(){
+	public function plugins_loaded(){
 		// Load extensions
 		$this->load_extensions();
 	}
@@ -614,7 +602,7 @@ class PluginCore {
 	/**
 	 * Wordpress "after_setup_theme" callback
 	 */
-	function after_setup_theme() {
+	public function after_setup_theme() {
 		// Loads notice manager. The notice manager can be already loaded by plugins constructor prior this point.
 		$wbf_notice_manager = Utilities::get_wbf_notice_manager();
 		$this->notice_manager = &$wbf_notice_manager; 
@@ -630,14 +618,14 @@ class PluginCore {
 		do_action("wbf_after_setup_theme");
 
 		// Make framework available for translation.
-		load_textdomain( 'wbf', self::get_path() . 'languages/wbf-'.get_locale().".mo");
+		load_textdomain( 'wbf', $this->get_path() . 'languages/wbf-'.get_locale().".mo");
 
 		if($this->options['do_global_theme_customizations']){
 			$this->do_global_theme_customizations();
 		}
 
 		// ACF INTEGRATION
-		if(!self::is_plugin()){
+		if(!$this->is_plugin()){
 			$this->load_extensions();
 		}
 
@@ -650,15 +638,15 @@ class PluginCore {
 	/**
 	 * Wordpress "init" callback
 	 */
-	function init() {
+	public function init() {
 		do_action("wbf_init");
 
 		if($this->options['check_for_updates']){
 			//Set update server
-			if(self::is_plugin()){
+			if($this->is_plugin()){
 				$this->update_instance = new Plugin_Update_Checker(
 					"http://update.waboot.org/resource/info/plugin/wbf", //$metadataUrl
-					self::get_path()."wbf.php", //$pluginFile
+					$this->get_path()."wbf.php", //$pluginFile
 					"wbf", //$slug
 					null, //$plugin_license
 					false, //$checkLicense
@@ -686,11 +674,11 @@ class PluginCore {
 	/**
 	 * Enqueues admin relative assets
 	 */
-	function enqueue_admin_assets(){
+	public function enqueue_admin_assets(){
 		$assets = [
 			"wbf-admin" => [
-				'uri' => defined("SCRIPT_DEBUG") && SCRIPT_DEBUG ? Resources::getInstance()->prefix_url("assets/dist/js/wbf-admin.js") : Resources::getInstance()->prefix_url("assets/dist/js/wbf-admin.min.js"),
-				'path' => defined("SCRIPT_DEBUG") && SCRIPT_DEBUG ? Resources::getInstance()->prefix_path("assets/dist/js/wbf-admin.js") : Resources::getInstance()->prefix_path("assets/dist/js/wbf-admin.min.js"),
+				'uri' => defined("SCRIPT_DEBUG") && SCRIPT_DEBUG ? WBF()->resources->prefix_url("assets/dist/js/wbf-admin.js") : Resources::getInstance()->prefix_url("assets/dist/js/wbf-admin.min.js"),
+				'path' => defined("SCRIPT_DEBUG") && SCRIPT_DEBUG ? WBF()->resources->prefix_path("assets/dist/js/wbf-admin.js") : Resources::getInstance()->prefix_path("assets/dist/js/wbf-admin.min.js"),
 				'deps' => apply_filters("wbf/js/admin/deps",["jquery","backbone","underscore"]),
 				'i10n' => [
 					'name' => 'wbfData',
@@ -699,14 +687,14 @@ class PluginCore {
 						'wpurl' => get_bloginfo('wpurl'),
 						'wp_screen' => function_exists("get_current_screen") ? get_current_screen() : null,
 						'isAdmin' => is_admin(),
-						'is_wbf_admin_page' => self::is_wbf_admin_page()
+						'is_wbf_admin_page' => $this->is_wbf_admin_page()
 					])
 				],
 				'type' => 'js',
 			],
 			'wbf-admin-style' => [
-				'uri' => Resources::getInstance()->prefix_url('assets/dist/css/admin.min.css'),
-				'path' => Resources::getInstance()->prefix_path('assets/dist/css/admin.min.css'),
+				'uri' => WBF()->resources->prefix_url('assets/dist/css/admin.min.css'),
+				'path' => WBF()->resources->prefix_path('assets/dist/css/admin.min.css'),
 				'type' => 'css'
 			]
 		];
@@ -717,8 +705,8 @@ class PluginCore {
 	/**
 	 * Register libraries used by WBF ecosystem
 	 */
-	function register_libs(){
-		$res = Resources::getInstance();
+	public function register_libs(){
+		$res = WBF()->resources;
 		$libs = [
 			"jquery-ui-style" => [
 				'uri' => "//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css",
@@ -760,7 +748,7 @@ class PluginCore {
 				'in_footer' => true,
 			]*/
 		];
-		if(defined("WBF_ENV") && WBF_ENV == "dev" || SCRIPT_DEBUG){
+		if( (defined("WBF_ENV") && WBF_ENV === "dev") || SCRIPT_DEBUG){
 			$libs["wbfgmapmc"] = [
 				"uri" => $res->prefix_url("/assets/src/js/includes/wbfgmap/markerclusterer.js"),
 				"path" => $res->prefix_path("/assets/src/js/includes/wbfgmap/markerclusterer.js"),
@@ -833,8 +821,8 @@ class PluginCore {
 	 *
 	 * @return mixed
 	 */
-	function unset_unwanted_updates($value){
-		$acf_update_path = preg_replace("/^\//","",self::get_path().'vendor/acf/acf.php');
+	public function unset_unwanted_updates($value){
+		$acf_update_path = preg_replace("/^\//","",$this->get_path().'vendor/acf/acf.php');
 
 		if(isset($value->response[$acf_update_path])){
 			unset($value->response[$acf_update_path]);
@@ -852,7 +840,7 @@ class PluginCore {
 	 *
 	 * @return mixed
 	 */
-	function do_not_load_pagebuilder($module_dirs){
+	public function do_not_load_pagebuilder($module_dirs){
 		foreach($module_dirs as $k => $dir){
 			$module_name = basename($dir);
 			if($module_name == "pagebuilder"){
@@ -871,7 +859,7 @@ class PluginCore {
 	 * @param \WP_Admin_Bar $wp_admin_bar
 	 * @since 0.2.0
 	 */
-	function add_env_notice($wp_admin_bar){
+	public function add_env_notice($wp_admin_bar){
 		global $post;
 
 		if ( current_user_can( 'manage_options' ) ) {
@@ -893,7 +881,7 @@ class PluginCore {
 	 * @param \WP_Admin_Bar $wp_admin_bar
 	 * @since 0.1.1
 	 */
-	function add_admin_compile_button($wp_admin_bar){
+	public function add_admin_compile_button($wp_admin_bar){
 		global $post,$wbf_styles_compiler;
 
 		if(!isset($wbf_styles_compiler) || !$wbf_styles_compiler instanceof Styles_Compiler) return;
@@ -917,7 +905,7 @@ class PluginCore {
 	 *
 	 */
 
-	function maybe_run_activation($force = false){
+	public function maybe_run_activation($force = false){
 		if($force){
 			$this->activation();
 		}else{
@@ -928,9 +916,9 @@ class PluginCore {
 		}
 	}
 
-	function maybe_add_option() {
+	public function maybe_add_option() {
 		$opt = get_option( "wbf_installed" );
-		if( ! $opt || !self::has_valid_wbf_path()) {
+		if( ! $opt || !$this->has_valid_wbf_path()) {
 			$this->add_wbf_options();
 		}else{
 			if(WBF_DIRECTORY != get_option("wbf_path")){
@@ -940,14 +928,14 @@ class PluginCore {
 		}
 	}
 
-	function add_wbf_options(){
+	public function add_wbf_options(){
 		update_option( "wbf_installed", true ); //Set a flag to make other component able to check if framework is installed
 		update_option( "wbf_path", WBF_DIRECTORY );
 		update_option( "wbf_url", WBF_URL );
 		update_option( "wbf_components_saved_once", false );
 	}
 
-	function has_valid_wbf_path(){
+	public function has_valid_wbf_path(){
 		$path = get_option("wbf_path");
 		if(!$path || empty($path) || !is_string($path)){
 			return false;
@@ -958,15 +946,15 @@ class PluginCore {
 		return false;
 	}
 
-	function activation() {
+	public function activation() {
 		$this->load_modules_activation_hooks();
 
 		$this->add_wbf_options();
 		do_action("wbf_activated");
-		//self::enable_default_components();
+		//$this->enable_default_components();
 	}
 
-	function deactivation($template = null) {
+	public function deactivation($template = null) {
 		$this->load_modules_deactivation_hooks();
 		delete_option( "wbf_installed" );
 		delete_option( "wbf_path" );

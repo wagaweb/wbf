@@ -80,7 +80,7 @@ function get_behavior($name, $post_id = 0, $return = "value") {
  * @return array
  */
 function register_behaviors_as_theme_options($organizer){
-	if(\WBF::module_is_loaded("behaviors") && class_exists('\WBF\modules\behaviors\BehaviorsManager') && BehaviorsManager::hasBehaviors()){
+	if(WBF()->module_is_loaded("behaviors") && class_exists('\WBF\modules\behaviors\BehaviorsManager') && BehaviorsManager::hasBehaviors()){
 		//Behaviors tab heading
 		$bh_options[] = [];
 		$section_label = apply_filters("wbf/modules/behaviors/options_tab_label",_x( 'Posts & Pages', "Behaviors tab name in theme options page" , 'wbf' ));

@@ -62,42 +62,42 @@ class CodeEditor extends BaseField  implements Field  {
 
 		$res = [
 			'codemirror' => [
-				'uri' => Resources::getInstance()->prefix_url('vendor/codemirror/lib/codemirror.js'),
-				'path' => Resources::getInstance()->prefix_path('vendor/codemirror/lib/codemirror.js'),
+				'uri' => WBF()->resources->prefix_url('vendor/codemirror/lib/codemirror.js'),
+				'path' => WBF()->resources->prefix_path('vendor/codemirror/lib/codemirror.js'),
 				'type' => 'js'
 			],
 			'codemirror-css' => [
-				'uri' => Resources::getInstance()->prefix_url('vendor/codemirror/lib/codemirror.css'),
-				'path' => Resources::getInstance()->prefix_path('vendor/codemirror/lib/codemirror.css'),
+				'uri' => WBF()->resources->prefix_url('vendor/codemirror/lib/codemirror.css'),
+				'path' => WBF()->resources->prefix_path('vendor/codemirror/lib/codemirror.css'),
 				'type' => 'css'
 			],
 			//Modes
 			'codemirror-mode-css' => [
-				'uri' => Resources::getInstance()->prefix_url('vendor/codemirror/mode/css/css.js'),
-				'path' => Resources::getInstance()->prefix_path('vendor/codemirror/mode/css/css.js'),
+				'uri' => WBF()->resources->prefix_url('vendor/codemirror/mode/css/css.js'),
+				'path' => WBF()->resources->prefix_path('vendor/codemirror/mode/css/css.js'),
 				'type' => 'css'
 			],
 			//Addons
 			'codemirror-addon-hint' => [
-				'uri' => Resources::getInstance()->prefix_url('vendor/codemirror/addon/hint/show-hint.js'),
-				'path' => Resources::getInstance()->prefix_path('vendor/codemirror/addon/hint/show-hint.js'),
+				'uri' => WBF()->resources->prefix_url('vendor/codemirror/addon/hint/show-hint.js'),
+				'path' => WBF()->resources->prefix_path('vendor/codemirror/addon/hint/show-hint.js'),
 				'type' => 'js'
 			],
 			'codemirror-addon-hint-style' => [
-				'uri' => Resources::getInstance()->prefix_url('vendor/codemirror/addon/hint/show-hint.css'),
-				'path' => Resources::getInstance()->prefix_path('vendor/codemirror/addon/hint/show-hint.css'),
+				'uri' => WBF()->resources->prefix_url('vendor/codemirror/addon/hint/show-hint.css'),
+				'path' => WBF()->resources->prefix_path('vendor/codemirror/addon/hint/show-hint.css'),
 				'type' => 'css'
 			],
 			'codemirror-addon-hint-css' => [
-				'uri' => Resources::getInstance()->prefix_url('vendor/codemirror/addon/hint/css-hint.js'),
-				'path' => Resources::getInstance()->prefix_path('vendor/codemirror/addon/hint/css-hint.js'),
+				'uri' => WBF()->resources->prefix_url('vendor/codemirror/addon/hint/css-hint.js'),
+				'path' => WBF()->resources->prefix_path('vendor/codemirror/addon/hint/css-hint.js'),
 				'deps' => ['codemirror','codemirror-addon-hint'],
 				'type' => 'js'
 			],
 			//Themes
 			'codemirror-theme-ambiance' => [
-				'uri' => Resources::getInstance()->prefix_url('vendor/codemirror/theme/ambiance.css'),
-				'path' => Resources::getInstance()->prefix_path('vendor/codemirror/theme/ambiance.css'),
+				'uri' => WBF()->resources->prefix_url('vendor/codemirror/theme/ambiance.css'),
+				'path' => WBF()->resources->prefix_path('vendor/codemirror/theme/ambiance.css'),
 				'type' => 'css'
 			]
 		];

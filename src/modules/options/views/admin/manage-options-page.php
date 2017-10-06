@@ -27,4 +27,4 @@
 
 	<p class="submit"><input type="submit" name="submit-restore" id="submit" class="button button-primary" value="<?php _e( "Import" ) ?>"></p>
 </form>
-<?php \WBF::print_copyright(); ?>
+<?php WBF()->print_copyright(); ?>

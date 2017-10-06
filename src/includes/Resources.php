@@ -7,10 +7,6 @@ use WBF\components\utils\Utilities;
 class Resources{
 
 	/**
-	 * @var Resources
-	 */
-	private static $instance;
-	/**
 	 * @var bool|string
 	 */
 	private $wbf_path = false;
@@ -24,19 +20,9 @@ class Resources{
 	 */
 	private $wbf_wd = false;
 
-	/**
-	 * @return Resources
-	 */
-	public static function getInstance(){
-		if (null === static::$instance) {
-			static::$instance = new static();
-		}
-		return static::$instance;
-	}
-	
-	protected function __construct(){
-		$path = get_option("wbf_path");
-		$url = $url = get_option("wbf_url");
+	public function __construct($path = null,$url = null){
+		if(!$path) $path = get_option("wbf_path");
+		if(!$url) $url = $url = get_option("wbf_url");
 		if(defined("WBF_DIRECTORY")){
 			$path = rtrim(WBF_DIRECTORY,"/")."/";
 			$this->wbf_path = $path;
@@ -141,7 +127,7 @@ class Resources{
 	/**
 	 * Tries to create the WBF working directory
 	 */
-	function maybe_add_work_directory(){
+	public function maybe_add_work_directory(){
 		$theme = wp_get_theme();
 		if(defined("WBF_WORK_DIRECTORY_NAME")){
 			$path = WBF_WORK_DIRECTORY."/".$theme->get_stylesheet();
@@ -161,7 +147,7 @@ class Resources{
 	 *
 	 * @return bool|string
 	 */
-	function get_base_working_directory(){
+	public function get_base_working_directory(){
 		if($this->wbf_wd){
 			return rtrim(dirname($this->wbf_wd),"/");
 		}
@@ -175,7 +161,7 @@ class Resources{
 	 *
 	 * @return bool|string
 	 */
-	function get_working_directory($base = false){
+	public function get_working_directory($base = false){
 		if($this->wbf_wd){
 			if($base){
 				return dirname(rtrim($this->wbf_wd,"/"));
@@ -192,10 +178,7 @@ class Resources{
 	 *
 	 * @return mixed
 	 */
-    function get_working_directory_uri($base = false){
+    public function get_working_directory_uri($base = false){
         return path_to_url($this->get_working_directory($base));
     }
-
-	private function __clone(){}
-	private function __wakeup(){}
 }

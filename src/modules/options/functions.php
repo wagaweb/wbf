@@ -248,7 +248,7 @@ function of_options_save($option, $old_value, $value){
 	if(!empty($deps_to_achieve)){
 		$wbf_notice_manager->clear_notices("theme_opt_component_deps");
 		if(!empty($deps_to_achieve['components'])){
-			if(\WBF::getInstance()->module_is_loaded("components")){
+			if(WBF()->module_is_loaded("components")){
 				//Try to enable all the required components
 				$registered_components = ComponentsManager::getAllComponents();
 				foreach($deps_to_achieve['components'] as $c_name){

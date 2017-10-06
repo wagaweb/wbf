@@ -111,7 +111,7 @@ class Admin{
 	 */
 	function add_options_page() {
 		$menu = $this->menu_settings();
-		$this->options_screen = add_submenu_page( \WBF::getInstance()->wp_menu_slug, $menu['page_title'], $menu['menu_title'], $menu['capability'], $menu['menu_slug'], array($this, 'display_options_page') );
+		$this->options_screen = add_submenu_page( WBF()->wp_menu_slug, $menu['page_title'], $menu['menu_title'], $menu['capability'], $menu['menu_slug'], array($this, 'display_options_page') );
 	}
 
 	/**
@@ -122,7 +122,7 @@ class Admin{
 	}
 
 	function add_copy_in_admin_page(){
-		\WBF::print_copyright();
+		WBF()->print_copyright();
 	}
 
 	static function menu_settings() {
@@ -131,7 +131,7 @@ class Admin{
 			'menu_title' => __('Theme Options', 'wbf'),
 			'capability' => 'edit_theme_options',
 			'old_menu_slug' => 'options-framework',
-			'menu_slug' => \WBF::getInstance()->wp_menu_slug
+			'menu_slug' => WBF()->wp_menu_slug
 		);
 		return apply_filters('optionsframework_menu', $menu);
 	}
