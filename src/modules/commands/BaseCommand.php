@@ -215,16 +215,11 @@ abstract class BaseCommand{
 	 *
 	 * @param $question
 	 *
-	 * @param bool $strtolower
-	 *
 	 * @return string
 	 */
-	public function get_cli_value($question, $strtolower = false){
-		fwrite( STDOUT, $question  );
+	public function get_cli_value($question){
+		fwrite( STDOUT, $question.': ');
 		$answer = trim( fgets( STDIN ) );
-		if($strtolower){
-			$answer = strtolower($answer);
-		}
 		return $answer;
 	}
 }
