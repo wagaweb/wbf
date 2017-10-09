@@ -124,7 +124,7 @@ Scaffold a new WBF-compatible plugin. You will be asked to specify the plugin ty
 
 **Complex** type will scaffold a more structured, good large projects. The skeleton can be found [here](https://github.com/wagaweb/wbf-sample-plugin/tree/standard-structure-base).
 
-**Modular** type will scaffold a modular plugin. Modular plugins can have different modules for different functionality. This type is the best for very large project that need to be maintained for a long time. The skeleton can be found [here](https://github.com/wagaweb/wbf-sample-plugin/tree/modular-plugin).
+**Modular** type will scaffold a modular plugin. Modular plugins can have different modules for different functionality. This type is the best for very large projects that need to be maintained for a long time. The skeleton can be found [here](https://github.com/wagaweb/wbf-sample-plugin/tree/modular-plugin).
 
 `wbf:theme-options`
 
