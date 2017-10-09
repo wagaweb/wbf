@@ -113,3 +113,19 @@ add_filter('wbf/commands/registered', function($registered_commands){
 ```
 
 You can refer to the [official commands cookbook](https://make.wordpress.org/cli/handbook/commands-cookbook/) for more information about defining commands this way.
+
+## Built-in commands
+
+`wbf:generate:plugin`
+
+Scaffold a new WBF-compatible plugin. You will be asked to specify the plugin type. They are three types available: simple, complex and modular.
+
+*Simple* type will scaffold a plugin with minimal code, good for not-so-big projects. The skeleton can be found [here](https://github.com/wagaweb/wbf-sample-plugin).
+
+*Complex* type will scaffold a more structured, good large projects. The skeleton can be found [here](https://github.com/wagaweb/wbf-sample-plugin/tree/standard-structure-base).
+
+*Modular* type will scaffold a modular plugin. Modular plugins can have different modules for different functionality. This type is the best for very large project that need to be maintained for a long time. The skeleton can be found [here](https://github.com/wagaweb/wbf-sample-plugin/tree/modular-plugin).
+
+`wbf:theme-options`
+
+Backup and restore theme options. You can call it with `wbf:theme-options backup` or `wbf:theme-options restore` arguments.
