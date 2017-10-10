@@ -59,7 +59,7 @@ class PluginCore {
 	/**
 	 * @var string
 	 */
-	const version = "1.0.11";
+	const version = "1.1.0";
 
 	/**
 	 * WBF constructor.
