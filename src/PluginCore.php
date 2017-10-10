@@ -14,7 +14,6 @@ use WBF\components\pluginsframework\BasePlugin;
 use WBF\components\pluginsframework\TemplatePlugin;
 use WBF\components\utils\Utilities;
 use WBF\includes\GoogleFontsRetriever;
-use WBF\includes\Resources;
 use WBF\includes\ServiceManager;
 use WBF\modules\components\GUI;
 use WBF\modules\options\Framework;
