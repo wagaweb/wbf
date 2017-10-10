@@ -118,6 +118,7 @@ A simple frontend to License_Manager component. It will make available a dashboa
 
 **v1.1.x**
 
+- :white_check_mark: wbf.php \ PluginCore.php refactoring
 - Implementation of tests
 - Make behaviors use theme options fields
 - Refactoring of Plugin_Update_Checker to a more modern version.
