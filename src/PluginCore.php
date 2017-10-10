@@ -1242,4 +1242,36 @@ class PluginCore {
 		$this->services->set_styles_compiler($wbf_styles_compiler);
 		$this->services->get_styles_compiler()->listen_requests();
 	}
+
+	/**
+	 * Provides backward compatibility for some proprieties
+	 *
+	 * @param $name
+	 *
+	 * @return null
+	 */
+	public function __get($name) {
+		$available_properties = [
+			'notice_manager','Styles_Compiler'
+		];
+
+		if (array_key_exists($name, $available_properties)) {
+			switch ($name){
+				case 'notice_manager':
+					$this->services->get_notice_manager();
+					break;
+				case 'Styles_Compiler':
+					$this->services->get_styles_compiler();
+					break;
+			}
+		}
+
+		$trace = debug_backtrace();
+		trigger_error(
+			'Undefined property via __get(): ' . $name .
+			' in ' . $trace[0]['file'] .
+			' on line ' . $trace[0]['line'],
+			E_USER_NOTICE);
+		return null;
+	}
 }
