@@ -99,7 +99,7 @@ class PluginCore {
 
 		if(!defined('WBF_URL')){
 			if(!$url){
-				$url = $url = get_option("wbf_url");
+				$url = get_option("wbf_url");
 			}else{
 				$update_wbf_url_flag = true;
 			}
