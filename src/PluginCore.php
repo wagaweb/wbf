@@ -63,22 +63,6 @@ class PluginCore {
 	const version = "1.0.11";
 
 	/**
-	 * Return a new instance of WBF
-	 *
-	 * @param array $args options that will be used in startup
-	 *
-	 * @return self
-	 */
-	public static function getInstance($args = []){
-		static $instance = null;
-		if (null === $instance) {
-			$instance = new static($args);
-		}
-
-		return $instance;
-	}
-
-	/**
 	 * WBF constructor.
 	 *
 	 * @param null|string $path
@@ -92,40 +76,61 @@ class PluginCore {
 		$update_wbf_path_flag = false;
 		$update_wbf_url_flag = false;
 
-		if(!$path){
-			$path = get_option("wbf_path");
+		if(!defined('WBF_DIRECTORY')){
+			if(!$path){
+				$path = get_option("wbf_path");
+			}else{
+				$update_wbf_path_flag = true;
+			}
+
+			if($path && is_string($path) && !empty($path)){
+				$path = rtrim($path,"/")."/";
+			}else{
+				throw new \Exception('Invalid path provided');
+			}
+
+			if( $update_wbf_path_flag && ( get_option('wbf_path','') !== $path) ){
+				update_option('wbf_path',$path);
+			}
+
+			define('WBF_DIRECTORY',$path);
 		}else{
-			$update_wbf_path_flag = true;
+			$path = rtrim(WBF_DIRECTORY,"/")."/";
 		}
 
-		if(!$url){
-			$url = $url = get_option("wbf_url");
-		}else{
-			$update_wbf_url_flag = true;
-		}
+		if(!defined('WBF_URL')){
+			if(!$url){
+				$url = $url = get_option("wbf_url");
+			}else{
+				$update_wbf_url_flag = true;
+			}
 
-		if($path && is_string($path) && !empty($path)){
-			$path = rtrim($path,"/")."/";
-		}else{
-			throw new \Exception('Invalid path provided');
-		}
+			if($url && is_string($url) && !empty($url)){
+				$url = rtrim($url,"/")."/";
+			}else{
+				throw new \Exception('Invalid url provided');
+			}
 
-		if($url && is_string($url) && !empty($url)){
-			$url = rtrim($url,"/")."/";
-		}else{
-			throw new \Exception('Invalid url provided');
-		}
+			if( $update_wbf_url_flag && ( get_option('wbf_url','') !== $url) ){
+				update_option('wbf_path',$url);
+			}
 
-		if( $update_wbf_path_flag && ( get_option('wbf_path','') !== $path) ){
-			update_option('wbf_path',$path);
-		}
-		if( $update_wbf_url_flag && ( get_option('wbf_url','') !== $url) ){
-			update_option('wbf_path',$url);
+			define('WBF_URL',$url);
+		}else{
+			$url = rtrim(WBF_URL,"/")."/";;
 		}
 
 		$this->path = $path;
 
 		$this->url = $url;
+
+		if(!defined("WBF_WORK_DIRECTORY_NAME")){
+			define("WBF_WORK_DIRECTORY_NAME","wbf-wd");
+		}
+
+		if(!defined("WBF_WORK_DIRECTORY")){
+			define("WBF_WORK_DIRECTORY", WP_CONTENT_DIR."/".WBF_WORK_DIRECTORY_NAME);
+		}
 
 		$options = wp_parse_args($options,[
 			'do_global_theme_customizations' => true,
@@ -483,9 +488,6 @@ class PluginCore {
 	 * @return bool|string
 	 */
 	public function get_url(){
-		if(defined('WBF_URL')){
-			return WBF_URL;
-		}
 		return $this->url;
 	}
 
@@ -495,9 +497,6 @@ class PluginCore {
 	 * @return bool|string
 	 */
 	public function get_path(){
-		if(defined('WBF_PATH')){
-			return WBF_PATH;
-		}
 		return $this->path;
 	}
 

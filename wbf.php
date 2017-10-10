@@ -41,14 +41,6 @@ if( !isset($GLOBALS['wbf']) || !$GLOBALS['wbf'] instanceof \WBF\PluginCore ) {
 	//Utilities
 	require_once( 'src/includes/utilities-functions.php' );
 
-	if(!defined("WBF_WORK_DIRECTORY_NAME")){
-		define("WBF_WORK_DIRECTORY_NAME","wbf-wd");
-	}
-
-	if(!defined("WBF_WORK_DIRECTORY")){
-		define("WBF_WORK_DIRECTORY", WP_CONTENT_DIR."/".WBF_WORK_DIRECTORY_NAME);
-	}
-
 	require_once("wbf-autoloader.php");
 	require_once("backup-functions.php");
 	include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
