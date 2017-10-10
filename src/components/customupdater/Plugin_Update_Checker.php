@@ -302,4 +302,11 @@ class Plugin_Update_Checker extends \PluginUpdateChecker{
 	protected function clear_not_upgradable_plugins(){
 		update_option("wbf_unable_to_update_plugins",array());
 	}
+
+	/**
+	 * Initialize the update checker Debug Bar plugin/add-on thingy.
+	 */
+	public function initDebugBarPanel() {
+		return; //We block this feature in our framework, because it generates a USER_WARNING.
+	}
 }
