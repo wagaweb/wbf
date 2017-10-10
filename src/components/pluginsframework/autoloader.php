@@ -16,7 +16,7 @@ require_once dirname(dirname(dirname(dirname(__FILE__))))."/vendor/autoload.php"
 //spl_autoload_register( 'WBF\includes\pluginsframework\plugin_autoload' );
 
 function plugin_autoload( $class ) {
-	$wbf_path = WBF()->resources->get_path();
+	$wbf_path = WBF()->get_path();
 
 	if(!is_file($wbf_path."/vendor/autoload.php")){
 		$wbf_path = WP_CONTENT_DIR."/plugins/wbf";

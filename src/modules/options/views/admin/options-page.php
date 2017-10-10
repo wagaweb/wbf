@@ -2,7 +2,7 @@
 
     <div class="optionsframework-header">
 		<h2><?php echo esc_html( $menu['page_title'] ); ?></h2>
-		<?php WBF()->notice_manager->show_notices(); ?>
+		<?php WBF()->services()->get_notice_manager()->show_notices(); ?>
 	</div>
 
     <!-- Navigation -->

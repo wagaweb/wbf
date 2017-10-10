@@ -2,7 +2,7 @@
 use WBF\modules\components\GUI;
 ?>
 
-<?php WBF()->notice_manager->show_manual_notices(); ?>
+<?php WBF()->services()->get_notice_manager()->show_manual_notices(); ?>
 
 <?php if(count($registered_components) <= 0) : ?>
 <div class="wrap">

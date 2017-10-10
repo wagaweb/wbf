@@ -197,7 +197,7 @@ class ComponentsManager {
 					$registered_components[$c['nicename']] = $oComponent;
 				}
 			}catch(\Exception $e){
-				if(function_exists("WBF")) WBF()->notice_manager->add_notice($c['nicename']."_error",$e->getMessage(),"error","_flash_");
+				if(function_exists("WBF")) WBF()->services()->get_notice_manager()->add_notice($c['nicename']."_error",$e->getMessage(),"error","_flash_");
 			}
 		}
 		return $registered_components;

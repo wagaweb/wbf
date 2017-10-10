@@ -45,13 +45,13 @@ class Advanced_Color extends BaseField implements Field{
 	public function scripts() {
 		$res = [
 			'spectrum-js' => [
-				'uri' => WBF()->resources->prefix_url('assets/dist/js/includes/spectrum.min.js'),
-				'path' => WBF()->resources->prefix_path('assets/dist/js/includes/spectrum.min.js'),
+				'uri' => WBF()->prefix_url('assets/dist/js/includes/spectrum.min.js'),
+				'path' => WBF()->prefix_path('assets/dist/js/includes/spectrum.min.js'),
 				'type' => 'js'
 			],
 			'spectrum-css' => [
-				'uri' => WBF()->resources->prefix_url('vendor/spectrum/spectrum.css'),
-				'path' => WBF()->resources->prefix_path('vendor/spectrum/spectrum.css'),
+				'uri' => WBF()->prefix_url('vendor/spectrum/spectrum.css'),
+				'path' => WBF()->prefix_path('vendor/spectrum/spectrum.css'),
 				'type' => 'css'
 			]
 		];

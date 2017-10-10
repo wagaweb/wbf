@@ -53,10 +53,10 @@ if( !isset($GLOBALS['wbf']) || !$GLOBALS['wbf'] instanceof \WBF\PluginCore ) {
 	require_once("backup-functions.php");
 	include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 
-	$GLOBALS['wbf'] = new \WBF\PluginCore(new \WBF\includes\Resources(
+	$GLOBALS['wbf'] = new \WBF\PluginCore(
 		dirname(__FILE__),
 		\WBF\components\utils\Paths::path_to_url(dirname(__FILE__))
-	));
+	);
 
 	if(!defined("WBF_PREVENT_STARTUP")){
 		if($GLOBALS['wbf']->is_plugin()){

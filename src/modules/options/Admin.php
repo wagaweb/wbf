@@ -223,8 +223,8 @@ class Admin{
 	 */
 	public function backup_options_to_file( $download = false ) {
 		$current_settings = $this->get_current_active_theme_options();
-		$backup_path      = WBF()->resources->get_working_directory() . "/theme-options-backups";
-		$backup_url       = WBF()->resources->get_working_directory_uri() . "/theme-options-backups";
+		$backup_path      = WBF()->get_working_directory() . "/theme-options-backups";
+		$backup_url       = WBF()->get_working_directory_uri() . "/theme-options-backups";
 		if ( ! is_dir( $backup_path ) ) {
 			mkdir( $backup_path );
 		}
@@ -336,7 +336,7 @@ class Admin{
 	 * @return array
 	 */
 	public function get_backupFiles() {
-		$backup_path = WBF()->resources->get_working_directory() . "/theme-options-backups";
+		$backup_path = WBF()->get_working_directory() . "/theme-options-backups";
 		$files       = glob( $backup_path . "/*.options" );
 		$output      = array();
 
@@ -345,7 +345,7 @@ class Admin{
 				$info     = pathinfo( $f );
 				$output[] = array(
 					'path' => $f,
-					'url'  => WBF()->resources->get_working_directory_uri() . "/theme-options-backups/" . $info['basename'],
+					'url'  => WBF()->get_working_directory_uri() . "/theme-options-backups/" . $info['basename'],
 					'name' => $info['basename']
 				);
 			}
