@@ -251,6 +251,57 @@ class Terms {
 	}
 
 	/**
+	 * Retrieve a taxonomy terms list in hierarchical order
+	 *
+	 * @param $object
+	 *
+	 * @return mixed
+	 */
+	static function get_tax_terms_hierarchical($object){
+		// get wp taxonomies as unsorted array
+		$taxonomies = get_object_taxonomies($object);
+
+		foreach ( $taxonomies as $taxomomy ) {
+			$terms = get_terms([
+				'taxonomy' => $taxomomy
+			]);
+
+			/**
+			 * generate array of arrays where each topmost key is a parent id.
+			 * the function place each child under the correspondent parent id.
+			 * Topmost parents have parent id equals to 0
+			 */
+			$organized_terms = [];
+			foreach ($terms as $term) {
+				$organized_terms[$term->parent][$term->term_id] = $term;
+			}
+
+			/**
+			 * Place each array of children under the voice 'children' of the correct parent term
+			 */
+			foreach ( $organized_terms as $parent_id => $children ) {
+				foreach ( $children as $id => $child ) {
+					if (array_key_exists($id,$organized_terms)) {
+						try {
+							if (is_object($child)) {
+								$child->children = $organized_terms[$id];
+							} elseif (is_array($child)) {
+								$child['children'] = $organized_terms[$id];
+							}
+
+						} catch (Exception $e) {
+							echo 'Caught exception: ',  $e->getMessage(), "\n";
+						}
+					}
+				}
+			}
+
+			// now return only the topmost parent terms array
+			return $organized_terms[0];
+		}
+	}
+
+	/**
 	 * @param \WP_Term $term
 	 *
 	 * @return string|false
