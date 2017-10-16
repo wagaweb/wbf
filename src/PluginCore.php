@@ -15,6 +15,7 @@ use WBF\components\pluginsframework\TemplatePlugin;
 use WBF\components\utils\Utilities;
 use WBF\includes\GoogleFontsRetriever;
 use WBF\includes\ServiceManager;
+use WBF\legacy\Resources;
 use WBF\modules\components\GUI;
 use WBF\modules\options\Framework;
 
@@ -1248,11 +1249,15 @@ class PluginCore {
 	 */
 	public function __get($name) {
 		$available_properties = [
-			'notice_manager','Styles_Compiler'
+			'resources','notice_manager','Styles_Compiler'
 		];
 
-		if (array_key_exists($name, $available_properties)) {
+		if (in_array($name, $available_properties)) {
 			switch ($name){
+				case 'resources':
+					require_once __DIR__.'/legacy/Resources.php';
+					return new Resources();
+					break;
 				case 'notice_manager':
 					$this->services->get_notice_manager();
 					break;
