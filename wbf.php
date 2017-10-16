@@ -56,18 +56,4 @@ if( !isset($GLOBALS['wbf']) || !$GLOBALS['wbf'] instanceof \WBF\PluginCore ) {
 		}
 	}
 
-}else{
-	//HERE WBF IS ALREADY DEFINED. We can't tell if by a plugin or others... So...
-
-	if(!defined("WBF_DIRECTORY")){
-		define("WBF_DIRECTORY", __DIR__);
-	}
-
-	//If this is a plugin, then force the options to point over the plugin.
-	if(preg_match("/plugins/",WBF_DIRECTORY."/wbf.php") && preg_match("/themes/",get_option("wbf_path"))){
-		define("WBF_URL", site_url() . "/wp-content/plugins/wbf/");
-		update_option( "wbf_path", WBF_DIRECTORY );
-		update_option( "wbf_url", site_url() . "/wp-content/plugins/wbf/" );
-	}
-
-}; // class_exists check
+}
