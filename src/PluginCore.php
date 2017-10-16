@@ -866,19 +866,14 @@ class PluginCore {
 	 * @hooked 'admin_menu'
 	 */
 	public function admin_menu(){
-		global $menu,$options_framework_admin,$WBFThemeUpdateChecker;
+		global $menu;
 
 		//Check if must display the bubble warning
-		if(isset($WBFThemeUpdateChecker)){
-			$updates_state = get_option($WBFThemeUpdateChecker->optionName,null);
+		$updater = $this->services->get_updater();
+		if(isset($updater) && property_exists($updater,'optionName')){
+			$updates_state = get_option($updater->optionName,null);
 		}
-
-		if(isset($updates_state) && !is_null($updates_state->update)){
-			$warning_count = 1;
-		}
-		else{
-			$warning_count = 0;
-		}
+		$warning_count = isset($updates_state) && !is_null($updates_state->update) ? 1 : 0;
 
 		$page_title = "WBF";
 		$menu_title = apply_filters("wbf/admin_menu/label",'WBF');
@@ -887,6 +882,7 @@ class PluginCore {
 
 		$menu['58'] = $menu['59']; //move the separator before "Appearance" one position up
 		$icon = apply_filters("wbf/admin_menu/icon","dashicons-text");
+
 		$wbf_menu = add_menu_page( $page_title, $menu_label, "edit_theme_options", $menu_slug, [$this,"options_page"], $icon, 59 );
 		do_action("wbf_admin_submenu",$menu_slug);
 		$wbf_info_submenu = add_submenu_page($menu_slug,__("WBF Status","wbf"),__("WBF Status","wbf"),"manage_options","wbf_status",[$this,"settings_page"]);
