@@ -43,7 +43,7 @@ if( !isset($GLOBALS['wbf']) || !$GLOBALS['wbf'] instanceof \WBF\PluginCore ) {
 
 	require_once("wbf-autoloader.php");
 	require_once("backup-functions.php");
-	include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+	require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 
 	$GLOBALS['wbf'] = new \WBF\PluginCore(
 		dirname(__FILE__),
