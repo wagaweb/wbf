@@ -870,11 +870,12 @@ class PluginCore {
 		global $menu;
 
 		//Check if must display the bubble warning
-		$updater = $this->services->get_updater();
+		/*$updater = $this->services->get_updater();
 		if(isset($updater) && property_exists($updater,'optionName')){
 			$updates_state = get_option($updater->optionName,null);
 		}
-		$warning_count = isset($updates_state) && !is_null($updates_state->update) ? 1 : 0;
+		$warning_count = isset($updates_state) && !is_null($updates_state->update) ? 1 : 0;*/
+		$warning_count = 0;
 
 		$page_title = "WBF";
 		$menu_title = apply_filters("wbf/admin_menu/label",'WBF');
