@@ -29,6 +29,11 @@ class PluginCore {
 	/**
 	 * @var array
 	 */
+	var $submenus = [];
+
+	/**
+	 * @var array
+	 */
 	private $options;
 
 	/**
@@ -233,24 +238,30 @@ class PluginCore {
 	 * @return bool
 	 */
 	public function is_wbf_admin_page(){
-		global $plugin_page,$wbf_options_framework;
+		global $plugin_page;
+		return array_key_exists($plugin_page,$this->submenus);
+	}
 
-		//todo: this is ugly, we could expose a function like register_wbf_admin_page()
-		$valid_pages = [
-			WBF()->wp_menu_slug,
-			GUI::$wp_menu_slug,
-			'wbf_licenses'
+	/**
+	 * Wrapper for adding a submenu to WBF menu
+	 *
+	 * @use add_submenu_page()
+	 *
+	 * @param $page_title
+	 * @param $menu_title
+	 * @param $capability
+	 * @param $menu_slug
+	 * @param string $function
+	 */
+	public function add_submenu_page($page_title, $menu_title, $capability, $menu_slug, $function = ''){
+		$this->submenus[$menu_slug] = [
+			'page_title' => $page_title,
+			'menu_title' => $menu_title,
+			'capability' => $capability,
+			'menu_slug' => $menu_slug,
+			'hook' => $function
 		];
-
-		if(isset($wbf_options_framework)){
-			$valid_pages[] = $wbf_options_framework->admin->wp_menu_slug;
-		}
-
-		if(in_array($plugin_page,$valid_pages)){
-			return true;
-		}
-
-		return false;
+		add_submenu_page($this->wp_menu_slug,$page_title,$menu_title,$capability,$menu_slug,$function);
 	}
 
 	/**

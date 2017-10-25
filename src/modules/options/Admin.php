@@ -111,14 +111,14 @@ class Admin{
 	 */
 	function add_options_page() {
 		$menu = $this->menu_settings();
-		$this->options_screen = add_submenu_page( WBF()->wp_menu_slug, $menu['page_title'], $menu['menu_title'], $menu['capability'], $menu['menu_slug'], array($this, 'display_options_page') );
+		$this->options_screen = WBF()->add_submenu_page( $menu['page_title'], $menu['menu_title'], $menu['capability'], $menu['menu_slug'], array($this, 'display_options_page') );
 	}
 
 	/**
 	 * Add "Manage Theme Options" subpage to WBF Menu
 	 */
 	public function add_man_page($parent_slug) {
-		add_submenu_page( $parent_slug , __( "Theme Options Manager", "wbf" ), __( "Import/Export", "wbf" ), "edit_theme_options", $this->wp_menu_slug, array( $this, 'display_manage_options_page') );
+		WBF()->add_submenu_page(__( "Theme Options Manager", "wbf" ), __( "Import/Export", "wbf" ), "edit_theme_options", $this->wp_menu_slug, array( $this, 'display_manage_options_page') );
 	}
 
 	function add_copy_in_admin_page(){

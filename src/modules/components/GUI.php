@@ -20,7 +20,13 @@ class GUI {
 	}
 
 	public static function add_menu( $parent_slug ) {
-		add_submenu_page( $parent_slug, __( "Waboot Components", "wbf" ), __( "Components", "wbf" ), "activate_plugins", self::$wp_menu_slug, '\WBF\modules\components\GUI::components_admin_page', "", 66 );
+		WBF()->add_submenu_page(
+			__( "Waboot Components", "wbf" ),
+			__( "Components", "wbf" ),
+			"activate_plugins",
+			self::$wp_menu_slug,
+			'\WBF\modules\components\GUI::components_admin_page'
+		);
 	}
 
 	/**
