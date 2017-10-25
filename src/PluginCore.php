@@ -326,20 +326,12 @@ class PluginCore {
 	/**
 	 * Retrieve WBF Modules
 	 *
-	 * @param bool|false $include
-	 *
 	 * @return mixed
 	 */
-	public function get_modules($include = false){
+	public function get_modules(){
 		static $modules = array();
 		if(!empty($modules)){
-			if(!$include){
-				return $modules;
-			}else{
-				foreach($modules as $m){
-					require_once $m['bootstrap'];
-				}
-			}
+			return $modules;
 		}
 
 		$modules_dir = $this->get_path()."src/modules";
@@ -364,12 +356,6 @@ class PluginCore {
 			}
 			return ($a['priority'] < $b['priority']) ? -1 : 1;
 		});
-
-		if($include){
-			foreach($modules as $m){
-				require_once $m['bootstrap'];
-			}
-		}
 
 		return $modules;
 	}
@@ -425,7 +411,11 @@ class PluginCore {
 	 * @return mixed
 	 */
 	public function load_modules(){
-		return $this->get_modules(true);
+		$modules = $this->get_modules();
+		foreach($modules as $m){
+			require_once $m['bootstrap'];
+		}
+		return $modules;
 	}
 
 	/**
