@@ -501,26 +501,12 @@ class PluginCore {
 	}
 
 	/**
-	 * Gets WBF admin assets uri
-	 *
-	 * @return bool|string
-	 */
-	public function get_admin_assets_uri(){
-		return $this->get_assets_uri(true);
-	}
-
-	/**
 	 * Gets WBF assets uri
-	 * @param bool $admin_assets_flag
 	 *
 	 * @return bool|string
 	 */
-	public function get_assets_uri($admin_assets_flag = false){
-		if($admin_assets_flag){
-			return $this->prefix_url("admin");
-		}else{
-			return $this->prefix_url("public");
-		}
+	public function get_assets_uri(){
+		return $this->prefix_url("assets/dist");
 	}
 
 	/**
