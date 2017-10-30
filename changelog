@@ -6,6 +6,8 @@ Version 1.1.0 -
 - Tweak: Removed Resource class
 - Tweak: Added ServiceManager class
 - Tweak: WBF is no longer a Singleton
+- Tweak: It is now possible to switch build branch
+- Feature: New Update Channels module
 
 Version 1.0.11 - 10/06/2017
 ---------------------------------
