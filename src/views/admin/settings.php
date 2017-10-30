@@ -44,6 +44,7 @@
 		</tbody>
 	</table>
 <?php endforeach; ?>
+<?php do_action("wbf/admins/status_page/sections"); ?>
 <h2><?php _e("Debug and administration console","wbf") ?></h2>
 <table class="widefat striped wbf-admin-console">
 	<tbody>
