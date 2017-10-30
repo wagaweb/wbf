@@ -45,6 +45,6 @@ add_filter('wbf/update_channels/available',function($channels){
  */
 function get_update_channel($name){
 	$channels = get_option('wbf_registered_update_channels',[]);
-	if(isset($channels[$name])) return $name;
+	if(isset($channels[$name])) return $channels[$name];
 	return false;
 }
