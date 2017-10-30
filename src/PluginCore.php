@@ -1086,6 +1086,8 @@ class PluginCore {
 	 * WBF options page (for now it just display info about WBF current status)
 	 */
 	public function settings_page() {
+		do_action('wbf/admins/status_page/before_render');
+
 		$v = new HTMLView("src/views/admin/settings.php","wbf");
 
 		$data = [
@@ -1143,11 +1145,17 @@ class PluginCore {
 			]
 		];
 
-		$v->display([
+		$data = apply_filters('wbf/admin/status_page/data',$data);
+
+		$display_args = [
 			'page_title' => __("WBF Status"),
 			'sections' => $data,
 			'force_plugin_update_link' => admin_url()."/update-core.php?force_wbf_plugin_update_check=1"
-		]);
+		];
+
+		$display_args = apply_filters('wbf/admin/status_page/display_args',$display_args);
+
+		$v->display($display_args);
 	}
 
 	/*
