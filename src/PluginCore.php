@@ -18,6 +18,7 @@ use WBF\includes\ServiceManager;
 use WBF\legacy\Resources;
 use WBF\modules\components\GUI;
 use WBF\modules\options\Framework;
+use function WBF\modules\update_channels\get_update_channel;
 
 class PluginCore {
 
@@ -712,8 +713,10 @@ class PluginCore {
 		if($this->options['check_for_updates']){
 			//Set update server
 			if($this->is_plugin()){
+				$channel = get_update_channel('wbf');
+				$endpoint = !$channel || $channel === 'stable' ? "http://update.waboot.org/resource/info/plugin/wbf" : "http://update.waboot.org/resource/info/plugin/wbf?channel=".$channel;
 				$this->services->set_updater(new Plugin_Update_Checker(
-					"http://update.waboot.org/resource/info/plugin/wbf", //$metadataUrl
+					$endpoint, //$metadataUrl
 					$this->get_path()."wbf.php", //$pluginFile
 					"wbf", //$slug
 					null, //$plugin_license
