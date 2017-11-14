@@ -748,8 +748,8 @@ class PluginCore {
 	public function enqueue_admin_assets(){
 		$assets = [
 			"wbf-admin" => [
-				'uri' => defined("SCRIPT_DEBUG") && SCRIPT_DEBUG ? WBF()->prefix_url("assets/dist/js/wbf-admin.js") : Resources::getInstance()->prefix_url("assets/dist/js/wbf-admin.min.js"),
-				'path' => defined("SCRIPT_DEBUG") && SCRIPT_DEBUG ? WBF()->prefix_path("assets/dist/js/wbf-admin.js") : Resources::getInstance()->prefix_path("assets/dist/js/wbf-admin.min.js"),
+				'uri' => defined("SCRIPT_DEBUG") && SCRIPT_DEBUG ? $this->prefix_url("assets/dist/js/wbf-admin.js") : $this->prefix_url("assets/dist/js/wbf-admin.min.js"),
+				'path' => defined("SCRIPT_DEBUG") && SCRIPT_DEBUG ? $this->prefix_path("assets/dist/js/wbf-admin.js") : $this->prefix_path("assets/dist/js/wbf-admin.min.js"),
 				'deps' => apply_filters("wbf/js/admin/deps",["jquery","backbone","underscore"]),
 				'i10n' => [
 					'name' => 'wbfData',
