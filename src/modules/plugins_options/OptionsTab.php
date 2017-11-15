@@ -123,6 +123,15 @@ class OptionsTab{
 	}
 
 	/**
+	 * Get a standardized string that can be used into the 'name' attribute of an input to store the value.
+	 *
+	 * @return string
+	 */
+	public function get_form_option_name($option_name){
+		return "wbf-plugin-option[{$this->slug}][".$option_name."]";
+	}
+
+	/**
 	 * Renders the tab
 	 */
 	public function render(){}
