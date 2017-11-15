@@ -6,7 +6,7 @@ use WBF\components\mvc\HTMLView;
 
 add_action('wbf_admin_submenu', function(){
 	if(has_filter('wbf/modules/plugins_options/tabs')){
-		$screen = WBF()->add_submenu_page( __('Plugins Options','wbf'), __('Plugins options','wbf'), 'manage_options', 'wbf-plugins-options', function(){
+		$screen = WBF()->add_submenu_page( __('Plugins Options','wbf'), __('Plugins Options','wbf'), 'manage_options', 'wbf-plugins-options', function(){
 			$tabs = apply_filters('wbf/modules/plugins_options/tabs',[]);
 			$tabs = array_filter($tabs,function($tab){
 				return $tab instanceof OptionsTab;
@@ -26,14 +26,16 @@ add_action('wbf_admin_submenu', function(){
 				}
 			}
 			$v = new HTMLView('src/modules/plugins_options/views/options.php','wbf');
-			$v->display([
+			$v->for_dashboard()->display([
+				'page_title' => __('WBF Plugins Options','wbf'),
 				'tabs' => $tabs,
 				'active_tab' => $active_tab,
-				'active_section' => $active_section
+				'active_section' => $active_section,
+				'current_uri' => isset($active_section) && $active_section ? $active_section->get_href() : isset($active_tab) && $active_tab ? $active_tab->get_href() : ""
 			]);
 		});
 	}
-});
+},12);
 
 /**
  * @param string $slug

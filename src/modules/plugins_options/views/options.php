@@ -6,6 +6,8 @@
 </ul>
 <!-- Current active tab -->
 <div class="wbf-plugin-options-tab <?php echo $active_tab->get_slug() ?>-tab active">
+    <h2><?php echo $active_tab->get_title(); ?></h2>
+    <form method="post" action="<?php echo $current_uri; ?>">
 	<?php if($active_tab->has_sections()) : ?>
 		<ul>
 			<?php foreach ($active_tab->get_sections() as $section): ?>
@@ -14,8 +16,11 @@
 		</ul>
 	<?php endif; ?>
 	<?php if(isset($active_section) && $active_section): ?>
+        <?php echo $active_section->get_title(); ?>
 		<?php call_user_func($active_section->render()); ?>
 	<?php else: ?>
 		<?php call_user_func($active_tab->render()) ?>
 	<?php endif; ?>
+
+    </form>
 </div>
