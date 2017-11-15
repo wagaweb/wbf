@@ -114,7 +114,7 @@ class BasePlugin {
 	 * @var boolean
 	 * @since 0.14.8
 	 */
-	var $use_object_cache = false;
+	public $use_object_cache = false;
 	/**
 	 * @var bool
 	 */
@@ -440,7 +440,7 @@ class BasePlugin {
 	 *
 	 * @return array|null|object
 	 */
-	function list_transients(){
+	public function list_transients(){
 		global $wpdb;
 		$sql = "SELECT `option_name` AS `name`, `option_value` AS `value`
             FROM  $wpdb->options
@@ -567,15 +567,30 @@ class BasePlugin {
 		$this->loader->run();
 	}
 
+	/**
+	 * @return string
+	 */
+	public function get_name(){
+		return $this->plugin_name;
+	}
+
+	/**
+	 * @return string
+	 */
 	public function get_uri(){
 		return get_bloginfo("wpurl")."/wp-content/plugins/".$this->plugin_name."/";
 	}
 
-
+	/**
+	 * @return string
+	 */
 	public function get_dir(){
 		return $this->plugin_dir;
 	}
 
+	/**
+	 * @return string
+	 */
 	public function get_src_dir(){
 		if(isset($this->src_path)){
 			return $this->src_path;
@@ -584,26 +599,44 @@ class BasePlugin {
 		}
 	}
 
+	/**
+	 * @return string
+	 */
 	public function get_path(){
 		return $this->plugin_path;
 	}
 
+	/**
+	 * @return string
+	 */
 	public function get_relative_dir(){
 		return $this->plugin_relative_dir;
 	}
 
+	/**
+	 * @return string
+	 */
 	public function get_public_class_name(){
 		return $this->public_class_name;
 	}
 
+	/**
+	 * @return string
+	 */
 	public function get_admin_class_name(){
 		return $this->admin_class_name;
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function is_debug(){
 		return $this->debug_mode;
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function is_script_debug(){
 		return $this->script_debug_mode;
 	}
@@ -611,8 +644,7 @@ class BasePlugin {
 	/**
 	 * The reference to the class that orchestrates the hooks with the plugin.
 	 *
-	 * @since     1.0.0
-	 * @return    Loader    Orchestrates the hooks of the plugin.
+	 * @return Loader Orchestrates the hooks of the plugin.
 	 */
 	public function get_loader() {
 		return $this->loader;
@@ -643,8 +675,7 @@ class BasePlugin {
 	/**
 	 * Retrieve the version number of the plugin.
 	 *
-	 * @since     1.0.0
-	 * @return    string    The version number of the plugin.
+	 * @return string The version number of the plugin.
 	 */
 	public function get_version() {
 		return $this->version;
