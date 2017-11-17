@@ -13,7 +13,6 @@
   ],
   "dependencies": {
     "codemirror": "~5.16.0",
-    "imagesloaded": "~3.2.0",
     "jquery-modal": "~0.6.0",
     "bootstrap": "~3.3.7",
     "spectrum": "~1.7.0",

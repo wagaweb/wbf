@@ -779,11 +779,6 @@ class PluginCore {
 	public function register_libs(){
 		$res = WBF();
 		$libs = [
-			"jquery-ui-style" => [
-				'uri' => "//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css",
-				'type' => 'css',
-				'enqueue' => false
-			],
 			"owlcarousel-css" => [
 				'uri' => $res->prefix_url("/vendor/owl.carousel/dist/assets/owl.carousel.css"),
 				'path' => $res->prefix_path("/vendor/owl.carousel/dist/assets/owl.carousel.css"),
@@ -796,13 +791,6 @@ class PluginCore {
 				'deps' => ['jquery'],
 				'enqueue' => false
 			],
-			"imagesLoaded-js" => [
-				"uri" => $res->prefix_url("/vendor/imagesloaded/imagesloaded.pkgd.min.js"),
-				"path" => $res->prefix_path("/vendor/imagesloaded/imagesloaded.pkgd.min.js"),
-				"type" => "js",
-				'enqueue' => false,
-				'in_footer' => true,
-			],
 			"owlcarousel-js" => [
 				"uri" => $res->prefix_url("/vendor/owl.carousel/dist/owl.carousel.min.js"),
 				"path" => $res->prefix_path("/vendor/owl.carousel/dist/owl.carousel.min.js"),
@@ -810,14 +798,6 @@ class PluginCore {
 				'enqueue' => false,
 				'in_footer' => true,
 			],
-			/* For now, this is included via Advanced_Color.php
-			"spectrum-js" => [
-				"uri" => $res->prefix_url("/assets/dist/js/includes/spectrum.min.js"),
-				"path" => $res->prefix_path("/assets/dist/js/includes/spectrum.min.js"),
-				"type" => "js",
-				'enqueue' => false,
-				'in_footer' => true,
-			]*/
 		];
 		if( (defined("WBF_ENV") && WBF_ENV === "dev") || SCRIPT_DEBUG){
 			$libs["wbfgmapmc"] = [
