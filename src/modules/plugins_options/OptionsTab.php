@@ -2,7 +2,13 @@
 
 namespace WBF\modules\plugins_options;
 
+use WBF\components\pluginsframework\BasePlugin;
+
 class OptionsTab{
+	/**
+	 * @var BasePlugin
+	 */
+	private $parent_plugin;
 	/**
 	 * @var string
 	 */
@@ -31,10 +37,12 @@ class OptionsTab{
 	/**
 	 * OptionsTab constructor.
 	 *
+	 * @param BasePlugin $parent_plugin
 	 * @param $title
 	 * @param array $params
 	 */
-	public function __construct($title,$params = []) {
+	public function __construct(&$parent_plugin,$title,$params = []) {
+		$this->parent_plugin = &$parent_plugin;
 		$this->title = $title;
 		$raw_slug = sanitize_title($title);
 		$params = wp_parse_args($params,[
@@ -50,6 +58,13 @@ class OptionsTab{
 		$this->label = $params['label'];
 		$this->href = $params['href'];
 		$this->order = $params['order'];
+	}
+
+	/**
+	 * @return BasePlugin
+	 */
+	public function get_parent_plugin(){
+		return $this->parent_plugin;
 	}
 
 	/**
