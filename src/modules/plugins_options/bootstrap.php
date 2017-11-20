@@ -7,6 +7,13 @@ use WBF\components\mvc\HTMLView;
 add_action('wbf_admin_submenu', function(){
 	if(has_filter('wbf/modules/plugins_options/tabs')){
 		$screen = WBF()->add_submenu_page( __('Plugins Options','wbf'), __('Plugins Options','wbf'), 'manage_options', 'wbf-plugins-options', function(){
+			if(isset($_POST['save-wbf-plugins-settings'])){
+				if(wp_verify_nonce($_POST['_wpnonce'],'save-wbf-plugins-settings')){
+					$current_saved_tab = $_POST['save-wbf-plugins-settings'];
+					unset($_POST['save-wbf-plugins-settings']);
+					do_action('wbf/modules/plugin_options/save_settings',$current_saved_tab,$_POST);
+				}
+			}
 			$tabs = apply_filters('wbf/modules/plugins_options/tabs',[]);
 			$tabs = array_filter($tabs,function($tab){
 				return $tab instanceof OptionsTab;
