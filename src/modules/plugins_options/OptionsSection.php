@@ -4,29 +4,33 @@ namespace WBF\modules\plugins_options;
 
 use WBF\components\pluginsframework\BasePlugin;
 
-class OptionsTab extends OptionsPage {
+class OptionsSection extends OptionsTab {
+
 	/**
-	 * @var array
+	 * @var OptionsTab
 	 */
-	private $sections;
+	private $parent_tab;
 
 	/**
 	 * OptionsTab constructor.
 	 *
-	 * @param BasePlugin $parent_plugin
+	 * @param OptionsTab $parent_tab
 	 * @param $title
 	 * @param array $params
 	 */
-	public function __construct(&$parent_plugin,$title,$params = []) {
-		$this->parent_plugin = &$parent_plugin;
+	public function __construct(&$parent_tab,$title,$params = []) {
+		$this->parent_tab = $parent_tab;
+		$this->parent_plugin = $parent_tab->get_parent_plugin();
 		$this->title = $title;
 		$raw_slug = sanitize_title($title);
+		$parent_raw_slug = sanitize_title($parent_tab->get_title());
 		$params = wp_parse_args($params,[
 			'slug' => $raw_slug,
 			'label' => $title,
 			'href' => add_query_arg([
 				'page' => 'wbf-plugins-options',
-				'tab' => $raw_slug
+				'tab' => $parent_raw_slug,
+				'section' => $raw_slug
 			],admin_url('admin.php')),
 			'order' => 0
 		]);
@@ -34,26 +38,5 @@ class OptionsTab extends OptionsPage {
 		$this->label = $params['label'];
 		$this->href = $params['href'];
 		$this->order = $params['order'];
-	}
-
-	/**
-	 * @param OptionsTab $section
-	 */
-	public function add_section(OptionsTab $section){
-		$this->sections[] = $section;
-	}
-
-	/**
-	 * @return array
-	 */
-	public function get_sections(){
-		return $this->sections;
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function has_sections(){
-		return count($this->get_sections()) > 0;
 	}
 }

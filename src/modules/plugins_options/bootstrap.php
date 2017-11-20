@@ -25,8 +25,9 @@ add_action('wbf_admin_submenu', function(){
 				$active_tab = pluck_tab($active_tab_slug,$tabs);
 				if(isset($active_tab) && $active_tab instanceof OptionsTab){
 					if($active_tab->has_sections()){
-						$active_section_slug = isset($_GET['section']) ? $_GET['section'] : $active_tab->get_sections()[0];
-						$active_tab = pluck_tab($active_section_slug,$active_tab->get_sections());
+						$first_section = $active_tab->get_sections()[0];
+						$active_section_slug = isset($_GET['section']) ? $_GET['section'] : $first_section->get_slug();
+						$active_section = pluck_tab($active_section_slug,$active_tab->get_sections());
 					}
 				}else {
 					$active_tab = false;
