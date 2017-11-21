@@ -141,6 +141,10 @@ class GUI {
 			Utilities::add_admin_notice("options_updated",ComponentsManager::$last_error,"error",['manual_display' => true]);
 		}
 
+		if ( isset( $_POST['submit-components-options'] ) ) {
+			do_action('wbf/modules/components/after_components_options_saved',$registered_components,$categorized_registered_components,$compiled_components_options,$options_updated_flag);
+		}
+
 		$v = new HTMLView( "src/modules/components/views/components-page.php", "wbf");
 		$v->clean()->display([
 			'page_title'                        => _x("Components","Components page title","wbf"),
