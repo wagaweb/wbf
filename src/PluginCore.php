@@ -901,7 +901,7 @@ class PluginCore {
 			$args = array(
 				'id'    => 'wbf_env_notice',
 				'title' => _x("ENV","WBF Admin Bar","wbf").': '.$env,
-				'href'  => "#",
+				'href'  => admin_url('admin.php?page=wbf_status'),
 				'meta'  => array( 'class' => 'wbf-toolbar-env-notice' )
 			);
 			$wp_admin_bar->add_node( $args );
