@@ -25,10 +25,15 @@ if(!function_exists("WBF")){
 	 * Return the registered instance of WBF
 	 *
 	 * @return \WBF\PluginCore
+	 * @throws Exception
 	 */
 	function WBF(){
 		global $wbf;
-		return $wbf;
+		if($wbf instanceof \WBF\PluginCore){
+			return $wbf;
+		}else{
+			throw new \Exception('WBF() does not have returned an instance of WBF. Is it the framework initialized?');
+		}
 	}
 }
 
