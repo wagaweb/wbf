@@ -26,7 +26,7 @@ function set_update_channels($channels){
     return $channels;
 }
 add_filter('wbf/update_channels/available','\\set_update_channels');
-```php
+```
 
 Now you can find the channel selector in the WBF Status page.
 
@@ -38,4 +38,4 @@ You can retrieve the selected channel with `get_update_channel($name)` function.
 $channel = get_update_channel("my_theme");
 //Do the update logic with $channel...
 //...
-```php
+```
