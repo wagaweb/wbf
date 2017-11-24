@@ -58,22 +58,6 @@ if(!function_exists( 'wbf_wp_title')):
     add_filter( 'wp_title', 'wbf_wp_title', 10, 2 );
 endif;
 
-if(!function_exists('wbf_comment_reply_link')):
-    /**
-     * Style comment reply links as buttons
-     * @since 0.1.0
-     *
-     * @param string $link
-     *
-     * @return string
-     */
-    function wbf_comment_reply_link( $link ) {
-
-        return str_replace( 'comment-reply-link', 'btn btn-default btn-xs', $link );
-    }
-    add_filter( 'comment_reply_link', 'wbf_comment_reply_link' );
-endif;
-
 if(!function_exists( 'wbf_nice_search_redirect')):
     /**
      * Pretty search URL. Changes /?s=foo to /search/foo. http://txfx.net/wordpress-plugins/nice-search/
