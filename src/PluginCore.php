@@ -194,13 +194,12 @@ class PluginCore {
 
 		//Setup admin menu:
 		add_action( 'admin_menu', [$this,"admin_menu"], 11 );
-		add_action( 'admin_bar_menu', [$this,"add_env_notice"], 1000 );
+		add_action( 'admin_bar_menu', [$this,"add_environment_notice"], 1000 );
 		add_action( 'admin_bar_menu', [$this,"add_admin_compile_button"], 990 );
 
 		//Additional settings:
 		add_filter( 'site_transient_update_plugins', [$this,"unset_unwanted_updates"], 999 );
 
-		add_filter( 'wbf/modules/available', [$this,"do_not_load_pagebuilder"], 999 ); //todo: its not stable yet
 		add_filter( 'wbf/modules/behaviors/priority', function(){
 			return 9;
 		});
@@ -278,11 +277,11 @@ class PluginCore {
 
 		$theme = wp_get_theme();
 		if($theme && isset($theme->stylesheet)){
-			if($theme->stylesheet == "waboot"){
+			if($theme->stylesheet === "waboot"){
 				$label = "Waboot";
 				$version = $theme->version;
 			}
-			elseif($theme->stylesheet != "waboot" && $theme->template == "waboot"){
+			elseif($theme->stylesheet !== "waboot" && $theme->template === "waboot"){
 				$theme = wp_get_theme("waboot");
 				if($theme && isset($theme->version)){
 					$label = "Waboot";
@@ -318,7 +317,7 @@ class PluginCore {
 	public function module_is_loaded($module_name){
 		$modules = $this->get_modules();
 		foreach($modules as $name => $params){
-			if($name == $module_name) return true;
+			if($name === $module_name) return true;
 		}
 
 		return false;
@@ -880,26 +879,6 @@ class PluginCore {
 	}
 
 	/**
-	 * Exclude pagebuilder from loading
-	 *
-	 * @hooked 'wbf/modules/available'
-	 *
-	 * @param $module_dirs
-	 *
-	 * @return mixed
-	 */
-	public function do_not_load_pagebuilder($module_dirs){
-		foreach($module_dirs as $k => $dir){
-			$module_name = basename($dir);
-			if($module_name == "pagebuilder"){
-				unset($module_dirs[$k]);
-			}
-		}
-
-		return $module_dirs;
-	}
-
-	/**
 	 * Add env notice to the admin bar
 	 *
 	 * @hooked 'admin_bar_menu' - 1000
@@ -907,13 +886,23 @@ class PluginCore {
 	 * @param \WP_Admin_Bar $wp_admin_bar
 	 * @since 0.2.0
 	 */
-	public function add_env_notice($wp_admin_bar){
+	public function add_environment_notice($wp_admin_bar){
 		global $post;
 
 		if ( current_user_can( 'manage_options' ) ) {
+			if(defined('WP_DEBUG') && WP_DEBUG){
+				$env = "PHP: Dev;";
+			}else{
+				$env = "PHP: Prod;";
+			}
+			if(defined('SCRIPT_DEBUG') && SCRIPT_DEBUG){
+				$env .= " JS: Dev";
+			}else{
+				$env .= " JS: Prod";
+			}
 			$args = array(
 				'id'    => 'wbf_env_notice',
-				'title' => _x("ENV","WBF Admin Bar","wbf").': '.WBF_ENV,
+				'title' => _x("ENV","WBF Admin Bar","wbf").': '.$env,
 				'href'  => "#",
 				'meta'  => array( 'class' => 'wbf-toolbar-env-notice' )
 			);
