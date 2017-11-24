@@ -9,6 +9,7 @@ Version 1.1.0 -
 - Tweak: It is now possible to switch build branch
 - Feature: New Update Channels module
 - Feature: New Plugins Options Page module
+- Feature: New CLI and Crons utilities
 - Removed obsolete pagebuilder module
 
 Version 1.0.11 - 10/06/2017
