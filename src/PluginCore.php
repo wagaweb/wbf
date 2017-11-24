@@ -887,8 +887,6 @@ class PluginCore {
 	 * @since 0.2.0
 	 */
 	public function add_environment_notice($wp_admin_bar){
-		global $post;
-
 		if ( current_user_can( 'manage_options' ) ) {
 			if(defined('WP_DEBUG') && WP_DEBUG){
 				$env = "PHP: Dev;";
