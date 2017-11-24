@@ -72,20 +72,6 @@ if(!function_exists( 'wbf_nice_search_redirect')):
     add_action( 'template_redirect', 'wbf_nice_search_redirect' );
 endif;
 
-if (!function_exists( 'wbf_excerpt_more')):
-    /**
-     * Style the excerpt continuation
-     *
-     * @param string $more
-     *
-     * @return string
-     */
-    function wbf_excerpt_more( $more ) {
-        return ' ... <a href="'. get_permalink( get_the_ID() ) . '">'. __( 'Continue Reading ', 'wbf' ) .' &raquo;</a>';
-    }
-    add_filter('excerpt_more', 'wbf_excerpt_more');
-endif;
-
 if (!function_exists( 'wbf_head_cleanup')):
     /**
      * Cleanup the head
