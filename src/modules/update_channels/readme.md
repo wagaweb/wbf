@@ -25,7 +25,7 @@ function set_update_channels($channels){
     ];
     return $channels;
 }
-add_filter('wbf/update_channels/available','\\set_update_channels');
+add_filter('wbf/update_channels/available','set_update_channels');
 ```
 
 Now you can find the channel selector in the WBF Status page.
