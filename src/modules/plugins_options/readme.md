@@ -16,7 +16,7 @@ class OptionsTab extends \WBF\modules\plugins_options\OptionsTab{
 }
 ```
 
-You can put the tab output (input fields and such into the `render()` method).
+You can put the tab output (input fields and such) into the `render()` method.
 
 ## Register a setting tab
 
@@ -55,4 +55,4 @@ The module does not dictate on how you have to save or render the settings. It w
 
 So you can intercept the POST event and save the settings as you prefer.
 
-Please note that [`WBF\components\pluginsframework\BasePlugin`](https://github.com/wagaweb/wbf/blob/master/src/components/pluginsframework/BasePlugin.php) provides a nice API to manage plugin settings.
+Please note that [`WBF\components\pluginsframework\BasePlugin`](https://github.com/wagaweb/wbf/blob/master/src/components/pluginsframework/BasePlugin.php) provides a nice [API](https://github.com/wagaweb/wbf/tree/master/src/components/pluginsframework#settings-api) to manage plugin settings.
