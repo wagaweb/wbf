@@ -2,7 +2,7 @@
 use WBF\modules\components\GUI;
 ?>
 
-<?php WBF()->notice_manager->show_manual_notices(); ?>
+<?php WBF()->services()->get_notice_manager()->show_manual_notices(); ?>
 
 <?php if(count($registered_components) <= 0) : ?>
 <div class="wrap">
@@ -143,5 +143,5 @@ use WBF\modules\components\GUI;
         </form>
         
 	</div><!-- #componentframework-wrap -->
-	<?php \WBF::print_copyright(); ?>
+	<?php WBF()->print_copyright(); ?>
 </div><!-- .wrap: end -->

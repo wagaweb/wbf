@@ -30,7 +30,7 @@ if(!function_exists("get_behavior")):
 		if (class_exists('\WBF\modules\behaviors\BehaviorsManager')) {
 			return \WBF\modules\behaviors\get_behavior( $name, $post_id, $return = "value" ); //call the behavior framework function
 		} else {
-			return WBF::get_behavior( $name, $post_id, $return = "value" ); //call the backup function
+			return WBF()->get_behavior( $name, $post_id, $return = "value" ); //call the backup function
 		}
 	}
 endif;

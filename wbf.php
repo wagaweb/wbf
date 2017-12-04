@@ -6,7 +6,7 @@
  * Plugin Name:       Waboot Framework
  * Plugin URI:        https://www.waboot.io
  * Description:       A comprehensive WordPress framework
- * Version:           1.0.11
+ * Version:           1.1.0
  * Author:            WAGA Team <dev@waga.it>
  * Author URI:        https://www.waga.it/
  * License:           GPL-2.0+
@@ -20,7 +20,24 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-if( ! class_exists('\WBF\WBF') ) :
+if(!function_exists("WBF")){
+	/**
+	 * Return the registered instance of WBF
+	 *
+	 * @return \WBF\PluginCore
+	 * @throws Exception
+	 */
+	function WBF(){
+		global $wbf;
+		if($wbf instanceof \WBF\PluginCore){
+			return $wbf;
+		}else{
+			throw new \Exception('WBF() does not have returned an instance of WBF. Is it the framework initialized?');
+		}
+	}
+}
+
+if( !isset($GLOBALS['wbf']) || !$GLOBALS['wbf'] instanceof \WBF\PluginCore ) {
 
 	if (!defined('WBF_ENV')) {
 		define('WBF_ENV', 'production');
@@ -29,73 +46,19 @@ if( ! class_exists('\WBF\WBF') ) :
 	//Utilities
 	require_once( 'src/includes/utilities-functions.php' );
 
-	//Define directory
-	if(!defined("WBF_DIRECTORY")){
-		define("WBF_DIRECTORY", __DIR__);
-	}
-	//Define uri
-	if(preg_match("/wp-content\/themes/", WBF_DIRECTORY )){
-		//If WBF is in a theme
-		$url = rtrim(path_to_url(dirname(WBF_DIRECTORY."/wbf.php")),"/")."/"; //ensure trailing slash
-		define("WBF_URL", $url);
-	}else{
-		//If is in the plugin directory
-		define("WBF_URL", site_url() . "/wp-content/plugins/wbf/");
-	}
-	define("WBF_ADMIN_DIRECTORY", WBF_DIRECTORY . "/admin");
-	define("WBF_PUBLIC_DIRECTORY", WBF_DIRECTORY . "/public");
-
-	/*if(!defined("WBF_THEME_DIRECTORY_NAME")){
-		define("WBF_THEME_DIRECTORY_NAME","wbf");
-	}*/
-
-	if(!defined("WBF_WORK_DIRECTORY_NAME")){
-		define("WBF_WORK_DIRECTORY_NAME","wbf-wd");
-	}
-
-	/*if(!defined("WBF_THEME_DIRECTORY")){
-		define("WBF_THEME_DIRECTORY",rtrim(get_stylesheet_directory(),"/")."/".WBF_THEME_DIRECTORY_NAME);
-	}*/
-
-	if(!defined("WBF_WORK_DIRECTORY")){
-		define("WBF_WORK_DIRECTORY", WP_CONTENT_DIR."/".WBF_WORK_DIRECTORY_NAME);
-	}
-	
 	require_once("wbf-autoloader.php");
 	require_once("backup-functions.php");
-	include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+	require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 
-	//Backward compatibility
-	class WBF extends \WBF\PluginCore{}
+	$GLOBALS['wbf'] = new \WBF\PluginCore(
+		dirname(__FILE__),
+		\WBF\components\utils\Paths::path_to_url(dirname(__FILE__))
+	);
 
-	$GLOBALS['wbf'] = \WBF\PluginCore::getInstance();
-
-else:
-	//HERE WBF IS ALREADY DEFINED. We can't tell if by a plugin or others... So...
-
-	if(!defined("WBF_DIRECTORY")){
-		define("WBF_DIRECTORY", __DIR__);
+	if(!defined("WBF_PREVENT_STARTUP")){
+		if($GLOBALS['wbf']->is_plugin()){
+			$GLOBALS['wbf']->startup();
+		}
 	}
 
-	//If this is a plugin, then force the options to point over the plugin.
-	if(preg_match("/plugins/",WBF_DIRECTORY."/wbf.php") && preg_match("/themes/",get_option("wbf_path"))){
-		define("WBF_URL", site_url() . "/wp-content/plugins/wbf/");
-		define("WBF_ADMIN_DIRECTORY", WBF_DIRECTORY . "/admin");
-		define("WBF_PUBLIC_DIRECTORY", WBF_DIRECTORY . "/public");
-		update_option( "wbf_path", WBF_DIRECTORY );
-		update_option( "wbf_url", site_url() . "/wp-content/plugins/wbf/" );
-	}
-
-endif; // class_exists check
-
-if(!function_exists("WBF")){
-	/**
-	 * Return the registered instance of WBF
-	 *
-	 * @return WBF
-	 */
-	function WBF(){
-		global $wbf;
-		return $wbf;
-	}
 }

@@ -1,5 +1,19 @@
 == Change log ==
 
+Version 1.1.0 -
+---------------------------------
+- Tweak: Revamped Plugin initialization
+- Tweak: Removed Resource class
+- Tweak: Added ServiceManager class
+- Tweak: WBF is no longer a Singleton
+- Tweak: It is now possible to switch build branch
+- Tweak: Added some filters to override the components page view
+- Feature: New Update Channels module
+- Feature: New Plugins Options Page module
+- Feature: New CLI and Crons utilities
+- Removed obsolete pagebuilder module
+- Removed obsolete theme customizations
+
 Version 1.0.11 - 10/06/2017
 ---------------------------------
 - Tweak: wbf:create-plugin renamed to wbf:generate:plugin

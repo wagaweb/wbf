@@ -197,7 +197,7 @@ class ComponentsManager {
 					$registered_components[$c['nicename']] = $oComponent;
 				}
 			}catch(\Exception $e){
-				if(function_exists("WBF")) WBF()->notice_manager->add_notice($c['nicename']."_error",$e->getMessage(),"error","_flash_");
+				if(function_exists("WBF")) WBF()->services()->get_notice_manager()->add_notice($c['nicename']."_error",$e->getMessage(),"error","_flash_");
 			}
 		}
 		return $registered_components;
@@ -549,10 +549,13 @@ class ComponentsManager {
 	    if(!is_admin()) return;
 	    if(!isset($_GET['page']) || $_GET['page'] != GUI::$wp_menu_slug) return;
 
+	    $components_state_changed = false;
+
         if ( isset( $_GET['enable'] ) ) {
             $component_name = $_GET['enable'];
             try {
                 self::enable( $component_name, ComponentsManager::is_child_component( $component_name ) );
+	            $components_state_changed = true;
             } catch ( \Exception $e ) {
                 self::$last_error = $e->getMessage();
             }
@@ -560,6 +563,7 @@ class ComponentsManager {
             $component_name = $_GET['disable'];
             try {
                 self::disable( $component_name, ComponentsManager::is_child_component( $component_name ) );
+	            $components_state_changed = true;
             } catch ( \Exception $e ) {
                 self::$last_error = $e->getMessage();
             }
@@ -576,6 +580,7 @@ class ComponentsManager {
                     if(!self::is_active($registered_components[$component_name])){
                         try{
 	                        self::enable( $component_name, ComponentsManager::is_child_component( $component_name ) );
+	                        $components_state_changed = true;
                         }catch(\Exception $e){
 	                        self::$last_error = $e->getMessage();
 	                        Utilities::admin_show_message(self::$last_error,"error");
@@ -585,6 +590,7 @@ class ComponentsManager {
                     if(self::is_active($registered_components[$component_name])){
                         try{
                             self::disable( $component_name, ComponentsManager::is_child_component( $component_name ) );
+	                        $components_state_changed = true;
                         }catch(\Exception $e){
                             self::$last_error = $e->getMessage();
                             Utilities::admin_show_message(self::$last_error,"error");
@@ -599,6 +605,7 @@ class ComponentsManager {
 		 */
         if ( isset( $_POST['restore_defaults_components'] ) ) {
 	        self::restore_components_state();
+	        $components_state_changed = true;
 	        Utilities::admin_show_message(__("Component status restored to defaults","wbf"),"success");
         }
 
@@ -611,10 +618,15 @@ class ComponentsManager {
 	        array_map( function ( $c ) {
 		        $c->active = false;
 	        }, $registered_components );
+	        $components_state_changed = true;
 	        Utilities::admin_show_message(__("Component status reset","wbf"),"success");
         }
 
 	    self::setupComponentsFilters();
+
+        if($components_state_changed){
+        	do_action('wbf/modules/components/after_state_changed');
+        }
     }
 
     /**

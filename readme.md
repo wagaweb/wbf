@@ -103,7 +103,15 @@ WP Cli extension with many adhoc commands for Waboot \ WBF environment.
 
     [Learn more](https://github.com/wagaweb/wbf/tree/master/src/modules/commands)
 
-- **License Manager**
+- **Updates Channels**  
+Allows developer to implement a channel selection feature for their custom updaters.
+
+    [Learn more](https://github.com/wagaweb/wbf/tree/master/src/modules/update_channels)
+
+- **Plugins Options**  
+Provides a unified options management page for WBF plugins.
+
+- **License Manager**  
 A simple frontend to License_Manager component. It will make available a dashboard page with all registered licenses.
 
 <span style="font-size:smaller"><a href="#waboot-framework">Back to top.</a></span>

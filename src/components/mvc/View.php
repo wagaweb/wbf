@@ -79,11 +79,17 @@ abstract class View{
 	/**
 	 * Populate the predefined args, providing a template ready for being displayed in WP dashboard
 	 *
+	 * @param array $specific_classes an array of classes to append to the canonical 'wrap'.
+	 *
 	 * @return $this
 	 */
-	public function for_dashboard(){
+	public function for_dashboard($specific_classes = []){
 		$this->args['page_title'] = "Page Title";
-		$this->args['wrapper_class'] = "wrap";
+		if(!empty($specific_classes)){
+			$this->args['wrapper_class'] = "wrap ".implode(" ",$specific_classes);
+		}else{
+			$this->args['wrapper_class'] = "wrap";
+		}
 		$this->args['wrapper_el'] = "div";
 		$this->args['title_wrapper'] = "<h1>%s</h1>";
 		return $this;

@@ -20,7 +20,13 @@ class GUI {
 	}
 
 	public static function add_menu( $parent_slug ) {
-		add_submenu_page( $parent_slug, __( "Waboot Components", "wbf" ), __( "Components", "wbf" ), "activate_plugins", self::$wp_menu_slug, '\WBF\modules\components\GUI::components_admin_page', "", 66 );
+		WBF()->add_submenu_page(
+			__( "Waboot Components", "wbf" ),
+			__( "Components", "wbf" ),
+			"activate_plugins",
+			self::$wp_menu_slug,
+			'\WBF\modules\components\GUI::components_admin_page'
+		);
 	}
 
 	/**
@@ -135,13 +141,23 @@ class GUI {
 			Utilities::add_admin_notice("options_updated",ComponentsManager::$last_error,"error",['manual_display' => true]);
 		}
 
-		$v = new HTMLView( "src/modules/components/views/components-page.php", "wbf");
-		$v->clean()->display([
+		if ( isset( $_POST['submit-components-options'] ) ) {
+			do_action('wbf/modules/components/after_components_options_saved',$registered_components,$categorized_registered_components,$compiled_components_options,$options_updated_flag);
+		}
+
+		$v_file = ['file' => "src/modules/components/views/components-page.php", 'plugin' => "wbf"];
+		$v_args = [
 			'page_title'                        => _x("Components","Components page title","wbf"),
 			'registered_components'             => $registered_components,
 			'categorized_registered_components' => $categorized_registered_components,
 			'compiled_components_options'       => $compiled_components_options,
 			'last_error'                        => ( isset( $_GET['enable'] ) || isset( $_GET['disable'] ) ) && ! empty( ComponentsManager::$last_error ) ? ComponentsManager::$last_error : false,
 			'options_updated_flag'              => $options_updated_flag
-		]);
+		];
+
+		$v_file = apply_filters('wbf/modules/components/views/components-page/file',$v_file);
+		$v_args = apply_filters('wbf/modules/components/views/components-page/args',$v_args);
+
+		$v = new HTMLView( $v_file['file'], $v_file['plugin']);
+		$v->clean()->display($v_args);
 	}}

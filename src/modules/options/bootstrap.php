@@ -19,7 +19,7 @@ require_once "functions.php";
 //define('OPTIONS_FRAMEWORK_URL', \WBF::prefix_url('src/modules/options/'));
 //define('OPTIONS_FRAMEWORK_DIRECTORY', \WBF::prefix_url('src/modules/options/'));
 if(!defined('WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR')){
-	define('WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR',WBF()->resources->get_working_directory()."/options");
+	define('WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR',WBF()->get_working_directory()."/options");
 }
 
 //Initialization

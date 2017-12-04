@@ -1,6 +1,8 @@
 <?php
 namespace WBF\components\utils;
 
+use WBF\PluginCore;
+
 class Paths {
 	/**
 	 * Completely erase a directory
@@ -83,14 +85,10 @@ class Paths {
 
 		//Defining search paths
 		$search_paths = [];
-		if(defined("WBF_DIRECTORY")){
-			$search_paths[] = WBF_DIRECTORY;
+		if(WBF() instanceof PluginCore){
+			$search_paths[] = WBF()->get_path();
 		}
-		$wbf_path_opt = get_option("wbf_path");
-		if($wbf_path_opt && !empty($wbf_path_opt) && $wbf_path_opt != WBF_DIRECTORY){
-			$search_paths[] = $wbf_path_opt;
-			unset($wbf_path_opt);
-		}
+
 		$search_paths[] = get_template_directory();
 		$search_paths[] = get_stylesheet_directory();
 

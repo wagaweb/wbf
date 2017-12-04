@@ -1,6 +1,7 @@
 <?php
 
 require_once("vendor/autoload.php");
+require_once("src/WBF.php"); //Backward compatibility
 
 /**
  * PS4 Autoloader

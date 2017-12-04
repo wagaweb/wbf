@@ -111,18 +111,18 @@ class Admin{
 	 */
 	function add_options_page() {
 		$menu = $this->menu_settings();
-		$this->options_screen = add_submenu_page( \WBF::getInstance()->wp_menu_slug, $menu['page_title'], $menu['menu_title'], $menu['capability'], $menu['menu_slug'], array($this, 'display_options_page') );
+		$this->options_screen = WBF()->add_submenu_page( $menu['page_title'], $menu['menu_title'], $menu['capability'], $menu['menu_slug'], array($this, 'display_options_page') );
 	}
 
 	/**
 	 * Add "Manage Theme Options" subpage to WBF Menu
 	 */
 	public function add_man_page($parent_slug) {
-		add_submenu_page( $parent_slug , __( "Theme Options Manager", "wbf" ), __( "Import/Export", "wbf" ), "edit_theme_options", $this->wp_menu_slug, array( $this, 'display_manage_options_page') );
+		WBF()->add_submenu_page(__( "Theme Options Manager", "wbf" ), __( "Import/Export", "wbf" ), "edit_theme_options", $this->wp_menu_slug, array( $this, 'display_manage_options_page') );
 	}
 
 	function add_copy_in_admin_page(){
-		\WBF::print_copyright();
+		WBF()->print_copyright();
 	}
 
 	static function menu_settings() {
@@ -131,7 +131,7 @@ class Admin{
 			'menu_title' => __('Theme Options', 'wbf'),
 			'capability' => 'edit_theme_options',
 			'old_menu_slug' => 'options-framework',
-			'menu_slug' => \WBF::getInstance()->wp_menu_slug
+			'menu_slug' => WBF()->wp_menu_slug
 		);
 		return apply_filters('optionsframework_menu', $menu);
 	}
@@ -223,8 +223,8 @@ class Admin{
 	 */
 	public function backup_options_to_file( $download = false ) {
 		$current_settings = $this->get_current_active_theme_options();
-		$backup_path      = WBF()->resources->get_working_directory() . "/theme-options-backups";
-		$backup_url       = WBF()->resources->get_working_directory_uri() . "/theme-options-backups";
+		$backup_path      = WBF()->get_working_directory() . "/theme-options-backups";
+		$backup_url       = WBF()->get_working_directory_uri() . "/theme-options-backups";
 		if ( ! is_dir( $backup_path ) ) {
 			mkdir( $backup_path );
 		}
@@ -336,7 +336,7 @@ class Admin{
 	 * @return array
 	 */
 	public function get_backupFiles() {
-		$backup_path = WBF()->resources->get_working_directory() . "/theme-options-backups";
+		$backup_path = WBF()->get_working_directory() . "/theme-options-backups";
 		$files       = glob( $backup_path . "/*.options" );
 		$output      = array();
 
@@ -345,7 +345,7 @@ class Admin{
 				$info     = pathinfo( $f );
 				$output[] = array(
 					'path' => $f,
-					'url'  => WBF()->resources->get_working_directory_uri() . "/theme-options-backups/" . $info['basename'],
+					'url'  => WBF()->get_working_directory_uri() . "/theme-options-backups/" . $info['basename'],
 					'name' => $info['basename']
 				);
 			}
