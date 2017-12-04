@@ -14,6 +14,7 @@ You can create a command by extending `\WP_CLI_Command` or `\WBF\modules\command
 For example, put the following lines in a file called `MyHelloWorld.php` under `/wp-content/themes/yourtheme/inc/cli`.
 
 ```php
+// note: you cannot use namespaced classname here
 use WBF\modules\commands\BaseCommand;
 
 class MyHelloWorld extends BaseCommand{
