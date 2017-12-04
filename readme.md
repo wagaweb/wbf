@@ -111,6 +111,8 @@ Allows developer to implement a channel selection feature for their custom updat
 - **Plugins Options**  
 Provides a unified options management page for WBF plugins.
 
+    [Learn more](https://github.com/wagaweb/wbf/tree/master/src/modules/plugins_options)
+
 - **License Manager**  
 A simple frontend to License_Manager component. It will make available a dashboard page with all registered licenses.
 
