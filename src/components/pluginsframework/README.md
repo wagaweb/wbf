@@ -112,6 +112,46 @@ $this->add_hierarchy_template("single-sample-post-type.php", $this->get_src_dir(
 
 An example con be found [here](https://github.com/wagaweb/wbf-sample-plugin/tree/template-plugin-standard).
 
+### Settings API
+
+`WBF\components\pluginsframework\BasePlugin` features a simple API to manage plugins settings.
+
+- Override `get_plugin_default_settings()` to set the settings defaults values.
+
+```php
+class MyPlugin extends \WBF\components\pluginsframework\TemplatePlugin{
+    //...
+    public function get_plugin_default_settings(){
+        return [
+            'setting_foo' => 'foo',
+            'setting_bar' => 'bar',
+            'my_custom_setting_name' => 'my_custom_setting_value'
+        ];
+    }
+    //...
+}
+```
+
+- Retrieve settings within BasePlugin with `get_plugin_settings()`
+
+```php
+$current_settings = $this->get_plugin_settings();
+```
+
+- Save plugins settings within BasePlugin with `save_plugin_settings($settings_to_save);`
+
+```php
+//Create a new array of settings, maybe after posted a form.
+$new_settings = [
+    'setting_foo' => 'foo2',
+    'my_custom_setting_name' => 'my_custom_setting_value2'
+    //No need to have all the settings here
+];
+
+$this->save_plugin_settings($new_settings);
+
+```
+
 ### More features
 
 **Using built-in cache mechanism**
