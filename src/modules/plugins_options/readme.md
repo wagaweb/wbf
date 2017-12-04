@@ -55,4 +55,4 @@ The module does not dictate on how you have to save or render the settings. It w
 
 So you can intercept the POST event and save the settings as you prefer.
 
-Please note that [https://github.com/wagaweb/wbf/blob/master/src/components/pluginsframework/BasePlugin.php](`WBF\components\pluginsframework\BasePlugin`) provides a nice API to manage plugin setting.
+Please note that [`WBF\components\pluginsframework\BasePlugin`](https://github.com/wagaweb/wbf/blob/master/src/components/pluginsframework/BasePlugin.php) provides a nice API to manage plugin setting.
