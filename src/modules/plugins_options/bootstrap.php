@@ -34,7 +34,7 @@ add_action('wbf_admin_submenu', function(){
 				}
 			}
 			$v = new HTMLView('src/modules/plugins_options/views/options.php','wbf');
-			$v->for_dashboard()->display([
+			$v->for_dashboard(['wbf-plugins-options-module'])->display([
 				'page_title' => __('WBF Plugins Options','wbf'),
 				'tabs' => $tabs,
 				'active_tab' => $active_tab,

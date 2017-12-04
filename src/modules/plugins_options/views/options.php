@@ -1,11 +1,11 @@
 <!-- Menu -->
-<ul>
+<ul class="options-tabs">
 <?php foreach ($tabs as $tab): ?>
-	<li><a href="<?php echo $tab->get_href(); ?>" title="<?php echo $tab->get_title(); ?>"><?php echo $tab->get_label(); ?></a></li>
+	<li class="option-tab-element" data-tab="<?php echo $tab->get_slug() ?>"><a class="option-tab-anchor" href="<?php echo $tab->get_href(); ?>" title="<?php echo $tab->get_title(); ?>"><?php echo $tab->get_label(); ?></a></li>
 <?php endforeach; ?>
 </ul>
 <!-- Current active tab -->
-<div class="wbf-plugin-options-tab <?php echo $active_tab->get_slug() ?>-tab active">
+<div class="wbf-plugin-options-tab <?php echo $active_tab->get_slug() ?>-tab active" data-tab="<?php echo $active_tab->get_slug() ?>">
     <h2><?php echo $active_tab->get_title(); ?></h2>
     <form method="post" action="<?php echo $current_uri; ?>">
 	<?php if($active_tab->has_sections()) : ?>
