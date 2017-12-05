@@ -44,10 +44,10 @@ Now you have a fully functional settings page ready.
 The module does not dictate on how you have to save or render the settings. It wraps your render() output in a `form` like this:
 
 ```html
-<form method="post" action="http://waboot.dev/wp-admin/admin.php?page=wbf-plugins-options&amp;tab=waboot-woo-eu-taxation">
+<form method="post" action="http://waboot.dev/wp-admin/admin.php?page=wbf-plugins-options&amp;tab=my-plugin">
     <!-- You render() output -->
 	<button style="display: block; margin-top: 10px;" class="button button-primary" type="submit">Save settings</button>
-    <input type="hidden" name="save-wbf-plugins-settings" value="waboot-woo-eu-taxation">
+    <input type="hidden" name="save-wbf-plugins-settings" value="my-plugin">
     <!-- NONCE Example: The nonce action is: save-wbf-plugins-settings -->
     <input type="hidden" id="_wpnonce" name="_wpnonce" value="0bd9dd176c"><input type="hidden" name="_wp_http_referer" value="/wp-admin/admin.php?page=wbf-plugins-options">
 </form>
