@@ -822,8 +822,8 @@ class PluginCore {
 				'version' => '2.1.4' //https://github.com/mahnunchik/markerclustererplus
 			],
 			"wbfgmap" => [
-				"uri" => $this->prefix_url("/assets/src/js/includes/wbfgmap/wbf-google-map.js"),
-				"path" => $this->prefix_path("/assets/src/js/includes/wbfgmap/wbf-google-map.js"),
+				"uri" => defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? $this->prefix_url("/assets/src/js/includes/wbfgmap/wbf-google-map.js") : $this->prefix_url("/assets/dist/js/includes/wbf-google-map.min.js"),
+				"path" => defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? $this->prefix_path("/assets/src/js/includes/wbfgmap/wbf-google-map.js") : $this->prefix_path("/assets/dist/js/includes/wbf-google-map.min.js"),
 				"deps" => ["jquery","gmapapi","markerclusterer"],
 				"type" => "js",
 				'enqueue' => false,

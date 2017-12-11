@@ -14,6 +14,7 @@ assets/dist/js/wbf-admin.min.js
 assets/dist/js/wbf-admin.min.js.map
 assets/dist/js/includes/spectrum.min.js
 assets/dist/js/includes/wbfgmap.min.js
+assets/dist/js/includes/wbf-google-map.min.js
 
 ############
 ## VENDORS (composer)

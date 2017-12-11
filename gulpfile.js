@@ -112,12 +112,13 @@ gulp.task('compile_js', ['browserify'] ,function(){
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('./assets/dist/js'));
 
-    var wbfgmap = gulp.src("assets/src/js/includes/wbfgmap/*.js")
-        .pipe(concat('wbfgmap.js'))
-        .pipe(uglify())
+    var wbfgmap = gulp.src("assets/src/js/includes/wbfgmap/wbf-google-map.js")
+        //.pipe(sourcemaps.init())
+        //.pipe(uglify())
         .pipe(rename({
             suffix: ".min"
         }))
+        //.pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('./assets/dist/js/includes'));
 
     var spectrum = gulp.src("assets/src/js/spectrum.js")
@@ -127,7 +128,7 @@ gulp.task('compile_js', ['browserify'] ,function(){
         }))
         .pipe(gulp.dest('./assets/dist/js/includes'));
 
-    return merge(admin_js,spectrum);
+    return merge(admin_js,wbfgmap,spectrum);
 });
 
 /**
