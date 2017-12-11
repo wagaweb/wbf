@@ -776,19 +776,27 @@ class PluginCore {
 	 * Register libraries used by WBF ecosystem
 	 */
 	public function register_libs(){
-		$gmapkey = apply_filters('wbf/js/libs/google_map/api','');
+		$gmap_api_url = call_user_func(function(){
+			$gmap_api = apply_filters('wbf/js/libs/google_map/api/args',[
+				'key' => apply_filters('wbf/js/libs/google_map/api',''),
+				'args' => [
+					'libraries' => 'places'
+				]
+			]);
+			$gmap_api_url = 'https://maps.googleapis.com/maps/api/js?key='.$gmap_api['key'];
+			if(isset($gmap_api['args']) && \is_array($gmap_api['args']) && !empty($gmap_api['args'])){
+				foreach($gmap_api['args'] as $arg_name => $arg_value){
+					$gmap_api_url.= '&'.$arg_name.'='.$arg_value;
+				}
+			}
+			return $gmap_api_url;
+		});
 
 		$libs = [
 			"owlcarousel-css" => [
 				'uri' => $this->prefix_url("/vendor/owl.carousel/dist/assets/owl.carousel.css"),
 				'path' => $this->prefix_path("/vendor/owl.carousel/dist/assets/owl.carousel.css"),
 				'type' => 'css',
-				'enqueue' => false
-			],
-			"gmapapi" => [
-				"uri" => $gmapkey !== '' ? 'https://maps.googleapis.com/maps/api/js?key='.$gmapkey.'&v=3.exp&sensor=false&libraries=places' : 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places',
-				'type' => "js",
-				'deps' => ['jquery'],
 				'enqueue' => false
 			],
 			"owlcarousel-js" => [
@@ -798,34 +806,30 @@ class PluginCore {
 				'enqueue' => false,
 				'in_footer' => true,
 			],
+			"gmapapi" => [
+				"uri" => $gmap_api_url,
+				'type' => "js",
+				'deps' => ['jquery'],
+				'enqueue' => false
+			],
+			"markerclusterer" => [
+				"uri" => $this->prefix_url("/assets/src/js/includes/wbfgmap/markerclusterer.min.js"),
+				"path" => $this->prefix_path("/assets/src/js/includes/wbfgmap/markerclusterer.min.js"),
+				"deps" => ["jquery","gmapapi"],
+				"type" => "js",
+				'enqueue' => false,
+				'in_footer' => true,
+				'version' => '2.1.4' //https://github.com/mahnunchik/markerclustererplus
+			],
+			"wbfgmap" => [
+				"uri" => $this->prefix_url("/assets/src/js/includes/wbfgmap/wbf-google-map.js"),
+				"path" => $this->prefix_path("/assets/src/js/includes/wbfgmap/wbf-google-map.js"),
+				"deps" => ["jquery","gmapapi","markerclusterer"],
+				"type" => "js",
+				'enqueue' => false,
+				'in_footer' => true,
+			]
 		];
-		if(defined('SCRIPT_DEBUG') && SCRIPT_DEBUG){
-			$libs["wbfgmapmc"] = [
-				"uri" => $this->prefix_url("/assets/src/js/includes/wbfgmap/markerclusterer.js"),
-				"path" => $this->prefix_path("/assets/src/js/includes/wbfgmap/markerclusterer.js"),
-				"deps" => ["jquery","gmapapi"],
-				"type" => "js",
-				'enqueue' => false,
-				'in_footer' => true,
-			];
-			$libs["wbfgmap"] = [
-				"uri" => $this->prefix_url("/assets/src/js/includes/wbfgmap/acfmap.js"),
-				"path" => $this->prefix_path("/assets/src/js/includes/wbfgmap/acfmap.js"),
-				"deps" => ["jquery","gmapapi","wbfgmapmc"],
-				"type" => "js",
-				'enqueue' => false,
-				'in_footer' => true,
-			];
-		}else{
-			$libs["wbfgmap"] = [
-				"uri" => $this->prefix_url("/assets/dist/js/includes/wbfgmap.min.js"),
-				"path" => $this->prefix_path("/assets/dist/js/includes/wbfgmap.min.js"),
-				"deps" => ["jquery","gmapapi"],
-				"type" => "js",
-				'enqueue' => false,
-				'in_footer' => true,
-			];
-		}
 		
 		$a = new AssetsManager($libs);
 		$a->enqueue();
