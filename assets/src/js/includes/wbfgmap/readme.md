@@ -97,9 +97,19 @@ If you want to use the location search feature:
 
 ## Methods
 
-`renderMap()`
+`renderMap(<array render_args>)`
 
-Renders a map into the container specified during object instantiation.
+Renders a map into the container specified during object instantiation. `render_args` can be undefined. The default values are:
+
+```javascript
+    var defaults_args = {
+        zoom: 16,
+        draggable: true,
+        scrollwheel: false,
+        center: new google.maps.LatLng(0, 0),
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+```
 
 `addMarkers(<jQuery element: container>,<bool: clusterize>)`
 
