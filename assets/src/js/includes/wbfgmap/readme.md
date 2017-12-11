@@ -80,8 +80,8 @@ If you want to use the location search feature:
 - Add input and button
 
 ```html
-<input type="text" class="form-control" placeholder="Inserisci una city" value="" name="gmap-map-search-address" data-gmap-map-search-field />
-<button class="btn btn-primary" name="reseller-map-search-submit" data-gmap-map-search-button>Search</button>
+<input type="text" class="form-control" placeholder="Insert a location" value="" name="gmap-map-search-address" data-gmap-map-search-field />
+<button class="btn btn-primary" name="gmap-map-search-submit" data-gmap-map-search-button>Search</button>
 ```
 
 - Edit the Javascript
@@ -94,3 +94,17 @@ If you want to use the location search feature:
     });
 </script>
 ```
+
+## Methods
+
+`renderMap()`
+
+Renders a map into the container specified during object instantiation.
+
+`addMarkers(<jQuery element: container>,<bool: clusterize>)`
+
+Add the markers specified into the container to the map. If clusterize is TRUE, then they will be grouped when the zoom is far enough.
+
+`bindSearch(<jQuery element: input>,<jQuery element: button>,<integer zoom_after_search>)`
+
+Bind a input\button pair to make search queries on the map. `zoom_after_search` dictates the map zoom when the searched location is found (default to 13).
