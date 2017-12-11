@@ -113,12 +113,12 @@ gulp.task('compile_js', ['browserify'] ,function(){
         .pipe(gulp.dest('./assets/dist/js'));
 
     var wbfgmap = gulp.src("assets/src/js/includes/wbfgmap/wbf-google-map.js")
-        //.pipe(sourcemaps.init())
-        //.pipe(uglify())
+        .pipe(sourcemaps.init())
+        .pipe(uglify())
         .pipe(rename({
             suffix: ".min"
         }))
-        //.pipe(sourcemaps.write('.'))
+        .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('./assets/dist/js/includes'));
 
     var spectrum = gulp.src("assets/src/js/spectrum.js")
