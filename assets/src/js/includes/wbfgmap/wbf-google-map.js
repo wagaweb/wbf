@@ -93,9 +93,10 @@ WBFGoogleMap.prototype.addMarker = function($marker){
     if($marker.html()){
         var infoWindow = new google.maps.InfoWindow({
             content: $marker.html()
-        });
-        google.maps.event.addListener(marker, 'click', () => {
-            infoWindow.open(this.map,marker);
+        }),
+            self = this;
+        google.maps.event.addListener(marker, 'click', function(){
+            infoWindow.open(self.map,marker);
         })
     }
 };
@@ -108,7 +109,7 @@ WBFGoogleMap.prototype.centerMap = function(){
     var bounds = new google.maps.LatLngBounds();
 
     if(typeof this.map.markers !== "undefined"){
-        jQuery.each(this.map.markers, (i, marker) => {
+        jQuery.each(this.map.markers, function(i, marker){
             var latlng = new google.maps.LatLng(marker.position.lat(),marker.position.lng());
             bounds.extend(latlng);
         });
@@ -134,7 +135,7 @@ WBFGoogleMap.prototype.centerMap = function(){
  * @returns {WBFGoogleMap}
  */
 WBFGoogleMap.prototype.bindSearch = function($input,$button,zoom_after_search){
-    let self = this;
+    var self = this;
     if(typeof zoom_after_search === 'undefined'){
         zoom_after_search = 13;
     }
@@ -144,9 +145,9 @@ WBFGoogleMap.prototype.bindSearch = function($input,$button,zoom_after_search){
         }
     });
     $button.on("click",function(){
-        let searchAddress = $input.val();
+        var searchAddress = $input.val();
         if(typeof(searchAddress) !== "undefined" && searchAddress !== ""){
-            let geocoder = new google.maps.Geocoder();
+            var geocoder = new google.maps.Geocoder();
             geocoder.geocode({'address': searchAddress}, function(result,status){
                 if(status === google.maps.GeocoderStatus.OK && typeof(self.map) !== "undefined"){
                     self.map.setCenter(result[0].geometry.location);
