@@ -32,19 +32,22 @@ $markers = [
 		'address' => 'Foobar',
 		'lat' => '...',
 		'lng' => '...',
-		'title' => 'Marker #1'
+		'title' => 'Marker #1',
+        'link' => '...'
 	],
 	[
 		'address' => 'Baz',
 		'lat' => '...',
 		'lng' => '...',
-		'title' => 'Marker #2'
+		'title' => 'Marker #2',
+        'link' => '...'
 	],
 	[
 	    'address' => 'Foobarbaz',
 	    'lat' => '...',
 	    'lng' => '...',
-        'title' => 'Marker #3'
+        'title' => 'Marker #3',
+        'link' => '...'
     ]
 ];
 ?>
@@ -54,9 +57,12 @@ $markers = [
         $address = $marker['address'];
         $lat = (float) $marker['lat'];
         $lng = (float) $marker['lng'];
+        $title = $marker['title'];
+        $link = $marker['link'];
         ?>
-        <div class="marker" data-lat="<?php echo $lat; ?>" data-lng="<?php echo $lng; ?>" data-title="<?php echo get_the_title(); ?>">
-            <h6><a href="<?php the_permalink() ?>"><?php the_title() ?></a></h6>
+        <div class="marker" data-lat="<?php echo $lat; ?>" data-lng="<?php echo $lng; ?>" data-title="<?php echo $title; ?>">
+            <!-- This HTML (if present) will inserted into an infowindow -->
+            <h6><a href="<?php echo $link; ?>"><?php echo $title; ?></a></h6>
             <p class="address"><?php echo $address; ?></p>
         </div>
     <?php endforeach; ?>
@@ -114,6 +120,8 @@ Renders a map into the container specified during object instantiation. `render_
 `addMarkers(<jQuery element: container>,<bool: clusterize>)`
 
 Add the markers specified into the container to the map. If clusterize is TRUE, then they will be grouped when the zoom is far enough.
+
+Markers must have `.marker` class (see the code above).
 
 `bindSearch(<jQuery element: input>,<jQuery element: button>,<integer zoom_after_search>)`
 
