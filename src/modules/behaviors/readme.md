@@ -3,7 +3,7 @@
 This module enables developers to have custom metaboxes for post types with default values specified within theme options interface. 
 Let's say, for example, that you want to set an option to let user decide whatever or not display the site sidebar, both site-wide and post-specific. You then can implement a very complicated theme option... or use a behavior!
 
-##Defining behaviors
+## Defining behaviors
 You can define new options by hooking to `wbf/modules/behaviors/available` filter from within theme `functions.php`.
 
 Then you can proceed to specify yours behaviors.
