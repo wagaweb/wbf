@@ -118,7 +118,7 @@ class PluginCore {
 			}
 
 			if( $update_wbf_url_flag && ( get_option('wbf_url','') !== $url) ){
-				update_option('wbf_path',$url);
+				update_option('wbf_url',$url);
 			}
 
 			define('WBF_URL',$url);
