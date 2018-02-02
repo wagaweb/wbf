@@ -7,7 +7,7 @@
 
 namespace WBF\modules\behaviors;
 
-require_once "functions.php";
+require_once __DIR__.'/functions.php';
 
 //locate_template('/inc/behaviors.php', true); //todo: questo sarebbe meglio toglierlo, mi pare superfluo, valutare se crea qlc danno
 
