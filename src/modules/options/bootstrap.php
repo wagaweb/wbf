@@ -13,8 +13,8 @@ use WBF\components\assets\AssetsManager;
 use WBF\components\utils\Utilities;
 use WBF\modules\options\fields\CodeEditor;
 
-require_once "CustomizerManager.php";
-require_once "functions.php";
+require_once __DIR__.'/CustomizerManager.php';
+require_once __DIR__.'/functions.php';
 
 //define('OPTIONS_FRAMEWORK_URL', \WBF::prefix_url('src/modules/options/'));
 //define('OPTIONS_FRAMEWORK_DIRECTORY', \WBF::prefix_url('src/modules/options/'));

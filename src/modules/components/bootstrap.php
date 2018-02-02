@@ -7,7 +7,7 @@
 
 namespace WBF\modules\components;
 
-require_once "functions.php";
+require_once __DIR__.'/functions.php';
 
 $GLOBALS['loaded_components'] = array();
 $GLOBALS['registered_components'] = array();
