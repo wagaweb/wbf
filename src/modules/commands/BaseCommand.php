@@ -2,8 +2,6 @@
 
 namespace WBF\modules\commands;
 
-use function GuzzleHttp\Psr7\str;
-
 abstract class BaseCommand{
 	//See class-wp-cli.php add_command() method for the implemented setter \ getter methods
 
