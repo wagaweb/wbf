@@ -1,5 +1,7 @@
 <?php
 
+require_once 'PluginCore.php';
+
 /**
  * Backward compatibility class.
  *
