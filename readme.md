@@ -117,6 +117,12 @@ Provides a unified options management page for WBF plugins.
 A simple frontend to License_Manager component. It will make available a dashboard page with all registered licenses.
 
 <span style="font-size:smaller"><a href="#waboot-framework">Back to top.</a></span>
+
+## Testing
+
+Use `/bin/install-wp-tests.sh` for installing wordpress tests environment and libs to your system.
+
+If you wish to rely on your IDE intellisense, you can use `/bin/install-symlink.sh` or `/bin/install-tests-lib-copy` to either install a symlink or a copy of wordpress-tests-lib (previously installed by `/bin/install-wp-tests.sh`) into `/tests/` subdirectory. 
   
 # Roadmap
 
