@@ -27,5 +27,33 @@ function _manually_load_plugin() {
 }
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
 
+/*
+ * CUSTOMIZATIONS: Begin
+ */
+
+define ('WBF_PLUGIN_DIR', _get_plugin_dir());
+define ('WBF_PREVENT_STARTUP', true);
+
+function _get_plugin_dir(){
+	$_tests_dir = dirname(__FILE__);
+	$_plugin_dir = dirname($_tests_dir);
+	return $_plugin_dir;
+}
+
+function _load_wbf(){
+	echo esc_html( 'Loading WBF...' . PHP_EOL );
+	require_once WBF_PLUGIN_DIR.'/wbf.php';
+}
+tests_add_filter( 'muplugins_loaded', '_load_wbf' );
+
+/*function _install_wbf(){
+	echo esc_html( 'Installing WBF...' . PHP_EOL );
+}
+tests_add_filter( 'setup_theme', '_install_wbf' );*/
+
+/*
+ * CUSTOMIZATIONS: End
+ */
+
 // Start up the WP testing environment.
 require $_tests_dir . '/includes/bootstrap.php';
