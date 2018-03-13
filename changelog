@@ -1,5 +1,11 @@
 == Change log ==
 
+Version 1.1.1 - 03/13/2017
+---------------------------------
+- Fix: Fixed some rare edge case when files are not required correctly from WP CLI
+- Fix: Fixed {ctag:} behavior filter for methods with namespace
+- Tweak: WBF\components\utils\DB::create_table() function
+
 Version 1.1.0 - 12/04/2017
 ---------------------------------
 - Tweak: Revamped Plugin initialization
