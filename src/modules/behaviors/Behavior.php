@@ -88,7 +88,7 @@ class Behavior{
 			$this->filters['conditional_tags'] = array();
 			if(is_array($args['valid'])){
 				foreach($args['valid'] as $filter){
-					if(preg_match("/^-([\{\}a-zA-Z0-9:_]+)/",$filter,$matches)){ //EXCLUDING
+					if(preg_match("/^-([\{\}\\a-zA-Z0-9:_]+)/",$filter,$matches)){ //EXCLUDING
 						if($matches[1] == "{blog}"){
 							array_push($this->filters['node_id'],"-".get_option( 'page_for_posts' ));
 						}elseif($matches[1] == "{cpt}"){
@@ -97,7 +97,7 @@ class Behavior{
 							foreach($cpts as $k => $v){
 								array_push($this->filters['post_type'],"-".$k);
 							}
-						}elseif(preg_match("/^\{ctag:([a-zA-Z0-9_]+)\}$/",$matches[1],$catags)){
+						}elseif(preg_match("/^\{ctag:([\\a-zA-Z0-9_]+)\}$/",$matches[1],$catags)){
 							//Conditional tags
 							array_push($this->filters['conditional_tags'],'-'.$catags[1]);
 						}elseif(is_numeric($matches[1])){
@@ -213,7 +213,7 @@ class Behavior{
 
 		if(isset($this->filters['conditional_tags']) && is_array($this->filters['conditional_tags']) && !empty($this->filters['conditional_tags'])){
 			foreach($this->filters['conditional_tags'] as $k => $filter){
-				preg_match("/^(-)?([a-zA-Z_]+)/",$filter,$matches);
+				preg_match("/^(-)?([\\a-zA-Z0-9_]+)/",$filter,$matches);
 				$negative_version = isset($matches[1]) ? true : false;
 				if(function_exists($matches[2])){
 					$result = @call_user_func($matches[2],$id);
