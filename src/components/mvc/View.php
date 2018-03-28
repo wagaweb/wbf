@@ -137,7 +137,8 @@ abstract class View{
 			$search_paths = [];
 			$relative_file_path = preg_replace("/^\/?src\//","",$relative_file_path); //Strip src/
 			//Theme and parent
-			foreach([Utilities::maybe_strip_trailing_slash(get_stylesheet_directory()),Utilities::maybe_strip_trailing_slash(get_template_directory())] as $template_dir){
+			foreach([get_stylesheet_directory(),get_template_directory()] as $template_dir){
+				$template_dir = Utilities::maybe_strip_trailing_slash($template_dir);
 				$search_paths[] = $template_dir."/".$plugin_dirname."/".dirname($relative_file_path)."/".basename($relative_file_path);
 				$search_paths[] = $template_dir."/".$plugin_dirname."/".basename($relative_file_path);
 			}
@@ -145,7 +146,8 @@ abstract class View{
 			$search_paths[] = $plugin_abspath;
 		}else{
 			$search_paths = [];
-			foreach([Utilities::maybe_strip_trailing_slash(get_stylesheet_directory()),Utilities::maybe_strip_trailing_slash(get_template_directory())] as $template_dir){
+			foreach([get_stylesheet_directory(),get_template_directory()] as $template_dir){
+				$template_dir = Utilities::maybe_strip_trailing_slash($template_dir);
 				$search_paths[] = $template_dir."/".$relative_file_path;
 			}
 		}
