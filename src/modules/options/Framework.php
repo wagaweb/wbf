@@ -17,10 +17,14 @@ class Framework{
 	var $fields;
 
 	public function __construct() {
-		Framework::set_theme_option_default_root_id();
+		try{
+			self::set_theme_option_default_root_id();
+		}catch (\Exception $e){
+			trigger_error($e->getMessage(),E_USER_WARNING);
+		}
 
 		//Create the framework working directory
-		if(defined("WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR") && !is_dir(WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR)){
+		if(\defined("WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR") && !is_dir(WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR)){
 			Utilities::mkpath(WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR);
 		}
 
@@ -84,13 +88,41 @@ class Framework{
 
 	/**
 	 * Sets defaults theme options root id
+	 *
+	 * @throws \Exception
 	 */
 	static function set_theme_option_default_root_id() {
 		// Load current theme
-		$current_theme_name = wp_get_theme()->get_stylesheet();
-		$current_theme_name = preg_replace("/\W/", "_", strtolower($current_theme_name));
-		$current_root_id = "wbf_".$current_theme_name."_options";
+		$current_root_id = self::get_theme_options_store();
+		if(!$current_root_id){
+			throw new \Exception('Unable to get the theme options default root id');
+		}
 		self::set_options_root_id($current_root_id);
+	}
+
+	/**
+	 * Returns the option name where the theme options are saved
+	 *
+	 * @param string|\WP_Theme|null $theme
+	 *
+	 * @return string|bool
+	 */
+	static function get_theme_options_store($theme = null){
+		if(!isset($theme)){
+			$current_theme_name = wp_get_theme()->get_stylesheet();
+		}else{
+			if(\is_string($theme)){
+				$theme = wp_get_theme($theme);
+			}
+			if($theme instanceof \WP_Theme){
+				$current_theme_name = $theme->get_stylesheet();
+			}
+		}
+		if(isset($current_theme_name)){
+			$current_theme_name = preg_replace("/\W/", "_", strtolower($current_theme_name));
+			return "wbf_".$current_theme_name."_options";
+		}
+		return false;
 	}
 
 	public function register_options(){

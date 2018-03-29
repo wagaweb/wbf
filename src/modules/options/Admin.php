@@ -220,15 +220,20 @@ class Admin{
 	 * Backup current theme options to a file. Return the file url or throws Exception on fail.
 	 *
 	 * @param string|null $filename
+	 * @param null $theme
 	 * @param bool $download
 	 *
 	 * @return bool|string
 	 * @throws \Exception
 	 */
-	public function backup_options_to_file( $filename = null, $download = false ) {
-		$current_settings = $this->get_current_active_theme_options();
-		$backup_path      = WBF()->get_working_directory() . "/theme-options-backups";
-		$backup_url       = WBF()->get_working_directory_uri() . "/theme-options-backups";
+	public function backup_options_to_file( $filename = null, $theme = null, $download = false ) {
+		if(!isset($theme)){
+			$current_settings = $this->get_current_active_theme_options();
+			$backup_path      = WBF()->get_working_directory() . "/theme-options-backups";
+			$backup_url       = WBF()->get_working_directory_uri() . "/theme-options-backups";
+		}else{
+
+		}
 		if ( ! is_dir( $backup_path ) ) {
 			mkdir( $backup_path );
 		}
@@ -261,6 +266,15 @@ class Admin{
 		$settings = get_option( $this->get_option_id() );
 
 		return $settings;
+	}
+
+	/**
+	 * Get the theme options of the specified theme
+	 *
+	 * @param string $theme
+	 */
+	public function get_theme_options_of_theme($theme){
+
 	}
 
 	/**
