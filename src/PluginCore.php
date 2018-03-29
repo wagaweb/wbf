@@ -551,6 +551,22 @@ class PluginCore {
 	}
 
 	/**
+	 * List all working directories
+	 */
+	public function get_working_directories(){
+		$wd_base = $this->get_base_working_directory();
+		$wd_dirs = [];
+		$dirs = glob($wd_base.'/*',GLOB_ONLYDIR);
+		foreach ($dirs as $dir){
+			$base = basename($dir);
+			if($base !== '_extensions'){
+				$wd_dirs[$base] = $dir;
+			}
+		}
+		return $wd_dirs;
+	}
+
+	/**
 	 * Returns WBF working directory URI
 	 *
 	 * @param bool $base
