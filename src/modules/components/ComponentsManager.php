@@ -42,15 +42,16 @@ class ComponentsManager {
     }
 
 	/**
-     * Detect the components in the their directory and update the registered component WP option. Called by self::init()
-     *
-     * @param $components_directory
-     * @param bool $child_theme
-     *
-     * @use self::get_registered_components
-     *
-     * @return mixed|void
-     */
+	 * Detect the components in the their directory and update the registered component WP option. Called by self::init()
+	 *
+	 * @param $components_directory
+	 * @param bool $child_theme
+	 *
+	 * @use self::get_registered_components
+	 *
+	 * @return mixed|void
+	 * @throws \Exception
+	 */
     static function detect_components( $components_directory, $child_theme = false ) {
 	    $registered_components = self::get_registered_components($child_theme);
 	    $states = self::get_components_state();
@@ -167,11 +168,27 @@ class ComponentsManager {
 	/**
 	 * Get the current component state (enabled or disabled) option for the current theme
 	 *
-	 * @return mixed|void
+	 * @param string|\WP_Theme|null $theme
+	 *
+	 * @return array
+	 * @throws \Exception
 	 */
-	static function get_components_state(){
-		$opt = get_option("wbf_".get_stylesheet()."_components_state", []);
-		$opt = apply_filters("wbf/modules/components/states",$opt,get_stylesheet());
+	static function get_components_state($theme = null){
+		if(!isset($theme)){
+			$theme_name = get_stylesheet();
+		}else{
+			if(\is_string($theme)){
+				$theme = wp_get_theme($theme);
+			}
+			if($theme instanceof \WP_Theme){
+				$theme_name = $theme->get_stylesheet();
+			}
+		}
+		if(!isset($theme_name)){
+			throw new \Exception('Unable to get components state');
+		}
+		$opt = get_option("wbf_".$theme_name."_components_state", []);
+		$opt = apply_filters("wbf/modules/components/states",$opt,$theme_name);
 		return $opt;
 	}
 
