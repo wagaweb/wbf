@@ -218,18 +218,27 @@ class Admin{
 
 	/**
 	 * Backup current theme options to a file. Return the file url or throws Exception on fail.
-	 * @throws \Exception
+	 *
+	 * @param string|null $filename
+	 * @param bool $download
+	 *
 	 * @return bool|string
+	 * @throws \Exception
 	 */
-	public function backup_options_to_file( $download = false ) {
+	public function backup_options_to_file( $filename = null, $download = false ) {
 		$current_settings = $this->get_current_active_theme_options();
 		$backup_path      = WBF()->get_working_directory() . "/theme-options-backups";
 		$backup_url       = WBF()->get_working_directory_uri() . "/theme-options-backups";
 		if ( ! is_dir( $backup_path ) ) {
 			mkdir( $backup_path );
 		}
-		$date            = date( 'Y-m-d-His' );
-		$backup_filename = $this->get_option_id() . "-" . $date . ".options";
+
+		if(!isset($filename) || !\is_string($filename)){
+			$date = date( 'Y-m-d-His' );
+			$backup_filename = $this->get_option_id() . "-" . $date . ".options";
+		}else{
+			$backup_filename = $filename;
+		}
 
 		if ( ! file_put_contents( $backup_path . "/" . $backup_filename, base64_encode( json_encode( $current_settings ) ) ) ) {
 			throw new \Exception( __( "Unable to create the backup file: " . $backup_path . "/" . $backup_filename ) );
