@@ -234,8 +234,8 @@ class Admin{
 			$backup_url = WBF()->get_working_directory_uri() . "/theme-options-backups";
 		}else{
 			$current_settings = Framework::get_saved_options($theme);
-			$backup_path = WBF()->get_working_directory() . "/theme-options-backups";
-			$backup_url = WBF()->get_working_directory_uri() . "/theme-options-backups";
+			$backup_path = WBF()->get_working_directory_of($theme) . "/theme-options-backups";
+			$backup_url = WBF()->get_working_directory_uri_of($theme) . "/theme-options-backups";
 		}
 		if ( ! is_dir( $backup_path ) ) {
 			mkdir( $backup_path );

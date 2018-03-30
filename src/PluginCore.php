@@ -595,6 +595,15 @@ class PluginCore {
 	}
 
 	/**
+	 * @param string|\WP_Theme $theme
+	 *
+	 * @return string
+	 */
+	public function get_working_directory_uri_of($theme){
+		return path_to_url($this->get_working_directory_of($theme));
+	}
+
+	/**
 	 * Tries to create the WBF working directory
 	 */
 	private function maybe_add_work_directory(){
