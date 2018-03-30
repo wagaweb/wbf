@@ -211,6 +211,7 @@ class Admin{
 
 		$v = new HTMLView("src/modules/options/views/admin/manage-options-page.php","wbf");
 		$v->for_dashboard()->display([
+			'page_title' => __( "Theme Options Manager", "wbf" ),
 			'backup_files' => $backup_files,
 			'wp_menu_slug' => $this->wp_menu_slug
 		]);
@@ -229,10 +230,12 @@ class Admin{
 	public function backup_options_to_file( $filename = null, $theme = null, $download = false ) {
 		if(!isset($theme)){
 			$current_settings = $this->get_current_active_theme_options();
-			$backup_path      = WBF()->get_working_directory() . "/theme-options-backups";
-			$backup_url       = WBF()->get_working_directory_uri() . "/theme-options-backups";
+			$backup_path = WBF()->get_working_directory() . "/theme-options-backups";
+			$backup_url = WBF()->get_working_directory_uri() . "/theme-options-backups";
 		}else{
-
+			$current_settings = $this->get_current_active_theme_options();
+			$backup_path = WBF()->get_working_directory() . "/theme-options-backups";
+			$backup_url = WBF()->get_working_directory_uri() . "/theme-options-backups";
 		}
 		if ( ! is_dir( $backup_path ) ) {
 			mkdir( $backup_path );
@@ -240,7 +243,7 @@ class Admin{
 
 		if(!isset($filename) || !\is_string($filename)){
 			$date = date( 'Y-m-d-His' );
-			$backup_filename = $this->get_option_id() . "-" . $date . ".options";
+			$backup_filename = Framework::get_options_root_id() . "-" . $date . ".options";
 		}else{
 			$backup_filename = $filename;
 		}
@@ -260,11 +263,11 @@ class Admin{
 
 	/**
 	 * Get the current theme options
-	 * @return mixed|void
+	 *
+	 * @return array
 	 */
 	public function get_current_active_theme_options() {
-		$settings = get_option( $this->get_option_id() );
-
+		$settings = get_option( Framework::get_options_root_id(), [] );
 		return $settings;
 	}
 
@@ -272,25 +275,12 @@ class Admin{
 	 * Get the theme options of the specified theme
 	 *
 	 * @param string $theme
+	 *
+	 * @return array
 	 */
 	public function get_theme_options_of_theme($theme){
-
-	}
-
-	/**
-	 * Get the current id for theme options settings (aka the theme name)
-	 * @return string
-	 */
-	public function get_option_id() {
-		$optionsframework_settings = Framework::get_options_framework_settings();
-		// Gets the unique option id
-		if ( isset( $optionsframework_settings['id'] ) ) {
-			$option_name = $optionsframework_settings['id'];
-		} else {
-			$option_name = 'optionsframework';
-		};
-
-		return $option_name;
+		$settings = get_option(Framework::get_theme_options_store($theme),[]);
+		return $settings;
 	}
 
 	/**
