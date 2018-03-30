@@ -38,6 +38,18 @@ add_action( "wbf/compiler/pre_compile", __NAMESPACE__.'\\of_generate_style_file'
 add_filter( "wbf/compiler/parser/line/import", __NAMESPACE__.'\\of_parse_generated_file', 10, 5 );
 
 /*
+ * WBF Status Integration
+ */
+add_filter('wbf/admin/status_page/data', __NAMESPACE__.'\\add_stores_to_wbf_status');
+function add_stores_to_wbf_status($data){
+	$data['engine_info']['data']['theme_options_stores'] = [
+		'name' => _x("Theme Options Stores","Setting page"."wbf"),
+		'value' => Framework::get_theme_options_active_stores()
+	];
+	return $data;
+}
+
+/*
  * Font selector actions
  */
 add_action("wp_ajax_gfontfetcher_getFonts", __NAMESPACE__.'\\FontSelector::getFonts');

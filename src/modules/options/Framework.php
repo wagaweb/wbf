@@ -396,6 +396,23 @@ class Framework{
 	}
 
 	/**
+	 * Get all options name that are used as theme options stores
+	 *
+	 * @return array
+	 */
+	static function get_theme_options_active_stores(){
+		$themes = wp_get_themes();
+		$stores = [];
+		foreach ($themes as $theme){
+			$opt = get_option(self::get_theme_options_store($theme), false);
+			if(\is_array($opt)){
+				$stores[] = self::get_theme_options_store($theme);
+			}
+		}
+		return $stores;
+	}
+
+	/**
 	 * Get all currently valid options
 	 * @return array|false
 	 */
