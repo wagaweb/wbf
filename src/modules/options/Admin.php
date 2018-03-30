@@ -229,11 +229,11 @@ class Admin{
 	 */
 	public function backup_options_to_file( $filename = null, $theme = null, $download = false ) {
 		if(!isset($theme)){
-			$current_settings = $this->get_current_active_theme_options();
+			$current_settings = Framework::get_saved_options();
 			$backup_path = WBF()->get_working_directory() . "/theme-options-backups";
 			$backup_url = WBF()->get_working_directory_uri() . "/theme-options-backups";
 		}else{
-			$current_settings = $this->get_current_active_theme_options();
+			$current_settings = Framework::get_saved_options($theme);
 			$backup_path = WBF()->get_working_directory() . "/theme-options-backups";
 			$backup_url = WBF()->get_working_directory_uri() . "/theme-options-backups";
 		}
@@ -259,28 +259,6 @@ class Admin{
 		}
 
 		return $backup_url . "/" . $backup_filename;
-	}
-
-	/**
-	 * Get the current theme options
-	 *
-	 * @return array
-	 */
-	public function get_current_active_theme_options() {
-		$settings = get_option( Framework::get_options_root_id(), [] );
-		return $settings;
-	}
-
-	/**
-	 * Get the theme options of the specified theme
-	 *
-	 * @param string $theme
-	 *
-	 * @return array
-	 */
-	public function get_theme_options_of_theme($theme){
-		$settings = get_option(Framework::get_theme_options_store($theme),[]);
-		return $settings;
 	}
 
 	/**
