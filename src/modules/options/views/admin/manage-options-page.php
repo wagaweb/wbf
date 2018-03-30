@@ -1,5 +1,3 @@
-<h2><?php _e( "Theme Options Manager", "wbf" ); ?></h2>
-
 <h3><?php _e( "Export or Backup Theme Options", "wbf" ); ?></h3>
 
 <form action="admin.php?page=<?php echo $wp_menu_slug; ?>" method="POST" id="export-themeoptions">
