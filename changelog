@@ -1,5 +1,11 @@
 == Change log ==
 
+Version 1.1.2 - 03/30/2017
+---------------------------------
+- Tweak: Now it is possible to get not only the current working directory, but also working directories of other themes.
+- Tweak: Backups functions of Theme Options module now can backup options of different themes.
+- Tweak: Admin and Framework classes of Theme Options module has been cleaned up a little.
+
 Version 1.1.1 - 03/13/2017
 ---------------------------------
 - Fix: Fixed some rare edge case when files are not required correctly from WP CLI
