@@ -163,6 +163,25 @@ class Framework{
 	}
 
 	/**
+	 * Get the saved options only
+	 *
+	 * @param string|\WP_Theme|null $theme
+	 *
+	 * @return array
+	 */
+	static function get_saved_options($theme = null){
+		if(!isset($theme)){
+			$saved_options = get_option(self::get_theme_options_store());
+		}else{
+			$saved_options = self::get_option(self::get_theme_options_store($theme));
+		}
+		if(!\is_array($saved_options)){
+			$saved_options = []; //Enforce type
+		}
+		return apply_filters("wbf/modules/options/get_saved_options",$saved_options);
+	}
+
+	/**
 	 * Get the options of type $type among the current registered options
 	 *
 	 * @param $type
@@ -341,27 +360,10 @@ class Framework{
 	}
 
 	/**
-	 * Get the value of the wordpress option that tells the system under which wordpress option the current theme options are stored.
-	 *
-	 * Eg: optionsframework = "wbf_<theme-name>_theme_options"
-	 *     wbf_<theme-name>_theme_options = current active theme options values
-	 */
-	static function get_options_framework_settings(){
-		$opt_root = get_option('optionsframework');
-		return $opt_root;
-	}
-
-	/**
-	 * Update the option that contains the current active options key
-	 * 
-	 * @param $settings
-	 */
-	static function set_options_framework_settings($settings){
-		update_option('optionsframework', $settings);
-	}
-
-	/**
 	 * Get the current options root id (the name of the option that contains the current valid options. Default to the current theme name)
+	 *
+	 * @uses get_theme_options_store()
+	 *
 	 * @return string
 	 */
 	static function get_options_root_id(){
@@ -398,17 +400,13 @@ class Framework{
 	 * @return array|false
 	 */
 	static function get_options_values(){
-		$opt_id = self::get_options_root_id();
-		if($opt_id){
-			$values = get_option($opt_id);
-		}
+		$values = self::get_saved_options();
 
 		if(!isset($values) || !$values || empty($values)){
-			//Returns the defaults
-			$values = self::get_default_values();
+			$values = self::get_default_values(); //Returns the defaults
 		}
 
-		if(is_array($values) && !empty($values)){
+		if(\is_array($values) && !empty($values)){
 			return $values;
 		}
 
@@ -416,23 +414,10 @@ class Framework{
 	}
 
 	/**
-	 * Get the saved options only
+	 * Get all currently valid options and applies "wbf/theme_options/get/{$option_name}" filter to them before return
+	 *
+	 * @return array|false
 	 */
-	static function get_saved_options(){
-		$optionsframework_settings = Framework::get_options_root_id();
-		// Gets the unique option id
-		if ($optionsframework_settings) {
-			$options_db_key = $optionsframework_settings;
-		} else {
-			$options_db_key = 'optionsframework';
-		}
-		$saved_options = get_option($options_db_key);
-
-		$saved_options = apply_filters("wbf/modules/options/get_saved_options",$saved_options);
-
-		return $saved_options;
-	}
-
 	static function get_options_values_filtered(){
 		$options = self::get_options_values();
 		foreach($options as $k => $v){
