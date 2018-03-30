@@ -511,26 +511,27 @@ class PluginCore {
 	}
 
 	/**
+	 * Returns WBF base working directory (without the theme)
+	 *
+	 * @uses get_working_directory()
+	 *
+	 * @return bool|string
+	 */
+	public function get_base_working_directory(){
+		return $this->get_working_directory(true);
+	}
+
+	/**
 	 * Returns WBF working directory
 	 *
 	 * @param bool $base (return dirname() of working directory)
+	 *
+	 * @deprecated
 	 *
 	 * @return bool|string
 	 */
 	public function get_wd($base = false){
 		return $this->get_working_directory($base);
-	}
-
-	/**
-	 * Returns WBF base working directory (without the theme)
-	 *
-	 * @return bool|string
-	 */
-	public function get_base_working_directory(){
-		if($this->working_directory){
-			return rtrim(dirname($this->working_directory),"/");
-		}
-		return false;
 	}
 
 	/**
@@ -543,11 +544,27 @@ class PluginCore {
 	public function get_working_directory($base = false){
 		if($this->working_directory){
 			if($base){
-				return dirname(rtrim($this->working_directory,"/"));
+				return \dirname(rtrim($this->working_directory,"/"));
 			}
 			return rtrim($this->working_directory,"/");
 		}
 		return false;
+	}
+
+	/**
+	 * Returns the working directory of the specified theme
+	 *
+	 * @param string|\WP_Theme $theme
+	 *
+	 * @return bool|string
+	 */
+	public function get_working_directory_of($theme){
+		if(\is_string($theme)){
+			$theme = wp_get_theme($theme);
+		}
+		if(!$theme instanceof \WP_Theme) return false;
+
+		return $this->get_base_working_directory().'/'.$theme->get_stylesheet();
 	}
 
 	/**
