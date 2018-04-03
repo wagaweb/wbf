@@ -29,14 +29,8 @@ class ComponentsManager {
 	    add_filter("wbf/modules/options/pre_save",'\WBF\modules\components\ComponentsManager::on_theme_options_saving',10,3);
 	    //add_filter("wbf/modules/options/after_restore",'\WBF\modules\components\ComponentsManager::on_theme_options_restore',10,1);
 	    add_filter("wbf/modules/options/after_reset",'\WBF\modules\components\ComponentsManager::on_theme_options_reset',10,1);
-	    /** Detect components in main theme **/
-        self::detect_components(get_root_components_directory());
-        /** Detect components in child theme **/
-        if(is_child_theme()){
-            self::detect_components(get_child_components_directory(),true);
-        }
-	    //Update registered_components global
-	    self::update_global_components_vars();
+
+	    self::detect_components(); //Detect components
 
 	    do_action("wbf/modules/components/after_init");
     }
@@ -44,19 +38,39 @@ class ComponentsManager {
 	/**
 	 * Detect the components in the their directory and update the registered component WP option. Called by self::init()
 	 *
-	 * @param $components_directory
-	 * @param bool $child_theme
 	 *
-	 * @use self::get_registered_components
+	 * @use self::detect_components_from_directory
 	 *
 	 * @return mixed|void
 	 * @throws \Exception
 	 */
-    static function detect_components( $components_directory, $child_theme = false ) {
-	    $registered_components = self::get_registered_components($child_theme);
+    static function detect_components(){
+	    /** Detect components in main theme **/
+	    $parent_components = self::detect_components_from_directory(get_root_components_directory());
+	    /** Detect components in child theme **/
+	    if(is_child_theme()){
+		    $child_components = self::detect_components_from_directory(get_child_components_directory(),true);
+	    }
+	    //Update registered_components global
+	    self::update_global_components_vars();
+    }
+
+	/**
+	 * Detect the components in the specified directory and update the registered component WP option.
+	 *
+	 * @param $components_directory
+	 * @param bool $child_theme_context are we trying to detect the components from a child theme?
+	 *
+	 * @use self::get_registered_components
+	 *
+	 * @return array
+	 * @throws \Exception
+	 */
+    static function detect_components_from_directory( $components_directory, $child_theme_context = false ) {
+	    $registered_components = self::get_registered_components($child_theme_context);
 	    $states = self::get_components_state();
 
-	    $components_directories = apply_filters("wbf/modules/components/directories",[$components_directory],$child_theme);
+	    $components_directories = apply_filters("wbf/modules/components/directories",[$components_directory],$child_theme_context);
 
         //Unset deleted and invalid components
         foreach ( $registered_components as $name => $data ) {
@@ -100,7 +114,7 @@ class ComponentsManager {
 					    	'tags' => isset($component_data['Tags']) && is_array($component_data['Tags']) ? $component_data['Tags'] : [],
 					    	'category' => isset($component_data['Category']) ? $component_data['Category'] : "",
 					    ],
-					    'child_component' => $child_theme,
+					    'child_component' => $child_theme_context,
 					    //'enabled' => array_key_exists( $component_name, $registered_components ) ? $registered_components[ $component_name ][ 'enabled' ] : false
 				    ];
 				    //if($component_params['enabled'] === null) $component_params['enabled'] = false;
@@ -112,7 +126,7 @@ class ComponentsManager {
 		    }
 	    }
 
-	    self::update_registered_components( $registered_components, $child_theme ); //update the WP Option of registered component
+	    self::update_registered_components( $registered_components, $child_theme_context ); //update the WP Option of registered component
 
         return $registered_components;
     }
