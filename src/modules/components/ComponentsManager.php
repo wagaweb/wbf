@@ -37,6 +37,31 @@ class ComponentsManager {
     }
 
 	/**
+	 * Prune invalid components and update the registered component WP option. Called by self::init()
+	 */
+	static function prune_components(){
+		$prune_components = function($components,$directory){
+			foreach ($components as $name => $data){
+				//If the file does not exists or if the file is not in the expected directory, unset
+				if( !is_file($data['file']) || !preg_match('|'.$directory.'|', $data['file']) ){
+					unset( $components[$name] );
+				}
+			}
+			return $components;
+		};
+
+		//Prune from parent
+		$registered_components = $prune_components(self::get_registered_components(),get_root_components_directory());
+		self::update_registered_components( $registered_components, false );
+
+		//Prune from child
+		if(is_child_theme()){
+			$registered_components = $prune_components(self::get_registered_components(true),get_child_components_directory());
+			self::update_registered_components( $registered_components, true );
+		}
+	}
+
+	/**
 	 * Detect the components in the their directory and update the registered component WP option. Called by self::init()
 	 *
 	 * @use self::detect_components_from_directories
@@ -54,31 +79,6 @@ class ComponentsManager {
 		    self::update_registered_components( $child_components, true ); //update the WP Option of registered component
 	    }
 	    self::update_global_components_vars(); //Update registered_components global
-    }
-
-	/**
-	 * Prune invalid components
-	 */
-    static function prune_components(){
-    	$prune_components = function($components,$directory){
-		    foreach ($components as $name => $data){
-			    //If the file does not exists or if the file is not in the expected directory, unset
-			    if( !is_file($data['file']) || !preg_match('|'.$directory.'|', $data['file']) ){
-				    unset( $components[$name] );
-			    }
-		    }
-		    return $components;
-	    };
-
-	    //Prune from parent
-	    $registered_components = $prune_components(self::get_registered_components(),get_root_components_directory());
-	    self::update_registered_components( $registered_components, false );
-
-	    //Prune from child
-	    if(is_child_theme()){
-		    $registered_components = $prune_components(self::get_registered_components(true),get_child_components_directory());
-		    self::update_registered_components( $registered_components, true );
-	    }
     }
 
 	/**
@@ -138,7 +138,7 @@ class ComponentsManager {
 	 *
 	 * @param bool|FALSE $get_child_components
 	 *
-	 * @return mixed|void
+	 * @return array
 	 */
 	static function get_registered_components($get_child_components = false){
 		$theme = wp_get_theme();
@@ -217,6 +217,7 @@ class ComponentsManager {
 	 * @param bool|false $registered_components
 	 *
 	 * @return array
+	 * @throws \Exception
 	 */
 	static function update_global_components_vars($registered_components = false){
 		if(!$registered_components){
@@ -230,7 +231,9 @@ class ComponentsManager {
 					$registered_components[$c['nicename']] = $oComponent;
 				}
 			}catch(\Exception $e){
-				if(function_exists("WBF")) WBF()->services()->get_notice_manager()->add_notice($c['nicename']."_error",$e->getMessage(),"error","_flash_");
+				if(function_exists("WBF")){
+					WBF()->services()->get_notice_manager()->add_notice($c['nicename']."_error",$e->getMessage(),"error","_flash_");
+				}
 			}
 		}
 		return $registered_components;
