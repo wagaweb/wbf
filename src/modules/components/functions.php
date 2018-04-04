@@ -55,6 +55,8 @@ function get_child_components_directory_uri(){
  * @return string
  */
 function get_root_components_directory(){
+	static $directory;
+	if(isset($directory)) return $directory;
 	$location = apply_filters("wbf/modules/components/root_directory_location",get_template_directory());
 	$name = get_root_dirname();
 	$directory = $location."/".$name."/";
@@ -69,6 +71,8 @@ function get_root_components_directory(){
  * @return string
  */
 function get_child_components_directory(){
+	static $directory;
+	if(isset($directory)) return $directory;
 	$location = apply_filters("wbf/modules/components/child_directory_location",get_stylesheet_directory());
 	$name = get_child_dirname();
 	$directory = $location."/".$name."/";
