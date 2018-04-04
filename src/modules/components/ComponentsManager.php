@@ -30,7 +30,8 @@ class ComponentsManager {
 	    //add_filter("wbf/modules/options/after_restore",'\WBF\modules\components\ComponentsManager::on_theme_options_restore',10,1);
 	    add_filter("wbf/modules/options/after_reset",'\WBF\modules\components\ComponentsManager::on_theme_options_reset',10,1);
 
-	    self::detect_components(); //Detect components
+	    self::prune_components();
+	    self::detect_components();
 
 	    do_action("wbf/modules/components/after_init");
     }
@@ -38,8 +39,7 @@ class ComponentsManager {
 	/**
 	 * Detect the components in the their directory and update the registered component WP option. Called by self::init()
 	 *
-	 *
-	 * @use self::detect_components_from_directory
+	 * @use self::detect_components_from_directories
 	 *
 	 * @return mixed|void
 	 * @throws \Exception
@@ -47,16 +47,42 @@ class ComponentsManager {
     static function detect_components(){
 	    /** Detect components in main theme **/
 	    $parent_components = self::detect_components_from_directory(get_root_components_directory());
+	    self::update_registered_components( $parent_components, false ); //update the WP Option of registered component
 	    /** Detect components in child theme **/
 	    if(is_child_theme()){
 		    $child_components = self::detect_components_from_directory(get_child_components_directory(),true);
+		    self::update_registered_components( $child_components, true ); //update the WP Option of registered component
 	    }
-	    //Update registered_components global
-	    self::update_global_components_vars();
+	    self::update_global_components_vars(); //Update registered_components global
     }
 
 	/**
-	 * Detect the components in the specified directory and update the registered component WP option.
+	 * Prune invalid components
+	 */
+    static function prune_components(){
+    	$prune_components = function($components,$directory){
+		    foreach ($components as $name => $data){
+			    //If the file does not exists or if the file is not in the expected directory, unset
+			    if( !is_file($data['file']) || !preg_match('|'.$directory.'|', $data['file']) ){
+				    unset( $components[$name] );
+			    }
+		    }
+		    return $components;
+	    };
+
+	    //Prune from parent
+	    $registered_components = $prune_components(self::get_registered_components(),get_root_components_directory());
+	    self::update_registered_components( $registered_components, false );
+
+	    //Prune from child
+	    if(is_child_theme()){
+		    $registered_components = $prune_components(self::get_registered_components(true),get_child_components_directory());
+		    self::update_registered_components( $registered_components, true );
+	    }
+    }
+
+	/**
+	 * Detect the components in the specified directories and update the registered component WP option.
 	 *
 	 * @param $components_directory
 	 * @param bool $child_theme_context are we trying to detect the components from a child theme?
@@ -68,65 +94,41 @@ class ComponentsManager {
 	 */
     static function detect_components_from_directory( $components_directory, $child_theme_context = false ) {
 	    $registered_components = self::get_registered_components($child_theme_context);
-	    $states = self::get_components_state();
 
-	    $components_directories = apply_filters("wbf/modules/components/directories",[$components_directory],$child_theme_context);
+	    if(!is_dir($components_directory)){
+	    	throw new \Exception('Invalid components directory: '.$components_directory);
+	    }
 
-        //Unset deleted and invalid components
-        foreach ( $registered_components as $name => $data ) {
-            if ( ! is_file( $data['file'] ) ) {
-                unset( $registered_components[ $name ] );
-            }else{
-                foreach ($components_directories as $dir){
-                    if( preg_match("|".$dir."|", $data['file']) ){
-                        $do_not_unset = true;
-                    }else{
-                        $do_not_unset = false;
-                    }
-                }
-                if(!isset($do_not_unset) || !$do_not_unset){
-                    unset( $registered_components[ $name ] );
-                }
-            }
-        }
-        if(isset($states_changed_flag) && $states_changed_flag){
-        	self::update_components_state($states);
-        }
-
-	    foreach ($components_directories as $directory){
-		    $components_files = listFolderFiles( $directory );
-		    foreach ( $components_files as $file ) {
-			    //$component_data = get_plugin_data($file);
-			    $component_data = ComponentFactory::get_component_data( $file );
-			    if ( $component_data['Name'] != "" ) {
-				    //The component is valid, now checks if is already in registered list
-				    $component_name = basename( dirname( $file ) );
-				    if ( $component_name == "components" ) { //this means that the component file is in root directory
-					    $pinfo          = pathinfo( $file );
-					    $component_name = $pinfo['filename'];
-				    }
-				    //Buildup component data:
-				    $component_params = [
-					    'nicename' => $component_name,
-					    'class_name' => isset($component_data['Class Name']) && $component_data['Class Name'] != "" ? $component_data['Class Name'] : ComponentFactory::get_component_class_name($component_name),
-					    'file' => $file,
-					    'metadata' => [
-					    	'tags' => isset($component_data['Tags']) && is_array($component_data['Tags']) ? $component_data['Tags'] : [],
-					    	'category' => isset($component_data['Category']) ? $component_data['Category'] : "",
-					    ],
-					    'child_component' => $child_theme_context,
-					    //'enabled' => array_key_exists( $component_name, $registered_components ) ? $registered_components[ $component_name ][ 'enabled' ] : false
-				    ];
-				    //if($component_params['enabled'] === null) $component_params['enabled'] = false;
-				    if(isset($component_params['enabled'])) unset($component_params['enabled']);
-				    if ( ! array_key_exists( $component_name, $registered_components ) || $registered_components[ $component_name ] != $component_data ) {
-					    $registered_components[ $component_name ] = $component_params;
-				    }
+	    $components_files = listFolderFiles( $components_directory );
+	    foreach ( $components_files as $file ) {
+		    //$component_data = get_plugin_data($file);
+		    $component_data = ComponentFactory::get_component_data( $file );
+		    if ( $component_data['Name'] != "" ) {
+			    //The component is valid, now checks if is already in registered list
+			    $component_name = basename( dirname( $file ) );
+			    if ( $component_name == "components" ) { //this means that the component file is in root directory
+				    $pinfo          = pathinfo( $file );
+				    $component_name = $pinfo['filename'];
+			    }
+			    //Buildup component data:
+			    $component_params = [
+				    'nicename' => $component_name,
+				    'class_name' => isset($component_data['Class Name']) && $component_data['Class Name'] != "" ? $component_data['Class Name'] : ComponentFactory::get_component_class_name($component_name),
+				    'file' => $file,
+				    'metadata' => [
+				        'tags' => isset($component_data['Tags']) && is_array($component_data['Tags']) ? $component_data['Tags'] : [],
+				        'category' => isset($component_data['Category']) ? $component_data['Category'] : "",
+				    ],
+				    'child_component' => $child_theme_context,
+				    //'enabled' => array_key_exists( $component_name, $registered_components ) ? $registered_components[ $component_name ][ 'enabled' ] : false
+			    ];
+			    //if($component_params['enabled'] === null) $component_params['enabled'] = false;
+			    if(isset($component_params['enabled'])) unset($component_params['enabled']);
+			    if ( ! array_key_exists( $component_name, $registered_components ) || $registered_components[ $component_name ] != $component_data ) {
+				    $registered_components[ $component_name ] = $component_params;
 			    }
 		    }
 	    }
-
-	    self::update_registered_components( $registered_components, $child_theme_context ); //update the WP Option of registered component
 
         return $registered_components;
     }
