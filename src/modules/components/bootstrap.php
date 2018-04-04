@@ -41,8 +41,13 @@ function backup_current_components_states(){
 add_action("wbf/modules/components/before_init", __NAMESPACE__."\\backup_current_components_states");
 
 function module_init(){
-    ComponentsManager::init();
-    ComponentsManager::toggle_components(); //enable or disable components if necessary (manage the disable\enable actions sent by admin page)
+	try{
+		maybe_create_components_directories();
+		ComponentsManager::init();
+		ComponentsManager::toggle_components(); //enable or disable components if necessary (manage the disable\enable actions sent by admin page)
+	}catch (\Exception $e){
+		WBF()->get_service_manager()->get_notice_manager()->add_notice('no_components_directory',$e->getMessage(),'error','_flash_');
+	}
 }
 add_action("wbf_init",'\WBF\modules\components\module_init', 10);
 

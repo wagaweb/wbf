@@ -2,6 +2,30 @@
 namespace WBF\modules\components;
 
 /**
+ * Ensure that the components directories exists
+ *
+ * @throws \Exception
+ */
+function maybe_create_components_directories(){
+	$root = get_root_components_directory();
+	if(!is_dir($root)){
+		$r = wp_mkdir_p($root);
+		if(!$r){
+			throw new \Exception('Unable to create dir: '.$root);
+		}
+	}
+	if(is_child_theme()){
+		$child = get_child_components_directory();
+		if(!is_dir($child)){
+			$r = wp_mkdir_p($child);
+			if(!$r){
+				throw new \Exception('Unable to create dir: '.$child);
+			}
+		}
+	}
+}
+
+/**
  * Get the components directory URI in the parent theme
  *
  * @uses get_root_dirname()
