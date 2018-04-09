@@ -118,8 +118,7 @@ class ComponentsManager {
 				    'metadata' => [
 				        'tags' => $component_data['Tags'],
 				        'category' => $component_data['Category'],
-					    'version' => $component_data['Version'],
-					    'update_uri' => $component_data['UpdateURI'],
+					    'version' => $component_data['Version']
 				    ],
 				    'child_component' => $child_theme_context,
 				    //'enabled' => array_key_exists( $component_name, $registered_components ) ? $registered_components[ $component_name ][ 'enabled' ] : false
