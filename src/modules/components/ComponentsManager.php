@@ -116,8 +116,10 @@ class ComponentsManager {
 				    'class_name' => isset($component_data['Class Name']) && $component_data['Class Name'] != "" ? $component_data['Class Name'] : ComponentFactory::get_component_class_name($component_name),
 				    'file' => $file,
 				    'metadata' => [
-				        'tags' => isset($component_data['Tags']) && is_array($component_data['Tags']) ? $component_data['Tags'] : [],
-				        'category' => isset($component_data['Category']) ? $component_data['Category'] : "",
+				        'tags' => $component_data['Tags'],
+				        'category' => $component_data['Category'],
+					    'version' => $component_data['Version'],
+					    'update_uri' => $component_data['UpdateURI'],
 				    ],
 				    'child_component' => $child_theme_context,
 				    //'enabled' => array_key_exists( $component_name, $registered_components ) ? $registered_components[ $component_name ][ 'enabled' ] : false
