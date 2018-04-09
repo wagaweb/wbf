@@ -81,15 +81,25 @@ class ComponentFactory {
 			'Tags'         => 'Tags',
 			'Author'       => 'Author',
 			'AuthorURI'    => 'Author URI',
-			'ComponentURI' => 'Component URI',
+			'ComponentURI' => 'Component URI'
 		);
+
+		$default_headers = apply_filters('wbf/modules/components/component/default_file_headers', $default_headers);
 
 		$component_data = get_file_data( $component_file, $default_headers );
 
 		if(isset($component_data['Tags']) && !empty($component_data['Tags'])){
 			$component_data['Tags'] = str_replace(" ","",$component_data['Tags']);
 			$component_data['Tags'] = explode(",",$component_data['Tags']);
+		}else{
+			$component_data['Tags'] = [];
 		}
+
+		if(!isset($component_data['Version']) || $component_data['Version'] === ''){
+			$component_data['Version'] = '1.0.0';
+		}
+
+		$component_data = apply_filters('wbf/modules/components/component_factory/retrieved_data', $component_data, $component_file, $default_headers);
 
 		return $component_data;
 	}
