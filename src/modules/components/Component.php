@@ -62,6 +62,10 @@ class Component {
 	 * @var bool
 	 */
 	var $override = false;
+	/**
+	 * @var string
+	 */
+	var $version;
 
 	/**
 	 * Component constructor.
@@ -91,6 +95,9 @@ class Component {
 		    }
 		    if(isset($component_data['metadata']['tags']) && is_array($component_data['metadata']['tags']) && !empty($component_data['metadata']['tags'])){
 			    $this->tags = $component_data['metadata']['tags'];
+		    }
+		    if(isset($component_data['metadata']['version'])){
+	    		$this->set_version($component_data['metadata']['version']);
 		    }
 	    }
     }
@@ -342,5 +349,27 @@ class Component {
 	 */
 	public function is_active(){
 		return $this->active;
+	}
+
+	/**
+	 * @param $version
+	 */
+	public function set_version($version){
+		$this->version = $version;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function get_version(){
+		if(!isset($this->version)){
+			$data = ComponentFactory::get_component_data($this->file);
+			if(isset($data['Version'])){
+				$this->set_version($data['Version']);
+			}else{
+				$this->set_version('1.0.0');
+			}
+		}
+		return $this->version;
 	}
 }
