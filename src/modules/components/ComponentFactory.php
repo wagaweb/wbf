@@ -23,12 +23,65 @@ class ComponentFactory {
 
 		//Check if component is active
 		$states = ComponentsManager::get_components_state();
-		if(isset($states[$component_params['nicename']]) && $states[$component_params['nicename']] == 1){
+		if(isset($states[$component_params['nicename']]) && $states[$component_params['nicename']] == 1){  //Here the nicename is the slug
 			$component_params['enabled'] = true;
 		}else{
 			$component_params['enabled'] = false;
 		}
 
+		if(!class_exists($class_name)){
+			$class_name = $class_name."Component";
+		}
+		if(class_exists($class_name)){
+			return new $class_name($component_params);
+		}else{
+			throw new \Exception( sprintf( __( "Component class (%s) not defined. Unable to activate the component.", "wbf" ), $component_params['nicename'] ) );
+		}
+	}
+
+	/**
+	 * Return an instance of Component
+	 *
+	 * @param $slug
+	 *
+	 * @return Component|false
+	 * @throws \Exception
+	 */
+	public static function create_from_slug($slug){
+		$component_params = [];
+		//Getting the main file
+		$main_files = self::generate_component_mainfile_path($slug);
+		if(is_file($main_files['child']) && is_child_theme()){
+			$component_params['file'] = $main_files['child'];
+			$component_params['child_component'] = true;
+		}elseif(is_file($main_files['core'])){
+			$component_params['file'] = $main_files['core'];
+			$component_params['child_component'] = false;
+		}
+
+		//Requiring the main file
+		if(!file_exists($component_params['file'])) return false;
+		$component_params['nicename'] = $slug;
+		require_once( $component_params['file'] );
+		$class_name = self::get_component_class_name($component_params['nicename']);
+
+		//Check if component is active
+		$states = ComponentsManager::get_components_state();
+		if(isset($states[$component_params['nicename']]) && $states[$component_params['nicename']] == 1){  //Here the nicename is the slug
+			$component_params['enabled'] = true;
+		}else{
+			$component_params['enabled'] = false;
+		}
+
+		//Parsing metadata
+		$component_data = self::get_component_data( $component_params['file'] );
+		$component_params['metadata'] = [
+			'tags' => $component_data['Tags'],
+			'category' => $component_data['Category'],
+			'version' => $component_data['Version']
+		];
+
+		//Getting the class
 		if(!class_exists($class_name)){
 			$class_name = $class_name."Component";
 		}
@@ -105,21 +158,22 @@ class ComponentFactory {
 	}
 	
 	/**
-	 * Get the possibile paths for a component named $c_name. The component does not have to exists.
+	 * Get the possibile paths for a component with specified. The component does not have to exists.
 	 *
-	 * @param $c_name
+	 * @param $slug
 	 *
 	 * @return array
 	 */
-	public static function generate_component_mainfile_path( $c_name ) {
+	public static function generate_component_mainfile_path( $slug ) {
 		$core_dir  = get_root_components_directory();
 		$child_dir = get_child_components_directory();
 
-		$c_name = strtolower( $c_name );
+		$dirname = $slug;
+		$filename = self::get_component_class_name($slug);
 
 		return array(
-			'core'  => $core_dir . $c_name . "/$c_name.php",
-			'child' => $core_dir . $c_name . "/$c_name.php"
+			'core'  => $core_dir . $dirname . "/$filename.php",
+			'child' => $child_dir . $dirname . "/$filename.php"
 		);
     }
 }
