@@ -160,4 +160,27 @@ class WordPress {
 
 		return $meta;
 	}
+
+	/**
+	 * Toggle maintenance mode for the site.
+	 *
+	 * Creates/deletes the maintenance file to enable/disable maintenance mode.
+	 *
+	 * @param bool $enable True to enable maintenance mode, false to disable.
+	 *
+	 * @extracted from 'class-wp-upgrader.php'
+	 */
+	public static function maintenance_mode( $enable = false ) {
+		$file = ABSPATH . '.maintenance';
+		if ( $enable ) {
+			// Create maintenance file to signal that we are upgrading
+			$maintenance_string = '<?php $upgrading = ' . time() . '; ?>';
+			if(is_file($file)){
+				unlink($file);
+			}
+			file_put_contents($file, $maintenance_string);
+		} elseif ( ! $enable && is_file($file) ) {
+			unlink($file);
+		}
+	}
 }
