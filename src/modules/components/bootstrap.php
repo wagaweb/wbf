@@ -16,27 +16,26 @@ $GLOBALS['registered_components'] = array();
  * Backup registered components (for backward compatibility)
  */
 function backup_current_components_states(){
-	if(!get_option("wbf_components_states_backuped_once",false)){
-		$parent_registered_components = ComponentsManager::get_registered_components();
-		$child_registered_components = ComponentsManager::get_registered_components(true);
-		//Backup
-		update_option(get_template()."_registered_components_backup",$parent_registered_components);
-		update_option(get_stylesheet()."_registered_components_backup",$child_registered_components);
-		update_option("wbf_components_states_backuped_once",true);
-		//Update the states
-		$states = [];
-		if($parent_registered_components && is_array($parent_registered_components) && !empty($parent_registered_components)){
-			foreach ($parent_registered_components as $component_name => $params){
-				$states[$component_name] = isset($params['enabled']) && $params['enabled'] ? 1 : 0;
-			}
+	if(get_option("wbf_components_states_backuped_once",false)) return;
+	$parent_registered_components = ComponentsManager::get_registered_components();
+	$child_registered_components = ComponentsManager::get_registered_components(true);
+	//Backup
+	update_option(get_template()."_registered_components_backup",$parent_registered_components);
+	update_option(get_stylesheet()."_registered_components_backup",$child_registered_components);
+	update_option("wbf_components_states_backuped_once",true);
+	//Update the states
+	$states = [];
+	if($parent_registered_components && is_array($parent_registered_components) && !empty($parent_registered_components)){
+		foreach ($parent_registered_components as $component_name => $params){
+			$states[$component_name] = isset($params['enabled']) && $params['enabled'] ? 1 : 0;
 		}
-		if($child_registered_components && is_array($child_registered_components) && !empty($child_registered_components)){
-			foreach ($child_registered_components as $component_name => $params){
-				$states[$component_name] = isset($params['enabled']) && $params['enabled'] ? 1 : 0;
-			}
-		}
-		ComponentsManager::update_components_state($states);
 	}
+	if($child_registered_components && is_array($child_registered_components) && !empty($child_registered_components)){
+		foreach ($child_registered_components as $component_name => $params){
+			$states[$component_name] = isset($params['enabled']) && $params['enabled'] ? 1 : 0;
+		}
+	}
+	ComponentsManager::update_components_state($states);
 }
 add_action("wbf/modules/components/before_init", __NAMESPACE__."\\backup_current_components_states");
 
