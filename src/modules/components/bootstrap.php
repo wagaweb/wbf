@@ -16,9 +16,9 @@ $GLOBALS['registered_components'] = array();
  * Backup registered components (for backward compatibility)
  */
 function backup_current_components_states(){
-	$parent_registered_components = ComponentsManager::get_registered_components();
-	$child_registered_components = ComponentsManager::get_registered_components(true);
 	if(!get_option("wbf_components_states_backuped_once",false)){
+		$parent_registered_components = ComponentsManager::get_registered_components();
+		$child_registered_components = ComponentsManager::get_registered_components(true);
 		//Backup
 		update_option(get_template()."_registered_components_backup",$parent_registered_components);
 		update_option(get_stylesheet()."_registered_components_backup",$child_registered_components);
