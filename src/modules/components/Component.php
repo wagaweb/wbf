@@ -352,6 +352,15 @@ class Component {
 	}
 
 	/**
+	 * Return the component slug
+	 *
+	 * @return string
+	 */
+	public function get_slug(){
+		return $this->name;
+	}
+
+	/**
 	 * @param $version
 	 */
 	public function set_version($version){
