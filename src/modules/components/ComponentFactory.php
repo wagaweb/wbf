@@ -60,7 +60,7 @@ class ComponentFactory {
 		}
 
 		//Requiring the main file
-		if(!file_exists($component_params['file'])) return false;
+		if(!isset($component_params['file']) || !file_exists($component_params['file'])) return false;
 		$component_params['nicename'] = $slug;
 		require_once( $component_params['file'] );
 		$class_name = self::get_component_class_name($component_params['nicename']);
