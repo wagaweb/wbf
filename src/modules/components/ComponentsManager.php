@@ -62,6 +62,15 @@ class ComponentsManager {
 			$registered_components = $prune_components(self::get_registered_components(true),get_child_components_directory());
 			self::update_registered_components( $registered_components, true );
 		}
+
+		//Prune states
+		$states = self::get_components_state();
+		foreach ($states as $component_name => $component_state){
+			if(!self::is_present($component_name)){
+				unset($states[$component_name]);
+			}
+		}
+		ComponentsManager::update_components_state($states);
 	}
 
 	/**
