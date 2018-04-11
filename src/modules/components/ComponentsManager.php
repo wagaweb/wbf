@@ -42,9 +42,12 @@ class ComponentsManager {
 	static function prune_components(){
 		$prune_components = function($components,$directory){
 			foreach ($components as $name => $data){
-				//If the file does not exists or if the file is not in the expected directory, unset
+				//If the file does not exists or if the file is not in the expected directory, unset and remove the component
 				if( !is_file($data['file']) || !preg_match('|'.$directory.'|', $data['file']) ){
 					unset( $components[$name] );
+					if(ComponentsManager::is_active($name)){
+						ComponentsManager::remove($name);
+					}
 				}
 			}
 			return $components;
@@ -70,6 +73,8 @@ class ComponentsManager {
 	 * @throws \Exception
 	 */
     static function detect_components(){
+    	static $already_detected;
+    	if($already_detected === true) return;
 	    /** Detect components in main theme **/
 	    $parent_components = self::detect_components_from_directory(get_root_components_directory());
 	    self::update_registered_components( $parent_components, false ); //update the WP Option of registered component
@@ -79,6 +84,7 @@ class ComponentsManager {
 		    self::update_registered_components( $child_components, true ); //update the WP Option of registered component
 	    }
 	    self::update_global_components_vars(); //Update registered_components global
+	    $already_detected = true;
     }
 
 	/**
@@ -706,6 +712,21 @@ class ComponentsManager {
      */
     static function disable( $component_name, $child_component = false ) {
 	    self::switch_component_state($component_name, self::STATE_DISABLED, $child_component);
+    }
+
+	/**
+	 * Remove a component from the DB (without calling the disable functions)
+	 *
+	 * @param $component_name
+	 *
+	 * @throws \Exception
+	 */
+    static function remove ( $component_name ) {
+	    $states = ComponentsManager::get_components_state();
+	    if(isset($states[$component_name])){
+	    	unset($states[$component_name]);
+	    }
+	    ComponentsManager::update_components_state($states);
     }
 
 	/**
