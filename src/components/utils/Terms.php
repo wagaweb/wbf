@@ -251,21 +251,15 @@ class Terms {
 	}
 
 	/**
-	 * Retrieve a taxonomy terms list in hierarchical order
+	 * Returns an hierarchical tree of $taxonomy terms
 	 *
-	 * @param $object
+	 * @param $taxonomy
 	 *
-	 * @return mixed
+	 * @return array
 	 */
-	static function get_tax_terms_hierarchical($object){
-		// get wp taxonomies as unsorted array
-		$taxonomies = get_object_taxonomies($object);
-
-		foreach ( $taxonomies as $taxomomy ) {
-			$terms = get_terms([
-				'taxonomy' => $taxomomy
-			]);
-
+	static function get_tax_terms_hierarchical($taxonomy){
+		$terms = get_terms(['taxonomy' => $taxonomy]);
+		if(is_array($terms) && !empty($terms)){
 			/**
 			 * generate array of arrays where each topmost key is a parent id.
 			 * the function place each child under the correspondent parent id.
@@ -299,6 +293,24 @@ class Terms {
 			// now return only the topmost parent terms array
 			return $organized_terms[0];
 		}
+		return [];
+	}
+
+	/**
+	 * Retrieve the taxonomies of $object, and then retrieve the hierarchical tree of terms of every taxonomy
+	 *
+	 * @param $object
+	 *
+	 * @return array
+	 */
+	static function get_object_taxonomies_terms_hierarchical($object){
+		// get wp taxonomies as unsorted array
+		$taxonomies = get_object_taxonomies($object);
+		$organized_terms = [];
+		foreach ( $taxonomies as $taxomomy ) {
+			$organized_terms[] = self::get_tax_terms_hierarchical($taxomomy);
+		}
+		return $organized_terms;
 	}
 
 	/**
