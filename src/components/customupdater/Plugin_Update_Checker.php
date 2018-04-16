@@ -196,8 +196,11 @@ class Plugin_Update_Checker extends \PluginUpdateChecker{
 		$state = $this->getUpdateState();
 		$shouldCheck = empty($state) || !isset($state->lastCheck) || ( (time() - $state->lastCheck) >= $timeout );
 		$shouldCheck = apply_filters('puc_check_now-' . $this->slug, $shouldCheck, (!empty($state) && isset($state->lastCheck)) ? $state->lastCheck : 0, $this->checkPeriod); //Let plugin authors substitute their own algorithm.
-		if(isset($_GET['force_wbf_plugin_update_check']) && $_GET['force_wbf_plugin_update_check'] == 1){
-			$shouldCheck = true;
+		if(isset($_GET['force-check']) && $_GET['force-check'] === '1' && is_admin()){
+			global $pagenow;
+			if($pagenow === 'update-core.php'){
+				$shouldCheck = true;
+			}
 		}
 
 		if($shouldCheck){

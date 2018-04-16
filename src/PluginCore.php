@@ -1167,7 +1167,7 @@ class PluginCore {
 		$display_args = [
 			'page_title' => __("WBF Status"),
 			'sections' => $data,
-			'force_plugin_update_link' => admin_url()."/update-core.php?force_wbf_plugin_update_check=1"
+			'force_plugin_update_link' => add_query_arg(['force-check'=>'1'],admin_url('update-core.php'))
 		];
 
 		$display_args = apply_filters('wbf/admin/status_page/display_args',$display_args);
