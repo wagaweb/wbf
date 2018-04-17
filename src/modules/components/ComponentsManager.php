@@ -487,6 +487,7 @@ class ComponentsManager {
 
 		//When theme options are saved, $value contains some wrong values for components options. We need to use the auxiliary array to restore those values:
 		foreach($component_options as $k => $v){
+			if(!self::is_component_option($k)) continue;
 			if(!isset($theme_options[$k]) || (isset($theme_options[$k]) && $theme_options[$k] != $v)){
 				if($v == "on") $v = "1"; //the checkboxes are saved as "1" or FALSE, but here we can have "on" as value. This is a legacy issue with vendor options framework.
 				$theme_options[$k] = $v;
@@ -811,7 +812,7 @@ class ComponentsManager {
 	 * @return array
 	 */
     static function get_components_options(){
-	    $component_options = call_user_func( function () {
+	    $component_options = \call_user_func( function () {
 		    $cbs = Framework::get_registered_options();
 		    $cbs = array_filter( $cbs, function ( $el ) {
 			    if ( isset( $el['component'] ) && $el['component'] ) {
@@ -825,6 +826,16 @@ class ComponentsManager {
 	    } ); //Gets the components options (not the actual values)
 
 	    return $component_options;
+    }
+
+	/**
+	 * @param $option_name
+	 *
+	 * @return bool
+	 */
+    static function is_component_option($option_name){
+	    $opt = Framework::get_option_object($option_name);
+	    return isset( $opt['component'] ) && $opt['component'];
     }
 
 	/**
