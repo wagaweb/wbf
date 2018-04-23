@@ -174,6 +174,8 @@ class PluginCore {
 			add_action( "switch_theme", [$this,"deactivation"], 4 );
 		}
 
+		add_filter('update_footer', [$this,'inject_engine_info'],11);
+
 		/*
 		 * Main Actions: BEGIN
 		 */
@@ -268,32 +270,19 @@ class PluginCore {
 	 * Get the copyright string
 	 *
 	 * @return string
+	 * @throws \Exception
 	 */
 	public function get_copyright(){
-		$v = new components\mvc\HTMLView("src/views/admin/copyright.php","wbf");
+		$v = new components\mvc\HTMLView("src/views/admin/engine-info.php","wbf");
 
-		$label = "WBF";
-		$version = self::version;
+		$args = [
+			'label' => "WBF",
+			'version' => self::version
+		];
 
-		$theme = wp_get_theme();
-		if($theme && isset($theme->stylesheet)){
-			if($theme->stylesheet === "waboot"){
-				$label = "Waboot";
-				$version = $theme->version;
-			}
-			elseif($theme->stylesheet !== "waboot" && $theme->template === "waboot"){
-				$theme = wp_get_theme("waboot");
-				if($theme && isset($theme->version)){
-					$label = "Waboot";
-					$version = $theme->version;
-				}
-			}
-		}
+		$args = apply_filters('wbf/engine_info_string/args',$args);
 
-		$output = $v->clean()->get([
-			'label' => $label,
-			'version' => $version,
-		]);
+		$output = $v->clean()->get($args);
 
 		return $output;
 	}
@@ -302,6 +291,7 @@ class PluginCore {
 	 * Print copyright string
 	 *
 	 * @return void
+	 * @throws \Exception
 	 */
 	public function print_copyright(){
 		echo $this->get_copyright();
@@ -459,6 +449,7 @@ class PluginCore {
 	 * Checks if WBF is in the plugins directory
 	 *
 	 * @return bool
+	 * @throws \Exception
 	 */
 	public function is_plugin(){
 		$path = WBF()->get_path();
@@ -977,6 +968,22 @@ class PluginCore {
 			);
 			$wp_admin_bar->add_node( $args );
 		}
+	}
+
+	/**
+	 * Adds engine informations to admin footer
+	 *
+	 * @hooked 'update_footer'
+	 *
+	 * @param $text
+	 *
+	 * @return string
+	 * @throws \Exception
+	 */
+	public function inject_engine_info($text){
+		$engine_info_text = $this->get_copyright();
+		$text .= ' '.$engine_info_text;
+		return $text;
 	}
 
 	/*

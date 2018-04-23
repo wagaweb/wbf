@@ -37,7 +37,6 @@ class Admin{
 			add_action( 'wbf_admin_submenu', array( $this, 'add_man_page' ), 12 );
 			//add_action( 'admin_menu', array( $this, 'add_additional_appearance_link' ) );
 		}
-		add_action( 'optionsframework_after', array( $this, 'add_copy_in_admin_page' ));
 	}
 
     /*function add_additional_appearance_link(){
@@ -119,10 +118,6 @@ class Admin{
 	 */
 	public function add_man_page($parent_slug) {
 		WBF()->add_submenu_page(__( "Theme Options Manager", "wbf" ), __( "Import/Export", "wbf" ), "edit_theme_options", $this->wp_menu_slug, array( $this, 'display_manage_options_page') );
-	}
-
-	function add_copy_in_admin_page(){
-		WBF()->print_copyright();
 	}
 
 	static function menu_settings() {

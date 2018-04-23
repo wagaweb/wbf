@@ -143,5 +143,4 @@ use WBF\modules\components\GUI;
         </form>
         
 	</div><!-- #componentframework-wrap -->
-	<?php WBF()->print_copyright(); ?>
 </div><!-- .wrap: end -->

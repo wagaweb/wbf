@@ -51,5 +51,4 @@
 		<?php endforeach; ?>
 	<?php endif; ?>
 	<?php wp_nonce_field('submit_licence_nonce','license_nonce_field'); ?>
-	<?php WBF()->print_copyright(); ?>
 </div>

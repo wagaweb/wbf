@@ -1,0 +1,1 @@
+<span>(<em><?php echo $label ?> v<?php echo $version ?></em>)</span>
