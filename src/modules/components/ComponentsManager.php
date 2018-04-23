@@ -78,12 +78,14 @@ class ComponentsManager {
 	 *
 	 * @use self::detect_components_from_directories
 	 *
+	 * @param bool $force
+	 *
 	 * @return mixed|void
 	 * @throws \Exception
 	 */
-    static function detect_components(){
+    static function detect_components($force = false){
     	static $already_detected;
-    	if($already_detected === true) return;
+    	if($already_detected === true && $force === false) return;
 	    /** Detect components in main theme **/
 	    $parent_components = self::detect_components_from_directory(get_root_components_directory());
 	    self::update_registered_components( $parent_components, false ); //update the WP Option of registered component
@@ -773,7 +775,11 @@ class ComponentsManager {
 				throw new \Exception($e->getMessage());
 			}
 		} else {
-			throw new \Exception( __( "Component not found among registered components. Unable to deactivate the component.","wbf"));
+			if($state === self::STATE_ENABLED){
+				throw new \Exception( sprintf(__( "Component not found among registered components. Unable to enable the component: %s.","wbf"), $component_name));
+			}else{
+				throw new \Exception( sprintf(__( "Component not found among registered components. Unable to deactivate the component: %s","wbf"), $component_name));
+			}
 		}
 	}
 
