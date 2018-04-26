@@ -797,4 +797,23 @@ class Utilities{
 		return (object) array( 'width' => $width, 'height' => $height );
 	}
 
+	/**
+	 * Generate a random string of $length characters
+	 *
+	 * @param int $length
+	 * @param string|null $characters the base characters to choose from
+	 *
+	 * @return string
+	 */
+	static function random_string($length = 10, $characters = null){
+		if(!isset($characters)){
+			$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		}
+		$charactersLength = strlen($characters);
+		$randomString = '';
+		for ($i = 0; $i < $length; $i++) {
+			$randomString .= $characters[rand(0, $charactersLength - 1)];
+		}
+		return $randomString;
+	}
 }
