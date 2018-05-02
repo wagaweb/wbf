@@ -287,6 +287,8 @@ class Framework{
 
 		if(!is_array($config)) $config = self::get_options_root_id();
 
+		$name = apply_filters("wbf/theme_options/get",$name);
+
 		//[WABOOT MOD] Tries to return the default value sets into $options array if $default is null
 		if(is_null($default)){
 			if(empty($options_in_file)) $options_in_file = self::get_registered_options();
