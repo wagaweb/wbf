@@ -144,6 +144,10 @@ class PluginCore {
 			'handle_errors' => true
 		]);
 
+		if(defined('WBF_PREVENT_UPDATES') && WBF_PREVENT_UPDATES){
+			$options['check_for_updates'] = false;
+		}
+
 		$this->options = $options;
 
 		if(!isset($service_manager)){
