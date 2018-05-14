@@ -132,6 +132,7 @@ use WBF\modules\components\GUI;
                 <div id="component-<?php echo $comp_data->name; ?>" class="group" style="display: none;" data-fieldgroup="component-<?php echo $comp_data->name; ?>">
                     <h3><?php _e(sprintf("%s Settings",isset($data['Name']) ? $data['Name'] : ucfirst($comp_data->name)),"wbf"); ?></h3>
                     <?php \WBF\modules\options\GUI::print_fields($compiled_components_options[$comp_data->name]); ?>
+                    <?php do_action('wbf/modules/components/active_component/'.$comp_data->name.'/settings'); ?>
                 </div>
             <?php endforeach; ?>
             <!-- /Active components tabs -->
