@@ -301,6 +301,39 @@ class Utilities{
 	}
 
 	/**
+	 * Returns the client IP address
+	 *
+	 * @return string|bool
+	 */
+	static function get_ip(){
+		$ipaddress = false;
+		if(isset($_SERVER['HTTP_TRUE_CLIENT_IP']) && $_SERVER['HTTP_TRUE_CLIENT_IP']){
+			$ipaddress = $_SERVER['HTTP_TRUE_CLIENT_IP'];
+		}elseif(isset($_SERVER['HTTP_CLIENT_IP']) && $_SERVER['HTTP_CLIENT_IP']){
+			$ipaddress = $_SERVER['HTTP_CLIENT_IP'];
+		}elseif(isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR']){
+			$ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
+		}elseif(isset($_SERVER['HTTP_X_FORWARDED']) && $_SERVER['HTTP_X_FORWARDED']){
+			$ipaddress = $_SERVER['HTTP_X_FORWARDED'];
+		}elseif(isset($_SERVER['HTTP_FORWARDED_FOR']) && $_SERVER['HTTP_FORWARDED_FOR']){
+			$ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
+		}elseif(isset($_SERVER['HTTP_FORWARDED']) && $_SERVER['HTTP_FORWARDED']){
+			$ipaddress = $_SERVER['HTTP_FORWARDED'];
+		}elseif(isset($_SERVER['REMOTE_ADDR']) && $_SERVER['REMOTE_ADDR']){
+			$ipaddress = $_SERVER['REMOTE_ADDR'];
+		}
+
+		if($ipaddress){
+			$ipaddresses = explode(',',$ipaddress);
+			if(is_array($ipaddresses) && !empty($ipaddresses)){
+				$ipaddress = $ipaddresses[0];
+			}
+		}
+
+		return $ipaddress;
+	}
+
+	/**
 	 * Get info about an IP address using http://www.geoplugin.net service
 	 * @from http://stackoverflow.com/questions/12553160/getting-visitors-country-from-their-ip
 	 *
