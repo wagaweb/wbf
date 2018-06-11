@@ -27,7 +27,7 @@ WBF then requires these files and initialize components.
 
 ### Component class definition
 
-When initialize a component, WBF takes the name of the file that contain the header, builds a class name starting from it and check for its existence.
+While initializing a component, WBF takes the name of the file that contain the header, builds a class name starting from it and check for its existence.
 
 The transformation rules for passing from file name to class name are simple:
 
@@ -96,9 +96,9 @@ Components can be used as a standard procedure to encapsulate distinct theme fun
 
 ### register_options() method.
 
-Within this method the Organizer (/src/modules/options/Organizer.php) can be used to adds theme options. The parent method register the components relative options (like "enable on all pages", "load locations" and so on). 
+Within this method the Organizer (/src/modules/options/Organizer.php) can be used to add theme options. The parent method register the components relative options (like "enable on all pages", "load locations" and so on). 
 
-It is possible to adds more components related options by setting a specific section name before adding the options:
+It is possible to add more components related options by setting a specific section name before adding the options:
 
     <?php
     $orgzr = Organizer::getInstance();
