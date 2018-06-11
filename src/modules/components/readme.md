@@ -54,7 +54,9 @@ These methods are:
 | onActivate()       |  component activation                 |
 | onDeactivate()     |  component deactivation               |
 
-Only the setup() method is called always, all other methods are called only for enabled components that can run for the current context.
+Only the `setup()` method is always called, all other methods are called only for enabled components that can run on the current context.
+
+You can use the `setup()` method to add general hooks and `run()` method to add hooks that have to be called only on contexts where the component is enabled.
 
 **Note**: always call the parent methods!
 
