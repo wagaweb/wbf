@@ -65,6 +65,10 @@ var paths = {
         "vendor/codemirror/**/*",
         "vendor/spectrum/**/*",
         "vendor/options-framework/**/*",
+        "vendor/mobiledetect/**/*",
+        "vendor/mgargano/**/*",
+        "vendor/myclabs/**/*",
+        "vendor/composer/**/*",
         "vendor/autoload.php"
     ]
 };
