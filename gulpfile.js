@@ -60,7 +60,12 @@ var paths = {
         "!{node_modules,node_modules/**}",
         "!{bower_components,bower_components/**}",
         //Vendors
-        "vendor/**"
+        "vendor/owl.carousel/**/*",
+        "vendor/yahnis-elsts/**/*",
+        "vendor/codemirror/**/*",
+        "vendor/spectrum/**/*",
+        "vendor/options-framework/**/*",
+        "vendor/autoload.php"
     ]
 };
 
