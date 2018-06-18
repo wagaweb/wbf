@@ -139,7 +139,7 @@ gulp.task('browserify', function(){
         insertGlobals : true,
         debug: true
     })
-        .transform("babelify", {presets: ["es2015"]}).bundle()
+        .transform("babelify", {presets: ["env"]}).bundle()
         .pipe(source(filenames.bundle_js))
         .pipe(buffer()) //This might be not required, it works even if commented
         .pipe(gulp.dest('./assets/dist/js'));
