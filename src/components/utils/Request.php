@@ -3,35 +3,39 @@ namespace WBF\components\utils;
 
 class Request{
 	/**
-	 * Retrieve a GET or POST parameter (GET has priority over parameters with the same name)
+	 * Retrieve a GET or POST parameter (GET has priority over parameters with the same name). Assign $default when not
+	 * found.
 	 *
-	 * @param string $param_name
-	 *
+	 * @param string $paramName
+	 * @param mixed|null $default
 	 * @param bool $sanitize
-	 *
 	 * @param \callable|null $sanitizeCallback
 	 *
 	 * @return null
 	 */
-	static function get($param_name,$sanitize = true,$sanitizeCallback = null){
-		$var = null;
-		if(isset($_GET[$param_name])){
-			$var = $_GET[$param_name];
-		}elseif(isset($_POST[$param_name])){
-			$var = $_POST[$param_name];
+	static function get($paramName, $default = null, $sanitize = true, $sanitizeCallback = null){
+		$paramValue = null;
+		if(isset($_GET[$paramName])){
+			$paramValue = $_GET[$paramName];
+		}elseif(isset($_POST[$paramName])){
+			$paramValue = $_POST[$paramName];
 		}
 
-		if($sanitize){
+		if($sanitize && isset($paramValue)){
 			if(isset($sanitizeCallback)){
 				if(is_callable($sanitizeCallback)){
-					$var = $sanitizeCallback($var);
+					$paramValue = $sanitizeCallback($paramValue);
 				}
 				trigger_error('Unable to call sanitize callback',E_USER_NOTICE);
 			}else{
-				$var = sanitize_text_field($var);
+				$paramValue = sanitize_text_field($paramValue);
 			}
 		}
 
-		return $var;
+		if(!isset($paramValue)){
+			$paramValue = $default;
+		}
+
+		return $paramValue;
 	}
 }
