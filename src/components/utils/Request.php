@@ -9,9 +9,11 @@ class Request{
 	 *
 	 * @param bool $sanitize
 	 *
+	 * @param \callable|null $sanitizeCallback
+	 *
 	 * @return null
 	 */
-	static function get($param_name,$sanitize = true){
+	static function get($param_name,$sanitize = true,$sanitizeCallback = null){
 		$var = null;
 		if(isset($_GET[$param_name])){
 			$var = $_GET[$param_name];
@@ -20,7 +22,14 @@ class Request{
 		}
 
 		if($sanitize){
-			$var = sanitize_text_field($var);
+			if(isset($sanitizeCallback)){
+				if(is_callable($sanitizeCallback)){
+					$var = $sanitizeCallback($var);
+				}
+				trigger_error('Unable to call sanitize callback',E_USER_NOTICE);
+			}else{
+				$var = sanitize_text_field($var);
+			}
 		}
 
 		return $var;
