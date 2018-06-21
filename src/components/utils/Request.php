@@ -19,6 +19,8 @@ class Request{
 			$paramValue = $_GET[$paramName];
 		}elseif(isset($_POST[$paramName])){
 			$paramValue = $_POST[$paramName];
+		}else{
+			return $default; //Return early if the value has not been found
 		}
 
 		if($sanitize && isset($paramValue)){
@@ -30,10 +32,6 @@ class Request{
 			}else{
 				$paramValue = sanitize_text_field($paramValue);
 			}
-		}
-
-		if(!isset($paramValue)){
-			$paramValue = $default;
 		}
 
 		return $paramValue;
