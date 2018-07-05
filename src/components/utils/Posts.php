@@ -230,8 +230,8 @@ class Posts {
 	 *
 	 * @param string|array $tpl_file a pointer to a file to render the template into. If array, must contain the file path at [0] and the plugin name at [1].
 	 * @param bool $show_pagination
-	 * @param bool $query
-	 * @param bool $current_page
+	 * @param \WP_Query|bool $query
+	 * @param int|bool $current_page
 	 * @param string $paged_var_name You can supply different paged var name for multiple pagination. The name must be previously registered with add_rewrite_tag()
 	 */
 	static function the_post_navigation($tpl_file, $show_pagination = false, $query = false, $current_page = false, $paged_var_name = "paged"){
@@ -241,7 +241,7 @@ class Posts {
 				$query = $wp_query;
 			}
 			$big = 999999999; // need an unlikely integer
-			if($paged_var_name != "paged"){
+			if($paged_var_name !== "paged"){
 				$base =  add_query_arg([
 					$paged_var_name => "%#%"
 				]);
@@ -251,16 +251,16 @@ class Posts {
 			}
 			if(!$current_page){
 				if(!$query){
-					$current_page = max( 1, intval(get_query_var($paged_var_name)) );
+					$current_page = max( 1, (int) (get_query_var($paged_var_name)) );
 				}else{
-					$current_page = max(1, intval($query->get($paged_var_name)) );
+					$current_page = max(1,  (int) ($query->get($paged_var_name)) );
 				}
 			}
-			$current_page = intval($current_page);
+			$current_page = (int) $current_page;
 			$paginate = paginate_links([
 				'base' => $base,
 				'format' => '?'.$paged_var_name.'=%#%',
-				'current' => $$current_page,
+				'current' => $current_page,
 				'total' => $query->max_num_pages
 			]);
 			$paginate_array = explode("\n",$paginate);
@@ -330,5 +330,23 @@ class Posts {
 				$sortable_callback($query);
 			} );
 		}
+	}
+
+	/**
+	 * Get the last post
+	 *
+	 * @return bool|\WP_Post
+	 */
+	static function get_last_post(){
+		static $p;
+		if(isset($p)) return $p;
+		$pp = get_posts([
+			'posts_per_page' => 1
+		]);
+		if(\is_array($pp) && \count($pp) !== 0){
+			$p = $pp[0];
+			return $p;
+		}
+		return false;
 	}
 }
