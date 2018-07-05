@@ -175,6 +175,6 @@ class Arrays {
 	 * @return bool
 	 */
 	static function isIterableArray($thing){
-		return \is_array($thing) && count($thing) !== 0;
+		return \is_array($thing) && \count($thing) !== 0;
 	}
 }
