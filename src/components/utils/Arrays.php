@@ -166,4 +166,15 @@ class Arrays {
 		}
 		return false;
 	}
+
+	/**
+	 * Check if $thing is an array with at least one value
+	 *
+	 * @param mixed $thing
+	 *
+	 * @return bool
+	 */
+	static function isIterableArray($thing){
+		return \is_array($thing) && count($thing) !== 0;
+	}
 }
