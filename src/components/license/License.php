@@ -7,9 +7,7 @@
 
 namespace WBF\components\license;
 
-use WBF\components\license\License_Manager;
-
-abstract class License{
+abstract class License implements License_Interface {
 	var $nicename = "License";
 	var $slug;
 	var $type;
