@@ -295,13 +295,16 @@ class BasePlugin {
 					$this->register_license($license);
 				}
 			}
-			$this->update_instance = new Plugin_Update_Checker(
-				$endpoint,
-				$this->plugin_dir.$this->plugin_name.".php",
-				$this->plugin_name,
-				$this->license
-			);
-			return $this->update_instance;
+			try{
+				$this->update_instance = new Plugin_Update_Checker( $endpoint, $this );
+				if($license !== null){
+					$this->update_instance->setLicense($license);
+				}
+				$this->update_instance->initialize();
+				return $this->update_instance;
+			}catch (\Exception $e){
+				return false;
+			}
 		}else{
 			return false;
 		}
@@ -679,6 +682,20 @@ class BasePlugin {
 	 */
 	public function get_version() {
 		return $this->version;
+	}
+
+	/**
+	 * Get changelog file content
+	 * @return string
+	 */
+	public function get_changelog(){
+		if(\is_file($this->get_dir().'/changelog')){
+			$changelog = file_get_contents($this->get_dir().'/changelog');
+			if(\is_string($changelog)){
+				return $changelog;
+			}
+		}
+		return '';
 	}
 
 	/**
