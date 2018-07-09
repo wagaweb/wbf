@@ -83,7 +83,7 @@ class Plugin_Update_Checker{
 	/**
 	 * @var array
 	 */
-	public $update;
+	public $updateData;
 
 	/**
 	 * Class constructor.
@@ -130,23 +130,6 @@ class Plugin_Update_Checker{
 		}
 	}
 
-	/**
-	 * Assign a license to validate before update the plugin
-	 * @param License $license
-	 * @param bool $checkLicense
-	 */
-	public function setLicense(License $license, $checkLicense = true){
-		$this->plugin_license = $license;
-		$this->checkLicense = $checkLicense;
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function mustCheckLicense(){
-		return $this->plugin_license instanceof License && $this->checkLicense;
-	}
-
 	public function initialize(){
 		if($this->mustCheckLicense()){
 			if($this->plugin_license->is_valid()){
@@ -185,43 +168,61 @@ class Plugin_Update_Checker{
 	/**
 	 * Set the update if necessary
 	 *
-	 * @param bool $force
+	 * @param bool|null $force
 	 *
 	 * @throws \Exception
 	 */
-	public function maybeSetUpdate($force = true){
-		if(!is_bool($force)) $force = false;
+	public function maybeSetUpdate($force = null){
+		if(!is_bool($force)){
+			global $pagenow;
+			$force = false;
+			if($pagenow === 'update-core.php' && isset($_GET['force-check'])){
+				$force = true;
+			}
+		}
 		$lastCheck = get_option($this->optionName,null);
 		if($force || (!$lastCheck || !is_array($lastCheck) || !isset($lastCheck['time']) || (time() - (int) $lastCheck['time']) > $this->checkPeriod) ){
 			//Check update
 			$update = $this->requestUpdate();
 			if(\is_array($update)){
-				$this->setUpdate($update);
+				$this->setUpdateData($update);
+				$this->updateCacheOption($update);
 				$this->enqueueUpdatesAvailableNotice();
+			}else{
+				$this->updateCacheOption(false);
 			}
-			update_option($this->optionName,['time' => time()]);
 		}
+	}
+
+	/**
+	 * @param mixed $update
+	 */
+	public function updateCacheOption($update){
+		update_option($this->optionName,[
+			'time' => time(),
+			'update' => \is_array($update) ? $update : false
+		]);
+	}
+
+	/**
+	 * @return array|bool
+	 */
+	public function getCacheOption(){
+		return get_option($this->optionName,false);
 	}
 
 	/**
 	 * @param array $update
 	 */
-	public function setUpdate($update){
-		$this->update = $update;
+	public function setUpdateData($update){
+		$this->updateData = $update;
 	}
 
 	/**
 	 * @return array
 	 */
-	public function getUpdate(){
-		return $this->update;
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function hasUpdate(){
-		return \is_array($this->update);
+	public function getUpdateData(){
+		return $this->updateData;
 	}
 
 	/**
@@ -233,24 +234,32 @@ class Plugin_Update_Checker{
 	 * @return \stdClass
 	 */
 	public function maybeInjectUpdate($updates){
-		if($this->hasUpdate() && !isset($updates->response[$this->slug])){
-			$update = $this->getUpdate();
-			$response = new \stdClass();
-			$response->slug = $update['slug'];
-			$response->plugin = $this->pluginFile;
-			$response->new_version = $update['version'];
-			$response->url = $update['url'] !== null ? $update['url'] : '';
-			$response->package = $this->upgradable ? $update['download_url'] : null;
-			$response->icons = $update['icons'] !== null && \is_array($update['icons']) ? $update['icons'] : [];
-			$response->banners = $update['banners'] !== null && \is_array($update['banners']) ? $update['banners'] : [];
-			$response->banners_rtl = $update['banners_rtl'] !== null && \is_array($update['banners_rtl']) ? $update['banners_rtl'] : [];
-			$response->compatibility = new \stdClass(); //?
-			$updates->response[$this->pluginFile] = $response;
+		if(isset($updates->response[$this->slug])) return $updates;
+		$update = $this->getUpdateData();
+		if(!\is_array($update)){
+			$update = $this->getCacheOption();
+			if(array_key_exists('update',$update) && $update['update'] !== false){
+				$update = $update['update'];
+			}else{
+				return $updates;
+			}
 		}
+		$response = new \stdClass();
+		$response->slug = $update['slug'];
+		$response->plugin = $this->pluginFile;
+		$response->new_version = $update['version'];
+		$response->url = $update['url'] !== null ? $update['url'] : '';
+		$response->package = $this->upgradable ? $update['download_url'] : null;
+		$response->icons = $update['icons'] !== null && \is_array($update['icons']) ? $update['icons'] : [];
+		$response->banners = $update['banners'] !== null && \is_array($update['banners']) ? $update['banners'] : [];
+		$response->banners_rtl = $update['banners_rtl'] !== null && \is_array($update['banners_rtl']) ? $update['banners_rtl'] : [];
+		$response->compatibility = new \stdClass(); //?
+		$updates->response[$this->pluginFile] = $response;
 		return $updates;
 	}
 
 	/**
+	 * Request the update package
 	 * @return array|bool
 	 */
 	public function requestUpdate(){
@@ -268,7 +277,16 @@ class Plugin_Update_Checker{
 	}
 
 	/**
-	 * Get update package from the endpoint
+	 * Get update package from the endpoint.
+	 * The update package must be a json with the following fields:
+	 *
+	 * - slug : string,
+	 * - version : string
+	 * - [url] : string
+	 * - download_url : string
+	 * - [icons] : array
+	 * - [banners] : array
+	 * - [banners_rtl] : array
 	 *
 	 * @return array|\WP_Error
 	 */
@@ -307,6 +325,9 @@ class Plugin_Update_Checker{
 		return false;
 	}
 
+	/**
+	 * Set the cron schedule to check for updates
+	 */
 	private function setupUpdateCheckCron(){
 		$scheduleName = call_user_func(function(){
 			$defaultSchedules = wp_get_schedules();
@@ -332,7 +353,24 @@ class Plugin_Update_Checker{
 		if(!wp_next_scheduled($this->cronHook) && !defined('WP_INSTALLING')) {
 			wp_schedule_event(time(), $scheduleName, $this->cronHook);
 		}
-		add_action($this->cronHook, array($this, 'maybeCheckForUpdates'));
+		add_action($this->cronHook, array($this, 'maybeSetUpdate'));
+	}
+
+	/**
+	 * Assign a license to validate before update the plugin
+	 * @param License $license
+	 * @param bool $checkLicense
+	 */
+	public function setLicense(License $license, $checkLicense = true){
+		$this->plugin_license = $license;
+		$this->checkLicense = $checkLicense;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function mustCheckLicense(){
+		return $this->plugin_license instanceof License && $this->checkLicense;
 	}
 
 	/**
@@ -447,7 +485,6 @@ class Plugin_Update_Checker{
 				}
 			}
 		}
-		//todo: Fetching info...
 		return $result;
 	}
 
