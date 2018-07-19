@@ -183,4 +183,21 @@ class WordPress {
 			unlink($file);
 		}
 	}
+
+	/**
+	 * Wrapper for 'wp_ajax_' 'wp_ajax_nopriv_' actions
+	 *
+	 * @param string $name
+	 * @param callable $callback
+	 * @param int $priority
+	 * @param int $accepted_args
+	 */
+	public static function add_ajax_endpoint($name,$callback,$priority = 10,$accepted_args = 1){
+		if(!is_callable($callback)){
+			trigger_error('Invalid callback for ajax endpoint',E_USER_WARNING);
+			return;
+		}
+		add_action('wp_ajax_'.$name,$callback,$priority,$accepted_args);
+		add_action('wp_ajax_nopriv_'.$name,$callback,$priority,$accepted_args);
+	}
 }
