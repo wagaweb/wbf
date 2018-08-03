@@ -185,7 +185,7 @@ class WordPress {
 	}
 
 	/**
-	 * Wrapper for 'wp_ajax_' 'wp_ajax_nopriv_' actions
+	 * Wrapper for 'wp_ajax_' 'wp_ajax_nopriv_' actions. It automatically tests for DOING_AJAX
 	 *
 	 * @param string $name
 	 * @param callable $callback
@@ -197,7 +197,11 @@ class WordPress {
 			trigger_error('Invalid callback for ajax endpoint',E_USER_WARNING);
 			return;
 		}
-		add_action('wp_ajax_'.$name,$callback,$priority,$accepted_args);
-		add_action('wp_ajax_nopriv_'.$name,$callback,$priority,$accepted_args);
+		$wrapperCallback = function() use($callback){
+			if(!defined('DOING_AJAX') || !DOING_AJAX) return;
+			$callback();
+		};
+		add_action('wp_ajax_'.$name,$wrapperCallback,$priority,$accepted_args);
+		add_action('wp_ajax_nopriv_'.$name,$wrapperCallback,$priority,$accepted_args);
 	}
 }
