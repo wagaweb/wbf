@@ -174,7 +174,18 @@ class Arrays {
 	 *
 	 * @return bool
 	 */
-	static function isIterableArray($thing){
+	static function is_iterable($thing){
 		return \is_array($thing) && \count($thing) !== 0;
+	}
+
+	/**
+	 * json_encode() version that generate a string ready to be put in an HTML data-* attribute
+	 *
+	 * @param mixed $thing
+	 *
+	 * @return string
+	 */
+	static function json_encode_for_html_data_attr($thing){
+		return htmlspecialchars(json_encode($thing),ENT_QUOTES,'UTF-8');
 	}
 }
