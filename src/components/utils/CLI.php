@@ -52,7 +52,7 @@ class CLI{
 	 * @throws \Exception
 	 */
 	public static function exec_cli_command($command,$wd=null,$exec_function=self::EXEC_FUNCTION_EXEC,$no_output=false){
-		if(!$wd){
+		if(!$wd || $wd === ''){
 			$wd = ABSPATH;
 		}
 		$cmd = 'cd '.$wd;
@@ -75,20 +75,20 @@ class CLI{
 	 */
 	private static function perform_command($cmd,$exec_function){
 		switch($exec_function){
+			case self::EXEC_FUNCTION_EXEC:
+				$output = '';
+				$status = '';
+				$r = exec($cmd,$output,$status);
+				return [
+					'output' => $output,
+					'status' => $status
+				];
+				break;
 			case self::EXEC_FUNCTION_SYSTEM:
 				$status = '';
 				$r = system($cmd,$status);
 				return [
 					'output' => $r,
-					'status' => $status
-				];
-				break;
-			case self::EXEC_FUNCTION_EXEC:
-				$output = '';
-				$status = '';
-				$r = exec($cmd,$output,$return_var);
-				return [
-					'output' => $output,
 					'status' => $status
 				];
 				break;
