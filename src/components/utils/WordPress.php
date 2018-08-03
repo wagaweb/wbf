@@ -124,7 +124,7 @@ class WordPress {
 	}
 
 	/**
-	 * Alias of get_post_meta($post_id,$key,true) that cache the result. If called on a Variation
+	 * Alias of get_post_meta($post_id,$key,true) that cache the result.
 	 *
 	 * @param int|object $post
 	 * @param string $key
