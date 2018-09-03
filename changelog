@@ -1,6 +1,18 @@
 == Change log ==
 
-Version 1.1.2 - 04/xx/2018
+Version 1.1.3 - 09/03/2018
+---------------------------------
+- Fix: Applied some fixes to WBF\components\utils\Posts::the_post_navigation()
+- Tweak: Major refactoring of WBF\components\customupdater\Plugin_Update_Checker
+- Tweak: Added the possibility to specify a sanitize callback for WBF\components\utils\Request::get()
+- Tweak: Now WBF\components\license\License class implements License_Interface
+- Tweak: small refactor of WBF\components\utils\CLI
+- Feature: Added WBF\components\utils\Posts::get_last_post()
+- Feature: Introduced WBF\components\utils\Arrays\is_iterable() and WBF\components\utils\Arrays\json_encode_for_html_data_attr()
+- Feature: Introduced WBF\components\utils\WordPress\save_file_as_attachment()
+- Feature: Introduced WBF\components\utils\WordPress\add_ajax_endpoint()
+
+Version 1.1.2 - 04-06/xx/2018
 ---------------------------------
 - Fix: Terms::get_tax_terms_hierarchical() now works as expected.
 - Tweak: Now it is possible to get not only the current working directory, but also working directories of other themes.
