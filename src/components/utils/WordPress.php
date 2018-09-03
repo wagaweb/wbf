@@ -204,4 +204,102 @@ class WordPress {
 		add_action('wp_ajax_'.$name,$wrapperCallback,$priority,$accepted_args);
 		add_action('wp_ajax_nopriv_'.$name,$wrapperCallback,$priority,$accepted_args);
 	}
+
+	/**
+	 * Save a file as WP attachment
+	 *
+	 * @param string $fromPath the path to the file to save as attachment
+	 * @param string|null $time Time formatted in 'yyyy/mm'.
+	 * @param string|null $targetCustomFilename custom target filename with extension.
+	 * @param array $attachmentData additional metadata for the attachment
+	 * @param int $parentId the post to which link the attachment (can be 0)
+	 * @param bool $unlinkOriginalFile whether delete the original file
+	 * @param string $wpAdminIncludesPath the path to the wp-admin/includes directory (the function needs image.php file from this directory to generate the attachment metadata)
+	 *
+	 * @throws \InvalidArgumentException
+	 * @throws \RuntimeException
+	 *
+	 * @uses \wp_upload_dir()
+	 * @uses \wp_unique_filename()
+	 * @uses \wp_check_filetype_and_ext()
+	 * @uses \wp_insert_attachment()
+	 * @uses \wp_update_attachment_metadata()
+	 * @uses \wp_generate_attachment_metadata()
+	 *
+	 * @see \_wp_handle_upload()
+	 * @see \media_handle_upload()
+	 *
+	 * @return int
+	 */
+	public static function save_file_as_attachment($fromPath, $targetCustomFilename = null, $time = null,array  $attachmentData = [], $parentId = 0, $unlinkOriginalFile = false, $wpAdminIncludesPath = null){
+		if(!\file_exists($fromPath)){
+			throw new \InvalidArgumentException("Unable to save $fromPath as attachment: file not found");
+		}
+		if($time === null){
+			$time = (new \DateTime())->format('Y/m');
+		}
+		$uploads = \wp_upload_dir($time);
+		if(!\is_array($uploads) || $uploads['error'] !== false){
+			if(\is_array($uploads)){
+				throw new \RuntimeException("Unable to save $fromPath as attachment: ".$uploads['error']);
+			}
+			throw new \RuntimeException("Unable to save $fromPath as attachment");
+		}
+
+		$fromPathInfo = \pathinfo($fromPath);
+		if($targetCustomFilename === null){
+			$targetFilename = \wp_unique_filename($uploads['path'], $fromPathInfo['basename']);
+		}else{
+			$targetFilename = \wp_unique_filename($uploads['path'], $targetCustomFilename);
+		}
+		$targetPath = $uploads['path'] . "/$targetFilename"; //Destination path.
+
+		//Compute the mimetype
+		$wpFileType = \wp_check_filetype_and_ext($fromPath, $fromPathInfo['basename']);
+
+		//Move the file
+		if(!\copy($fromPath,$targetPath)){
+			throw new \RuntimeException("Unable to save $fromPath as attachment: unable to move the file to ".$targetPath);
+		}
+		if($unlinkOriginalFile){
+			\unlink($fromPath);
+		}
+
+		//Set correct file permissions (borrowed from _wp_handle_upload())
+		$stat = \stat(\dirname($targetPath));
+		$perms = $stat['mode'] & 0000666;
+		@\chmod($targetPath, $perms);
+
+		//Compute the URL.
+		$url = $uploads['url'] . "/$targetFilename";
+
+		//Construct the attachment array
+		$attachment = \wp_parse_args($attachmentData,[
+			'post_mime_type' => $wpFileType['type'],
+			'guid' => $url,
+			'post_parent' => $parentId,
+			'post_title' => $fromPathInfo['filename'],
+			'post_content' => '',
+			'post_excerpt' => '',
+		]);
+
+		//This should never be set as it would then overwrite an existing attachment.
+		unset($attachment['ID']);
+
+		//Save the data
+		if(!\function_exists('wp_generate_attachment_metadata')){
+			if($wpAdminIncludesPath === null){
+				$wpAdminIncludesPath = ABSPATH.'/wp-admin/includes/image.php';
+			}
+			require_once $wpAdminIncludesPath;
+		}
+		$id = \wp_insert_attachment( $attachment, $targetPath, $parentId, true );
+		if(!is_wp_error($id)){
+			\wp_update_attachment_metadata($id, \wp_generate_attachment_metadata($id, $targetPath));
+		}else{
+			throw new \RuntimeException("Unable to save $fromPath as attachment: ".$id->get_error_message());
+		}
+
+		return $id;
+	}
 }
