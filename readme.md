@@ -122,15 +122,16 @@ A simple frontend to License_Manager component. It will make available a dashboa
 
 **v1.0.x**
 
-- :white_check_mark: New hooks logic for components and theme options
-- :white_check_mark: Introduction of Commands module
-- Bug fixing
+- :heavy_check_mark: New hooks logic for components and theme options
+- :heavy_check_mark: Introduction of Commands module
+- :heavy_check_mark: Bug fixing
 
 **v1.1.x**
 
-- :white_check_mark: wbf.php \ PluginCore.php refactoring
+- :heavy_check_mark: wbf.php \ PluginCore.php refactoring
 - Implementation of tests
 - Make behaviors use theme options fields
-- Refactoring of Plugin_Update_Checker to a more modern version.
+- :heavy_check_mark: Refactoring of Plugin_Update_Checker to a more modern version.
+- Bug fixing
 
 <span style="font-size:smaller"><a href="#waboot-framework">Back to top.</a></span>
