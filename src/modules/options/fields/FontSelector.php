@@ -239,14 +239,10 @@ class FontSelector extends BaseField implements Field
 	}
 
 	static function getFonts(){
-		$gfontfetcher = GoogleFontsRetriever::getInstance();
+		$gfontfetcher = WBF()->get_service_manager()->get_google_fonts_retriever();
 
 		$os_fonts = self::getOSFonts();
 		$g_fonts = $gfontfetcher->get_webfonts();
-		if(!$g_fonts){
-			$g_fonts = new \stdClass();
-			$g_fonts->items = array();
-		}
 		$fonts = array_merge($os_fonts,$g_fonts->items);
 
 		return $fonts;
@@ -265,7 +261,7 @@ class FontSelector extends BaseField implements Field
 				else return false;
 			}
 		}
-		$gfontfetcher = GoogleFontsRetriever::getInstance();
+		$gfontfetcher = WBF()->get_service_manager()->get_google_fonts_retriever();
 		if(DOING_AJAX){
             if(self::isOSFont($familyname)){
                 $font_info = self::getOSFontProps($familyname);

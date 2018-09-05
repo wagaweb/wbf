@@ -24,6 +24,10 @@ class ServiceManager{
 	 * @var Plugin_Update_Checker
 	 */
 	private $updater;
+	/**
+	 * @var GoogleFontsRetriever
+	 */
+	private $google_fonts_retriever;
 
 	/**
 	 * @param Notice_Manager $notice_manager
@@ -79,5 +83,19 @@ class ServiceManager{
 	 */
 	public function get_updater(){
 		return $this->updater;
+	}
+
+	/**
+	 * @param GoogleFontsRetriever $googleFontsRetriever
+	 */
+	public function set_google_fonts_retriever(GoogleFontsRetriever $googleFontsRetriever){
+		$this->google_fonts_retriever = $googleFontsRetriever;
+	}
+
+	/**
+	 * @return GoogleFontsRetriever
+	 */
+	public function get_google_fonts_retriever(){
+		return $this->google_fonts_retriever;
 	}
 }

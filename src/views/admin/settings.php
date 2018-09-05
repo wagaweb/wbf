@@ -53,7 +53,12 @@
 			<td class="desc">
 				<ul>
 					<li><a href="<?php echo $force_plugin_update_link ?>" title="<?php _ex("Force plugins update check","WBF Status Page","wbf") ?>"><?php _ex("Force plugins update check","WBF Status Page","wbf") ?></a></li>
-					<?php do_action("wbf/admins/status_page/administration_console_table/actions_list"); ?>
+					<?php if($can_update_gfonts): ?>
+                        <li><a href="<?php echo $gfont_update_link ?>" title="<?php _ex("Update google fonts","WBF Status Page","wbf") ?>"><?php _ex("Update google Fonts","WBF Status Page","wbf") ?></a></li>
+					<?php else: ?>
+                        <li><a href="#" title="<?php _ex("Update google fonts","WBF Status Page","wbf") ?>"><?php _ex("Update google Fonts (set WBF_GOOGLE_FONTS_API_KEY constant in wp-config.php first)","WBF Status Page","wbf") ?></a></li>
+                    <?php endif; ?>
+                    <?php do_action("wbf/admins/status_page/administration_console_table/actions_list"); ?>
 				</ul>
 			</td>
 		</tr>

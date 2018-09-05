@@ -735,7 +735,18 @@ class PluginCore {
 		}
 
 		// Google Fonts
-		if(class_exists("WBF\\includes\\GoogleFontsRetriever")) $GLOBALS['wbf_gfont_fetcher'] = GoogleFontsRetriever::getInstance();
+		if(defined('WBF_GOOGLE_FONTS_API_KEY')){
+			$gfontApiKey = WBF_GOOGLE_FONTS_API_KEY;
+		}elseif($optionApiKey = \get_option('wbf_google_fonts_api_key','') !== ''){
+			$gfontApiKey = $optionApiKey;
+		}
+		if(isset($gfontApiKey)){
+			$this->services->set_google_fonts_retriever(new GoogleFontsRetriever($gfontApiKey));
+		}else{
+			$this->services->set_google_fonts_retriever(new GoogleFontsRetriever());
+		}
+		//Backward compatibility:
+		$GLOBALS['wbf_gfont_fetcher'] = &$this->services->get_google_fonts_retriever();
 
 		do_action("wbf_after_setup_theme_end");
 	}
@@ -1178,7 +1189,9 @@ class PluginCore {
 		$display_args = [
 			'page_title' => __("WBF Status"),
 			'sections' => $data,
-			'force_plugin_update_link' => add_query_arg(['force-check'=>'1'],admin_url('update-core.php'))
+			'force_plugin_update_link' => add_query_arg(['force-check'=>'1'],admin_url('update-core.php')),
+			'can_update_gfonts' => defined('WBF_GOOGLE_FONTS_API_KEY') && \is_string(WBF_GOOGLE_FONTS_API_KEY),
+			'gfont_update_link' => add_query_arg(['wbf_update_font_cache'=>'1'],admin_url('admin.php?page=wbf_status')),
 		];
 
 		$display_args = apply_filters('wbf/admin/status_page/display_args',$display_args);
@@ -1209,7 +1222,7 @@ class PluginCore {
 	 *
 	 * @param $service_name
 	 *
-	 * @return \Mobile_Detect|Styles_Compiler|Plugin_Update_Checker|Notice_Manager
+	 * @return \Mobile_Detect|Styles_Compiler|Plugin_Update_Checker|Notice_Manager|GoogleFontsRetriever
 	 * @throws \Exception
 	 */
 	public function get_service($service_name){
@@ -1225,6 +1238,9 @@ class PluginCore {
 				break;
 			case 'mobile_detect':
 				return $this->services->get_mobile_detect();
+				break;
+			case 'google_fonts_retriever':
+				return $this->services->get_google_font_retriever();
 				break;
 			default:
 				throw new \Exception('Service '.$service_name.' not available');
@@ -1250,6 +1266,8 @@ class PluginCore {
 	 *
 	 * @param $args
 	 * @param null|Base_Compiler $base_compiler
+	 *
+	 * @throws \Exception
 	 */
 	public function set_styles_compiler($args,$base_compiler = null){
 		global $wbf_styles_compiler;

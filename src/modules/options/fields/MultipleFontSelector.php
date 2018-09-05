@@ -79,14 +79,10 @@ class MultipleFontSelector extends BaseField implements Field {
 	}
 
 	public function getFonts(){
-		$gfontfetcher = GoogleFontsRetriever::getInstance();
+		$gfontfetcher = WBF()->get_service_manager()->get_google_fonts_retriever();
 
 		//$os_fonts = self::getOSFonts();
 		$g_fonts = $gfontfetcher->get_webfonts();
-		if(!$g_fonts){
-			$g_fonts = new \stdClass();
-			$g_fonts->items = array();
-		}
 		//$fonts = array_merge($os_fonts,$g_fonts->items);
 
 		return $g_fonts->items;
