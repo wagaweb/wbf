@@ -1,5 +1,10 @@
 == Change log ==
 
+Version 1.1.4 - xx/xx/2018
+---------------------------------
+- Tweak: Now GoogleFontsRetriever is a WBF service.
+- Tweak: Google Fonts can now be updated via a link in WBF Status page
+
 Version 1.1.3 - 09/03/2018
 ---------------------------------
 - Fix: Applied some fixes to WBF\components\utils\Posts::the_post_navigation()
