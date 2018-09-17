@@ -17,9 +17,9 @@
 	<?php endif; ?>
 	<?php if(isset($active_section) && $active_section): ?>
         <?php echo $active_section->get_title(); ?>
-		<?php call_user_func($active_section->render()); ?>
+		<?php $active_section->render(); ?>
 	<?php else: ?>
-		<?php call_user_func($active_tab->render()) ?>
+		<?php $active_tab->render(); ?>
 	<?php endif; ?>
         <button style="display: block; margin-top: 10px;" class="button button-primary" type="submit"><?php _ex('Save settings','WBF Plugin Options page','wbf'); ?></button>
         <input type="hidden" name="save-wbf-plugins-settings" value="<?php echo $active_tab->get_slug(); ?>">
