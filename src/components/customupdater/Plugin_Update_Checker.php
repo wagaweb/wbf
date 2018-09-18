@@ -248,11 +248,11 @@ class Plugin_Update_Checker{
 		$response->slug = $update['slug'];
 		$response->plugin = $this->pluginFile;
 		$response->new_version = $update['version'];
-		$response->url = $update['url'] !== null ? $update['url'] : '';
+		$response->url = isset($update['url']) ? $update['url'] : '';
 		$response->package = $this->upgradable ? $update['download_url'] : null;
-		$response->icons = $update['icons'] !== null && \is_array($update['icons']) ? $update['icons'] : [];
-		$response->banners = $update['banners'] !== null && \is_array($update['banners']) ? $update['banners'] : [];
-		$response->banners_rtl = $update['banners_rtl'] !== null && \is_array($update['banners_rtl']) ? $update['banners_rtl'] : [];
+		$response->icons = isset($update['icons']) && \is_array($update['icons']) ? $update['icons'] : [];
+		$response->banners = isset($update['banners']) && \is_array($update['banners']) ? $update['banners'] : [];
+		$response->banners_rtl = isset($update['banners_rtl']) && \is_array($update['banners_rtl']) ? $update['banners_rtl'] : [];
 		$response->compatibility = new \stdClass(); //?
 		$updates->response[$this->pluginFile] = $response;
 		return $updates;
