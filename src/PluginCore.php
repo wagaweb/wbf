@@ -746,7 +746,7 @@ class PluginCore {
 			$this->services->set_google_fonts_retriever(new GoogleFontsRetriever());
 		}
 		//Backward compatibility:
-		$GLOBALS['wbf_gfont_fetcher'] = &$this->services->get_google_fonts_retriever();
+		$GLOBALS['wbf_gfont_fetcher'] = $this->services->get_google_fonts_retriever();
 
 		do_action("wbf_after_setup_theme_end");
 	}
