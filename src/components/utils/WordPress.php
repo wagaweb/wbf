@@ -302,4 +302,61 @@ class WordPress {
 
 		return $id;
 	}
+
+	/**
+	 * Sign-in an user by $login and $password
+	 *
+	 * @param string $login
+	 * @param string $password
+	 * @param bool $remember
+	 * @param bool $secure_cookie
+	 *
+	 * @return \WP_Error|\WP_User
+	 */
+	public static function signin_by_credentials($login,$password,$remember = true,$secure_cookie = true){
+		$r = wp_signon([
+			'user_login' => $login,
+			'user_password' => $password,
+			'remember' => $remember
+		],$secure_cookie);
+		if($r instanceof \WP_User){
+			wp_set_current_user($r->ID);
+		}
+		return $r;
+	}
+
+	/**
+	 * Sign-in an user by the provided $fieldKey and $fieldValue
+	 *
+	 * @param string $fieldKey (can be: 'id' || 'login' || 'email' || 'slug')
+	 * @param string $fieldValue
+	 * @param bool $remember
+	 * @param bool $secure_cookie
+	 *
+	 * @return \WP_Error|\WP_User
+	 */
+	public static function signin_by($fieldKey,$fieldValue,$remember = true,$secure_cookie = true){
+		$user = false;
+		switch($fieldKey){
+			case 'id':
+				$user = get_user_by('id',$fieldValue);
+				break;
+			case 'login':
+				$user = get_user_by('login',$fieldValue);
+				break;
+			case 'email':
+				$user = get_user_by('email',$fieldValue);
+				break;
+			case 'slug':
+				$user = get_user_by('slug',$fieldValue);
+				break;
+		}
+		if($user instanceof \WP_User){
+			wp_set_auth_cookie($user->ID,$remember,$secure_cookie);
+			do_action('wp_login', $user->user_login, $user);
+			wp_set_current_user($user->ID);
+			return $user;
+		}
+		return new \WP_Error('wbf_invalid_login','Invalid login');
+	}
 }
