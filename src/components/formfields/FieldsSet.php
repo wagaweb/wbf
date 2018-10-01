@@ -59,6 +59,8 @@ class FieldsSet{
 	 */
 	private $sanitizedPostedFields;
 
+	const FORM_FIELDS_GROUP_PREFIX = 'wbf_form_fields';
+
 	/**
 	 * FieldsSet constructor.
 	 *
@@ -71,6 +73,7 @@ class FieldsSet{
 		}
 		$this->id = $id;
 		if($loadFields){
+			//Try to get the Field instances
 			$fields = $this->retrieve_raw_available_fields();
 			if(Arrays::is_iterable($fields)){
 				$fieldsObjs = [];
@@ -83,6 +86,10 @@ class FieldsSet{
 				$this->set_fields($fieldsObjs);
 			}else{
 				$this->fields = [];
+			}
+			//Try to get the posted fields
+			if(isset($_POST[self::FORM_FIELDS_GROUP_PREFIX][$this->id])){
+				$this->set_posted_fields($_POST[self::FORM_FIELDS_GROUP_PREFIX][$this->id]);
 			}
 		}
 	}
@@ -164,7 +171,8 @@ class FieldsSet{
 	public function validate_fields($sanitize = true){
 		$fields = $this->get_posted_fields();
 		if($sanitize){
-			$fields = $this->sanitize_fields();
+			$this->sanitize_fields();
+			$fields = $this->get_sanitized_posted_fields();
 		}
 		$errors = [];
 		foreach ($fields as $fieldKey => $fieldValue){
@@ -178,16 +186,12 @@ class FieldsSet{
 			foreach ($rules as $rule){
 				switch ($rule){
 					case 'notEmpty':
-						$fieldValue = sanitize_text_field($fieldValue);
-						$fields[$fieldKey] = $fieldValue;
 						if($fieldValue === ''){
 							$errors[$fieldKey] = $label.': The field cannot be empty.';
 						}
 						break;
 					case 'isEmail':
-						$fieldValue = sanitize_email($fieldValue);
-						$fields[$fieldKey] = $fieldValue;
-						if(!is_email($fieldValue)){
+						if(!\is_email($fieldValue)){
 							$errors[$fieldKey] = $label.': The field must be an email address.';
 						}
 						break;
@@ -212,20 +216,20 @@ class FieldsSet{
 						}
 						break;
 				}
-			}
-			if(\is_callable($rule) && function_exists($rule)){
-				$r = $rule($fieldKey,$fieldValue,$fields);
-				if(\is_string($r)){
-					$errors[$fieldKey] = $r;
+				if(\is_callable($rule) && function_exists($rule)){
+					$r = $rule($fieldKey,$fieldValue,$fields);
+					if(\is_string($r)){
+						$errors[$fieldKey] = $r;
+					}
 				}
-			}
-			if(preg_match('|^field:([a-zA-Z]+)|',$rule,$field_to_match)){
-				$field_to_match = $field_to_match[1];
-				if(!isset($fields[$field_to_match])){
-					$errors[$fieldKey] = $label.': The compare field does not exists.';
-				}
-				if($fieldValue !== $fields[$field_to_match]){
-					$errors[$fieldKey] = $label.': The field is not the same.';
+				if(preg_match('|^field:([a-zA-Z]+)|',$rule,$field_to_match)){
+					$field_to_match = $field_to_match[1];
+					if(!isset($fields[$field_to_match])){
+						$errors[$fieldKey] = $label.': The compare field does not exists.';
+					}
+					if($fieldValue !== $fields[$field_to_match]){
+						$errors[$fieldKey] = $label.': The field is not the same.';
+					}
 				}
 			}
 		}
@@ -235,7 +239,7 @@ class FieldsSet{
 	/**
 	 * Sanitize the fields in the set
 	 *
-	 * @return array
+	 * @return void
 	 */
 	public function sanitize_fields(){
 		$sanitizedFields = [];
@@ -264,7 +268,16 @@ class FieldsSet{
 			}
 		}
 		$this->sanitizedPostedFields = $sanitizedFields;
-		return $sanitizedFields;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function get_sanitized_posted_fields(){
+		if(isset($this->sanitizedPostedFields) && \is_array($this->sanitizedPostedFields)){
+			return $this->sanitizedPostedFields;
+		}
+		return [];
 	}
 
 	/**
@@ -305,7 +318,7 @@ class FieldsSet{
 			$v = new HTMLView($fieldViewsDirectory.'/'.$fieldType.'.php',null,false);
 			$v->display([
 				'label' => $field->get_label(),
-				'name' => $field->get_key(),
+				'name' => self::FORM_FIELDS_GROUP_PREFIX.'['.$this->id.']['.$field->get_key().']',
 				'value' => $fieldValue,
 				'args' => $field
 			]);
