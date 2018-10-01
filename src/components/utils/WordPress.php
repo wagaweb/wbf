@@ -314,6 +314,7 @@ class WordPress {
 	 * @return \WP_Error|\WP_User
 	 */
 	public static function signin_by_credentials($login,$password,$remember = true,$secure_cookie = true){
+		$login = sanitize_user($login);
 		$r = wp_signon([
 			'user_login' => $login,
 			'user_password' => $password,
@@ -339,15 +340,19 @@ class WordPress {
 		$user = false;
 		switch($fieldKey){
 			case 'id':
+				$fieldValue = (int) $fieldValue;
 				$user = get_user_by('id',$fieldValue);
 				break;
 			case 'login':
+				$fieldValue = sanitize_user($fieldValue);
 				$user = get_user_by('login',$fieldValue);
 				break;
 			case 'email':
+				$fieldValue = sanitize_email($fieldValue);
 				$user = get_user_by('email',$fieldValue);
 				break;
 			case 'slug':
+				$fieldValue = sanitize_text_field($fieldValue);
 				$user = get_user_by('slug',$fieldValue);
 				break;
 		}
