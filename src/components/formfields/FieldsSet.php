@@ -2,6 +2,7 @@
 
 namespace WBF\components\formfields;
 
+use WBF\components\mvc\HTMLView;
 use WBF\components\utils\Arrays;
 use WBF\components\utils\Utilities;
 
