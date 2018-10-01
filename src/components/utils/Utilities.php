@@ -636,6 +636,17 @@ class Utilities{
 	}
 
 	/**
+	 * @param $url
+	 *
+	 * @return bool
+	 */
+	static function validate_url($url){
+		$url = \filter_var($url,FILTER_SANITIZE_URL);
+		$r = \filter_var($url, FILTER_VALIDATE_URL);
+		return (bool) $r;
+	}
+
+	/**
 	 * Completely erase a directory
 	 * @param string $dir the directory path
 	 */
