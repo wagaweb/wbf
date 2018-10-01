@@ -1,10 +1,12 @@
 <?php
-namespace WBF\components\utils;
 
-use WBF\components\mvc\HTMLView;
+namespace WBF\components\formfields;
+
+use WBF\components\utils\Arrays;
+use WBF\components\utils\Utilities;
 
 /**
- * Class FormFields
+ * Class FieldsSet
  *
  * This class provides an API to work with form fields.
  * Form fields can be registered, sanitized, validated and rendered.
@@ -36,47 +38,142 @@ use WBF\components\mvc\HTMLView;
  * An HTMLView will be initialized based on this template. The view will receive:
  * $label, $name, $value and $args, where $args is the field array.
  *
- * @package WBF\components\utils
+ * @package WBF\components\formfields
  */
-class FormFields{
+class FieldsSet{
 	/**
-	 * Get all registered custom form fields
-	 *
-	 * @param null|string $id
-	 *
-	 * @return array
+	 * @var string
 	 */
-	public static function get_available_fields($id = null){
+	private $id;
+	/**
+	 * @var array
+	 */
+	private $fields;
+	/**
+	 * @var array
+	 */
+	private $postedFields;
+	/**
+	 * @var array
+	 */
+	private $sanitizedPostedFields;
+
+	/**
+	 * FieldsSet constructor.
+	 *
+	 * @param string|null $id an unique identifier for the set
+	 * @param bool $loadFields
+	 */
+	public function __construct($id = null, $loadFields = true) {
 		if($id === null){
-			$profile_fields = apply_filters('wbf/utilities/form_fields/'.$id.'/available',[]);
-		}else{
-			$profile_fields = apply_filters('wbf/utilities/form_fields/available',[]);
+			$id = 'default';
 		}
-		if(!\is_array($profile_fields)){
-			$profile_fields = [];
+		$this->id = $id;
+		if($loadFields){
+			$fields = $this->retrieve_raw_available_fields();
+			if(Arrays::is_iterable($fields)){
+				$fieldsObjs = [];
+				array_walk($fields,function($field) use(&$fieldsObjs){
+					try{
+						$f = new Field($field);
+						$fieldsObjs[$f->get_key()] = $f;
+					}catch (\Exception $e){}
+				});
+				$this->set_fields($fieldsObjs);
+			}else{
+				$this->fields = [];
+			}
 		}
-		return $profile_fields;
 	}
 
 	/**
-	 * Validate and (optionally) sanitize a set of $fields
+	 * @return string
+	 */
+	public function get_id(){
+		return $this->id;
+	}
+
+	/**
+	 * Get set fields
+	 *
+	 * @return array
+	 */
+	public function get_fields(){
+		if(!isset($this->fields) || !\is_array($this->fields)){
+			$this->fields = [];
+		}
+		return $this->fields;
+	}
+
+	/**
+	 * Set fields
 	 *
 	 * @param array $fields
-	 * @param string|null $set
+	 */
+	public function set_fields($fields){
+		if(!\is_array($fields)){
+			$fields = [];
+		}
+		$this->fields = $fields;
+	}
+
+	/**
+	 * Set the posted fields
+	 *
+	 * @param $fields
+	 */
+	public function set_posted_fields($fields){
+		if(\is_array($fields)){
+			$this->postedFields;
+		}
+	}
+
+	/**
+	 * Get the posted fields (aka: the key\values pair from $_POST)
+	 *
+	 * @return array
+	 */
+	public function get_posted_fields(){
+		if(isset($this->postedFields) && \is_array($this->postedFields)){
+			return $this->postedFields;
+		}
+		return [];
+	}
+
+	/**
+	 * Retrieve the registered fields (not Field instances)
+	 *
+	 * @return array
+	 */
+	public function retrieve_raw_available_fields(){
+		$fields = apply_filters('wbf/utilities/form_fields/'.$this->get_id().'/available',[]);
+		if(!\is_array($fields)){
+			$fields = [];
+		}
+		return $fields;
+	}
+
+	/**
+	 * Validates the fields in the set. Returns an array of errors.
+	 *
 	 * @param bool $sanitize
 	 *
 	 * @return array
 	 */
-	public static function validate_fields($fields,$set = null,$sanitize = true){
+	public function validate_fields($sanitize = true){
+		$fields = $this->get_posted_fields();
 		if($sanitize){
-			$fields = self::sanitize_fields($fields,$set);
+			$fields = $this->sanitize_fields();
 		}
 		$errors = [];
 		foreach ($fields as $fieldKey => $fieldValue){
-			$rules = self::get_field_validation_rules($fieldKey,$set);
-			$allowEmpty = self::field_can_be_empty($fieldKey,$set);
+			if(!$this->field_exists($fieldKey)) continue;
+			$field = $this->get_field($fieldKey);
+			if(!$field instanceof Field) continue;
+			$rules = $field->get_sanitization_rules();
+			$allowEmpty = $field->can_be_empty();
 			if(count($rules) === 0) continue;
-			$label = self::get_field_label($fieldKey,$set);
+			$label = $field->get_label();
 			foreach ($rules as $rule){
 				switch ($rule){
 					case 'notEmpty':
@@ -135,135 +232,79 @@ class FormFields{
 	}
 
 	/**
-	 * Sanitize a set of $fields
-	 *
-	 * @param array $fields
-	 * @param string|null $set
+	 * Sanitize the fields in the set
 	 *
 	 * @return array
 	 */
-	private static function sanitize_fields($fields,$set = null){
+	public function sanitize_fields(){
 		$sanitizedFields = [];
+		$fields = $this->get_posted_fields();
 		foreach ($fields as $fieldKey => $fieldValue){
-			$rules = self::get_field_sanitization_rules($fieldKey,$set);
+			if(!$this->field_exists($fieldKey)) continue;
+			$field = $this->get_field($fieldKey);
+			if(!$field instanceof Field) continue;
+			$rules = $field->get_sanitization_rules();
 			if(count($rules) === 0) continue;
 			foreach ($rules as $rule){
 				switch ($rule){
 					case 'text':
-						$sanitizedFields[$fieldKey] = sanitize_text_field($fieldValue);
+						$sanitizedFields[$fieldKey] = \sanitize_text_field($fieldValue);
 						break;
 					case 'textarea':
-						$sanitizedFields[$fieldKey] = sanitize_textarea_field($fieldValue);
+						$sanitizedFields[$fieldKey] = \sanitize_textarea_field($fieldValue);
 						break;
 					case 'email':
-						$sanitizedFields[$fieldKey] = sanitize_email($fieldValue);
+						$sanitizedFields[$fieldKey] = \sanitize_email($fieldValue);
 						break;
 					case 'url':
-						$sanitizedFields[$fieldKey] = sanitize_url($fieldValue);
+						$sanitizedFields[$fieldKey] = \sanitize_url($fieldValue);
 						break;
 				}
 			}
 		}
+		$this->sanitizedPostedFields = $sanitizedFields;
 		return $sanitizedFields;
 	}
 
 	/**
-	 * Get the validation rules of a field
+	 * @param $fieldKey
 	 *
-	 * @param string $fieldName
-	 * @param string|null $set
-	 *
-	 * @return array
+	 * @return Field|false
 	 */
-	private static function get_field_validation_rules($fieldName,$set = null){
-		$field = self::get_single_field($fieldName,$set);
-		if(!$field){
-			return [];
+	public function get_field($fieldKey){
+		if($this->field_exists($fieldKey)){
+			return $this->get_fields()[$fieldKey];
 		}
-		return isset($field['validation']) && \is_array($field['validation']) ? $field['validation'] : [];
+		return false;
 	}
 
 	/**
-	 * Get sanitization rules of a field
-	 *
-	 * @param string $fieldName
-	 * @param string|null $set
-	 *
-	 * @return array
-	 */
-	private static function get_field_sanitization_rules($fieldName,$set = null){
-		$field = self::get_single_field($fieldName,$set);
-		if(!$field){
-			return [];
-		}
-		return isset($field['sanitization']) && \is_array($field['sanitization']) ? $field['sanitization'] : ['text'];
-	}
-
-	/**
-	 * Get a single field
-	 *
-	 * @param $fieldName
-	 * @param string|null $set
-	 *
-	 * @return bool|array
-	 */
-	private static function get_single_field($fieldName,$set = null){
-		$fields = self::get_available_fields($set);
-		if(!isset($fields[$fieldName])) return false;
-		return $fields[$fieldName];
-	}
-
-	/**
-	 * Get the label of a field
-	 *
-	 * @param $fieldName
-	 * @param string|null $set
-	 *
-	 * @return string
-	 */
-	private static function get_field_label($fieldName,$set = null){
-		$field = self::get_single_field($fieldName,$set);
-		if(!$field){
-			return '';
-		}
-		return isset($field['label']) ? $field['label'] : preg_replace('/[-_]/',' ',ucfirst($fieldName));
-	}
-
-	/**
-	 * Checks if a field can be empty
-	 *
-	 * @param $fieldName
-	 * @param string|null $set
+	 * @param $fieldKey
 	 *
 	 * @return bool
 	 */
-	private static function field_can_be_empty($fieldName,$set = null){
-		$field = self::get_single_field($fieldName,$set);
-		return isset($field['allowEmpty']) ? (bool) $field['allowEmpty'] : true;
+	public function field_exists($fieldKey){
+		return isset($this->get_fields()[$fieldKey]);
 	}
 
 	/**
-	 * Render a single field
+	 * @param string $fieldKey
+	 * @param mixed $fieldValue
+	 * @param bool|string $customTpl
 	 *
-	 * @param string $fieldName
-	 * @param mixed|null $fieldValue
-	 * @param string|null $set
+	 * @return void
 	 */
-	public static function render_field($fieldName, $fieldValue = null, $set = null){
-		$field = self::get_single_field($fieldName);
-		if(!$field) echo '';
-		$fieldType = isset($field['type']) ? $field['type'] : 'text';
+	public function render_field($fieldKey,$fieldValue,$customTpl = false){
+		$field = $this->get_field($fieldKey);
+		if(!$field || !$field instanceof Field) echo '';
+		$fieldType = $field->get_type();
 		try{
 			$baseDir = get_stylesheet_directory().'/views/form-fields/';
-			if($set === null){
-				$fieldViewsDirectory = apply_filters('wbf/utilities/form_fields/'.$set.'/views_directory',$baseDir);
-			}else{
-				$fieldViewsDirectory = apply_filters('wbf/utilities/form_fields/views_directory',$baseDir);
-			}
+			$fieldViewsDirectory = apply_filters('wbf/utilities/form_fields/'.$this->id.'/views_directory',$baseDir);
 			$v = new HTMLView($fieldViewsDirectory.'/'.$fieldType.'.php',null,false);
 			$v->display([
-				'label' => self::get_field_label($fieldName),
-				'name' => $fieldName,
+				'label' => $field->get_label(),
+				'name' => $field->get_key(),
 				'value' => $fieldValue,
 				'args' => $field
 			]);
