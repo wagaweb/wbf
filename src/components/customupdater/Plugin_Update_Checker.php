@@ -238,7 +238,7 @@ class Plugin_Update_Checker{
 		$update = $this->getUpdateData();
 		if(!\is_array($update)){
 			$update = $this->getCacheOption();
-			if(array_key_exists('update',$update) && $update['update'] !== false){
+			if(\is_array($update) && array_key_exists('update',$update) && $update['update'] !== false){
 				$update = $update['update'];
 			}else{
 				return $updates;
