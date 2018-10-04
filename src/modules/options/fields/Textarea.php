@@ -16,7 +16,7 @@ class Textarea extends BaseField implements Field{
 	 * @return string
 	 */
 	public function get_value($value){
-		if(is_string($value)){
+		if(\is_string($value)){
 			$value = stripslashes($value);
 		}
 		return $value;
