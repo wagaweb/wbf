@@ -81,6 +81,15 @@ class BaseField {
 	}
 
 	/**
+	 * Return the settings specified for the field when the options has been registered
+	 *
+	 * @return array
+	 */
+	public function get_relative_option_settings(){
+		return $this->related_option;
+	}
+
+	/**
 	 * Common sanitize function for options that have multiple values.
 	 *
 	 * @param string|array $input

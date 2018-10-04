@@ -41,14 +41,39 @@ class Textarea extends BaseField implements Field{
 		}
 
 		$val = stripslashes($val);
-		$output .= '<textarea id="' . esc_attr($current_option['id']) . '" class="of-input" name="' . $this->get_field_name() . '" rows="' . $rows . '">' . esc_textarea($val) . '</textarea>';
+		$val = $this->is_raw() ? $val : esc_textarea($val);
+		$output .= '<textarea id="' . esc_attr($current_option['id']) . '" class="of-input" name="' . $this->get_field_name() . '" rows="' . $rows . '">' . $val . '</textarea>';
 
 		return $output;
 	}
 
 	public function sanitize( $input, $option ) {
+		if($this->is_raw($option)){
+			return $input;
+		}
 		global $allowedposttags;
-		$output = wp_kses( $input, $allowedposttags);
+
+		if(\is_array($allowedposttags)){
+			$custom_allowedtags = $allowedposttags;
+		}else{
+			$custom_allowedtags = [];
+		}
+
+		$custom_allowedtags = apply_filters('wbf/modules/options/fields/textarea/allowed_tags',$custom_allowedtags,$input,$option,$this);
+		$output = wp_kses( $input, $custom_allowedtags);
+
 		return $output;
+	}
+
+	/**
+	 * @param null $settings
+	 *
+	 * @return bool
+	 */
+	public function is_raw($settings = null){
+		if($settings === null){
+			$settings = $this->get_relative_option_settings();
+		}
+		return isset($settings['raw']) && $settings['raw'] === true;
 	}
 }

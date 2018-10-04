@@ -27,11 +27,16 @@ class Text extends BaseField implements Field{
 	 * return string
 	 */
 	public function get_html(){
-		$output = '<input id="' . $this->get_field_id() . '" class="of-input" name="' . $this->get_field_name() . '" type="text" value="' . esc_attr($this->value) . '" />';
+		$value = $this->is_raw() ? $this->value : esc_attr($this->value);
+		$output = '<input id="' . $this->get_field_id() . '" class="of-input" name="' . $this->get_field_name() . '" type="text" value="' . $value . '" />';
 		return $output;
 	}
 
 	public function sanitize($input, $option) {
+		if($this->is_raw($option)){
+			return $input;
+		}
+
 		global $allowedposttags;
 
 		$custom_allowedtags["a"] = array(
@@ -41,9 +46,26 @@ class Text extends BaseField implements Field{
 			"class"  => array()
 		);
 
-		$custom_allowedtags = array_merge( $custom_allowedtags, $allowedposttags );
+		if(\is_array($allowedposttags)){
+			$custom_allowedtags = array_merge( $custom_allowedtags, $allowedposttags );
+		}
+
+		$custom_allowedtags = apply_filters('wbf/modules/options/fields/text/allowed_tags',$custom_allowedtags,$input,$option,$this);
+
 		$output = wp_kses( $input, $custom_allowedtags );
 
 		return $output;
+	}
+
+	/**
+	 * @param null $settings
+	 *
+	 * @return bool
+	 */
+	public function is_raw($settings = null){
+		if($settings === null){
+			$settings = $this->get_relative_option_settings();
+		}
+		return isset($settings['raw']) && $settings['raw'] === true;
 	}
 }
