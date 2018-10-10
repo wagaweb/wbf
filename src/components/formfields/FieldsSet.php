@@ -77,8 +77,9 @@ class FieldsSet{
 			$fields = $this->retrieve_raw_available_fields();
 			if(Arrays::is_iterable($fields)){
 				$fieldsObjs = [];
-				array_walk($fields,function($field) use(&$fieldsObjs){
+				array_walk($fields,function($field,$fieldKey) use(&$fieldsObjs){
 					try{
+						$field['key'] = $fieldKey;
 						$f = new Field($field);
 						$fieldsObjs[$f->get_key()] = $f;
 					}catch (\Exception $e){}
@@ -89,7 +90,13 @@ class FieldsSet{
 			}
 			//Try to get the posted fields
 			if(isset($_POST[self::FORM_FIELDS_GROUP_PREFIX][$this->id])){
-				$this->set_posted_fields($_POST[self::FORM_FIELDS_GROUP_PREFIX][$this->id]);
+				$posted = $_POST[self::FORM_FIELDS_GROUP_PREFIX][$this->id];
+				$parsedPosted = [];
+				foreach ($posted as $key => $value){
+					if(!$this->field_exists($key)) continue;
+					$parsedPosted[$key] = $value;
+				}
+				$this->set_posted_fields($parsedPosted);
 			}
 		}
 	}
@@ -132,7 +139,7 @@ class FieldsSet{
 	 */
 	public function set_posted_fields($fields){
 		if(\is_array($fields)){
-			$this->postedFields;
+			$this->postedFields = $fields;
 		}
 	}
 
@@ -159,6 +166,19 @@ class FieldsSet{
 			$fields = [];
 		}
 		return $fields;
+	}
+
+	/**
+	 * @param $fields
+	 * @param string|null $set
+	 */
+	public static function register_fields($fields,$set = null){
+		if($set === null){
+			$set = 'default';
+		}
+		add_filter('wbf/utilities/form_fields/'.$set.'/available', function() use($fields){
+			return $fields;
+		});
 	}
 
 	/**
