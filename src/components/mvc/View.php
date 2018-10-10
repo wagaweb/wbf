@@ -52,7 +52,10 @@ abstract class View{
 		}
 
 		if(!isset($abs_path) || !file_exists($abs_path)){
-			throw new \Exception( "File {$file_path} does not exists in any of these locations: " . implode(",\n",$search_paths));
+			if(!isset($search_paths)){
+				$search_paths = [$file_path];
+			}
+			throw new ViewNotFoundException($file_path,$search_paths);
 		}
 
 		$this->template = pathinfo($abs_path);
