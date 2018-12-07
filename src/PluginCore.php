@@ -1255,6 +1255,9 @@ class PluginCore {
 	 */
 	public function get_mobile_detect() {
 		if ( ! $this->services->get_mobile_detect() instanceof \Mobile_Detect ) {
+            if(!class_exists('\Mobile_Detect')){
+                require_once dirname(__DIR__).'/vendor/mobiledetect/mobiledetectlib/Mobile_Detect.php';
+            }
 			$this->services->set_mobile_detect(new \Mobile_Detect());
 			$this->services->get_mobile_detect()->setDetectionType( 'extended' );
 		}
