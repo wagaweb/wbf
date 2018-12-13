@@ -690,10 +690,9 @@ class PluginCore {
 	 */
 	public function do_global_theme_customizations(){
 		// Global Customization
-		wbf_locate_file( '/src/includes/theme-customs.php', true );
-
-		// Email encoder
-		wbf_locate_file( '/src/includes/email-encoder.php', true );
+		try{
+			wbf_locate_file( '/src/includes/theme-customs.php', true );
+		}catch (\Exception $e){}
 	}
 
 	/**
