@@ -20,45 +20,43 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-if(!function_exists("WBF")){
+if ( ! function_exists( 'WBF' ) ) {
 	/**
 	 * Return the registered instance of WBF
 	 *
 	 * @return \WBF\PluginCore
 	 * @throws Exception
 	 */
-	function WBF(){
+	function WBF() {
 		global $wbf;
-		if($wbf instanceof \WBF\PluginCore){
+		if ( $wbf instanceof \WBF\PluginCore ) {
 			return $wbf;
-		}else{
-			throw new \Exception('WBF() does not have returned an instance of WBF. Is it the framework initialized?');
 		}
+		throw new \Exception( 'WBF() does not have returned an instance of WBF. Is it the framework initialized?' );
 	}
 }
 
-if( !isset($GLOBALS['wbf']) || !$GLOBALS['wbf'] instanceof \WBF\PluginCore ) {
-
-	if (!defined('WBF_ENV')) {
-		define('WBF_ENV', 'production');
+if ( ! isset( $GLOBALS['wbf'] ) || ! $GLOBALS['wbf'] instanceof \WBF\PluginCore ) {
+	if ( ! defined( 'WBF_ENV' ) ) {
+		define( 'WBF_ENV', 'production' );
 	}
 
 	//Utilities
-	require_once( 'src/includes/utilities-functions.php' );
+	require_once 'src/includes/utilities-functions.php';
 
-	require_once("wbf-autoloader.php");
-	require_once("backup-functions.php");
-	require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+	require_once 'wbf-autoloader.php';
+	require_once 'backup-functions.php';
+	require_once ABSPATH . 'wp-admin/includes/plugin.php';
 
-	$GLOBALS['wbf'] = new \WBF\PluginCore(
-		dirname(__FILE__),
-		\WBF\components\utils\Paths::path_to_url(dirname(__FILE__))
-	);
+	try {
+		$GLOBALS['wbf'] = new \WBF\PluginCore( dirname( __FILE__ ), \WBF\components\utils\Paths::path_to_url( dirname( __FILE__ ) ) );
 
-	if(!defined("WBF_PREVENT_STARTUP")){
-		if($GLOBALS['wbf']->is_plugin()){
-			$GLOBALS['wbf']->startup();
+		if ( ! defined( 'WBF_PREVENT_STARTUP' ) || ! WBF_PREVENT_STARTUP ) {
+			if ( $GLOBALS['wbf']->is_plugin() ) {
+				$GLOBALS['wbf']->startup();
+			}
 		}
+	} catch ( \Exception $e ) {
+		trigger_error( 'Unable to initialize WBF due to: ' . $e->getMessage(), E_USER_WARNING );
 	}
-
 }
