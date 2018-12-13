@@ -47,7 +47,7 @@ class FormFields{
 	 * @return array
 	 */
 	public static function get_available_fields($id = null){
-		if($id === null){
+		if($id !== null){
 			$profile_fields = apply_filters('wbf/utilities/form_fields/'.$id.'/available',[]);
 		}else{
 			$profile_fields = apply_filters('wbf/utilities/form_fields/available',[]);
