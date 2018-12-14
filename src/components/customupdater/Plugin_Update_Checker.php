@@ -265,7 +265,7 @@ class Plugin_Update_Checker{
 	public function requestUpdate(){
 		$currentVersion = $this->getCurrentVersion();
 		$latestPackage = $this->getUpdatePackage();
-		if(!is_wp_error($latestPackage)){
+		if(!is_wp_error($latestPackage) && isset($latestPackage['version'])){
 			$r = version_compare($currentVersion,$latestPackage['version']);
 			if($r === -1){
 				$update = $latestPackage;
