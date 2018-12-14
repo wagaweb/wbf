@@ -2,8 +2,19 @@
 
 Version 1.1.4 - xx/xx/2018
 ---------------------------------
+- Fix: Fix wrong call_user_function usage in plugins_options module
+- Fix: Fixed errors in Plugin_Update_Checker
+- Fix: Fix applied for rare cases in which Mobile_Detect cannot be found
+- Fix: Fix registration \ deactivation hooks
+- Fix: Fix default WBF page visualization
+- Fix: Various other fixes
 - Tweak: Now GoogleFontsRetriever is a WBF service.
 - Tweak: Google Fonts can now be updated via a link in WBF Status page
+- Tweak: Now Text and Textarea options fields can be provided with a "raw" option that tells them to not escape the their content
+- Tweak: Moved the email encoder to the theme default customizations
+- Tweak: Improved default WBF page
+- Feature: WordPress helper now has signin_by_credentials() and signin_by() functions
+- Feature: Utilities helper now has a validate_url() function
 
 Version 1.1.3 - 09/03/2018
 ---------------------------------
