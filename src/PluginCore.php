@@ -17,6 +17,7 @@ use WBF\includes\GoogleFontsRetriever;
 use WBF\includes\ServiceManager;
 use WBF\legacy\Resources;
 use WBF\modules\components\GUI;
+use WBF\modules\options\Admin;
 use WBF\modules\options\Framework;
 use function WBF\modules\update_channels\get_update_channel;
 
@@ -455,9 +456,27 @@ class PluginCore {
 	 * @return bool
 	 */
 	public function is_plugin(){
+		static $is_plugin;
+		if($is_plugin !== null){
+			return $is_plugin;
+		}
 		$path = $this->get_path();
 		$is_plugin = strpos( $path, 'plugins' ) !== false;
 		return apply_filters('wbf/is_plugin',$is_plugin);
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function is_supported(){
+		return current_theme_supports('wbf');
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function is_plugin_and_supported(){
+		return $this->is_plugin() && $this->is_supported();
 	}
 
 	/**
@@ -702,6 +721,9 @@ class PluginCore {
 	 * @called at 'after_setup_theme', 11
 	 */
 	public function do_global_theme_customizations(){
+		if(!$this->is_supported()){
+			return;
+		}
 		// Global Customization
 		try{
 			wbf_locate_file( '/src/includes/theme-customs.php', true );
@@ -1124,13 +1146,18 @@ class PluginCore {
 	 * Placeholder callback
 	 */
 	public function options_page(){
-		if(has_action("wbf/theme_options/register") || has_filter("wbf/modules/options/available") || has_action("wbf/modules/behaviors/available")){
+		//@todo: use $this->is_supported() in future release instead of has_options?
+		if ( !Framework::has_options() && ( has_action( 'wbf/theme_options/register' ) || has_filter( 'wbf/modules/options/available' ) || has_action( 'wbf/modules/behaviors/available' ) ) ){
 			return; //if we have theme options, do not display the default page.
 		}
-		$v = new HTMLView("src/views/admin/default-page.php","wbf");
-		$v->for_dashboard()->display([
-			'page_title' => __("Welcome to WBF!")
-		]);
+		try{
+			$v = new HTMLView( 'src/views/admin/default-page.php', 'wbf' );
+			$v->for_dashboard()->display([
+				'page_title' => __("Welcome to WBF!")
+			]);
+		}catch (\Exception $e){
+			echo $e->getMessage();
+		}
 	}
 
 	/**
@@ -1139,7 +1166,7 @@ class PluginCore {
 	public function settings_page() {
 		do_action('wbf/admins/status_page/before_render');
 
-		$v = new HTMLView("src/views/admin/settings.php","wbf");
+		$v = new HTMLView( 'src/views/admin/settings.php',"wbf");
 
 		$data = [
 			'engine_info' => [

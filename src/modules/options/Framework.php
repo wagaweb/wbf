@@ -119,6 +119,17 @@ class Framework{
 	}
 
 	/**
+	 * @todo: check if this is sufficient to check whether there are theme options
+	 * @return bool
+	 */
+	public static function has_options(){
+		$additional_options = [];
+		$additional_options = apply_filters( 'of_options', $additional_options );
+		$additional_options = apply_filters( 'wbf/modules/options/available', $additional_options );
+		return \is_array($additional_options) && count($additional_options) > 0;
+	}
+
+	/**
 	 * Get current registered theme options.
 	 *
 	 * The functions use the filter "options_framework_location" to determine options file existance and location, then try to call the function "optionsframework_options()".
