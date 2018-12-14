@@ -774,13 +774,17 @@ class PluginCore {
 		}elseif($optionApiKey = \get_option('wbf_google_fonts_api_key','') !== ''){
 			$gfontApiKey = $optionApiKey;
 		}
-		if(isset($gfontApiKey)){
-			$this->services->set_google_fonts_retriever(new GoogleFontsRetriever($gfontApiKey));
-		}else{
-			$this->services->set_google_fonts_retriever(new GoogleFontsRetriever());
+		try{
+			if(isset($gfontApiKey)){
+				$this->services->set_google_fonts_retriever(new GoogleFontsRetriever($gfontApiKey));
+			}else{
+				$this->services->set_google_fonts_retriever(new GoogleFontsRetriever());
+			}
+			//Backward compatibility:
+			$GLOBALS['wbf_gfont_fetcher'] = $this->services->get_google_fonts_retriever();
+		}catch (\Exception $e){
+			trigger_error($e->getMessage(),E_USER_NOTICE);
 		}
-		//Backward compatibility:
-		$GLOBALS['wbf_gfont_fetcher'] = $this->services->get_google_fonts_retriever();
 
 		do_action("wbf_after_setup_theme_end");
 	}
