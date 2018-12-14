@@ -61,12 +61,12 @@ class PluginCore {
 	/**
 	 * @var ServiceManager
 	 */
-	var $services;
+	public $services;
 
 	/**
 	 * @var string
 	 */
-	const version = "1.1.4";
+	const version = '1.1.4';
 
 	/**
 	 * WBF constructor.
@@ -84,13 +84,13 @@ class PluginCore {
 
 		if(!defined('WBF_DIRECTORY')){
 			if(!$path){
-				$path = get_option("wbf_path");
+				$path = get_option('wbf_path');
 			}else{
 				$update_wbf_path_flag = true;
 			}
 
 			if($path && is_string($path) && !empty($path)){
-				$path = rtrim($path,"/")."/";
+				$path = rtrim($path, '/').'/';
 			}else{
 				throw new \Exception('Invalid path provided');
 			}
@@ -101,18 +101,18 @@ class PluginCore {
 
 			define('WBF_DIRECTORY',$path);
 		}else{
-			$path = rtrim(WBF_DIRECTORY,"/")."/";
+			$path = rtrim(WBF_DIRECTORY, '/') . '/';
 		}
 
 		if(!defined('WBF_URL')){
 			if(!$url){
-				$url = get_option("wbf_url");
+				$url = get_option('wbf_url');
 			}else{
 				$update_wbf_url_flag = true;
 			}
 
 			if($url && is_string($url) && !empty($url)){
-				$url = rtrim($url,"/")."/";
+				$url = rtrim($url, '/') . '/';
 			}else{
 				throw new \Exception('Invalid url provided');
 			}
@@ -123,19 +123,19 @@ class PluginCore {
 
 			define('WBF_URL',$url);
 		}else{
-			$url = rtrim(WBF_URL,"/")."/";;
+			$url = rtrim(WBF_URL,'/').'/';
 		}
 
 		$this->path = $path;
 
 		$this->url = $url;
 
-		if(!defined("WBF_WORK_DIRECTORY_NAME")){
-			define("WBF_WORK_DIRECTORY_NAME","wbf-wd");
+		if(!defined('WBF_WORK_DIRECTORY_NAME')){
+			define('WBF_WORK_DIRECTORY_NAME', 'wbf-wd');
 		}
 
-		if(!defined("WBF_WORK_DIRECTORY")){
-			define("WBF_WORK_DIRECTORY", WP_CONTENT_DIR."/".WBF_WORK_DIRECTORY_NAME);
+		if(!defined('WBF_WORK_DIRECTORY')){
+			define('WBF_WORK_DIRECTORY', WP_CONTENT_DIR .'/'. WBF_WORK_DIRECTORY_NAME);
 		}
 
 		$options = wp_parse_args($options,[
@@ -161,21 +161,21 @@ class PluginCore {
 	 */
 	public function startup(){
 		if($this->options['handle_errors']){
-			set_error_handler([$this,"handle_errors"],E_USER_WARNING); //http://php.net/manual/en/language.types.callable.php
+			set_error_handler([$this,'handle_errors'],E_USER_WARNING); //http://php.net/manual/en/language.types.callable.php
 		}
 
 		$this->maybe_run_activation();
 		$this->maybe_add_option();
-		update_option("wbf_version",self::version);
+		update_option('wbf_version',self::version);
 
 		$this->maybe_add_work_directory();
 
 		if($this->is_plugin()){
-			add_action('activate_' . plugin_basename(__FILE__), [$this,"maybe_run_activation"]);
-			add_action('deactivate_' . plugin_basename(__FILE__), [$this,"deactivation"]);
+			register_activation_hook($this->get_basepath(),[$this,'maybe_run_activation']);
+			register_deactivation_hook($this->get_basepath(),[$this,'deactivation']);
 		}else{
-			add_action( "after_switch_theme", [$this,"activation"] );
-			add_action( "switch_theme", [$this,"deactivation"], 4 );
+			add_action('after_switch_theme', [$this, 'activation']);
+			add_action('switch_theme', [$this, 'deactivation'], 4);
 		}
 
 		add_filter('update_footer', [$this,'inject_engine_info'],11);
@@ -185,31 +185,31 @@ class PluginCore {
 		 */
 
 		if($this->is_plugin()) {
-			add_action( "plugins_loaded", [$this,"plugins_loaded"], 11 );
+			add_action('plugins_loaded', [$this,'plugins_loaded'], 11 );
 		}
-		add_action( "after_setup_theme", [$this,"after_setup_theme"], 11 );
-		add_action( "init", [$this,"init"], 11 );
+		add_action('after_setup_theme', [$this,'after_setup_theme'], 11 );
+		add_action('init', [$this,'init'], 11 );
 
-		add_action( 'wp_enqueue_scripts', [$this,"register_libs"] );
-		add_action( "admin_enqueue_scripts", [$this, "enqueue_admin_assets"]);
-		add_action( 'admin_enqueue_scripts', [$this,"register_libs"] );
+		add_action('wp_enqueue_scripts', [$this,'register_libs'] );
+		add_action('admin_enqueue_scripts', [$this,'enqueue_admin_assets']);
+		add_action('admin_enqueue_scripts', [$this,'register_libs'] );
 
 		/*
 		 * |- Main Actions: END
 		 */
 
 		//Setup admin menu:
-		add_action( 'admin_menu', [$this,"admin_menu"], 11 );
-		add_action( 'admin_bar_menu', [$this,"add_environment_notice"], 1000 );
-		add_action( 'admin_bar_menu', [$this,"add_admin_compile_button"], 990 );
+		add_action('admin_menu', [$this,'admin_menu'], 11 );
+		add_action('admin_bar_menu', [$this,'add_environment_notice'], 1000 );
+		add_action('admin_bar_menu', [$this,'add_admin_compile_button'], 990 );
 
 		//Additional settings:
-		add_filter( 'site_transient_update_plugins', [$this,"unset_unwanted_updates"], 999 );
+		add_filter('site_transient_update_plugins', [$this,'unset_unwanted_updates'], 999 );
 
-		add_filter( 'wbf/modules/behaviors/priority', function(){
+		add_filter('wbf/modules/behaviors/priority', function(){
 			return 9;
 		});
-		add_filter( 'wbf/modules/options/priority', function(){
+		add_filter('wbf/modules/options/priority', function(){
 			return 11;
 		});
 	}
@@ -453,12 +453,11 @@ class PluginCore {
 	 * Checks if WBF is in the plugins directory
 	 *
 	 * @return bool
-	 * @throws \Exception
 	 */
 	public function is_plugin(){
-		$path = WBF()->get_path();
-		$is_plugin = strpos( $path, "plugins" ) !== false;
-		return apply_filters("wbf/is_plugin",$is_plugin);
+		$path = $this->get_path();
+		$is_plugin = strpos( $path, 'plugins' ) !== false;
+		return apply_filters('wbf/is_plugin',$is_plugin);
 	}
 
 	/**
@@ -477,6 +476,20 @@ class PluginCore {
 	 *
 	 *
 	 */
+
+	/**
+	 * Get the basename
+	 * @use plugin_basename
+	 * @return string
+	 */
+	public function get_basepath(){
+		static $basePath;
+		if($basePath !== null){
+			return $basePath;
+		}
+		$basePath = $this->get_path().'wbf.php';
+		return $basePath;
+	}
 
 	/**
 	 * Returns WBF url or FALSE
@@ -810,8 +823,8 @@ class PluginCore {
 				'type' => 'js',
 			],
 			'wbf-admin-style' => [
-				'uri' => WBF()->prefix_url('assets/dist/css/admin.min.css'),
-				'path' => WBF()->prefix_path('assets/dist/css/admin.min.css'),
+				'uri' => $this->prefix_url('assets/dist/css/admin.min.css'),
+				'path' => $this->prefix_path('assets/dist/css/admin.min.css'),
 				'type' => 'css'
 			]
 		];
