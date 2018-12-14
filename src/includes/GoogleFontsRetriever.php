@@ -15,7 +15,7 @@ class GoogleFontsRetriever{
 	/**
 	 * @var string
 	 */
-    public $cache_file_name = 'wbf_font_cache.php';
+    public $cache_file_name = 'wbf_font_cache.json';
 	/**
 	 * @var \stdClass|null
 	 */
@@ -90,16 +90,18 @@ class GoogleFontsRetriever{
 	 * @return \stdClass|bool
 	 */
 	public function read_font_cache_file(){
+		static $fonts_parsed;
+		if($fonts_parsed instanceof \stdClass){
+			return $fonts_parsed;
+		}
 		try{
 			$cache_file = WBF()->get_working_directory() . '/gfont_font_cache/' . $this->cache_file_name;
 			if(!\is_file($cache_file) || !\is_readable($cache_file)){
 				$cache_file = WBF()->get_path() . 'cache/' . $this->cache_file_name;
 			}
 			if(\is_file($cache_file) && \is_readable($cache_file)){
-				require_once $cache_file;
-				global $fonts;
-				if(isset($fonts)){
-					$fonts_json = $fonts;
+				$fonts_json = file_get_contents($cache_file);
+				if(isset($fonts_json) && \is_string($fonts_json)){
 					$fonts_parsed = json_decode($fonts_json);
 					if($fonts_parsed instanceof \stdClass){
 						return $fonts_parsed;
@@ -129,7 +131,7 @@ class GoogleFontsRetriever{
 		}
 
 		//File initialization
-        $cache_file_content = '<?php $fonts = \''.$fonts_json.'\'; ?>';
+        $cache_file_content = $fonts_json;
         wp_mkdir_p(WBF()->get_working_directory().'/gfont_font_cache');
 	    $cache_file = WBF()->get_working_directory().'/gfont_font_cache/'.$this->cache_file_name;
 
