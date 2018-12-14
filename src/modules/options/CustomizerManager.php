@@ -160,7 +160,11 @@ class CustomizerManager{
 	 */
 	public static function styles_preview(){
 		global $wbf_styles_compiler;
-		$post_values = json_decode( wp_unslash( $_POST['customized'] ), true );
+		if(isset($_POST['customized'])){
+			$post_values = json_decode( wp_unslash( $_POST['customized'] ), true );
+		}else{
+			$post_values = '';
+		}
 		if(!empty($post_values)){
 			//Get only the updated post values (the $_POST['customized'] is updated every time an option being changed):
 			$cached_post_values = get_transient("wbf_customizer_post_values");
