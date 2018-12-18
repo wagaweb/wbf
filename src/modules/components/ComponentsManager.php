@@ -40,6 +40,12 @@ class ComponentsManager {
 	 * Prune invalid components and update the registered component WP option. Called by self::init()
 	 */
 	static function prune_components(){
+		/*
+		 * @from 1.1.4: do this action only in Components page to avoid unwanted components deactivation on deploy procedures.
+		 */
+		if(!is_admin()) return;
+		if(!isset($_GET['page']) || $_GET['page'] != GUI::$wp_menu_slug) return;
+
 		$prune_components = function($components,$directory){
 			foreach ($components as $name => $data){
 				//If the file does not exists or if the file is not in the expected directory, unset and remove the component
