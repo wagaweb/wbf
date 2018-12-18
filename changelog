@@ -1,6 +1,6 @@
 == Change log ==
 
-Version 1.1.4 - xx/xx/2018
+Version 1.1.4 - 12/18/2018
 ---------------------------------
 - Fix: Fix wrong call_user_function usage in plugins_options module
 - Fix: Fixed errors in Plugin_Update_Checker
