@@ -7,6 +7,7 @@ Version 1.1.4 - xx/xx/2018
 - Fix: Fix applied for rare cases in which Mobile_Detect cannot be found
 - Fix: Fix registration \ deactivation hooks
 - Fix: Fix default WBF page visualization
+- Fix: Maybe fixed components deactivation during deployment procedures
 - Fix: Various other fixes
 - Tweak: Now GoogleFontsRetriever is a WBF service.
 - Tweak: The google font cache file is now a proper json!
