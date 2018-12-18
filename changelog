@@ -11,6 +11,7 @@ Version 1.1.4 - 12/18/2018
 - Fix: Various other fixes
 - Tweak: Now GoogleFontsRetriever is a WBF service.
 - Tweak: The google font cache file is now a proper json!
+- Tweak: Better handling of Google Fonts API Key
 - Tweak: Google Fonts can now be updated via a link in WBF Status page
 - Tweak: Now Text and Textarea options fields can be provided with a "raw" option that tells them to not escape the their content
 - Tweak: Moved the email encoder to the theme default customizations
