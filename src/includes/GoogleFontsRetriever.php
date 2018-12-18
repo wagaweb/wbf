@@ -54,6 +54,12 @@ class GoogleFontsRetriever{
 	 * @return bool
 	 */
     public function can_download_webfonts(){
+    	if(defined('DOING_AJAX') && DOING_AJAX){
+    		return false;
+	    }
+    	if(isset($_POST) && count($_POST) > 0){
+    		return false;
+	    }
 		return isset( $_GET['wbf_update_font_cache'], $this->api_key );
     }
 
@@ -179,6 +185,18 @@ class GoogleFontsRetriever{
 	    }
 
 	    return $fonts_json;
+    }
+
+	/**
+	 * @param string|null $url
+	 *
+	 * @return string
+	 */
+    public static function get_update_font_cache_link($url = null){
+    	if(\is_string($url)){
+		    return add_query_arg(['wbf_update_font_cache'=>'1'],$url);
+	    }
+	    return add_query_arg(['wbf_update_font_cache'=>'1']);
     }
 }
 

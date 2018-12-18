@@ -769,14 +769,19 @@ class PluginCore {
 		}
 
 		// Google Fonts
+		$currentGFontApiKey = '';
 		if(defined('WBF_GOOGLE_FONTS_API_KEY')){
-			$gfontApiKey = WBF_GOOGLE_FONTS_API_KEY;
-		}elseif($optionApiKey = \get_option('wbf_google_fonts_api_key','') !== ''){
-			$gfontApiKey = $optionApiKey;
+			$currentGFontApiKey = WBF_GOOGLE_FONTS_API_KEY;
+		}else{
+			$optionApiKey = \get_option('wbf_google_fonts_api_key','');
+			if($optionApiKey !== ''){
+				$currentGFontApiKey = $optionApiKey;
+			}
+			$currentGFontApiKey = apply_filters('wbf/google_fonts_api_key',$currentGFontApiKey);
 		}
 		try{
-			if(isset($gfontApiKey)){
-				$this->services->set_google_fonts_retriever(new GoogleFontsRetriever($gfontApiKey));
+			if($currentGFontApiKey !== ''){
+				$this->services->set_google_fonts_retriever(new GoogleFontsRetriever($currentGFontApiKey));
 			}else{
 				$this->services->set_google_fonts_retriever(new GoogleFontsRetriever());
 			}
@@ -1233,8 +1238,7 @@ class PluginCore {
 			'page_title' => __("WBF Status"),
 			'sections' => $data,
 			'force_plugin_update_link' => add_query_arg(['force-check'=>'1'],admin_url('update-core.php')),
-			'can_update_gfonts' => defined('WBF_GOOGLE_FONTS_API_KEY') && \is_string(WBF_GOOGLE_FONTS_API_KEY),
-			'gfont_update_link' => add_query_arg(['wbf_update_font_cache'=>'1'],admin_url('admin.php?page=wbf_status')),
+			'gfont_update_link' => GoogleFontsRetriever::get_update_font_cache_link(admin_url('admin.php?page=wbf_status')),
 		];
 
 		$display_args = apply_filters('wbf/admin/status_page/display_args',$display_args);
