@@ -26,9 +26,6 @@ class GoogleFontsRetriever{
 	 *
 	 * @param string|null $api_key
 	 * @param string|null $cache_file_name
-	 *
-	 * @throws GoogleFontsRetrieverException
-	 * @throws \Exception
 	 */
 	public function __construct($api_key = null,$cache_file_name = null){
         if(isset($api_key)){
@@ -37,17 +34,54 @@ class GoogleFontsRetriever{
         if(isset($cache_file_name)){
         	$this->cache_file_name = $cache_file_name;
         }
-        if($this->can_download_webfonts()){
-        	$fonts_json = $this->download_webfonts();
-	        if($fonts_json !== false){
-		        $this->write_font_cache_file($fonts_json);
-	        }
-        }else{
-	        $fonts = $this->read_font_cache_file();
-	        if($fonts instanceof \stdClass){
-	        	$this->cached_fonts = $fonts;
-	        }
-        }
+    }
+
+	/**
+	 * @throws GoogleFontsRetrieverException
+	 * @throws \Exception
+	 * @return \stdClass|false
+	 */
+    public function load_webfonts(){
+    	if(defined('DOING_CRON') && DOING_CRON){
+    		return;
+	    }
+	    if($this->can_download_webfonts()){
+		    $fonts_json = $this->download_webfonts();
+		    if($fonts_json !== false){
+			    $this->write_font_cache_file($fonts_json);
+		    }
+	    }
+	    $fonts = $this->read_font_cache_file();
+	    if($fonts instanceof \stdClass){
+		    $this->set_cached_fonts($fonts);
+		    return $fonts;
+	    }
+	    return false;
+    }
+
+	/**
+	 * @param \stdClass $fonts
+	 */
+    public function set_cached_fonts(\stdClass $fonts){
+		$this->cached_fonts = $fonts;
+    }
+
+	/**
+	 * @return \stdClass|null
+	 */
+    public function get_cached_fonts(){
+    	$cached_fonts = $this->cached_fonts;
+	    try{
+		    if($cached_fonts === null){
+			    $cached_fonts = $this->load_webfonts();
+		    }
+		    if($cached_fonts instanceof \stdClass && property_exists($cached_fonts,'items')){
+				return $cached_fonts;
+		    }
+		    return null;
+	    }catch (\Exception $e){
+		    return null;
+	    }
     }
 
 	/**
@@ -67,7 +101,7 @@ class GoogleFontsRetriever{
 	 * @return \stdClass
 	 */
     public function get_webfonts(){
-    	$currentFonts = $this->cached_fonts;
+    	$currentFonts = $this->get_cached_fonts();
     	if($currentFonts === null){
 		    $currentFonts = new \stdClass();
 		    $currentFonts->items = array();
