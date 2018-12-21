@@ -798,23 +798,19 @@ class PluginCore {
 	 * Wordpress "init" callback
 	 */
 	public function init() {
-		do_action("wbf_init");
+		do_action('wbf_init');
 
 		if($this->options['check_for_updates']){
 			//Set update server
 			if($this->is_plugin()){
 				$channel = get_update_channel('wbf');
-				$endpoint = !$channel || $channel === 'stable' ? "http://update.waboot.org/resource/info/plugin/wbf" : "http://update.waboot.org/resource/info/plugin/wbf?channel=".$channel;
-				$this->services->set_updater(new Plugin_Update_Checker(
-					$endpoint, //$metadataUrl
-					$this->get_path()."wbf.php", //$pluginFile
-					"wbf", //$slug
-					null, //$plugin_license
-					false, //$checkLicense
-					12, //$checkPeriod
-					'wbf_updates', //$optionName
-					is_multisite() //$muPluginFile
-				));
+				$endpoint = !$channel || $channel === 'stable' ? 'http://update.waboot.org/resource/info/plugin/wbf' : 'http://update.waboot.org/resource/info/plugin/wbf?channel='.$channel;
+				try{
+					$this->services->set_updater(new Plugin_Update_Checker( $endpoint, $this->get_basepath(), 'wbf' ));
+					$this->services->get_updater()->initialize();
+				}catch (\Exception $e){
+					trigger_error('Unable to initialize the WBF updater: '.$e->getMessage());
+				}
 			}
 		}
 
