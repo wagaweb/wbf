@@ -781,12 +781,13 @@ class PluginCore {
 		}
 		try{
 			if($currentGFontApiKey !== ''){
-				$this->services->set_google_fonts_retriever(new GoogleFontsRetriever($currentGFontApiKey));
+				$gFontRetriever = new GoogleFontsRetriever($currentGFontApiKey);
 			}else{
-				$this->services->set_google_fonts_retriever(new GoogleFontsRetriever());
+				$gFontRetriever = new GoogleFontsRetriever();
 			}
+			$this->services->set_google_fonts_retriever($gFontRetriever);
 			//Backward compatibility:
-			$GLOBALS['wbf_gfont_fetcher'] = &$this->services->get_google_fonts_retriever();
+			$GLOBALS['wbf_gfont_fetcher'] = &$gFontRetriever;
 			$GLOBALS['wbf_gfont_fetcher']->load_webfonts();
 		}catch (\Exception $e){
 			trigger_error($e->getMessage(),E_USER_NOTICE);
