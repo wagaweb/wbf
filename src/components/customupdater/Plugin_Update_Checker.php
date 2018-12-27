@@ -244,6 +244,9 @@ class Plugin_Update_Checker{
 				return $updates;
 			}
 		}
+		if(!$this->isNextVersion($update['version'])){
+			return $updates;
+		}
 		$response = new \stdClass();
 		$response->slug = $update['slug'];
 		$response->plugin = $this->pluginFile;
@@ -263,11 +266,9 @@ class Plugin_Update_Checker{
 	 * @return array|bool
 	 */
 	public function requestUpdate(){
-		$currentVersion = $this->getCurrentVersion();
 		$latestPackage = $this->getUpdatePackage();
 		if(!is_wp_error($latestPackage) && isset($latestPackage['version'])){
-			$r = version_compare($currentVersion,$latestPackage['version']);
-			if($r === -1){
+			if($this->isNextVersion($latestPackage['version'])){
 				$update = $latestPackage;
 				return $update;
 			}
@@ -553,5 +554,15 @@ class Plugin_Update_Checker{
 	 */
 	protected static function clearUpgradablePluginsStatusCache(){
 		update_option("wbf_unable_to_update_plugins",array());
+	}
+
+	/**
+	 * @param $version
+	 *
+	 * @return bool
+	 */
+	private function isNextVersion($version){
+		$currentVersion = $this->getCurrentVersion();
+		return version_compare($currentVersion,$version) === -1;
 	}
 }
