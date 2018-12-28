@@ -10,5 +10,6 @@ function add_wc_post_types_to_invalid_for_behaviors($post_types){
 	$post_types[] = "product_variation";
 	$post_types[] = "shop_order";
 	$post_types[] = "shop_order_refund";
+	$post_types[] = "scheduled-action";
 	return $post_types;
 }

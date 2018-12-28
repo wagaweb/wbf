@@ -101,7 +101,18 @@ class Posts {
 	static function get_filtered_post_types($blacklist = array()){
 		$post_types = get_post_types();
 		$result = array();
-		$blacklist = array_merge($blacklist,array('attachment','revision','nav_menu_item','ml-slider','custom_css','customize_changeset'));
+		$defaultBlackList = [
+			'attachment',
+			'revision',
+			'nav_menu_item',
+			'ml-slider',
+			'custom_css',
+			'customize_changeset',
+			'oembed_cache',
+			'user_request',
+			'wp_block'
+		];
+		$blacklist = array_merge($blacklist,$defaultBlackList);
 		$blacklist = array_unique(apply_filters("wbf/utilities/get_filtered_post_types/blacklist",$blacklist));
 		foreach($post_types as $pt){
 			if(!in_array($pt,$blacklist)){
