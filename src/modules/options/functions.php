@@ -714,12 +714,31 @@ function organizer(){
 }
 
 /**
- * Helper function to return the theme option value.
- * If no value has been saved, it returns $default.
- * Needed because options are saved as serialized strings.
+ * Helper function to return the theme option value
+ * If no value has been saved, it returns $default
+ * Needed because options are saved as serialized strings
  *
- * Not in a class to support backwards compatibility in themes.
+ * Not in a class to support backwards compatibility in themes
+ *
+ * It is an alias of get_option
+ *
+ * @deprecated
+ *
+ * @param string $name
+ * @param mixed|null $default
+ *
+ * @return mixed
  */
 function of_get_option( $name, $default = null ) {
+	return Framework::get_option($name,$default);
+}
+
+/**
+ * @param string $name
+ * @param mixed|null $default
+ *
+ * @return mixed
+ */
+function get_option( $name, $default = null ){
 	return Framework::get_option($name,$default);
 }
