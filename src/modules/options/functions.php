@@ -720,25 +720,11 @@ function organizer(){
  *
  * Not in a class to support backwards compatibility in themes
  *
- * It is an alias of get_option
- *
- * @deprecated
- *
  * @param string $name
  * @param mixed|null $default
  *
  * @return mixed
  */
 function of_get_option( $name, $default = null ) {
-	return Framework::get_option($name,$default);
-}
-
-/**
- * @param string $name
- * @param mixed|null $default
- *
- * @return mixed
- */
-function get_option( $name, $default = null ){
 	return Framework::get_option($name,$default);
 }

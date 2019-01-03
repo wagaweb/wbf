@@ -316,7 +316,7 @@ class Framework{
 			return $default;
 		}
 
-		if(empty($options)) $options = get_option( $config );
+		if(empty($options)) $options = \get_option( $config );
 
 		if ( isset( $options[$name] ) ) {
 			$option_type = self::get_option_type($name);
