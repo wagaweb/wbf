@@ -354,7 +354,7 @@ class ComponentsManager {
 	 *
 	 * @param Component $c
 	 */
-	static function addLoadedComponent( \WBF\modules\components\Component $c ) {
+	static function addLoadedComponent( Component $c ) {
 		global $loaded_components;
 		if ( ! in_array( $c->name, $loaded_components ) ) {
 			$loaded_components[ $c->name] = $c;
@@ -579,7 +579,7 @@ class ComponentsManager {
      * @param Component $c
      * @return bool
      */
-    static function is_enable_for_current_page( \WBF\modules\components\Component $c ) {
+    static function is_enable_for_current_page( Component $c ) {
         global $post;
 
 	    $maybe_enabled = false;
