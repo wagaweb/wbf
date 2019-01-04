@@ -25,9 +25,9 @@ class ComponentsManager {
     static function init(){
     	do_action("wbf/modules/components/before_init");
 
-	    add_action("wbf/theme_options/register",'\WBF\modules\components\ComponentsManager::addRegisteredComponentOptions',999); //register component options
+	    add_action("wbf/theme_options/register",'\WBF\modules\components\ComponentsManager::registeredActiveComponentOptions',999); //register component options
 	    add_filter("wbf/modules/options/pre_save",'\WBF\modules\components\ComponentsManager::on_theme_options_saving',10,3);
-	    //add_filter("wbf/modules/options/after_restore",'\WBF\modules\components\ComponentsManager::on_theme_options_restore',10,1);
+	    //add_filter("wbf/modules/options/after_restore",'\WBF\modules\components\ComponentsManager::on_theme_options_restore',10,1); //@deprecated
 	    add_filter("wbf/modules/options/after_reset",'\WBF\modules\components\ComponentsManager::on_theme_options_reset',10,1);
 
 	    self::prune_components();
@@ -279,6 +279,21 @@ class ComponentsManager {
 	}
 
 	/**
+	 * Get all active components
+	 * @return array
+	 */
+	static function getActiveComponents(){
+		$components = self::getAllComponents();
+		$activeComponents = array_filter($components,function($component){
+			return self::is_active($component);
+		});
+		if(!\is_array($activeComponents)){
+			return [];
+		}
+		return $activeComponents;
+	}
+
+	/**
 	 * Retrieve current detected components (an array of components data)
 	 *
 	 * @uses self::get_registered_components()
@@ -422,14 +437,15 @@ class ComponentsManager {
 
     /**
      * Exec register_options method on active components (executed during "wbf/theme_options/register" action)
+     * @todo: BUG: When all components being deactivated, theme options checkboxes are reset
      */
-    static function addRegisteredComponentOptions(){
-        $components = self::getAllComponents();
-        foreach ( $components as $oComponent ) {
-            if ( self::is_active( $oComponent ) ) {
-	            add_filter("wbf/modules/components/component/{$oComponent->name}_component/register_custom_options",[$oComponent,"theme_options"]);
-                $oComponent->register_options();
-            }
+    static function registeredActiveComponentOptions(){
+	    $activeComponents = self::getActiveComponents();
+        if(count($activeComponents) > 0){
+	        foreach ( $activeComponents as $oComponent ) {
+		        add_filter( "wbf/modules/components/component/{$oComponent->name}_component/register_custom_options", [ $oComponent, "theme_options" ] );
+		        $oComponent->register_options();
+	        }
         }
     }
 

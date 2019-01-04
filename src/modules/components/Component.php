@@ -164,7 +164,7 @@ class Component {
     public function setup(){}
 
     /**
-     * Method called from &_optionsframework_options() by addRegisteredComponentOptions()
+     * Method called from &_optionsframework_options() by registeredActiveComponentOptions()
      */
     public function register_options(){
 	    $orgzr = Organizer::getInstance();
