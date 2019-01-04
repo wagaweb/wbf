@@ -408,28 +408,26 @@ class ComponentsManager {
      * See components-hooks.php.
      */
     static function enqueueRegisteredComponent( $action ) {
-        $components = self::getAllComponents();
+        $components = self::getActiveComponents();
         foreach ( $components as $oComponent ) {
-            if ( self::is_active( $oComponent ) ) {
-                if ( self::is_enable_for_current_page( $oComponent ) ) {
-                    self::addLoadedComponent( $oComponent );
-                    switch ( $action ) {
-                        case "wp":
-                            if(method_exists($oComponent,"run")){
-                                $oComponent->run();
-                            }else{
-                                if(method_exists($oComponent,"onInit")){
-                                    $oComponent->onInit();
-                                }
+            if ( self::is_enable_for_current_page( $oComponent ) ) {
+                self::addLoadedComponent( $oComponent );
+                switch ( $action ) {
+                    case "wp":
+                        if(method_exists($oComponent,"run")){
+                            $oComponent->run();
+                        }else{
+                            if(method_exists($oComponent,"onInit")){
+                                $oComponent->onInit();
                             }
-                            break;
-                        case "wp_enqueue_scripts":
-                            if(method_exists($oComponent,"scripts"))
-                                $oComponent->scripts();
-                            if(method_exists($oComponent,"styles"))
-                                $oComponent->styles();
-                            break;
-                    }
+                        }
+                        break;
+                    case "wp_enqueue_scripts":
+                        if(method_exists($oComponent,"scripts"))
+                            $oComponent->scripts();
+                        if(method_exists($oComponent,"styles"))
+                            $oComponent->styles();
+                        break;
                 }
             }
         }
@@ -589,6 +587,15 @@ class ComponentsManager {
 
         if ( empty( $c->filters ) ) {
 	        $maybe_enabled = false;
+        }
+
+        //Normalize data
+	    //@todo: find out why some times 'post_type' and 'node_id' are empty arrays
+	    if(\is_array($c->filters['post_type']) && count($c->filters['post_type']) === 0){
+		    $c->filters['post_type'] = '*';
+	    }
+        if(\is_array($c->filters['node_id']) && count($c->filters['node_id']) === 0){
+        	$c->filters['node_id'] = '*';
         }
 
         if ( $c->filters['node_id'] == "*" ) {
