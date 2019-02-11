@@ -33,7 +33,7 @@ class WooCommerce{
 	 *
 	 * @return int
 	 */
-	public static function wpdb_get_product_id_by_sku($sku){
+	public static function db_get_product_id_by_sku($sku){
 		global $wpdb;
 		$q = 'SELECT post_id FROM '.$wpdb->postmeta.' WHERE meta_key = "_sku" AND meta_value = "'.$sku.'"';
 		$id = (int) $wpdb->get_var($q);
@@ -49,7 +49,7 @@ class WooCommerce{
 	 * @param $id
 	 * @return bool|string
 	 */
-	public static function wpdb_get_product_sku_by_id($id){
+	public static function db_get_product_sku_by_id($id){
 		global $wpdb;
 		$q = 'SELECT meta_value FROM '.$wpdb->postmeta.' WHERE meta_key = "_sku" AND post_id = '.$id;
 		$sku = $wpdb->get_var($q);
@@ -63,7 +63,7 @@ class WooCommerce{
 	 * Retrieve id of all products with a _sku assigned by querying the database directly.
 	 * @return array
 	 */
-	function wpdb_get_products_with_sku(){
+	function db_get_products_with_sku(){
 		global $wpdb;
 		$q = 'SELECT post_id FROM '.$wpdb->postmeta.' WHERE meta_key = "_sku"';
 		$res = $wpdb->get_results($q,ARRAY_A);

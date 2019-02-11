@@ -366,7 +366,7 @@ class Terms {
 	 *
 	 * @return int
 	 */
-	public static function wpdb_set_object_terms($object_id, $terms = []){
+	public static function db_set_object_terms($object_id, $terms = []){
 		global $wpdb;
 		$res = 0;
 		if(!\is_array($terms) || count($terms) <= 0){
