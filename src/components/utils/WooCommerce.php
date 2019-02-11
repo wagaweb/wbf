@@ -27,6 +27,56 @@ class WooCommerce{
 	}
 
 	/**
+	 * Retrieve the id of a product by _sky by querying the database directly. If no product is found 0 is returned.
+	 *
+	 * @param $sku
+	 *
+	 * @return int
+	 */
+	public static function wpdb_get_product_id_by_sku($sku){
+		global $wpdb;
+		$q = 'SELECT post_id FROM '.$wpdb->postmeta.' WHERE meta_key = "_sku" AND meta_value = "'.$sku.'"';
+		$id = (int) $wpdb->get_var($q);
+		if(\is_int($id) && $id > 0){
+			return $id;
+		}
+		return 0;
+	}
+
+	/**
+	 * Retrieve the sku of a product by its id by querying the database directly. If no product is found FALSE is returned.
+	 *
+	 * @param $id
+	 * @return bool|string
+	 */
+	public static function wpdb_get_product_sku_by_id($id){
+		global $wpdb;
+		$q = 'SELECT meta_value FROM '.$wpdb->postmeta.' WHERE meta_key = "_sku" AND post_id = '.$id;
+		$sku = $wpdb->get_var($q);
+		if($sku !== null && $sku !== false){
+			return $sku;
+		}
+		return false;
+	}
+
+	/**
+	 * Retrieve id of all products with a _sku assigned by querying the database directly.
+	 * @return array
+	 */
+	function wpdb_get_products_with_sku(){
+		global $wpdb;
+		$q = 'SELECT post_id FROM '.$wpdb->postmeta.' WHERE meta_key = "_sku"';
+		$res = $wpdb->get_results($q,ARRAY_A);
+		if(\is_array($res) && count($res) > 0){
+			$ids = array_map(function($el){
+				return (int) $el['post_id'];
+			},$res);
+			return $ids;
+		}
+		return [];
+	}
+
+	/**
 	 * Adds an hook to "woocommerce_product_class" that replace the vanilla WC classes with WBF ones
 	 */
 	public static function replace_wc_product_classes(){

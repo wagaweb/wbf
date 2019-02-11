@@ -357,4 +357,31 @@ class Terms {
 		}
 		return false;
 	}
+
+	/**
+	 * Assign terms to an object, by querying the database directly
+	 *
+	 * @param $object_id
+	 * @param array $terms
+	 *
+	 * @return int
+	 */
+	public static function wpdb_set_object_terms($object_id, $terms = []){
+		global $wpdb;
+		$res = 0;
+		if(!\is_array($terms) || count($terms) <= 0){
+			return $res;
+		}
+		$wpdb->delete($wpdb->term_relationships,[
+			'object_id' => $object_id
+		]);
+		foreach ($terms as $termId){
+			$res += (int) $wpdb->insert($wpdb->term_relationships,[
+				'object_id' => $object_id,
+				'term_taxonomy_id' => $termId,
+				'term_order' => 0
+			]);
+		}
+		return $res;
+	}
 }
