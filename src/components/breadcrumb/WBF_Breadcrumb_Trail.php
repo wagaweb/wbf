@@ -3,12 +3,20 @@
  * This file is part of WBF Framework: https://github.com/wagaweb/wbf
  *
  * @author WAGA Team <dev@waga.it>
+ *
+ * @DEPRECATED
  */
 
 namespace WBF\components\breadcrumb;
 
 require_once( dirname(__FILE__).'/vendor/breadcrumb-trail.php');
 
+/**
+ * Class WBF_Breadcrumb_Trail
+ * @package WBF\components\breadcrumb
+ *
+ * @deprecated
+ */
 class WBF_Breadcrumb_Trail extends \Breadcrumb_Trail{
     /**
      * Formats and outputs the breadcrumb trail.

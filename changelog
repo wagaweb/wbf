@@ -1,5 +1,11 @@
 == Change log ==
 
+Version 1.1.5 - 02/19/2019
+---------------------------------
+- Tweak: The Breadcrumb component has been refactored and modernized
+- Tweak: Some new utilities in Terms and WooCommerce to do things directly through the database
+- Tweak: A new experimental Model class has been added to the MVC component
+
 Version 1.1.4 - 12/18/2018
 ---------------------------------
 - Fix: Fix wrong call_user_function usage in plugins_options module
