@@ -579,7 +579,6 @@ class Utilities{
 		return Posts::get_post_thumbnail_src($post_id,$size);
 	}
 
-
 	/**
 	 * Convert full URL paths to path relative to wp-content.
 	 *
@@ -859,5 +858,33 @@ class Utilities{
 			$randomString .= $characters[rand(0, $charactersLength - 1)];
 		}
 		return $randomString;
+	}
+
+	/**
+	 * Append the current datetime to a string that represent a full path to a file.
+	 *
+	 * @example
+	 * Input: /var/srv/logs/test.log
+	 * Output: /var/srv/logs/test-02142019_1233.log
+	 *
+	 * @param string $fullpath
+	 * @param \DateTimeZone $time_zone
+	 * @param string $format
+	 *
+	 * @return string
+	 */
+	static function append_current_datetime_to_filename($fullpath,\DateTimeZone $time_zone, $format = 'mdY_Hi'){
+		$path_parts = pathinfo($fullpath);
+		$ext = isset($path_parts['extension']) ? $path_parts['extension'] : '';
+		try{
+			$datetime = (new \DateTime('now',$time_zone))->format($format);
+		}catch (\Exception $e){
+			$datetime = 'nodate';
+		}
+		$r = $path_parts['dirname'].'/'.$path_parts['filename'].'-'.$datetime;
+		if($ext !== ''){
+			$r .= '.'.$ext;
+		}
+		return $r;
 	}
 }
