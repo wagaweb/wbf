@@ -4,6 +4,7 @@ builds/**/*
 npm-debug.log
 yarn.lock
 .yarnclean
+shrinkwrap.yaml
 
 ############
 ## COMPILED
