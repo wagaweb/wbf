@@ -31,9 +31,10 @@ add_action('init', function(){
 					$registered_commands[] = [
 						'type' => 'custom-class',
 						'class_name' => $class_name,
-						'runner' => $command_instance
+						'callable' => $command_instance
 					];
-				}elseif(class_exists('\WP_CLI_Command') && $command_instance instanceof \WP_CLI_Command){
+				}else{
+					//Standard WP_CLI command class
 					if(preg_match('|'.__DIR__.'|',$file)){
 						$name = strtolower(substr($class_name, strrpos($class_name, '\\') + 1)); //Strip namespace
 					}else{
@@ -42,7 +43,7 @@ add_action('init', function(){
 					$registered_commands[] = [
 						'type' => 'vanilla-class',
 						'class_name' => $class_name,
-						'runner' => $class_name,
+						'callable' => $class_name,
 						'name' => $name
 					];
 				}
@@ -58,27 +59,26 @@ add_action('init', function(){
 			'type' => null,
 			'class_name' => null,
 			'name' => null,
-			'runner' => null,
+			'callable' => null,
 			'args' => []
 		]);
 		switch($command_entry['type']){
 			case 'custom-class':
-				$command_instance = $command_entry['runner'];
+				$command_instance = $command_entry['callable'];
 				if($command_instance instanceof BaseCommand && method_exists($command_instance,'configure') && method_exists($command_instance,'register')){
 					$command_instance->configure();
 					$command_instance->register();
 				}
 				break;
 			case 'vanilla-class':
-				if(class_exists('\WP_CLI_Command')){
-					if(class_exists('\WP_CLI'))
-						\WP_CLI::add_command($command_entry['name'],$command_entry['runner'],$command_entry['args']);
+				if(class_exists('\WP_CLI')){
+					\WP_CLI::add_command($command_entry['name'],$command_entry['callable'],$command_entry['args']);
 				}
 				break;
 			case 'callable':
 				if(isset($command_entry['name'],$command_entry['runner'])){
 					if(class_exists('\WP_CLI'))
-						\WP_CLI::add_command($command_entry['name'],$command_entry['runner'],$command_entry['args']);
+						\WP_CLI::add_command($command_entry['name'],$command_entry['callable'],$command_entry['args']);
 				}
 				break;
 		}
