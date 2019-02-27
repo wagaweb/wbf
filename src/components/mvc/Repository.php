@@ -120,7 +120,8 @@ abstract class Repository implements RepositoryInterface
 	 * @return RepositoryInterface
 	 * @throws ModelException
 	 */
-	public static function get($modelClassName){
+	public static function get($modelClassName)
+	{
 		if($modelClassName === \WP_Post::class){
 			return new PostRepository();
 		}
