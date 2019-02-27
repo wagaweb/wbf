@@ -42,6 +42,13 @@ And then use them:
 	$books = \WBF\components\mvc\Repository::get(Book::class)->findAll();
 ```
 
+Default WP_Post repository is also supported:
+
+```php
+$postRepostory = \WBF\components\mvc\Repository::get(WP_Post::class);
+$posts = $postRepository->findAll();
+```
+
 ## Usage of HTMLView
 HTMLView is the default view type provided by component. You can use is to display HTML templates.
 

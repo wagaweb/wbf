@@ -2,6 +2,8 @@
 
 namespace WBF\components\mvc;
 
+use WBF\components\utils\Utilities;
+
 abstract class Repository implements RepositoryInterface
 {
 	const FIND_ALL_IDS = 0;
@@ -116,20 +118,29 @@ abstract class Repository implements RepositoryInterface
 	}
 
 	/**
-	 * @param $className
+	 * @param $modelClassName
 	 *
 	 * @return RepositoryInterface
 	 * @throws ModelException
 	 */
-	public static function get($className){
-		static $repository;
-		if($repository instanceof RepositoryInterface){
-			return $repository;
+	public static function get($modelClassName){
+		if($modelClassName === \WP_Post::class){
+			return new PostRepository();
 		}
-		$className = $className.'Repository';
-		$repository = new $className();
+		$repositoryClassName = $modelClassName.'Repository';
+		if(class_exists($repositoryClassName)){
+			$repository = new $repositoryClassName();
+		}else{
+			$repository = new PostRepository();
+			$repository->setClassName($modelClassName);
+			$postTypeName = Utilities::strip_namespace($modelClassName);
+			if(\is_string($postTypeName)){
+				$postTypeName = strtolower($postTypeName);
+				$repository->setPostType($postTypeName);
+			}
+		}
 		if(!$repository instanceof RepositoryInterface){
-			throw new ModelException('Invalid repository class provided');
+			throw new ModelException('Invalid model class name provided');
 		}
 		return $repository;
 	}
