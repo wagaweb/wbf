@@ -887,4 +887,14 @@ class Utilities{
 		}
 		return $r;
 	}
+
+	/**
+	 * @param $class_name
+	 *
+	 * @return string|bool
+	 */
+	static function strip_namespace($class_name){
+		$r = substr($class_name, strrpos($class_name, '\\') + 1);
+		return $r;
+	}
 }
