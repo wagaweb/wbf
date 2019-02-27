@@ -6,9 +6,6 @@ use WBF\components\utils\Utilities;
 
 abstract class Repository implements RepositoryInterface
 {
-	const FIND_ALL_IDS = 0;
-	const FIND_ALL_OBJECT = 1;
-
 	/**
 	 * @var string
 	 */
@@ -37,7 +34,7 @@ abstract class Repository implements RepositoryInterface
 	}
 
 	/**
-	 * @param int $returnType
+	 * @param string $returnType
 	 *
 	 * @return array
 	 */
