@@ -11,6 +11,10 @@ abstract class Model{
 	 * @var int
 	 */
 	private $id;
+	/**
+	 * @var
+	 */
+	private $repositoryClass;
 
 	/**
 	 * Model constructor.
