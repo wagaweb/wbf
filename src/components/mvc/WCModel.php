@@ -13,49 +13,54 @@ abstract class WCProductModel extends Model {
 	 *
 	 * @param $id
 	 * @param bool $load_wp_post
-	 * @param bool $load_wc_product
-	 * @param bool $instantiate_directly
+	 * @param bool $loadWCProduct
+	 * @param bool $instantiateDirectly
 	 *
 	 * @throws ModelException
 	 */
-	public function __construct($id, $load_wp_post = true, $load_wc_product = true, $instantiate_directly = false) {
+	public function __construct($id, $load_wp_post = true, $loadWCProduct = true, $instantiateDirectly = false)
+	{
 		parent::__construct($id,$load_wp_post);
-		if($load_wc_product){
-			$this->load_wc_product($instantiate_directly);
+		if($loadWCProduct){
+			$this->loadWCProduct($instantiateDirectly);
 		}
 	}
 
 	/**
 	 * @return \WC_Product|null
 	 */
-	public function get_wc_product(){
+	public function getWCProduct()
+	{
 		return $this->wc_product;
 	}
 
 	/**
 	 * @param \WC_Product $product
 	 */
-	public function set_wc_product(\WC_Product $product){
+	public function setWCProduct(\WC_Product $product)
+	{
 		$this->wc_product = $product;
 	}
 
 	/**
 	 * @param bool $instantiate_directly
 	 */
-	public function load_wc_product($instantiate_directly = false){
+	public function loadWCProduct($instantiate_directly = false)
+	{
 		if($instantiate_directly) {
-			$this->wc_product = $this->get_id() > 0 ? new \WC_Product($this->get_id()) : new \WC_Product();
+			$this->wc_product = $this->getId() > 0 ? new \WC_Product($this->getId()) : new \WC_Product();
 		}else{
-			$this->wc_product = $this->get_id() > 0 ? wc_get_product($this->get_id()) : new \WC_Product();
+			$this->wc_product = $this->getId() > 0 ? wc_get_product($this->getId()) : new \WC_Product();
 		}
 	}
 
 	/**
 	 * Refresh own id by post
 	 */
-	public function refresh_id(){
+	public function refreshId()
+	{
 		if($this->wc_product instanceof \WC_Product){
-			$this->set_id($this->wc_product->get_id());
+			$this->setId($this->wc_product->get_id());
 		}
 	}
 }

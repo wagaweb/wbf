@@ -11,25 +11,21 @@ abstract class Model{
 	 * @var int
 	 */
 	private $id;
-	/**
-	 * @var
-	 */
-	private $repositoryClass;
 
 	/**
 	 * Model constructor.
 	 *
 	 * @param $id
-	 * @param bool $load_wp_post
+	 * @param bool $loadWpPost
 	 *
 	 * @throws ModelException
 	 */
-	public function __construct($id, $load_wp_post = true) {
+	public function __construct($id, $loadWpPost = true) {
 		if(!\is_int($id)){
 			throw new ModelException('Invalid ID provided');
 		}
-		$this->set_id($id);
-		if($load_wp_post){
+		$this->setId($id);
+		if($loadWpPost){
 			$this->load_post();
 		}
 	}
@@ -37,51 +33,51 @@ abstract class Model{
 	/**
 	 * @return int
 	 */
-	public function get_id(){
+	public function getId(){
 		return $this->id;
 	}
 
 	/**
 	 * @param $id
 	 */
-	public function set_id($id){
+	public function setId($id){
 		$this->id = (int) $id;
 	}
 
 	/**
 	 * @return \WP_Post|null
 	 */
-	public function get_post(){
+	public function getPost(){
 		return $this->post;
 	}
 
 	/**
 	 * Loads the \WP_Post
 	 */
-	public function load_post(){
-		if($this->get_id() > 0){
-			$this->post = get_post($this->get_id());
+	public function loadPost(){
+		if($this->getId() > 0){
+			$this->post = get_post($this->getId());
 		}
 	}
 
 	/**
 	 * @param \WP_Post $post
 	 */
-	public function set_post(\WP_Post $post){
+	public function setPost(\WP_Post $post){
 		$this->post = $post;
 	}
 
 	/**
 	 * @return bool
 	 */
-	public function is_new(){
+	public function isNew(){
 		return $this->id > 0;
 	}
 
 	/**
 	 * Refresh own id by post
 	 */
-	public function refresh_id(){
+	public function refreshId(){
 		if($this->post instanceof \WP_Post){
 			$this->id = $this->post->ID;
 		}
@@ -91,7 +87,7 @@ abstract class Model{
 	 * Calls WordPress core actions for inserting a post
 	 * @param $id
 	 */
-	public function call_post_creation_core_actions($id){
+	public function callPostCreationCoreActions($id){
 		$post = get_post( $id );
 		do_action( 'save_post_product', $id, $post, false );
 		do_action( 'save_post', $id, $post, false );
@@ -101,8 +97,8 @@ abstract class Model{
 	/**
 	 * Calls WordPress core actions for updating a post
 	 */
-	public function call_post_updating_core_actions(){
-		$id = $this->get_id();
+	public function callPostUpdatingCoreActions(){
+		$id = $this->getId();
 		$post = get_post( $id );
 		do_action( 'edit_post', $id, $post );
 		$postAfter = get_post( $id );
