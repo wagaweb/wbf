@@ -24,6 +24,7 @@ if(!defined('WBF_OPTIONS_FRAMEWORK_THEME_ASSETS_DIR')){
 
 //Initialization
 add_action( "wbf_after_setup_theme", __NAMESPACE__.'\\module_init', 1 );
+add_action( "wbf_init_end", __NAMESPACE__.'\\check_options_deps_callback', 1 );
 
 /*
  * Options saving
@@ -74,6 +75,13 @@ function module_init(){
 
 	//Bind to Theme Customizer
 	CustomizerManager::init();
+}
+
+/**
+ * Check theme options dependecies
+ */
+function check_options_deps_callback(){
+	of_check_options_deps();
 }
 
 /**

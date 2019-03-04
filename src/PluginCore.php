@@ -744,6 +744,9 @@ class PluginCore {
 	public function after_setup_theme() {
 		// Loads notice manager. The notice manager can be already loaded by plugins constructor prior this point.
 		$this->services->set_notice_manager(Notice_Manager::get_global_instance());
+		add_action('wbf_init_end', function(){
+			WBF()->get_service_manager()->get_notice_manager()->enqueue_notices(); //...and display notices ad init end
+		},9999);
 
 		$this->options = apply_filters("wbf/options",$this->options);
 
@@ -821,10 +824,6 @@ class PluginCore {
 			wbf_locate_file( '/src/components/breadcrumb/vendor/breadcrumb-trail.php', true);
 			wbf_locate_file( '/src/components/breadcrumb/WBF_Breadcrumb_Trail.php', true);
 		}*/
-
-
-		if(function_exists('\WBF\modules\options\of_check_options_deps')) \WBF\modules\options\of_check_options_deps(); //Check if theme options dependencies are met
-		$this->get_service_manager()->get_notice_manager()->enqueue_notices(); //Display notices
 
 		do_action("wbf_init_end");
 	}
