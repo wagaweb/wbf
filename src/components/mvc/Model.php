@@ -26,7 +26,7 @@ abstract class Model{
 		}
 		$this->setId($id);
 		if($loadWpPost){
-			$this->load_post();
+			$this->loadPost();
 		}
 	}
 
