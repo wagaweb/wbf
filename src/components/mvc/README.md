@@ -40,6 +40,14 @@ And then use them:
 	
 	//OR:
 	$books = \WBF\components\mvc\Repository::get(Book::class)->findAll();
+	
+	//Find by WP_Query params:
+	$books = $bookRepository->findByParams(['meta_query' => [...]]);
+	
+	//Returns a new \WP_Query...
+	$bookQuery = $bookRepository->getQuery();
+	//an array of WP_Query params can be passed to the function...
+	$bookQuery = $bookRepository->getQuery(['orderby' => 'date']);
 ```
 
 Default WP_Post repository is also supported:
