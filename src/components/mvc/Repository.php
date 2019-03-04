@@ -40,16 +40,16 @@ abstract class Repository implements RepositoryInterface
 	 */
 	public function findAll($returnType = self::FIND_ALL_IDS)
 	{
-		$args = [
+		$criteria = [
 			'post_type' => $this->getPostType(),
 			'posts_per_page' => -1,
 			'fields' => 'ids'
 		];
 		if($returnType === self::FIND_ALL_OBJECT && $this->isVanillaPost()){
-			unset($args['fields']);
+			unset($criteria['fields']);
 		}
 
-		$posts = get_posts($args);
+		$posts = get_posts($criteria);
 		if(!\is_array($posts)){
 			$posts = [];
 		}
@@ -64,17 +64,76 @@ abstract class Repository implements RepositoryInterface
 	}
 
 	/**
-	 * @param array $criteria
+	 * @param array $criteria (@see https://codex.wordpress.org/Class_Reference/WP_Query#Parameters)
 	 * @param array|null $orderBy
 	 * @param int|null $limit
 	 * @param int|null $offset
+	 * @param string $returnType
 	 *
 	 * @return array
 	 */
-	public function findBy( array $criteria, array $orderBy = null, $limit = null, $offset = null )
+	public function findByParams( array $criteria, array $orderBy = null, $limit = null, $offset = null, $returnType = self::FIND_ALL_IDS )
 	{
-		// TODO: Implement findBy() method.
-		return [];
+		$criteria['post_type'] = $this->getPostType();
+		$criteria['fields'] = 'ids';
+
+		if($returnType === self::FIND_ALL_OBJECT && $this->isVanillaPost()){
+			unset($criteria['fields']);
+		}
+
+		if($orderBy === null || !\is_array($orderBy) || count($orderBy) <= 0){
+			$orderBy = ['date' => 'DESC'];
+		}
+
+		if($limit === null){
+			$limit = 5;
+		}
+
+		if($offset === null){
+			$offset = 0;
+		}
+
+		$criteria['orderby'] = array_keys($orderBy)[0];
+		$criteria['order'] = array_values($orderBy)[0];
+		$criteria['offset'] = $offset;
+		$criteria['posts_per_page'] = $limit;
+
+		$posts = get_posts($criteria);
+
+		if(!\is_array($posts)){
+			$posts = [];
+		}
+
+		if(!$this->isVanillaPost() && $returnType === self::FIND_ALL_OBJECT){
+			foreach ($posts as $k => $postId){
+				$posts[$k] = $this->createModelInstance($postId);
+			}
+		}
+
+		return $posts;
+	}
+
+	/**
+	 * @param array $criteria (@see https://codex.wordpress.org/Class_Reference/WP_Query#Parameters)
+	 * @param int|null $page
+	 * @param string $returnType
+	 *
+	 * @return \WP_Query
+	 */
+	public function getQuery( array $criteria = [], $page = null, $returnType = self::FIND_ALL_IDS )
+	{
+		$criteria['post_type'] = $this->getPostType();
+		if($returnType === self::FIND_ALL_IDS){
+			$criteria['fields'] = 'ids';
+		}
+
+		if($page !== null){
+			$criteria['paged'] = (int) $page;
+		}
+
+		$q = new \WP_Query($criteria);
+
+		return $q;
 	}
 
 	/**

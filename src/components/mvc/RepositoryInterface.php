@@ -26,8 +26,9 @@ interface RepositoryInterface
 	 * @param array|null $orderBy
 	 * @param int|null $limit
 	 * @param int|null $offset
+	 * @param string $returnType
 	 *
 	 * @return array
 	 */
-	public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null);
+	public function findByParams(array $criteria, array $orderBy, $limit, $offset, $returnType);
 }
