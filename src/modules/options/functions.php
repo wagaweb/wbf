@@ -2,6 +2,7 @@
 namespace WBF\modules\options;
 use WBF\components\compiler\less\Less_Compiler;
 use WBF\components\compiler\Styles_Compiler;
+use WBF\components\notices\Notice_Manager;
 use WBF\components\utils\Utilities;
 use WBF\modules\components\ComponentFactory;
 use \WBF\modules\components\ComponentsManager;
@@ -11,7 +12,7 @@ use \WBF\modules\components\ComponentsManager;
  * Checks if the dependencies of theme options are met
  */
 function of_check_options_deps(){
-    $wbf_notice_manager = Utilities::get_wbf_notice_manager();
+    $wbf_notice_manager = Notice_Manager::get_global_instance();
     $deps_to_achieve = _of_get_theme_options_deps();
     if(!empty($deps_to_achieve)){
         if(!empty($deps_to_achieve['components'])){
@@ -73,7 +74,7 @@ function of_options_save($option, $old_value, $value){
     if($option != $config_id) return;
 
 	//Ok let's go!
-	$wbf_notice_manager = Utilities::get_wbf_notice_manager();
+	$wbf_notice_manager = WBF()->get_service_manager()->get_notice_manager();
 
 	$must_recompile_flag = false;
 	$must_update_styles_flag = false;

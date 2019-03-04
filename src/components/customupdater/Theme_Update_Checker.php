@@ -59,7 +59,7 @@ class Theme_Update_Checker{
 		$this->current_state = get_option($this->optionName);
 
 		//Load Notice Manager if needed
-		$wbf_notice_manager = Utilities::get_wbf_notice_manager();
+		$wbf_notice_manager = Notice_Manager::get_global_instance();
 		$this->notice_manager = &$wbf_notice_manager;
 
 		//Install required hooks

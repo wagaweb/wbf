@@ -222,4 +222,17 @@ class Notice_Manager {
         }
         return false;
     }
+
+	/**
+	 * return \WBF\components\notices\Notice_Manager
+	 */
+    public static function get_global_instance(){
+	    global $wbf_notice_manager;
+	    if($wbf_notice_manager === null){
+	        $c = __CLASS__;
+	        $nm = new $c();
+		    $GLOBALS['wbf_notice_manager'] = $nm;
+        }
+	    return $wbf_notice_manager;
+    }
 }

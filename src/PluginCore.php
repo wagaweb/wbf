@@ -233,7 +233,7 @@ class PluginCore {
 	 * @param array $errcontext
 	 */
 	public function handle_errors($errno,$errstr,$errfile = "",$errline = 0,$errcontext = []){
-		$wbf_notice_manager = Utilities::get_wbf_notice_manager();
+		$wbf_notice_manager = Notice_Manager::get_global_instance();
 		if($wbf_notice_manager && is_admin() && current_user_can("manage_options")){
 			$str = sprintf('[Admin Only] There was an USER_WARNING error generated at %s:%s: <strong>%s</strong>',basename($errfile),$errline,$errstr);
 			$wbf_notice_manager->add_notice($errline,$str,"error","_flash_");
@@ -743,8 +743,7 @@ class PluginCore {
 	 */
 	public function after_setup_theme() {
 		// Loads notice manager. The notice manager can be already loaded by plugins constructor prior this point.
-		$wbf_notice_manager = Utilities::get_wbf_notice_manager();
-		$this->services->set_notice_manager($wbf_notice_manager);
+		$this->services->set_notice_manager(Notice_Manager::get_global_instance());
 
 		$this->options = apply_filters("wbf/options",$this->options);
 
@@ -825,7 +824,7 @@ class PluginCore {
 
 
 		if(function_exists('\WBF\modules\options\of_check_options_deps')) \WBF\modules\options\of_check_options_deps(); //Check if theme options dependencies are met
-		$GLOBALS['wbf_notice_manager']->enqueue_notices(); //Display notices
+		$this->get_service_manager()->get_notice_manager()->enqueue_notices(); //Display notices
 
 		do_action("wbf_init_end");
 	}

@@ -346,7 +346,7 @@ class BasePlugin {
 		//require_once plugin_dir_path( dirname( __FILE__ ) ) . 'class-waboot-plugin-i18n.php';
 
 		//Load Notice Manager if needed
-		$wbf_notice_manager = Utilities::get_wbf_notice_manager();
+		$wbf_notice_manager = Notice_Manager::get_global_instance();
 		$this->notice_manager = &$wbf_notice_manager;
 
 		$this->loader = new Loader($this);

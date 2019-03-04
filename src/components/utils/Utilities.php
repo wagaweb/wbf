@@ -201,13 +201,8 @@ class Utilities{
 		if($provide_new){
 			return new Notice_Manager();
 		}
-		
-		global $wbf_notice_manager;
-		if(!$wbf_notice_manager){
-			$wbf_notice_manager = new Notice_Manager();
-			$GLOBALS['wbf_notice_manager'] = $wbf_notice_manager;
-		}
-		return $wbf_notice_manager;
+
+		return Notice_Manager::get_global_instance();
 	}
 
 	/**
