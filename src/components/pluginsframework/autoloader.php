@@ -15,7 +15,7 @@ require_once dirname(dirname(dirname(dirname(__FILE__))))."/vendor/autoload.php"
 
 //spl_autoload_register( 'WBF\includes\pluginsframework\plugin_autoload' );
 
-function plugin_autoload( $class ) {
+/*function plugin_autoload( $class ) {
 	$wbf_path = WBF()->get_path();
 
 	if(!is_file($wbf_path."/vendor/autoload.php")){
@@ -70,4 +70,4 @@ function plugin_autoload( $class ) {
 				break;
 		}
 	}
-}
+}*/
