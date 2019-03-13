@@ -1,5 +1,14 @@
 == Change log ==
 
+Version 1.1.6 - 03/13/2019
+---------------------------------
+- Fix: Fixed path_to_url and url_to_path
+- Tweak: Added append_current_datetime_to_filename() to Utilities class
+- Tweak: Added MonoLoggerTrait and MonoLog dependency
+- Tweak: Some tweaks to Command module
+- Tweak: Removed embedded theme options behavior in plugin core
+- Feature: new Model classes to MVC component
+
 Version 1.1.5 - 02/19/2019
 ---------------------------------
 - Tweak: The Breadcrumb component has been refactored and modernized
