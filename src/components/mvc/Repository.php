@@ -28,7 +28,6 @@ abstract class Repository implements RepositoryInterface
 				return $p;
 			}
 			$pp = $this->createModelInstance($p->ID);
-			$this->loadModelMetaData($pp);
 			return $pp;
 		}
 		return null;
@@ -57,7 +56,8 @@ abstract class Repository implements RepositoryInterface
 
 		if(!$this->isVanillaPost() && $returnType === self::FIND_ALL_OBJECT){
 			foreach ($posts as $k => $postId){
-				$posts[$k] = $this->createModelInstance($postId);
+				$pp = $this->createModelInstance($postId);
+				$posts[$k] = $pp;
 			}
 		}
 
@@ -112,6 +112,16 @@ abstract class Repository implements RepositoryInterface
 		}
 
 		return $posts;
+	}
+
+	/**
+	 * Save Model to the database
+	 *
+	 * @param Model $model
+	 */
+	public function persist(Model &$model){
+		$metaList = $model->getMetaList();
+		//todo: persist with wp_insert_post... but... so the model will be available only for Post and PostType? Not for users?
 	}
 
 	/**
@@ -188,14 +198,30 @@ abstract class Repository implements RepositoryInterface
 		return new $className($constructorParam);
 	}
 
-	private function loadModelMetaData(Model &$model)
+	/**
+	 * Loads model metadata from the DB
+	 *
+	 * @param Model $model
+	 */
+	public function loadModelMetaData(Model &$model)
 	{
-		$metas = $model->getMetaList();
+		$metas = $model->getMetaList(true);
 		if(!\is_array($metas) || count($metas) == 0){
 			return;
 		}
 		foreach ($metas as $meta){
-
+			if(!$meta instanceof MetaData) continue;
+			switch($meta->getType()){
+				case MetaData::TYPE_POSTMETA:
+					$model->{$meta->getSetterMethodName()}(get_post_meta($model->getId(),$meta->getKey(),true));
+					break;
+				case MetaData::TYPE_TERMMETA:
+					$model->{$meta->getSetterMethodName()}(get_term_meta($model->getId(),$meta->getKey(),true));
+					break;
+				case MetaData::TYPE_USERMETA:
+					$model->{$meta->getSetterMethodName()}(get_user_meta($model->getId(),$meta->getKey(),true));
+					break;
+			}
 		}
 	}
 

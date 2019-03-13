@@ -70,9 +70,11 @@ abstract class Model{
 	/**
 	 * Get the list of MetaData associated with the object
 	 *
+	 * @param bool $getObjects
+	 *
 	 * @return array
 	 */
-	public function getMetaList(){
+	public function getMetaList($getObjects = false){
 		try{
 			$ref = new \ReflectionClass(static::class);
 		}catch (\Exception $e){
@@ -84,7 +86,11 @@ abstract class Model{
 
 		foreach ($defProperties as $pName => $pValue){
 			$prop = $this->getMetaDataObject($pName);
-			$r[$prop->getKey()] = $prop->getValue();
+			if($getObjects){
+				$r[$prop->getKey()] = $prop;
+			}else{
+				$r[$prop->getKey()] = $prop->getValue();
+			}
 		}
 
 		return $r;
