@@ -68,6 +68,43 @@ abstract class Model{
 	}
 
 	/**
+	 * Get the list of MetaData associated with the object
+	 *
+	 * @return array
+	 */
+	public function getMetaList(){
+		try{
+			$ref = new \ReflectionClass(static::class);
+		}catch (\Exception $e){
+			return [];
+		}
+
+		$defProperties = $ref->getDefaultProperties();
+		$r = [];
+
+		foreach ($defProperties as $pName => $pValue){
+			$prop = $this->getMetaDataObject($pName);
+			$r[$prop->getKey()] = $prop->getValue();
+		}
+
+		return $r;
+	}
+
+	/**
+	 * Get the MetaData instance of a properties
+	 * @param $metaName
+	 *
+	 * @return MetaData|false
+	 */
+	public function getMetaDataObject($metaName){
+		$metaDataInstance = $this->$metaName;
+		if(!$metaDataInstance instanceof MetaData){
+			return false;
+		}
+		return $metaDataInstance;
+	}
+
+	/**
 	 * @return bool
 	 */
 	public function isNew(){

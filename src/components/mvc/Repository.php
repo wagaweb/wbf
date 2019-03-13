@@ -28,6 +28,7 @@ abstract class Repository implements RepositoryInterface
 				return $p;
 			}
 			$pp = $this->createModelInstance($p->ID);
+			$this->loadModelMetaData($pp);
 			return $pp;
 		}
 		return null;
@@ -185,6 +186,17 @@ abstract class Repository implements RepositoryInterface
 	{
 		$className = $this->getClassName();
 		return new $className($constructorParam);
+	}
+
+	private function loadModelMetaData(Model &$model)
+	{
+		$metas = $model->getMetaList();
+		if(!\is_array($metas) || count($metas) == 0){
+			return;
+		}
+		foreach ($metas as $meta){
+
+		}
 	}
 
 	/**
