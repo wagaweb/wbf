@@ -263,9 +263,16 @@ class Paths {
      * @return mixed
      */
     static function url_to_path($url){
-        //$blogurl = get_bloginfo("url");
-        //$siteurl = site_url();
-        $siteurl = get_home_url();
+	    if(defined('WBF_REAL_SITE_URL')){
+		    $siteurl = WBF_REAL_SITE_URL;
+	    }else{
+		    //$blogurl = get_bloginfo("url");
+		    if(defined('WBF_WP_AS_APP') && WBF_WP_AS_APP){
+			    $siteurl = get_home_url();
+		    }else{
+			    $siteurl = site_url();
+		    }
+	    }
         $blogurl = preg_replace("(https?://)", "", $siteurl );
         //$result = preg_match("/^https?:\/\/$blogurl\/([[:space:]a-zA-Z0-9\/_.-]+)/", $url, $matches);
         $result = preg_replace("|^https?://$blogurl|", self::get_abspath(), $url);
@@ -283,9 +290,16 @@ class Paths {
      * @return mixed
      */
     static function path_to_url($path){
-        //$blogurl = trailingslashit(get_bloginfo("url"));
-        //$siteurl = trailingslashit(site_url());
-        $siteurl = trailingslashit(get_home_url());
+    	if(defined('WBF_REAL_SITE_URL')){
+    		$siteurl = WBF_REAL_SITE_URL;
+	    }else{
+		    //$blogurl = trailingslashit(get_bloginfo("url"));
+		    if(defined('WBF_WP_AS_APP') && WBF_WP_AS_APP){
+			    $siteurl = trailingslashit(get_home_url());
+		    }else{
+			    $siteurl = trailingslashit(site_url());
+		    }
+	    }
         $blogpath = self::get_abspath();
         $result = preg_replace("|^$blogpath|", $siteurl, $path);
         return $result;
