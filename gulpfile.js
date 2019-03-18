@@ -79,7 +79,7 @@ gulp.task('compile_css',function(){
     var styles = gulp.src(paths.main_admin_style)
         .pipe(sourcemaps.init())
         .pipe(less({
-            paths: ["vendor/bootstrap/less"]
+            paths: ["bower_components/bootstrap/less"]
         }))
         .pipe(postcss(processors))
         .pipe(rename({
