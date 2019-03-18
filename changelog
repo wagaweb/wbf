@@ -7,7 +7,7 @@ Version 1.1.6 - 03/13/2019
 - Tweak: Added MonoLoggerTrait and MonoLog dependency
 - Tweak: Some tweaks to Command module
 - Tweak: Removed embedded theme options behavior in plugin core
-- Feature: new Model classes to MVC component
+- Feature: new Model classes to MVC component (more later)
 
 Version 1.1.5 - 02/19/2019
 ---------------------------------
