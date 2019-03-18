@@ -62,42 +62,42 @@ class CodeEditor extends BaseField  implements Field  {
 
 		$res = [
 			'codemirror' => [
-				'uri' => WBF()->prefix_url('vendor/codemirror/lib/codemirror.js'),
-				'path' => WBF()->prefix_path('vendor/codemirror/lib/codemirror.js'),
+				'uri' => WBF()->prefix_url('assets/vendor/codemirror/js/codemirror.js'),
+				'path' => WBF()->prefix_path('assets/vendor/codemirror/js/codemirror.js'),
 				'type' => 'js'
 			],
 			'codemirror-css' => [
-				'uri' => WBF()->prefix_url('vendor/codemirror/lib/codemirror.css'),
-				'path' => WBF()->prefix_path('vendor/codemirror/lib/codemirror.css'),
+				'uri' => WBF()->prefix_url('assets/vendor/codemirror/css/codemirror.css'),
+				'path' => WBF()->prefix_path('assets/vendor/codemirror/css/codemirror.css'),
 				'type' => 'css'
 			],
 			//Modes
 			'codemirror-mode-css' => [
-				'uri' => WBF()->prefix_url('vendor/codemirror/mode/css/css.js'),
-				'path' => WBF()->prefix_path('vendor/codemirror/mode/css/css.js'),
+				'uri' => WBF()->prefix_url('assets/vendor/codemirror/js/css.js'),
+				'path' => WBF()->prefix_path('assets/vendor/codemirror/js/css.js'),
 				'type' => 'css'
 			],
 			//Addons
 			'codemirror-addon-hint' => [
-				'uri' => WBF()->prefix_url('vendor/codemirror/addon/hint/show-hint.js'),
-				'path' => WBF()->prefix_path('vendor/codemirror/addon/hint/show-hint.js'),
+				'uri' => WBF()->prefix_url('assets/vendor/codemirror/js/show-hint.js'),
+				'path' => WBF()->prefix_path('assets/vendor/codemirror/js/show-hint.js'),
 				'type' => 'js'
 			],
 			'codemirror-addon-hint-style' => [
-				'uri' => WBF()->prefix_url('vendor/codemirror/addon/hint/show-hint.css'),
-				'path' => WBF()->prefix_path('vendor/codemirror/addon/hint/show-hint.css'),
+				'uri' => WBF()->prefix_url('assets/vendor/codemirror/css/show-hint.css'),
+				'path' => WBF()->prefix_path('assets/vendor/codemirror/css/show-hint.css'),
 				'type' => 'css'
 			],
 			'codemirror-addon-hint-css' => [
-				'uri' => WBF()->prefix_url('vendor/codemirror/addon/hint/css-hint.js'),
-				'path' => WBF()->prefix_path('vendor/codemirror/addon/hint/css-hint.js'),
+				'uri' => WBF()->prefix_url('assets/vendor/codemirror/js/css-hint.js'),
+				'path' => WBF()->prefix_path('assets/vendor/codemirror/js/css-hint.js'),
 				'deps' => ['codemirror','codemirror-addon-hint'],
 				'type' => 'js'
 			],
 			//Themes
 			'codemirror-theme-ambiance' => [
-				'uri' => WBF()->prefix_url('vendor/codemirror/theme/ambiance.css'),
-				'path' => WBF()->prefix_path('vendor/codemirror/theme/ambiance.css'),
+				'uri' => WBF()->prefix_url('assets/vendor/codemirror/css/ambiance.css'),
+				'path' => WBF()->prefix_path('assets/vendor/codemirror/css/ambiance.css'),
 				'type' => 'css'
 			]
 		];

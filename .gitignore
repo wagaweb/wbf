@@ -34,28 +34,7 @@ src/components/**/vendor/**
 ############
 ## VENDORS (bower)
 ############
-vendor/jquery
-vendor/eventEmitter
-vendor/eventie
-vendor/imagesloaded
-vendor/jquery-modal
-vendor/codemirror
-vendor/bootstrap
-vendor/spectrum
-vendor/owl.carousel
-vendor/owlcarousel
-assets/src/js/spectrum.js
-assets/src/css/spectrum.css
-
-############
-## VENDORS (other)
-############
-
-vendor/codemirror/demo
-vendor/codemirror/doc
-vendor/codemirror/test
-vendor/codemirror/*.*
-!vendor/codemirror/package.json
+assets/vendor
 
 ############
 ## IDEs

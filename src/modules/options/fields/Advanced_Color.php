@@ -50,8 +50,8 @@ class Advanced_Color extends BaseField implements Field{
 				'type' => 'js'
 			],
 			'spectrum-css' => [
-				'uri' => WBF()->prefix_url('vendor/spectrum/spectrum.css'),
-				'path' => WBF()->prefix_path('vendor/spectrum/spectrum.css'),
+				'uri' => WBF()->prefix_url('assets/vendor/spectrum.css'),
+				'path' => WBF()->prefix_path('assets/vendor/spectrum.css'),
 				'type' => 'css'
 			]
 		];

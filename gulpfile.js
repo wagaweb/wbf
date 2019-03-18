@@ -49,6 +49,7 @@ var paths = {
         "cache/wbf_font_cache.json",
         "assets/**",
         "src/**",
+        "vendor/**",
         "*.*",
         "!.*" ,
         "!Gruntfile.js",
@@ -58,18 +59,7 @@ var paths = {
         "!Movefile-sample",
         "!{builds,builds/**}",
         "!{node_modules,node_modules/**}",
-        "!{bower_components,bower_components/**}",
-        //Vendors
-        "vendor/owl.carousel/**/*",
-        "vendor/yahnis-elsts/**/*",
-        "vendor/codemirror/**/*",
-        "vendor/spectrum/**/*",
-        "vendor/options-framework/**/*",
-        "vendor/mobiledetect/**/*",
-        "vendor/mgargano/**/*",
-        "vendor/myclabs/**/*",
-        "vendor/composer/**/*",
-        "vendor/autoload.php"
+        "!{bower_components,bower_components/**}"
     ]
 };
 
@@ -130,7 +120,7 @@ gulp.task('compile_js', ['browserify'] ,function(){
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('./assets/dist/js/includes'));
 
-    var spectrum = gulp.src("assets/src/js/spectrum.js")
+    var spectrum = gulp.src("assets/vendor/spectrum.js")
         .pipe(uglify())
         .pipe(rename({
             suffix: ".min"
@@ -198,11 +188,22 @@ gulp.task('copy-vendors',function() {
 
     //@see https://github.com/jonschlinkert/copy/tree/master/examples
 
+    //Copy codemirror js
+    copy(['bower_components/codemirror/lib/codemirror.js'],'assets/vendor/codemirror/js',{flatten: true},cb);
+    copy(['bower_components/codemirror/mode/css/css.js'],'assets/vendor/codemirror/js',{flatten: true},cb);
+    copy(['bower_components/codemirror/addon/hint/show-hint.js'],'assets/vendor/codemirror/js',{flatten: true},cb);
+    copy(['bower_components/codemirror/addon/hint/css-hint.js'],'assets/vendor/codemirror/js',{flatten: true},cb);
+
+    //Copy codemirror css
+    copy(['bower_components/codemirror/lib/codemirror.css'],'assets/vendor/codemirror/css',{flatten: true},cb);
+    copy(['bower_components/codemirror/addon/hint/show-hint.css'],'assets/vendor/codemirror/css',{flatten: true},cb);
+    copy(['bower_components/codemirror/theme/ambience.css'],'assets/vendor/codemirror/css',{flatten: true},cb);
+
     //Copy spectrum js
-    copy(['vendor/spectrum/spectrum.js'],'assets/src/js',{flatten: true},cb);
+    copy(['bower_components/spectrum/spectrum.js'],'assets/vendor',{flatten: true},cb);
 
     //Copy spectrum css
-    copy(['vendor/spectrum/spectrum.css'],'assets/src/css',{flatten: true},cb);
+    copy(['bower_components/spectrum/spectrum.css'],'assets/vendor',{flatten: true},cb);
 });
 
 /**
