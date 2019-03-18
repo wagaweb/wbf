@@ -881,14 +881,14 @@ class PluginCore {
 
 		$libs = [
 			"owlcarousel-css" => [
-				'uri' => $this->prefix_url("/vendor/owl.carousel/dist/assets/owl.carousel.css"),
-				'path' => $this->prefix_path("/vendor/owl.carousel/dist/assets/owl.carousel.css"),
+				'uri' => $this->prefix_url("/assets/vendor/owl.carousel.css"),
+				'path' => $this->prefix_path("/assets/vendor/owl.carousel.css"),
 				'type' => 'css',
 				'enqueue' => false
 			],
 			"owlcarousel-js" => [
-				"uri" => $this->prefix_url("/vendor/owl.carousel/dist/owl.carousel.min.js"),
-				"path" => $this->prefix_path("/vendor/owl.carousel/dist/owl.carousel.min.js"),
+				"uri" => $this->prefix_url("/assets/vendor/owl.carousel.min.js"),
+				"path" => $this->prefix_path("/assets/vendor/owl.carousel.min.js"),
 				"type" => "js",
 				'enqueue' => false,
 				'in_footer' => true,

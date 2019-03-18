@@ -88,7 +88,7 @@ gulp.task('compile_css',function(){
         .pipe(sourcemaps.write("."))
         .pipe(gulp.dest('./assets/dist/css'));
 
-    var spectrum = gulp.src("assets/src/css/spectrum.css")
+    var spectrum = gulp.src("assets/vendor/spectrum.css")
         .pipe(postcss(processors))
         .pipe(rename({
             suffix: ".min"
@@ -204,6 +204,12 @@ gulp.task('copy-vendors',function() {
 
     //Copy spectrum css
     copy(['bower_components/spectrum/spectrum.css'],'assets/vendor',{flatten: true},cb);
+
+    //Copy owlcarousel js
+    copy(['bower_components/owl.carousel/dist/owl.carousel.min.js'],'assets/vendor',{flatten: true},cb);
+
+    //Copy owlcarousel css
+    copy(['bower_components/owl.carousel/dist/assets/owl.carousel.css'],'assets/vendor',{flatten: true},cb);
 });
 
 /**
