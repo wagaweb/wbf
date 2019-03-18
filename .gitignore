@@ -2,7 +2,6 @@ node_modules/
 bower_components/
 builds/**/*
 npm-debug.log
-yarn.lock
 .yarnclean
 shrinkwrap.yaml
 
