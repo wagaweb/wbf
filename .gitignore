@@ -22,7 +22,6 @@ assets/dist/js/includes/wbf-google-map.min.js.map
 ## VENDORS (composer)
 ############
 vendor/**/*
-!vendor/options-framework
 
 ############
 ## VENDORS (components)
