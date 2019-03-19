@@ -1,5 +1,7 @@
 <?php
 
+if(class_exists('WBF')) return;
+
 require_once 'PluginCore.php';
 
 /**
