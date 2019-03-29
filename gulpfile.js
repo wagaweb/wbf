@@ -197,7 +197,7 @@ gulp.task('copy-vendors',function() {
     //Copy codemirror css
     copy(['bower_components/codemirror/lib/codemirror.css'],'assets/vendor/codemirror/css',{flatten: true},cb);
     copy(['bower_components/codemirror/addon/hint/show-hint.css'],'assets/vendor/codemirror/css',{flatten: true},cb);
-    copy(['bower_components/codemirror/theme/ambience.css'],'assets/vendor/codemirror/css',{flatten: true},cb);
+    copy(['bower_components/codemirror/theme/ambiance.css'],'assets/vendor/codemirror/css',{flatten: true},cb);
 
     //Copy spectrum js
     copy(['bower_components/spectrum/spectrum.js'],'assets/vendor',{flatten: true},cb);
