@@ -71,7 +71,7 @@ abstract class Model{
 	 * @return bool
 	 */
 	public function isNew(){
-		return $this->id > 0;
+		return !isset($this->id) || $this->id <= 0;
 	}
 
 	/**
