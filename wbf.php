@@ -42,11 +42,11 @@ if ( ! isset( $GLOBALS['wbf'] ) || ! $GLOBALS['wbf'] instanceof \WBF\PluginCore 
 	}
 
 	//Utilities
-	require_once 'src/includes/utilities-functions.php';
+	require_once __DIR__.'/src/includes/utilities-functions.php';
 
-	require_once 'wbf-autoloader.php';
-	require_once 'backup-functions.php';
-	require_once ABSPATH . 'wp-admin/includes/plugin.php';
+	require_once __DIR__.'/wbf-autoloader.php';
+	require_once __DIR__.'/backup-functions.php';
+	//require_once ABSPATH . 'wp-admin/includes/plugin.php';
 
 	try {
 		$GLOBALS['wbf'] = new \WBF\PluginCore( dirname( __FILE__ ), \WBF\components\utils\Paths::path_to_url( dirname( __FILE__ ) ) );
