@@ -12,6 +12,7 @@ use WBF\components\mvc\HTMLView;
 use WBF\components\notices\Notice_Manager;
 use WBF\components\pluginsframework\BasePlugin;
 use WBF\components\pluginsframework\TemplatePlugin;
+use WBF\components\utils\Paths;
 use WBF\components\utils\Utilities;
 use WBF\includes\GoogleFontsRetriever;
 use WBF\includes\ServiceManager;
@@ -85,19 +86,13 @@ class PluginCore {
 
 		if(!defined('WBF_DIRECTORY')){
 			if(!$path){
-				$path = get_option('wbf_path');
-			}else{
-				$update_wbf_path_flag = true;
+				$path = dirname(dirname(__FILE__));
 			}
 
 			if($path && is_string($path) && !empty($path)){
 				$path = rtrim($path, '/').'/';
 			}else{
 				throw new \Exception('Invalid path provided');
-			}
-
-			if( $update_wbf_path_flag && ( get_option('wbf_path','') !== $path) ){
-				update_option('wbf_path',$path);
 			}
 
 			define('WBF_DIRECTORY',$path);
@@ -107,19 +102,13 @@ class PluginCore {
 
 		if(!defined('WBF_URL')){
 			if(!$url){
-				$url = get_option('wbf_url');
-			}else{
-				$update_wbf_url_flag = true;
+				$url = Paths::path_to_url(dirname(dirname(__FILE__)));
 			}
 
 			if($url && is_string($url) && !empty($url)){
 				$url = rtrim($url, '/') . '/';
 			}else{
 				throw new \Exception('Invalid url provided');
-			}
-
-			if( $update_wbf_url_flag && ( get_option('wbf_url','') !== $url) ){
-				update_option('wbf_url',$url);
 			}
 
 			define('WBF_URL',$url);
