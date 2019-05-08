@@ -353,6 +353,11 @@ class PluginCore {
 	 */
 	public function get_extensions($include = false){
 		static $exts = array();
+
+		/*if($include){
+			require_once ABSPATH . 'wp-admin/includes/plugin.php'; //This is needed to allow use of is_plugin_active in extensions
+		}*/
+
 		if(!empty($exts)){
 			if(!$include){
 				return $exts;
@@ -412,6 +417,7 @@ class PluginCore {
 	 * @return mixed
 	 */
 	public function load_extensions(){
+		require_once ABSPATH . 'wp-admin/includes/plugin.php'; //This is needed to allow use of is_plugin_active in extensions
 		return $this->get_extensions(true);
 	}
 
