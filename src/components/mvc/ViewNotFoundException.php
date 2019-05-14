@@ -19,7 +19,7 @@ class ViewNotFoundException extends \Exception{
 		$this->viewFilePath = $viewFilePath;
 		$this->searchPaths = $searchPaths;
 		$message = "File {$viewFilePath} does not exists in any of these locations: ".implode(",\n",$searchPaths);
-		parent::__construct( $message, 'view_not_found');
+		parent::__construct( $message );
 	}
 
 	/**
