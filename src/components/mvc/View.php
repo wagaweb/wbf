@@ -38,6 +38,13 @@ abstract class View{
 			throw new \Exception("Invalid plugin parameter for View rendering");
 		}
 
+        //Tries to force file extension
+        //todo: decide if do this or not
+        $pinfo = pathinfo($file_path);
+        if(!isset($pinfo['extension'])){
+            $file_path .= '.php';
+        }
+
 		if($is_relative_path){
 			$search_paths = self::get_search_paths($file_path,$plugin);
 			//Searching for template
