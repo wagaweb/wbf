@@ -1,5 +1,9 @@
 == Change log ==
 
+Version 1.1.8 -
+---------------------------------
+- Tweak: PluginCore 'plugins_loaded' action is now called at plugins_loaded,1 (this was made to address an issue with WPGlobus, which register itself at 2, and so it was unable to find ACF due to the fact that WBF loads it via extensions).
+
 Version 1.1.7 - 05/03/2019
 ---------------------------------
 - Fix: some fixes in MVC component

@@ -175,7 +175,8 @@ class PluginCore {
 		 */
 
 		if($this->is_plugin()) {
-			add_action('plugins_loaded', [$this,'plugins_loaded'], 11 );
+			//add_action('plugins_loaded', [$this,'plugins_loaded'], 11 ); //Before 1.1.8
+			add_action('plugins_loaded', [$this,'plugins_loaded'], 1 ); //From 1.1.8
 		}
 		add_action('after_setup_theme', [$this,'after_setup_theme'], 11 );
 		add_action('init', [$this,'init'], 11 );
