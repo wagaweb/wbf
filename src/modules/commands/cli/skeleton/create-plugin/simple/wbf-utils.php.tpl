@@ -6,25 +6,29 @@ namespace {{ namespace }}\includes;
  * Get the WBF path
  *
  * @return string|boolean
+ * @throws \Exception
  */
 function get_wbf_path(){
-	return get_option('wbf_path',false);
+	$wbf_path = ABSPATH."wp-content/plugins/wbf";
+	if(!\is_dir($wbf_path)){
+		throw new \Exception("WBF Not Found");
+	}
+	return $wbf_path;
 }
 
 /**
  * Get the WBF Plugin Autoloader
  */
 function include_wbf_autoloader(){
-	$wbf_path = get_wbf_path();
-
-	if(!is_dir($wbf_path)){
-		$wbf_path = ABSPATH."wp-content/plugins/wbf";
-	}
-
-	//Require the base autoloader
-	$wbf_base_autoloader = $wbf_path."/wbf-autoloader.php";
-	if(is_file($wbf_base_autoloader)){
-		require_once $wbf_base_autoloader;
+	try{
+		$wbf_path = get_wbf_path();
+		//Require the base autoloader
+		$wbf_base_autoloader = $wbf_path."/wbf-autoloader.php";
+		if(is_file($wbf_base_autoloader)){
+			require_once $wbf_base_autoloader;
+		}
+	}catch(\Exception $e){
+		trigger_error('WBF not found',E_USER_WARNING);
 	}
 }
 
