@@ -62,7 +62,9 @@ abstract class View{
 			if(!isset($search_paths)){
 				$search_paths = [$file_path];
 			}
-			throw new ViewNotFoundException($file_path,$search_paths);
+            $message = "File ".$file_path." does not exists in any of these locations: ".implode(",\n",$search_paths);
+            throw new \Exception( $message );
+            //throw new ViewNotFoundException($file_path,$search_paths);
 		}
 
 		$this->template = pathinfo($abs_path);
